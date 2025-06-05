@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Renter Registration - Tailwind</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class=" min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-xl bg-white p-6 rounded-lg">
+
+    <button
+      type="button"
+      id="backBtn"
+      class="p-2 rounded-md text-blue-600 hover:text-blue-800 hover:bg-blue-100 disabled:opacity-50 disabled:pointer-events-none"
+      disabled
+      aria-label="Back"
+    >
+      <!-- Left arrow icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+
+    <h2 class="text-center text-2xl font-bold mb-6">Register as Renter</h2>
+
+     <!-- Stepper -->
+    <div class="flex justify-between mb-6">
+      <div class="flex-1 flex flex-col items-center">
+        <div id="step1-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-semibold">1</div>
+        <span class="mt-2 text-sm font-medium text-gray-600">My Details</span>
+      </div>
+      <div class="flex-1 flex flex-col items-center">
+        <div id="step2-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">2</div>
+        <span class="mt-2 text-sm font-medium text-gray-600">Property Details</span>
+      </div>
+      <div class="flex-1 flex flex-col items-center">
+        <div id="step3-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">3</div>
+        <span class="mt-2 text-sm font-medium text-gray-600">Review</span>
+      </div>
+    </div>
+
+    <form id="registrationForm" class="space-y-4" style="height: 480px; overflow-y: auto;" method="POST" action="{% url 'register_renter' %}" enctype="multipart/form-data">
+
+    {% csrf_token %}
+      <!-- Step 1 -->
+    <div id="step1" class="space-y-4">
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          placeholder="Name"
+
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
+        <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 rounded-md p-2">
+
+      </div>
+
+      <div class="mb-4">
+        <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number*</label>
+        <input
+          type="tel"
+          name="phone"
+          id="phone"
+          placeholder="Phone Number"
+
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4 relative">
+        <label for="password" class="block text-gray-700 font-medium mb-2">Password*</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Password"
+
+          class="w-full border border-gray-300 rounded-md p-2 pr-10"
+        />
+        <button
+          type="button"
+          id="togglePassword"
+          class="absolute right-2 top-9 text-sm text-gray-600"
+        >
+          Show
+        </button>
+      </div>
+
+      <div class="mb-4 relative">
+        <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">Confirm Password*</label>
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+
+          class="w-full border border-gray-300 rounded-md p-2 pr-10"
+        />
+        <button
+          type="button"
+          id="toggleConfirmPassword"
+          class="absolute right-2 top-9 text-sm text-gray-600"
+        >
+          Show
+        </button>
+      </div>
+    </div>
+
+
+
+     <!-- Step 2 -->
+    <div id="step2" class="space-y-4 hidden">
+      <div class="mb-4">
+        <label for="company" class="block text-gray-700 font-medium mb-2">Company Name*</label>
+        <input
+          type="text"
+          name="company"
+          id="company"
+          placeholder="Company Name"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="contactPerson" class="block text-gray-700 font-medium mb-2">Contact Person*</label>
+        <input
+          type="text"
+          name="contactPerson"
+          id="contactPerson"
+          placeholder="Contact Person"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="contactPerson" class="block text-gray-700 font-medium mb-2">Contact Email Adress*</label>
+        <input
+          type="email"
+          name="contactPersonEmail"
+          id="contactPersonEmail"
+          placeholder="Contact Person Email Address"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="contactPhone" class="block text-gray-700 font-medium mb-2">Contact Phone Number*</label>
+        <input
+          type="tel"
+          name="contactPhone"
+          id="contactPhone"
+          placeholder="Contact Phone Number"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="contactPhone" class="block text-gray-700 font-medium mb-2">Company Address</label>
+      </div>
+
+      <!--<div class="mb-4">-->
+      <!--  <label for="contactAddress" class="block text-gray-700 font-medium mb-2">Contact Address</label>-->
+      <!--  <input-->
+      <!--    type="text"-->
+      <!--    name="contactAddress"-->
+      <!--    id="contactAddress"-->
+      <!--    placeholder="Contact Address"-->
+      <!--    class="w-full border border-gray-300 rounded-md p-2"-->
+      <!--  />-->
+      <!--</div>-->
+
+      <div class="mb-4">
+        <label for="state" class="block text-gray-700 font-medium mb-2">State*</label>
+        <input
+          type="text"
+          name="state"
+          id="state"
+          placeholder="State"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="city" class="block text-gray-700 font-medium mb-2">City*</label>
+        <input
+          type="text"
+          name="city"
+          id="city"
+          placeholder="City"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="zip" class="block text-gray-700 font-medium mb-2">ZIP Code*</label>
+        <input
+          type="text"
+          name="zip"
+          id="zip"
+          placeholder="ZIP Code"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+       <div class="mb-4">
+        <label for="zip" class="block text-gray-700 font-medium mb-2">Address Line 1*</label>
+        <input
+          type="text"
+          name="companyAddressLine1"
+          id="companyAddressLine1"
+          placeholder="Address Line 1"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="zip" class="block text-gray-700 font-medium mb-2">Address Line 2 (optional)</label>
+        <input
+          type="text"
+          name="companyAddressLine2"
+          id="companyAddressLine2"
+          placeholder="Address Line 2"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="zip" class="block text-gray-700 font-medium mb-2">Postal Code</label>
+        <input
+          type="text"
+          name="companyPostalCode"
+          id="companyPostalCode"
+          placeholder="Company Postal Code"
+          class="w-full border border-gray-300 rounded-md p-2"
+        />
+      </div>
+
+    </div>
+
+
+     <!-- Step 3 -->
+    <div id="step3" class="space-y-4 hidden">
+      <div class="mb-4">
+        <label for="uploadOption" class="block text-gray-700 font-medium mb-2">Upload Option</label>
+        <select name="uploadOption" id="uploadOption" class="w-full border border-gray-300 rounded-md p-2">
+          <option value="">Select Upload Option</option>
+          <option value="manual">Manually Upload Property Details</option>
+          <option value="report">Upload Property Reports</option>
+        </select>
+      </div>
+
+      <div id="manualUploadFields" class="space-y-4 hidden">
+        <div class="mb-4">
+          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
+          <input
+            type="file"
+            name="propertyImage"
+            id="propertyImage"
+            class="block w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-md file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              hover:file:bg-blue-100"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
+          <input type="text" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <div class="mb-4">
+          <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
+          <input type="text" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <div class="mb-6">
+          <label for="roomType" class="block text-gray-700 font-semibold mb-2">Rooms</label>
+
+          <!-- Input and Add Button -->
+          <div class="flex gap-2 mb-4">
+            <input
+              type="text"
+              id="roomType"
+              placeholder="Enter Room Type (e.g., Bedroom)"
+              class="flex-1 border border-gray-300 rounded-md p-2"
+            />
+            <button
+              type="button"
+              id="addRoomBtn"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Add Room
+            </button>
+          </div>
+
+          <!-- Room List -->
+          <ul id="roomList" class="space-y-3">
+            <!-- Dynamic items will be added here -->
+          </ul>
+        </div>
+
+
+        <div class="mb-4">
+          <label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label>
+          <input type="text" name="address1" id="address1" placeholder="Address Line 1" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <div class="mb-4">
+          <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2</label>
+          <input type="text" name="address2" id="address2" placeholder="Address Line 2" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <div class="mb-4">
+          <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
+          <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <div class="mb-4">
+          <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
+          <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <div class="mb-4">
+          <label for="houseZip" class="block text-gray-700 font-medium mb-2">ZIP Code</label>
+          <input type="text" name="houseZip" id="houseZip" placeholder="ZIP Code" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+      </div>
+    </div>
+
+
+      <!-- Navigation Buttons -->
+      <!-- Navigation Buttons -->
+      <div class="flex justify-between">
+        <!--<button type="button" id="prevBtn" class="px-4 py-2 bg-gray-300 rounded" disabled>Previous</button>-->
+
+       <!-- Continue is type=button so no submit yet -->
+        <button type="button" id="nextBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Continue</button>
+
+        <!-- Submit button, initially hidden -->
+        <button type="submit" id="submitBtn" class="w-full px-4 py-2 bg-green-600 text-white rounded hidden">Submit</button>
+
+      </div>
+
+      <!-- Login Link -->
+      <p class="text-center text-sm mt-4">
+        Already have an account?
+        <a href="/login" class="text-blue-600 font-semibold hover:underline">Login Here</a>
+      </p>
+
+    </form>
+  </div>
+
+  <script>
+    const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+  const stepIndicators = [
+    document.getElementById('step1-indicator'),
+    document.getElementById('step2-indicator'),
+    document.getElementById('step3-indicator'),
+  ];
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn'); // New Submit button
+  const uploadOption = document.getElementById('uploadOption');
+  const manualUploadFields = document.getElementById('manualUploadFields');
+
+  let currentStep = 0;
+
+  function updateStep() {
+    steps.forEach((step, index) => {
+      step.classList.toggle('hidden', index !== currentStep);
+      stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
+      stepIndicators[index].classList.toggle('text-white', index === currentStep);
+      stepIndicators[index].classList.toggle('bg-gray-300', index !== currentStep);
+      stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);
+    });
+
+    backBtn.disabled = currentStep === 0;
+
+    if (currentStep === steps.length - 1) {
+      // Last step: hide Next, show Submit
+      nextBtn.classList.add('hidden');
+      submitBtn.classList.remove('hidden');
+    } else {
+      // Other steps: show Next, hide Submit
+      nextBtn.classList.remove('hidden');
+      submitBtn.classList.add('hidden');
+    }
+
+    // Show manual upload fields only if on step 3 and option selected
+    if (currentStep === 2) {
+      if (uploadOption.value === 'manual') {
+        manualUploadFields.classList.remove('hidden');
+      } else {
+        manualUploadFields.classList.add('hidden');
+      }
+    } else {
+      manualUploadFields.classList.add('hidden');
+    }
+  }
+
+  backBtn.addEventListener('click', () => {
+    if (currentStep > 0) {
+      currentStep--;
+      updateStep();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      updateStep();
+    }
+  });
+
+  const form = document.getElementById('registrationForm');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (form.checkValidity()) {
+      alert('Form submitted! ');
+      form.reset();
+      currentStep = 0;
+      updateStep();
+    } else {
+      form.reportValidity();
+    }
+  });
+
+  uploadOption.addEventListener('change', () => {
+    if (uploadOption.value === 'manual' && currentStep === 2) {
+      manualUploadFields.classList.remove('hidden');
+    } else {
+      manualUploadFields.classList.add('hidden');
+    }
+  });
+
+    // Password toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    togglePassword.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePassword.textContent = 'Hide';
+      } else {
+        passwordInput.type = 'password';
+        togglePassword.textContent = 'Show';
+      }
+    });
+
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    toggleConfirmPassword.addEventListener('click', () => {
+      if (confirmPasswordInput.type === 'password') {
+        confirmPasswordInput.type = 'text';
+        toggleConfirmPassword.textContent = 'Hide';
+      } else {
+        confirmPasswordInput.type = 'password';
+        toggleConfirmPassword.textContent = 'Show';
+      }
+    });
+
+    // Initialize
+    updateStep();
+
+    const roomInput = document.getElementById('roomType');
+  const addRoomBtn = document.getElementById('addRoomBtn');
+  const roomList = document.getElementById('roomList');
+
+  function createRoomItem(roomName) {
+    const li = document.createElement('li');
+    li.className = "flex items-center justify-between border p-3 rounded-md";
+
+    const span = document.createElement('span');
+    span.className = "text-gray-800 font-medium";
+    span.textContent = roomName;
+
+    const controls = document.createElement('div');
+    controls.className = "flex gap-3";
+
+    const editBtn = document.createElement('button');
+    editBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
+      </svg>
+    `;
+    editBtn.onclick = () => {
+      roomInput.value = span.textContent;
+      li.remove();
+    };
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 hover:text-red-700" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    `;
+    deleteBtn.onclick = () => li.remove();
+
+    controls.appendChild(editBtn);
+    controls.appendChild(deleteBtn);
+
+    li.appendChild(span);
+    li.appendChild(controls);
+
+    return li;
+  }
+
+  addRoomBtn.addEventListener('click', () => {
+    const roomName = roomInput.value.trim();
+    if (roomName) {
+      roomList.appendChild(createRoomItem(roomName));
+      roomInput.value = '';
+    }
+  });
+  </script>
+
+</body>
+</html>

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-_-8d_oxo-u)l^kd-4e0l&r(k3y@1_(k#ady0^r*%a!zc841q+c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['sandbox.fixmh.com']
 
 
 # Application definition
@@ -76,11 +76,14 @@ WSGI_APPLICATION = 'FMH.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fixmyhome_db',
+        'USER': 'super',
+        'PASSWORD': 'FixMyHomeAdminDB44560',
+        'HOST': 'fixmyhouse-4582.postgres.pythonanywhere-services.com',
+        'PORT': '14582',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
