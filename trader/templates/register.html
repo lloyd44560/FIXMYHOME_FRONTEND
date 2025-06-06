@@ -50,79 +50,77 @@
 
     <form id="registrationForm" class="space-y-4" style="height: 480px; overflow-y: auto;" method="POST" action="{% url 'register_renter' %}" enctype="multipart/form-data">
 
-    {% csrf_token %}
-    <!-- Step 1 -->
-    <div id="step1" class="space-y-4">
-      <div class="mb-4">
-        <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          placeholder="Name"
-          class="w-full border border-gray-300 rounded-md p-2"
-        />
+      {% csrf_token %}
+      <!-- Step 1 -->
+      <div id="step1" class="space-y-4">
+        <div class="mb-4">
+          <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Name"
+            class="w-full border border-gray-300 rounded-md p-2"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
+          <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 rounded-md p-2">
+        </div>
+
+        <div class="mb-4">
+          <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number*</label>
+          <input
+            type="tel"
+            name="phone"
+            id="phone"
+            placeholder="Phone Number"
+            class="w-full border border-gray-300 rounded-md p-2"
+          />
+        </div>
+
+        <div class="mb-4 relative">
+          <label for="password" class="block text-gray-700 font-medium mb-2">Password*</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+
+            class="w-full border border-gray-300 rounded-md p-2 pr-10"
+          />
+          <button
+            type="button"
+            id="togglePassword"
+            class="absolute right-2 top-9 text-sm text-gray-600"
+          >
+            Show
+          </button>
+        </div>
+
+        <div class="mb-4 relative">
+          <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">Confirm Password*</label>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+
+            class="w-full border border-gray-300 rounded-md p-2 pr-10"
+          />
+          <button
+            type="button"
+            id="toggleConfirmPassword"
+            class="absolute right-2 top-9 text-sm text-gray-600"
+          >
+            Show
+          </button>
+        </div>
       </div>
 
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
-        <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 rounded-md p-2">
-
-      </div>
-
-      <div class="mb-4">
-        <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number*</label>
-        <input
-          type="tel"
-          name="phone"
-          id="phone"
-          placeholder="Phone Number"
-
-          class="w-full border border-gray-300 rounded-md p-2"
-        />
-      </div>
-
-      <div class="mb-4 relative">
-        <label for="password" class="block text-gray-700 font-medium mb-2">Password*</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Password"
-
-          class="w-full border border-gray-300 rounded-md p-2 pr-10"
-        />
-        <button
-          type="button"
-          id="togglePassword"
-          class="absolute right-2 top-9 text-sm text-gray-600"
-        >
-          Show
-        </button>
-      </div>
-
-      <div class="mb-4 relative">
-        <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">Confirm Password*</label>
-        <input
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-
-          class="w-full border border-gray-300 rounded-md p-2 pr-10"
-        />
-        <button
-          type="button"
-          id="toggleConfirmPassword"
-          class="absolute right-2 top-9 text-sm text-gray-600"
-        >
-          Show
-        </button>
-      </div>
-    </div>
-
-    <!-- Step 2 -->
-    <div id="step2" class="space-y-4 hidden">
+      <!-- Step 2 -->
+      <div id="step2" class="space-y-4 hidden">
         <!-- Type of Company -->
         <div>
             <label class="block text-sm font-medium text-gray-700">Type of Company <span class="text-red-500">*</span></label>
@@ -157,15 +155,21 @@
 
         <!-- Contractor License Number -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Contractor license number</label>
-            <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label for="licenseInput" class="block text-sm font-medium text-gray-700">Contractor license number</label>
+            <input id="licenseInput" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <!-- Add Another License -->
         <div>
-            <button type="button" class="w-full text-blue-600 border border-blue-500 rounded-md py-2 hover:bg-blue-50 font-medium text-sm">
+          <button id="addLicense" type="button" class="w-full text-blue-600 border border-blue-500 rounded-md py-2 hover:bg-blue-50 font-medium text-sm">
             + ADD ANOTHER LICENSE
-            </button>
+          </button>
+
+          <!-- License List -->
+          <ul id="licenseList" class="mt-4 space-y-3">
+            <h1 id="addedLicensesHeader" class="font-bold hidden">Added Licenses</h1>
+            <!-- Dynamic items will be added here -->
+          </ul>
         </div>
 
         <!-- GST Toggle -->
@@ -195,212 +199,259 @@
             <option>Select Expertise</option>
             </select>
         </div>
-    </div>
+      </div>
 
-    <!-- Step 3 -->
-    <div id="step3" class="space-y-4 hidden">
-        <!-- Add Team Member Button -->
-        <div>
-            <button type="button" class="w-full text-blue-600 border border-blue-500 rounded-md py-2 hover:bg-blue-50 font-medium text-sm">
-            + ADD TEAM MEMBER
-            </button>
-        </div>
-
+      <!-- Step 3 -->
+      <div id="step3" class="space-y-4 hidden">
         <!-- Team Member Name -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
-            <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label for="teamMemberName" class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
+            <input id="teamMemberName" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <!-- Position -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Position <span class="text-red-500">*</span></label>
-            <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label for="teamMemberPosition" class="block text-sm font-medium text-gray-700">Position <span class="text-red-500">*</span></label>
+            <input id="teamMemberPosition" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+
+        <!-- Add Team Member Button -->
+        <div>
+          <button id="addTeamMember" type="button" class="w-full text-blue-600 border border-blue-500 rounded-md py-2 hover:bg-blue-50 font-medium text-sm">
+            + ADD TEAM MEMBER
+          </button>
+
+          <!-- Team Member List -->
+          <ul id="teamMemberList" class="mt-4 space-y-3">
+            <h1 id="addedMembersHeader" class="font-bold hidden">Added Members</h1>
+            <!-- Dynamic items will be added here -->
+          </ul>
         </div>
 
         <div class="space-y-4">
-            <!-- Labour (per hour) -->
-            <div class="grid grid-cols-2 gap-x-4">
-                <!-- Left column: Label, description, counter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Labour (per hour)</label>
-                    <p class="text-xs text-gray-500">Your team member’s rate per hour</p>
-                    <div class="mt-2 grid grid-cols-2 gap-2">
-                        <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
-                            <button type="button" class="text-blue-600 px-2">−</button>
-                            <span class="px-1">1</span>
-                            <button type="button" class="text-blue-600 px-2">+</button>
-                        </div>
-                        <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
-                            <button type="button" class="text-blue-600 px-2">−</button>
-                            <span class="px-1">1</span>
-                            <button type="button" class="text-blue-600 px-2">+</button>
-                        </div>
-                    </div>
-                </div>
+          <!-- Labour (per hour) -->
+          <div class="grid grid-cols-2 gap-x-4">
+              <!-- Left column: Label, description, counter -->
+              <div>
+                  <label class="block text-sm font-medium text-gray-700">Labour (per hour)</label>
+                  <p class="text-xs text-gray-500">Your team member’s rate per hour</p>
+                  <div class="mt-2 grid grid-cols-2 gap-2">
+                      <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                          <button type="button" class="text-blue-600 px-2">−</button>
+                          <span class="px-1">1</span>
+                          <button type="button" class="text-blue-600 px-2">+</button>
+                      </div>
+                      <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                          <button type="button" class="text-blue-600 px-2">−</button>
+                          <span class="px-1">1</span>
+                          <button type="button" class="text-blue-600 px-2">+</button>
+                      </div>
+                  </div>
+              </div>
 
-                <!-- Right column: Dollar sign + larger input -->
-                <div class="flex items-center justify-end">
-                    <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
-                        <span class="text-gray-600 mr-1">$</span>
-                        <input
-                        type="number"
-                        step="0.01"
-                        placeholder="XX.XX"
-                        class="w-full outline-none border-none text-base focus:ring-0"
-                        />
+              <!-- Right column: Dollar sign + larger input -->
+              <div class="flex items-center justify-end">
+                  <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
+                      <span class="text-gray-600 mr-1">$</span>
+                      <input
+                      type="number"
+                      step="0.01"
+                      placeholder="XX.XX"
+                      class="w-full outline-none border-none text-base focus:ring-0"
+                      />
+                  </div>
+              </div>
+          </div>
+
+          <!-- Callout rate -->
+          <div class="grid grid-cols-2 gap-x-4">
+            <!-- Left column: Label, description, counter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Callout rate</label>
+                <p class="text-xs text-gray-500">Team member’s travel and logistics expenses</p>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                    <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                        <button type="button" class="text-blue-600 px-2">−</button>
+                        <span class="px-1">1</span>
+                        <button type="button" class="text-blue-600 px-2">+</button>
+                    </div>
+                    <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                        <button type="button" class="text-blue-600 px-2">−</button>
+                        <span class="px-1">1</span>
+                        <button type="button" class="text-blue-600 px-2">+</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Callout rate -->
-            <div class="grid grid-cols-2 gap-x-4">
-                <!-- Left column: Label, description, counter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Callout rate</label>
-                    <p class="text-xs text-gray-500">Team member’s travel and logistics expenses</p>
-                    <div class="mt-2 grid grid-cols-2 gap-2">
-                        <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
-                            <button type="button" class="text-blue-600 px-2">−</button>
-                            <span class="px-1">1</span>
-                            <button type="button" class="text-blue-600 px-2">+</button>
-                        </div>
-                        <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
-                            <button type="button" class="text-blue-600 px-2">−</button>
-                            <span class="px-1">1</span>
-                            <button type="button" class="text-blue-600 px-2">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right column: Dollar sign + larger input -->
-                <div class="flex items-center justify-end">
-                    <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
-                        <span class="text-gray-600 mr-1">$</span>
-                        <input
-                        type="number"
-                        step="0.01"
-                        placeholder="XX.XX"
-                        class="w-full outline-none border-none text-base focus:ring-0"
-                        />
-                    </div>
-                </div>
+            <!-- Right column: Dollar sign + larger input -->
+            <div class="flex items-center justify-end">
+              <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
+                <span class="text-gray-600 mr-1">$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="XX.XX"
+                  class="w-full outline-none border-none text-base focus:ring-0"
+                />
+              </div>
             </div>
+          </div>
         </div>
 
         <!-- Employee Contact Number -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Employee contact number (if available) <span class="text-red-500">*</span></label>
-            <input type="tel" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <label class="block text-sm font-medium text-gray-700">Employee contact number (if available) <span class="text-red-500">*</span></label>
+          <input type="tel" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <!-- Employee Email -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Employee email (if available)</label>
-            <input type="email" placeholder="name@email.com" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <label class="block text-sm font-medium text-gray-700">Employee email (if available)</label>
+          <input type="email" placeholder="name@email.com" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <!-- Active Postal Codes -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Active postal codes</label>
-            <input type="text" placeholder="3070, 3071, 3072" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <label class="block text-sm font-medium text-gray-700">Active postal codes</label>
+          <input type="text" placeholder="3070, 3071, 3072" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
-    </div>
 
-    <!-- Step 3 -->
-    <div id="step4" class="space-y-4 hidden">
+        <!-- Holidays* (Not available to work) -->
+        <div class="flex justify-center">
+          <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-md flex flex-col items-center">
+            <h2 class="text-sm font-semibold text-gray-700 mb-2 text-center">Holidays* <span class="text-xs text-gray-500">(Not available to work)</span></h2>
+            <div class="flex items-center justify-between mb-4 w-full max-w-xs mx-auto">
+              <button type="button" id="prev" class="text-blue-500 hover:text-blue-700">&lt;</button>
+                <div class="text-lg font-semibold text-gray-800">June 2024</div>
+              <button id="next" class="text-blue-500 hover:text-blue-700">&gt;</button>
+            </div>
+            <div class="grid grid-cols-7 text-center text-sm font-medium text-gray-500 w-full">
+              <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div id="calendar" class="grid grid-cols-7 text-center text-gray-800 mt-2 gap-y-2 w-full">
+              <!-- Calendar cells generated by JS -->
+            </div>
+          </div>
+        </div>
+        <!-- Time-in and Time-out -->
+        <div class="flex justify-center">
+          <div class="space-y-6 bg-white p-6 rounded shadow-md w-full max-w-md flex flex-col items-center">
+            <!-- Time Block 1 -->
+            <div class="w-full">
+              <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
+              <div class="flex items-center gap-3 justify-center">
+                <input type="time" class="border border-gray-300 px-2 py-1 rounded text-center w-full" />
+              </div>
+            </div>
+            <!-- Time Block 2 -->
+            <div class="w-full">
+              <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
+              <div class="flex items-center gap-3 justify-center">
+                <input type="time" class="border border-gray-300 px-2 py-1 rounded text-center w-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div id="step4" class="space-y-4 hidden">
         <!-- GST Registered Toggle -->
-        <div>
+        <div class="flex items-center justify-between">
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Is your company currently registered for GST?</label>
             <p class="text-xs text-gray-500 mb-2">
-            The General Service Tax or GST is a 10% fee on top of your original charge.
+              The General Service Tax or GST is a 10% fee on top of your original charge.
             </p>
-            <label class="inline-flex items-center cursor-pointer">
+          </div>
+          <!-- Switch -->
+          <label class="relative inline-flex items-center cursor-pointer mr-4">
             <input type="checkbox" class="sr-only peer">
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-blue-600 transition-all duration-300"></div>
-            </label>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-600 transition-all duration-200"></div>
+            <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow peer-checked:translate-x-5 transition-transform duration-200"></div>
+          </label>
         </div>
 
         <!-- Area of Service Heading -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Area of Service</label>
-            <p class="text-xs text-gray-500">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Area of Service</label>
+          <p class="text-xs text-gray-500">
             Your input in the fields will also determine your Area of Service. We will recommend you in the area.
-            </p>
+          </p>
         </div>
 
         <!-- State -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">State <span class="text-red-500">*</span></label>
-            <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select state</option>
-            </select>
+          <label class="block text-sm font-medium text-gray-700 mb-1">State <span class="text-red-500">*</span></label>
+          <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Select state</option>
+          </select>
         </div>
 
         <!-- Municipality -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Municipality <span class="text-red-500">*</span></label>
-            <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select municipality</option>
-            </select>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Municipality <span class="text-red-500">*</span></label>
+          <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Select municipality</option>
+          </select>
         </div>
 
         <!-- City -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">City <span class="text-red-500">*</span></label>
-            <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select city</option>
-            </select>
+          <label class="block text-sm font-medium text-gray-700 mb-1">City <span class="text-red-500">*</span></label>
+          <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Select city</option>
+          </select>
         </div>
 
         <!-- Address Line 1 -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1 <span class="text-red-500">*</span></label>
-            <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1 <span class="text-red-500">*</span></label>
+          <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <!-- Address Line 2 -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
-            <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+          <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <!-- Postal Code -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code <span class="text-red-500">*</span></label>
-            <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code <span class="text-red-500">*</span></label>
+          <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-    </div>
+     </div>
 
 
-    <!-- Navigation Buttons -->
-    <div class="flex justify-between">
+      <!-- Navigation Buttons -->
+      <div class="flex justify-between">
         <!-- Continue is type=button so no submit yet -->
         <button type="button" id="nextBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Continue</button>
         <!-- Submit button, initially hidden -->
         <button type="submit" id="submitBtn" class="w-full px-4 py-2 bg-green-600 text-white rounded hidden">Submit</button>
-    </div>
+      </div>
 
-    <!-- Login Link -->
-        <p class="text-center text-sm mt-4">
+      <!-- Login Link -->
+      <p class="text-center text-sm mt-4">
         Already have an account?
         <a href="/login" class="text-blue-600 font-semibold hover:underline">Login Here</a>
-    </p>
+      </p>
     </form>
   </div>
 
   <script>
     const steps = [
-        document.getElementById('step1'), 
-        document.getElementById('step2'), 
-        document.getElementById('step3'), 
-        document.getElementById('step4')
+      document.getElementById('step1'), 
+      document.getElementById('step2'), 
+      document.getElementById('step3'), 
+      document.getElementById('step4')
     ];
     const stepIndicators = [
-        document.getElementById('step1-indicator'),
-        document.getElementById('step2-indicator'),
-        document.getElementById('step3-indicator'),
-        document.getElementById('step4-indicator'),
+      document.getElementById('step1-indicator'),
+      document.getElementById('step2-indicator'),
+      document.getElementById('step3-indicator'),
+      document.getElementById('step4-indicator'),
     ];
 
     const backBtn = document.getElementById('backBtn');
@@ -412,12 +463,12 @@
     let currentStep = 0;
 
     function updateStep() {
-        steps.forEach((step, index) => {
-        step.classList.toggle('hidden', index !== currentStep);
-        stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
-        stepIndicators[index].classList.toggle('text-white', index === currentStep);
-        stepIndicators[index].classList.toggle('bg-gray-300', index !== currentStep);
-        stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);
+      steps.forEach((step, index) => {
+      step.classList.toggle('hidden', index !== currentStep);
+      stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
+      stepIndicators[index].classList.toggle('text-white', index === currentStep);
+      stepIndicators[index].classList.toggle('bg-gray-300', index !== currentStep);
+      stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);
     });
 
     backBtn.disabled = currentStep === 0;
@@ -430,17 +481,6 @@
       // Other steps: show Next, hide Submit
       nextBtn.classList.remove('hidden');
       submitBtn.classList.add('hidden');
-    }
-
-    // Show manual upload fields only if on step 3 and option selected
-    if (currentStep === 2) {
-      if (uploadOption.value === 'manual') {
-        manualUploadFields.classList.remove('hidden');
-      } else {
-        manualUploadFields.classList.add('hidden');
-      }
-    } else {
-      manualUploadFields.classList.add('hidden');
     }
   }
 
@@ -473,14 +513,6 @@
     }
   });
 
-  uploadOption.addEventListener('change', () => {
-    if (uploadOption.value === 'manual' && currentStep === 2) {
-      manualUploadFields.classList.remove('hidden');
-    } else {
-      manualUploadFields.classList.add('hidden');
-    }
-  });
-
     // Password toggle
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
@@ -509,42 +541,56 @@
     // Initialize
     updateStep();
 
-    const roomInput = document.getElementById('roomType');
-  const addRoomBtn = document.getElementById('addRoomBtn');
-  const roomList = document.getElementById('roomList');
+  // --- Add Another License Functionality ---
+  const licenseInput = document.getElementById('licenseInput');
+  const addLicenseBtn = document.getElementById('addLicense');
+  const licenseList = document.getElementById('licenseList');
 
-  function createRoomItem(roomName) {
+  function updateLicenseHeader() {
+    const header = document.getElementById('addedLicensesHeader');
+    const licenseList = document.getElementById('licenseList');
+    // Show header only if there is at least one <li>
+    header.classList.toggle('hidden', licenseList.querySelectorAll('li').length === 0);
+  }
+
+  function createLicenseItem(licenseNumber) {
     const li = document.createElement('li');
-    li.className = "flex items-center justify-between border p-3 rounded-md";
+    li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
 
     const span = document.createElement('span');
     span.className = "text-gray-800 font-medium";
-    span.textContent = roomName;
+    span.textContent = licenseNumber;
 
     const controls = document.createElement('div');
-    controls.className = "flex gap-3";
+    controls.className = "flex gap-2";
 
     const editBtn = document.createElement('button');
+    editBtn.type = "button";
     editBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
+              d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
       </svg>
     `;
     editBtn.onclick = () => {
-      roomInput.value = span.textContent;
+      licenseInput.value = span.textContent;
       li.remove();
+      updateLicenseHeader()
     };
 
     const deleteBtn = document.createElement('button');
+    deleteBtn.type = "button";
     deleteBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 hover:text-red-700" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M6 18L18 6M6 6l12 12"/>
       </svg>
     `;
-    deleteBtn.onclick = () => li.remove();
+    deleteBtn.onclick = () => {
+      li.remove();
+      updateLicenseHeader();
+    };
 
     controls.appendChild(editBtn);
     controls.appendChild(deleteBtn);
@@ -555,13 +601,141 @@
     return li;
   }
 
-  addRoomBtn.addEventListener('click', () => {
-    const roomName = roomInput.value.trim();
-    if (roomName) {
-      roomList.appendChild(createRoomItem(roomName));
-      roomInput.value = '';
+  addLicenseBtn.addEventListener('click', function () {
+    console.log('Add License Button Clicked');
+    const licenseNumber = licenseInput.value.trim();
+    if (licenseNumber) {
+      licenseList.appendChild(createLicenseItem(licenseNumber));
+      licenseInput.value = '';
+      licenseInput.focus();
+      updateLicenseHeader();
     }
   });
+
+  // --- Add Team Member Functionality ---
+  const teamMemberNameInput = document.getElementById('teamMemberName');
+  const teamMemberPositionInput = document.getElementById('teamMemberPosition');
+  const addTeamMemberBtn = document.getElementById('addTeamMember');
+  const teamMemberList = document.getElementById('teamMemberList');
+
+  function updateTeamMemberHeader() {
+    const header = document.getElementById('addedMembersHeader');
+    const teamMemberList = document.getElementById('teamMemberList');
+    // Show header only if there is at least one <li>
+    header.classList.toggle('hidden', teamMemberList.querySelectorAll('li').length === 0);
+  }
+
+  function createTeamMemberItem(name, position) {
+    const li = document.createElement('li');
+    li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
+
+    const span = document.createElement('span');
+    span.className = "text-gray-800 font-medium";
+    span.textContent = `${name} (${position})`;
+
+    const controls = document.createElement('div');
+    controls.className = "flex gap-2";
+
+    const editBtn = document.createElement('button');
+    editBtn.type = "button";
+    editBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
+      </svg>
+    `;
+    editBtn.onclick = () => {
+      teamMemberNameInput.value = name;
+      teamMemberPositionInput.value = position;
+      li.remove();
+      updateTeamMemberHeader();
+    };
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = "button";
+    deleteBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    `;
+    deleteBtn.onclick = () => {
+      li.remove();
+      updateTeamMemberHeader();
+    };
+
+    controls.appendChild(editBtn);
+    controls.appendChild(deleteBtn);
+
+    li.appendChild(span);
+    li.appendChild(controls);
+
+    return li;
+  }
+
+  addTeamMemberBtn.addEventListener('click', function () {
+    const name = teamMemberNameInput.value.trim();
+    const position = teamMemberPositionInput.value.trim();
+    if (name && position) {
+      teamMemberList.appendChild(createTeamMemberItem(name, position));
+      teamMemberNameInput.value = '';
+      teamMemberPositionInput.value = '';
+      teamMemberNameInput.focus();
+      updateTeamMemberHeader();
+    }
+  });
+
+    // --- Calendar Functionality ---
+    const holidays = ['2024-06-10', '2024-06-17', '2024-06-26'];
+    const currentMonth = 5; // 0-indexed: June = 5
+    const currentYear = 2024;
+
+    function generateCalendar(year, month) {
+      const calendar = document.getElementById('calendar');
+      calendar.innerHTML = '';
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // Add empty slots for days before the 1st
+      for (let i = 0; i < firstDay; i++) {
+        calendar.innerHTML += `<div></div>`;
+      }
+
+      // Add actual days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isHoliday = holidays.includes(dateStr);
+        const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+
+        calendar.innerHTML += `
+          <div class="
+            w-8 h-8 mx-auto flex items-center justify-center rounded-full 
+            ${isHoliday ? 'bg-blue-600 text-white font-semibold' : ''}
+            ${isToday && !isHoliday ? 'bg-blue-100 text-blue-700' : ''}
+            hover:bg-blue-200 cursor-pointer
+          ">
+            ${day}
+          </div>`;
+      }
+    }
+
+    // Initially render June 2024
+    generateCalendar(currentYear, currentMonth);
+
+    // Toggle active AM/PM
+    document.querySelectorAll('.toggle-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.parentElement;
+        container.querySelectorAll('.toggle-btn').forEach(btn => {
+          btn.classList.remove('bg-blue-600', 'text-white');
+          btn.classList.add('bg-blue-100', 'text-blue-600');
+        });
+        button.classList.remove('bg-blue-100', 'text-blue-600');
+        button.classList.add('bg-blue-600', 'text-white');
+      });
+    });
   </script>
 
 </body>
