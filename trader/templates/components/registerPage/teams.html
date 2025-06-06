@@ -1,0 +1,151 @@
+<div id="step3" class="space-y-4 hidden">
+    <!-- Team Member Name -->
+    <div>
+        <label for="teamMemberName" class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
+        <input id="teamMemberName" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <!-- Position -->
+    <div>
+        <label for="teamMemberPosition" class="block text-sm font-medium text-gray-700">Position <span class="text-red-500">*</span></label>
+        <input id="teamMemberPosition" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <!-- Add Team Member Button -->
+    <div>
+        <button id="addTeamMember" type="button" class="w-full text-blue-600 border border-blue-500 rounded-md py-2 hover:bg-blue-50 font-medium text-sm">
+            + ADD TEAM MEMBER
+        </button>
+
+        <!-- Team Member List -->
+        <ul id="teamMemberList" class="mt-4 space-y-3">
+        <h1 id="addedMembersHeader" class="font-bold hidden">Added Members</h1>
+        <!-- Dynamic items will be added here -->
+        </ul>
+    </div>
+
+    <div class="space-y-4">
+        <!-- Labour (per hour) -->
+        <div class="grid grid-cols-2 gap-x-4">
+            <!-- Left column: Label, description, counter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Labour (per hour)</label>
+                <p class="text-xs text-gray-500">Your team member’s rate per hour</p>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                    <button type="button" class="text-blue-600 px-2">−</button>
+                        <span class="px-1">1</span>
+                    <button type="button" class="text-blue-600 px-2">+</button>
+                </div>
+                <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                    <button type="button" class="text-blue-600 px-2">−</button>
+                        <span class="px-1">1</span>
+                    <button type="button" class="text-blue-600 px-2">+</button>
+                </div>
+                </div>
+            </div>
+
+            <!-- Right column: Dollar sign + larger input -->
+            <div class="flex items-center justify-end">
+                <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
+                    <span class="text-gray-600 mr-1">$</span>
+                    <input
+                    type="number"
+                    step="0.01"
+                    placeholder="XX.XX"
+                    class="w-full outline-none border-none text-base focus:ring-0"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <!-- Callout rate -->
+        <div class="grid grid-cols-2 gap-x-4">
+            <!-- Left column: Label, description, counter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Callout rate</label>
+                <p class="text-xs text-gray-500">Team member’s travel and logistics expenses</p>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                    <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                        <button type="button" class="text-blue-600 px-2">−</button>
+                            <span class="px-1">1</span>
+                        <button type="button" class="text-blue-600 px-2">+</button>
+                    </div>
+                    <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 w-fit text-sm space-x-2">
+                        <button type="button" class="text-blue-600 px-2">−</button>
+                            <span class="px-1">1</span>
+                        <button type="button" class="text-blue-600 px-2">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column: Dollar sign + larger input -->
+            <div class="flex items-center justify-end">
+                <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
+                    <span class="text-gray-600 mr-1">$</span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="XX.XX"
+                        class="w-full outline-none border-none text-base focus:ring-0"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Contact Number -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Employee contact number (if available) <span class="text-red-500">*</span></label>
+        <input type="tel" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <!-- Employee Email -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Employee email (if available)</label>
+        <input type="email" placeholder="name@email.com" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <!-- Active Postal Codes -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Active postal codes</label>
+        <input type="text" placeholder="3070, 3071, 3072" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <!-- Holidays* (Not available to work) -->
+    <div class="flex justify-center">
+        <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-md flex flex-col items-center">
+            <h2 class="text-sm font-semibold text-gray-700 mb-2 text-center">Holidays* <span class="text-xs text-gray-500">(Not available to work)</span></h2>
+            <div class="flex items-center justify-between mb-4 w-full max-w-xs mx-auto">
+                <button type="button" id="prev" class="text-blue-500 hover:text-blue-700">&lt;</button>
+                <div class="text-lg font-semibold text-gray-800">June 2024</div>
+                <button id="next" class="text-blue-500 hover:text-blue-700">&gt;</button>
+            </div>
+            <div class="grid grid-cols-7 text-center text-sm font-medium text-gray-500 w-full">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div id="calendar" class="grid grid-cols-7 text-center text-gray-800 mt-2 gap-y-2 w-full">
+                <!-- Calendar cells generated by JS -->
+            </div>
+        </div>
+    </div>
+    <!-- Time-in and Time-out -->
+    <div class="flex justify-center">
+        <div class="space-y-6 bg-white p-6 rounded shadow-md w-full max-w-md flex flex-col items-center">
+            <!-- Time Block 1 -->
+            <div class="w-full">
+                <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
+                <div class="flex items-center gap-3 justify-center">
+                    <input type="time" class="border border-gray-300 px-2 py-1 rounded text-center w-full" />
+                </div>
+            </div>
+            <!-- Time Block 2 -->
+            <div class="w-full">
+                <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
+                <div class="flex items-center gap-3 justify-center">
+                    <input type="time" class="border border-gray-300 px-2 py-1 rounded text-center w-full" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
