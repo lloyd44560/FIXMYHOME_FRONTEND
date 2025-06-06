@@ -11,7 +11,7 @@
   <nav class="flex items-center justify-around py-3 bg-blue-700 text-white shadow-md sticky top-0 z-50">
     <div class="cursor-pointer flex items-center gap-2 font-medium text-lg">
       <span>🏠</span>
-      <span>Home</span>
+      <title>Welcome, {{ renter.name }}</title>
     </div>
     <div class="cursor-pointer flex items-center gap-2 font-medium text-lg">
       <span>📬</span>
@@ -21,18 +21,39 @@
       <span>👤</span>
       <span>Account</span>
     </div>
+    <a href="{% url 'logout' %}" class="text-white hover:underline">Logout</a>
   </nav>
 
   <!-- Title -->
   <div class="px-5 pt-6">
     <h1 class="text-3xl font-semibold text-gray-800">Home</h1>
   </div>
+    <!-- Welcome Message -->
+  <div class="px-5 pt-6">
+    <h1 class="text-3xl font-semibold text-gray-800">Welcome, {{ renter.name }}!</h1>
+    <p class="text-gray-600 mt-1">We're glad to have you on board.</p>
+  </div>
+
 
   <!-- Hero -->
   <div class="h-64 bg-cover bg-center mx-5 my-4 rounded-xl shadow-lg" style="background-image: url('https://via.placeholder.com/1200x350');"></div>
 
   <!-- Content -->
   <div class="px-5 pb-10 space-y-6">
+
+      <!-- Renter Details -->
+  <div class="bg-white mx-5 my-4 p-6 rounded-lg shadow">
+    <h2 class="text-xl font-bold mb-4">Your Profile</h2>
+    <p><strong>Email:</strong> {{ renter.email }}</p>
+    <p><strong>Phone:</strong> {{ renter.phone }}</p>
+    <p><strong>Company:</strong> {{ renter.company_name }}</p>
+    <p><strong>Contact Person:</strong> {{ renter.contact_person }} ({{ renter.contact_phone }})</p>
+    <p><strong>Address:</strong> {{ renter.address_line1 }}, {{ renter.city }}, {{ renter.state }}, ZIP {{ renter.zip_code }}</p>
+    {% if renter.property_image %}
+      <p class="mt-4"><strong>Uploaded Property Image:</strong></p>
+      <img src="{{ renter.property_image.url }}" alt="Property Image" class="w-64 h-auto rounded shadow mt-2" />
+    {% endif %}
+  </div>
 
     <!-- Quick Actions -->
     <section class="bg-white p-5 rounded-xl shadow">

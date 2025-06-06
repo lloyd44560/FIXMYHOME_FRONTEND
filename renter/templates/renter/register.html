@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Renter Registration - Tailwind</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class=" min-h-screen flex items-center justify-center p-4">
 
@@ -44,25 +45,29 @@
       </div>
     </div>
 
-    <form id="registrationForm" class="space-y-4" style="height: 480px; overflow-y: auto;" method="POST" action="{% url 'register_renter' %}" enctype="multipart/form-data">
+    <form id="registrationForm" class="space-y-4" method="POST" style="height: 480px; overflow-y: auto;" action="{% url 'register_renter' %}" enctype="multipart/form-data">
 
     {% csrf_token %}
       <!-- Step 1 -->
     <div id="step1" class="space-y-4">
-      <div class="mb-4">
-        <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          placeholder="Name"
-          class="w-full border border-gray-300 rounded-md p-2"
-        />
-      </div>
+       <div class="mb-4">
+    <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
+    <input
+      type="text"
+      name="name"
+      id="name"
+      placeholder="Name"
+      class="w-full border border-gray-300 rounded-md p-2"
+      oninput="validateFields()"
+    />
+          <p id="nameError" class="text-red-500 text-sm hidden">Name is required.</p>
+    </div>
+
 
       <div class="mb-4">
         <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
-        <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 rounded-md p-2">
+        <input type="email" name="email" id="email"  placeholder="Email" class="w-full border border-gray-300 rounded-md p-2"  oninput="validateFields()">
+      <p id="emailError" class="text-red-500 text-sm hidden">Email is required.</p>
 
       </div>
 
@@ -73,9 +78,10 @@
           name="phone"
           id="phone"
           placeholder="Phone Number"
-
+          oninput="validateFields()"
           class="w-full border border-gray-300 rounded-md p-2"
         />
+        <p id="phoneError" class="text-red-500 text-sm hidden">Phone Number is required.</p>
       </div>
 
       <div class="mb-4 relative">
@@ -85,9 +91,11 @@
           name="password"
           type="password"
           placeholder="Password"
-
+          oninput="validateFields()"
           class="w-full border border-gray-300 rounded-md p-2 pr-10"
         />
+        <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
+
         <button
           type="button"
           id="togglePassword"
@@ -104,9 +112,11 @@
           name="confirmPassword"
           type="password"
           placeholder="Confirm Password"
-
+          oninput="validateFields()"
           class="w-full border border-gray-300 rounded-md p-2 pr-10"
         />
+        <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
+
         <button
           type="button"
           id="toggleConfirmPassword"
@@ -129,8 +139,12 @@
           id="company"
           placeholder="Company Name"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="companyError" class="text-red-500 text-sm hidden">Company Name is required.</p>
+
+
 
       <div class="mb-4">
         <label for="contactPerson" class="block text-gray-700 font-medium mb-2">Contact Person*</label>
@@ -140,8 +154,10 @@
           id="contactPerson"
           placeholder="Contact Person"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="contactPersonError" class="text-red-500 text-sm hidden">Contact Person is required.</p>
 
       <div class="mb-4">
         <label for="contactPerson" class="block text-gray-700 font-medium mb-2">Contact Email Adress*</label>
@@ -151,8 +167,10 @@
           id="contactPersonEmail"
           placeholder="Contact Person Email Address"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="contactPersonEmailError" class="text-red-500 text-sm hidden">Contact Person Email is required.</p>
 
       <div class="mb-4">
         <label for="contactPhone" class="block text-gray-700 font-medium mb-2">Contact Phone Number*</label>
@@ -162,8 +180,10 @@
           id="contactPhone"
           placeholder="Contact Phone Number"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="contactPhoneError" class="text-red-500 text-sm hidden">Contact Person Phone Number is required.</p>
 
       <div class="mb-4">
         <label for="contactPhone" class="block text-gray-700 font-medium mb-2">Company Address</label>
@@ -188,8 +208,11 @@
           id="state"
           placeholder="State"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="stateError" class="text-red-500 text-sm hidden">State is required.</p>
+
 
       <div class="mb-4">
         <label for="city" class="block text-gray-700 font-medium mb-2">City*</label>
@@ -199,8 +222,10 @@
           id="city"
           placeholder="City"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="cityError" class="text-red-500 text-sm hidden">City is required.</p>
 
       <div class="mb-4">
         <label for="zip" class="block text-gray-700 font-medium mb-2">ZIP Code*</label>
@@ -210,8 +235,10 @@
           id="zip"
           placeholder="ZIP Code"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="zipError" class="text-red-500 text-sm hidden">Zip Code is required.</p>
 
        <div class="mb-4">
         <label for="zip" class="block text-gray-700 font-medium mb-2">Address Line 1*</label>
@@ -221,8 +248,10 @@
           id="companyAddressLine1"
           placeholder="Address Line 1"
           class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
         />
       </div>
+      <p id="companyAddressLine1Error" class="text-red-500 text-sm hidden">Company Address Line is required </p>
 
       <div class="mb-4">
         <label for="zip" class="block text-gray-700 font-medium mb-2">Address Line 2 (optional)</label>
@@ -425,21 +454,6 @@
     }
   });
 
-  const form = document.getElementById('registrationForm');
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    if (form.checkValidity()) {
-      alert('Form submitted! ');
-      form.reset();
-      currentStep = 0;
-      updateStep();
-    } else {
-      form.reportValidity();
-    }
-  });
-
   uploadOption.addEventListener('change', () => {
     if (uploadOption.value === 'manual' && currentStep === 2) {
       manualUploadFields.classList.remove('hidden');
@@ -477,8 +491,8 @@
     updateStep();
 
     const roomInput = document.getElementById('roomType');
-  const addRoomBtn = document.getElementById('addRoomBtn');
-  const roomList = document.getElementById('roomList');
+    const addRoomBtn = document.getElementById('addRoomBtn');
+    const roomList = document.getElementById('roomList');
 
   function createRoomItem(roomName) {
     const li = document.createElement('li');
@@ -529,6 +543,100 @@
       roomInput.value = '';
     }
   });
+
+
+// Form validation Here for required  
+
+  const nameInput = document.getElementById("name");
+  const nameError = document.getElementById("nameError");
+  function validateFields() {
+    const fields = [
+      { id: "name", error: "nameError" },
+      { id: "email", error: "emailError" },
+      { id: "phone", error: "phoneError" },
+      { id: "password", error: "passwordError" },
+      { id: "confirmPassword", error: "confirmPasswordError" },
+      { id: "company", error: "companyError" },
+      { id: "contactPerson", error: "contactPersonError" },
+      { id: "contactPersonEmail", error: "contactPersonEmailError" },
+      { id: "contactPhone", error: "contactPhoneError" },
+      { id: "state", error: "stateError" },
+      { id: "city", error: "cityError" },
+      { id: "zip", error: "zipError" },
+      { id: "companyAddressLine1", error: "companyAddressLine1Error" },
+      { id: "companyAddressLine2", error: "companyAddressLine2Error" },
+    ];
+
+    fields.forEach(({ id, error }) => {
+      const input = document.getElementById(id);
+      const errorMsg = document.getElementById(error);
+
+      if (input && errorMsg) {
+        if (input.value.trim() === "") {
+          input.classList.add("border-red-500");
+          errorMsg.classList.remove("hidden");
+        } else {
+          input.classList.remove("border-red-500");
+          errorMsg.classList.add("hidden");
+        }
+      }
+    });
+
+    // Password match validation
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    const matchError = document.getElementById("matchError");
+
+    if (password && confirmPassword && password !== confirmPassword) {
+      matchError.classList.remove("hidden");
+      document.getElementById("confirmPassword").classList.add("border-red-500");
+    } else {
+      matchError.classList.add("hidden");
+      document.getElementById("confirmPassword").classList.remove("border-red-500");
+    }
+  }
+  
+document.getElementById("registrationForm").addEventListener("submit", function (e) {
+
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const nameInput = document.getElementById("name");
+  const nameError = document.getElementById("nameError");
+
+  //  Empty field check
+  if (!name || !email || !password || !confirmPassword) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Missing Fields',
+      text: 'Please fill out all fields.',
+    });
+    return;
+  }
+
+
+  if (password !== confirmPassword) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Password Mismatch',
+      text: 'Passwords do not match. Please try again.',
+    });
+    return;
+  }
+
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Success!',
+    text: 'Registration successful!',
+  }).then(() => {
+    // Optional: submit form manually or reset
+    e.target.submit(); // Uncomment if using server-side
+
+  });
+});
   </script>
 
 </body>

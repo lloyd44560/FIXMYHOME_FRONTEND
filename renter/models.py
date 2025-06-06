@@ -1,9 +1,10 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class Renter(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     # Step 1 - Personal Info
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
