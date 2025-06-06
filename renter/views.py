@@ -6,8 +6,8 @@ from django.http import JsonResponse
 from .forms import RenterForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth import authenticate, login
-
+from django.contrib.auth import authenticate, login 
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'renter/home.html')
@@ -52,7 +52,7 @@ def register(request):
 
     return render(request, 'renter/register.html')
 
-def login(request):
+def login_page(request):
     return render(request, 'renter/login.html')
 
 
@@ -60,21 +60,22 @@ def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        next_url = request.POST.get('next') or '/welcome/'  # fallback to /welcome/
 
         try:
-            # Look up user by email to get the username
             user_obj = User.objects.get(email=email)
             user = authenticate(request, username=user_obj.username, password=password)
         except User.DoesNotExist:
             user = None
 
         if user is not None:
-            # login(request, user)
-            return redirect('/welcome')  # or wherever you want to go
+            login(request, user)  
+            return redirect(next_url)
         else:
-            return redirect('/login', {'error': 'Invalid credentials'})
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
 
-    return redirect('/login')
+    next_url = request.GET.get('next', '/welcome/')
+    return render(request, 'login.html', {'next': next_url})
 
 @csrf_exempt
 def register_renter(request):
@@ -121,6 +122,8 @@ def register_renter(request):
         renter = Renter.objects.create(
             user=user,  # 💡 Link to auth_user
             phone=phone,
+            name=name, 
+            email=email,
             company_name=company,
             contact_person=contact_person,
             contact_phone=contact_phone,
@@ -149,10 +152,14 @@ def register_renter(request):
 #         form = RenterForm()
 #     return render(request, 'register.html', {'form': form})
 
-
+@login_required
 def welcome(request):
-    return render(request, 'renter/welcome.html')
+    try:
+        renter = Renter.objects.get(user=request.user)
+    except Renter.DoesNotExist:
+        renter = None  # Or redirect to profile setup page
 
+    return render(request, 'renter/welcome.html', {'renter': renter})
 
 
 def renter_create(request):
