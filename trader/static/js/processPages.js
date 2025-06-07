@@ -55,21 +55,6 @@ if (currentStep < steps.length - 1) {
 }
 });
 
-const form = document.getElementById('registrationForm');
-
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    if (form.checkValidity()) {
-        alert('Form submitted! ');
-        form.reset();
-        currentStep = 0;
-        updateStep();
-    } else {
-        form.reportValidity();
-    }
-});
-
 // Password toggle
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('password');

@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FMH | Register as Trader</title>
+{% extends "base.html" %}
 
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class=" min-h-screen flex items-center justify-center p-4">
+{% block content %}
+<div class=" min-h-screen flex items-center justify-center p-4">
   <div class="w-full max-w-xl bg-white p-6 rounded-lg">
 
     <!-- Left arrow back icon -->
@@ -48,19 +41,21 @@
       </div>
     </div>
 
-    <form id="registrationForm" class="space-y-4" style="height: 480px; overflow-y: auto;" method="POST" action="{% url 'register_submit' %}" enctype="multipart/form-data">
+    <form class="space-y-4" style="height: 480px; overflow-y: auto;" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-      <!-- Step 1 -->
-      {% include "components/registerPage/details.html" %} 
-
-      <!-- Step 2 -->
-      {% include "components/registerPage/company.html" %}
-
-      <!-- Step 3 -->
-      {% include "components/registerPage/teams.html" %}
-
-      <!-- Step 4 -->
-      {% include "components/registerPage/rates.html" %}
+        <div class="mb-4">
+          <!-- Step 1 -->
+          {% include "components/registerPage/details.html" %} 
+          <!-- Step 2 -->
+          {% include "components/registerPage/company.html" %}
+          <!-- Step 3 -->
+          {% include "components/registerPage/teams.html" %}
+          <!-- Step 4 -->
+          {% include "components/registerPage/rates.html" %}
+          {% if field.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+          {% endif %}
+        </div>
 
       <!-- Navigation Buttons -->
       <div class="flex justify-between">
@@ -77,12 +72,12 @@
       </p>
     </form>
   </div>
+</div>
+{% endblock %}
 
-  <!-- Include JS Functions -->
+{% block scripts %}
   <script src="/static/js/AddLicenseFunc.js"></script>
   <script src="/static/js/AddTeamFunc.js"></script>
   <script src="/static/js/generateCalendar.js"></script>
   <script src="/static/js/processPages.js"></script>
-
-</body>
-</html>
+{% endblock %}

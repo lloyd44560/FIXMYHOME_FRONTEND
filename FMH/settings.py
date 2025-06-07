@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',  # For customizing form widgets in templates - pip install django-widget-tweaks
     'renter',
     'trader',
 ]
