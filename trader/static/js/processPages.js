@@ -14,8 +14,7 @@ const stepIndicators = [
 const backBtn = document.getElementById('backBtn');
 const nextBtn = document.getElementById('nextBtn');
 const submitBtn = document.getElementById('submitBtn'); // New Submit button
-const uploadOption = document.getElementById('uploadOption');
-const manualUploadFields = document.getElementById('manualUploadFields');
+let step2Company = document.getElementById('step2-company');
 
 let currentStep = 0;
 
@@ -24,6 +23,7 @@ function updateStep() {
         if (step) {
             step.classList.toggle('hidden', index !== currentStep);
         }
+
         if (stepIndicators[index]) {
             stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
             stepIndicators[index].classList.toggle('text-white', index === currentStep);
@@ -31,6 +31,16 @@ function updateStep() {
             stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);
         }
     });
+    // Show/hide step2-company based on step and company_type value
+    if (step2Company && companyType) {
+        if (currentStep === 1 && companyType.value === 'company') {
+            step2Company.classList.remove('hidden');
+            // Optionally show the indicator for company step
+            if (stepIndicators[1]) stepIndicators[1].classList.remove('hidden');
+        } else {
+            step2Company.classList.add('hidden');
+        }
+    }
 
     if (backBtn) backBtn.disabled = currentStep === 0;
 
@@ -44,6 +54,7 @@ function updateStep() {
 }
 
 backBtn.addEventListener('click', () => {
+    console.log(`Current step: ${currentStep + 1} of ${steps.length}`);
     // Only proceed if the current step is visible
     if (!steps[currentStep].classList.contains('hidden') && currentStep > 0) {
         currentStep--;
