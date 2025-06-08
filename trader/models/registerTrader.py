@@ -17,7 +17,6 @@ class TraderRegistration(models.Model):
     COMPANY_TYPE_CHOICES = [
         ('sole_trader', 'Sole Trader'),
         ('company', 'Company'),
-        ('partnership', 'Partnership'),
     ]
     company_type = models.CharField(max_length=100, choices=COMPANY_TYPE_CHOICES, default='sole_trader')
     company_name = models.CharField(max_length=255, blank=True)

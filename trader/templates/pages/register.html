@@ -29,7 +29,7 @@
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step2-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">2</div>
-        <span class="mt-2 text-sm font-medium text-gray-600">Company</span>
+        <span id="step2-label" class="mt-2 text-sm font-medium text-gray-600">Sole Trader</span>
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step3-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">3</div>
@@ -47,14 +47,16 @@
           <!-- Step 1 -->
           {% include "components/registerPage/details.html" %} 
           <!-- Step 2 -->
-          {% include "components/registerPage/company.html" %}
+          <div id="soleTraderSection">
+              {% include "components/registerPage/soleTrader.html" %}
+          </div>
+          <div id="companySection" class="hidden">
+              {% include "components/registerPage/company.html" %}
+          </div>
           <!-- Step 3 -->
           {% include "components/registerPage/teams.html" %}
           <!-- Step 4 -->
           {% include "components/registerPage/rates.html" %}
-          {% if field.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
-          {% endif %}
         </div>
 
       <!-- Navigation Buttons -->
@@ -62,22 +64,33 @@
           <!-- Continue is type=button so no submit yet -->
           <button type="button" id="nextBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Continue</button>
           <!-- Submit button, initially hidden -->
-          <button type="submit" id="submitBtn" class="w-full px-4 py-2 bg-green-600 text-white rounded hidden">Submit</button>
+          <button type="submit" id="submitBtn" class="w-full px-4 py-2 bg-green-600 text-white rounded">Submit</button>
       </div>
 
       <!-- Login Link -->
       <p class="text-center text-sm mt-4">
           Already have an account?
-          <a href="/login" class="text-blue-600 font-semibold hover:underline">Login Here</a>
+          <a href="{% url 'login' %}" class="text-blue-600 font-semibold hover:underline">Login Here</a>
       </p>
     </form>
   </div>
 </div>
+<script>
+
+</script>
 {% endblock %}
 
 {% block scripts %}
+  <!-- Functions -->
   <script src="/static/js/AddLicenseFunc.js"></script>
   <script src="/static/js/AddTeamFunc.js"></script>
   <script src="/static/js/generateCalendar.js"></script>
   <script src="/static/js/processPages.js"></script>
+  <script src="/static/js/togglePassword.js"></script>
+  <script src="/static/js/whatTypeCompany.js"></script>
+  <!-- Validations -->
+  <script src="/static/js/validations/traderDetails.js"></script>
+  <script src="/static/js/validations/traderCompany.js"></script>
+  <script src="/static/js/validations/traderTeam.js"></script>
+  <script src="/static/js/validations/traderRates.js"></script>
 {% endblock %}

@@ -6,7 +6,8 @@
         <label for="{{ form.name.id_for_label }}" class="block text-gray-700 font-medium mb-2">
             Name <span class="text-red-500">*</span>
         </label>
-        {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        {{ form.name | add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        <span id="nameError" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Email -->
@@ -14,7 +15,8 @@
         <label for="{{ form.email.id_for_label }}" class="block text-gray-700 font-medium mb-2">
             Email <span class="text-red-500">*</span>
         </label>
-        {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        {{ form.email | add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        <span id="emailError" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Phone -->
@@ -22,7 +24,17 @@
         <label for="{{ form.phone.id_for_label }}" class="block text-gray-700 font-medium mb-2">
             Phone Number <span class="text-red-500">*</span>
         </label>
-        {{ form.phone|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        {{ form.phone | add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        <span id="phoneError" class="text-red-500 text-xs"></span>
+    </div>
+
+    <!-- Type of Company -->
+    <div>
+        <label for="{{ form.company_type.id_for_label }}" class="block text-sm font-medium text-gray-700">
+            Type of company <span class="text-red-500">*</span>
+        </label>
+        {{ form.company_type|add_class:"mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="companyTypeError" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Password -->
@@ -30,34 +42,28 @@
         <label for="{{ form.password.id_for_label }}" class="block text-gray-700 font-medium mb-2">
             Password <span class="text-red-500">*</span>
         </label>
-        {{ form.password|add_class:"w-full border border-gray-300 rounded-md p-2 pr-10" }}
+        {{ form.password | add_class:"w-full border border-gray-300 rounded-md p-2 pr-10" }}
         <button
             type="button"
             id="togglePassword"
-            class="absolute right-2 top-9 text-sm text-gray-600"
+            class="absolute right-3 top-[2.6rem] text-sm text-gray-600"
         >
             Show
         </button>
+        <span id="passwordError" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Confirm Password (frontend only, not in Django form) -->
     <div class="mb-4 relative">
-        <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">
-            Confirm Password <span class="text-red-500">*</span>
-        </label>
-        <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            class="w-full border border-gray-300 rounded-md p-2 pr-10"
-        />
+        <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">Confirm Password</label>
+        {{ form.confirm_password | add_class:"w-full border border-gray-300 rounded-md p-2 pr-10" }}
         <button
             type="button"
             id="toggleConfirmPassword"
-            class="absolute right-2 top-9 text-sm text-gray-600"
+            class="absolute right-3 top-[2.6rem] text-sm text-gray-600"
         >
            Show
         </button>
+        <span id="confirmPasswordError" class="text-red-500 text-xs"></span>
     </div>
 </div>

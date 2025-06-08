@@ -3,12 +3,13 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 
 from .models import TraderRegistration
+from .forms import TraderRegistrationForm
 
 # View for the registration page
 class TraderRegistrationCreateView(CreateView):
     model = TraderRegistration
+    form_class = TraderRegistrationForm
     template_name = 'pages/register.html'
-    fields = '__all__'
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
