@@ -42,3 +42,13 @@ class Renter(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class FailedLoginAttempt(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    attempts = models.IntegerField(default=0)
+    is_locked = models.BooleanField(default=False)
+    locked_until = models.DateTimeField(null=True, blank=True) 
+
+    def __str__(self):
+        return f"{self.user.email} - {self.attempts} attempts"
