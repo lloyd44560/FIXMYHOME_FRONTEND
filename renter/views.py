@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Renter
+from .models import Renter, FailedLoginAttempt
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
@@ -8,6 +8,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import authenticate, login 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def home(request):
     return render(request, 'renter/home.html')
@@ -19,7 +25,8 @@ def register(request):
         files = request.FILES
 
         if Renter.objects.filter(email=data.get('email')).exists():
-            return render(request, 'renter/register.html', {'error': 'Email already registered.'})
+            return render(request, 'renter/register.html',
+            {'error': 'Email already registered.'})
 
         renter = Renter.objects.create(
             name=data.get('name'),
@@ -55,28 +62,78 @@ def register(request):
 def login_page(request):
     return render(request, 'renter/login.html')
 
-
 def login_view(request):
+    locked_until_str = request.session.get('locked_until')
+    if locked_until_str:
+        locked_until = timezone.datetime.fromisoformat(locked_until_str)
+        if timezone.now() < locked_until:
+            remaining_seconds = int((locked_until - timezone.now()).total_seconds())
+            return render(request, 'renter/login.html', {
+                'error': 'Account temporarily locked.',
+                'lockout': True,
+                'remaining_seconds': remaining_seconds
+            })
+        else:
+            request.session.pop('locked_until', None)
+
     if request.method == 'POST':
-        email = request.POST.get('email')
+        email = request.POST.get('email').strip().lower()
         password = request.POST.get('password')
-        next_url = request.POST.get('next') or '/welcome/'  # fallback to /welcome/
+        next_url = request.POST.get('next') or '/welcome/'
 
         try:
             user_obj = User.objects.get(email=email)
-            user = authenticate(request, username=user_obj.username, password=password)
-        except User.DoesNotExist:
-            user = None
+            fail_record, _ = FailedLoginAttempt.objects.get_or_create(user=user_obj)
 
-        if user is not None:
-            login(request, user)  
-            return redirect(next_url)
-        else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            if fail_record.is_locked and fail_record.locked_until and timezone.now() < fail_record.locked_until:
+                request.session['locked_until'] = fail_record.locked_until.isoformat()
+                remaining_seconds = int((fail_record.locked_until - timezone.now()).total_seconds())
+                return render(request, 'renter/login.html', {
+                    'error': 'Account temporarily locked.',
+                    'lockout': True,
+                    'remaining_seconds': remaining_seconds
+                })
+            elif fail_record.is_locked:
+                # unlock if time passed
+                fail_record.is_locked = False
+                fail_record.attempts = 0
+                fail_record.locked_until = None
+                fail_record.save()
+
+            # 🔐 Check password
+            user = authenticate(request, username=user_obj.username, password=password)
+            if user:
+                login(request, user)
+                fail_record.attempts = 0
+                fail_record.save()
+                request.session.pop('locked_until', None)
+                return redirect(next_url)
+            else:
+                fail_record.attempts += 1
+                if fail_record.attempts >= 3:
+                    fail_record.is_locked = True
+                    fail_record.locked_until = timezone.now() + timedelta(minutes=5)
+                    request.session['locked_until'] = fail_record.locked_until.isoformat()
+                    fail_record.save()
+                    return render(request, 'renter/login.html', {
+                        'error': "Your account is now locked due to too many failed login attempts.",
+                        'lockout': True,
+                        'remaining_seconds': 300
+                    })
+                fail_record.save()
+                remaining = 3 - fail_record.attempts
+                return render(request, 'renter/login.html', {
+                    'error': f"Incorrect password. {remaining} attempt(s) left."
+                })
+
+        except User.DoesNotExist:
+            return render(request, 'renter/login.html', {
+                'error': 'User with this email does not exist.'
+            })
 
     next_url = request.GET.get('next', '/welcome/')
-    return render(request, 'login.html', {'next': next_url})
-
+    return render(request, 'renter/login.html', {'next': next_url})
+    
 @csrf_exempt
 def register_renter(request):
     if request.method == 'POST':
@@ -136,7 +193,7 @@ def register_renter(request):
             property_image=uploaded_file_url
         )
 
-        return redirect('/login')
+        return redirect('/login_renter/')
     else:
         print("Register Form is not submitted")
         return redirect('/register')
