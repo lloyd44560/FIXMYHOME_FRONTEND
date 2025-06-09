@@ -1,22 +1,30 @@
 const companyType = document.getElementById('id_company_type');
 
-const soleTraderSection = document.getElementById('soleTraderSection');
-const companySection = document.getElementById('companySection');
-let step2Label = document.getElementById('step2-label');
+let step2div = document.getElementById('step2-div');
+let step2Indicator = document.getElementById('step2-indicator');
+let step3Indicator = document.getElementById('step3-indicator');
+let step4Indicator = document.getElementById('step4-indicator');
+let step3Label = document.getElementById('step3-label');
 
-if (companyType && step2Label) {
+if (companyType && step3Label) {
     companyType.addEventListener('change', function() {
-        console.log(`${step2Label.textContent} changed:`, companyType.value);
+        console.log(`${step3Label.textContent} changed:`, companyType.value);
         if (companyType.value.trim() === 'company') {
-            step2Label.textContent = 'Company';
-            companySection.classList.remove('hidden');
-            soleTraderSection.classList.add('hidden');
+            step2Indicator.textContent = '2';
+            step3Indicator.textContent = '3';
+            step4Indicator.textContent = '4';
+            step3Label.textContent = 'Team';
+
+            if (step2div.classList.contains('hidden')) {
+                step2div.classList.remove('hidden')
+            }
         } else if (companyType.value.trim() === 'sole_trader') {
-            step2Label.textContent = 'Sole Trader';
-            companySection.classList.add('hidden');
-            soleTraderSection.classList.remove('hidden');
+            step3Indicator.textContent = '2';
+            step4Indicator.textContent = '3';
+            step3Label.textContent = 'Sole Trader';
+            step2div.classList.add('hidden')
         } else {
-            step2Label.textContent = '';
+            step3Label.textContent = '';
         }
     });
 }

@@ -16,4 +16,4 @@ class TeamMember(models.Model):
     time_out = models.TimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name} ({self.position})"
+        return f"{self.name} ({self.id})"

@@ -1,14 +1,19 @@
+{% load widget_tweaks %}
+{{ formset.management_form }}
+{% for form in formset %}
 <div id="step3" class="space-y-4 hidden">
     <!-- Team Member Name -->
     <div>
         <label for="teamMemberName" class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
-        <input id="teamMemberName" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+        {{ form.name|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="teamMemberNameError" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Position -->
     <div>
         <label for="teamMemberPosition" class="block text-sm font-medium text-gray-700">Position <span class="text-red-500">*</span></label>
-        <input id="teamMemberPosition" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+        {{ form.position|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="teamMemberPositionError" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Add Team Member Button -->
@@ -19,8 +24,8 @@
 
         <!-- Team Member List -->
         <ul id="teamMemberList" class="mt-4 space-y-3">
-        <h1 id="addedMembersHeader" class="font-bold hidden">Added Members</h1>
-        <!-- Dynamic items will be added here -->
+            <h1 id="addedMembersHeader" class="font-bold hidden">Added Members</h1>
+            <!-- Dynamic items will be added here -->
         </ul>
     </div>
 
@@ -49,12 +54,7 @@
             <div class="flex items-center justify-end">
                 <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
                     <span class="text-gray-600 mr-1">$</span>
-                    <input
-                    type="number"
-                    step="0.01"
-                    placeholder="XX.XX"
-                    class="w-full outline-none border-none text-base focus:ring-0"
-                    />
+                    {{ form.labour_rate_per_hour|add_class:"w-full outline-none border-none text-base focus:ring-0" }}
                 </div>
             </div>
         </div>
@@ -83,12 +83,7 @@
             <div class="flex items-center justify-end">
                 <div class="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white w-32 h-10">
                     <span class="text-gray-600 mr-1">$</span>
-                    <input
-                        type="number"
-                        step="0.01"
-                        placeholder="XX.XX"
-                        class="w-full outline-none border-none text-base focus:ring-0"
-                    />
+                    {{ form.callout_rate|add_class:"w-full outline-none border-none text-base focus:ring-0" }}
                 </div>
             </div>
         </div>
@@ -97,19 +92,19 @@
     <!-- Employee Contact Number -->
     <div>
         <label class="block text-sm font-medium text-gray-700">Employee contact number (if available) <span class="text-red-500">*</span></label>
-        <input type="tel" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+        {{ form.contact_number|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
     </div>
 
     <!-- Employee Email -->
     <div>
         <label class="block text-sm font-medium text-gray-700">Employee email (if available)</label>
-        <input type="email" placeholder="name@email.com" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+        {{ form.email|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
     </div>
 
     <!-- Active Postal Codes -->
     <div>
         <label class="block text-sm font-medium text-gray-700">Active postal codes</label>
-        <input type="text" placeholder="3070, 3071, 3072" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+        {{ form.active_postal_codes|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
     </div>
 
     <!-- Holidays* (Not available to work) -->
@@ -118,7 +113,7 @@
             <h2 class="text-sm font-semibold text-gray-700 mb-2 text-center">Holidays* <span class="text-xs text-gray-500">(Not available to work)</span></h2>
             <div class="flex items-center justify-between mb-4 w-full max-w-xs mx-auto">
                 <button type="button" id="prev" class="text-blue-500 hover:text-blue-700">&lt;</button>
-                <div class="text-lg font-semibold text-gray-800">June 2024</div>
+                    <div class="text-lg font-semibold text-gray-800">June 2024</div>
                 <button id="next" class="text-blue-500 hover:text-blue-700">&gt;</button>
             </div>
             <div class="grid grid-cols-7 text-center text-sm font-medium text-gray-500 w-full">
@@ -136,16 +131,17 @@
             <div class="w-full">
                 <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
                 <div class="flex items-center gap-3 justify-center">
-                    <input type="time" class="border border-gray-300 px-2 py-1 rounded text-center w-full" />
+                    {{ form.time_in|add_class:"border border-gray-300 px-2 py-1 rounded text-center w-full" }}
                 </div>
             </div>
             <!-- Time Block 2 -->
             <div class="w-full">
                 <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
                 <div class="flex items-center gap-3 justify-center">
-                    <input type="time" class="border border-gray-300 px-2 py-1 rounded text-center w-full" />
+                    {{ form.time_out|add_class:"border border-gray-300 px-2 py-1 rounded text-center w-full" }}
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}

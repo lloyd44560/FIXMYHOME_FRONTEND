@@ -1,2 +1,2 @@
 from .registerTrader import TraderRegistration
-# from .TeamMember import TeamMember
+from .teamMember import TeamMember

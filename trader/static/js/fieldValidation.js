@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const companyNameInput = document.getElementById('id_company_name');
     const companyAddressInput = document.getElementById('id_company_address');
     const companyEmailInput = document.getElementById('id_company_email');
-    const companyLandlineInput = document.getElementById('id_company_landline');
     const contractorLicenseInput = document.getElementById('id_contractor_license');
     const abnInput = document.getElementById('id_abn');
     const industryInput = document.getElementById('id_industry');
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const companyNameError = document.getElementById('companyNameError');
     const companyAddressError = document.getElementById('companyAddressError');
     const companyEmailError = document.getElementById('companyEmailError');
-    const companyLandlineError = document.getElementById('companyLandlineError');
     const contractorLicenseError = document.getElementById('contractorLicenseError');
     const abnError = document.getElementById('abnError');
     const industryError = document.getElementById('industryError');
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: companyNameInput, error: companyNameError, label: 'Company Name' },
         { id: companyAddressInput, error: companyAddressError, label: 'Company Address' },
         { id: companyEmailInput, error: companyEmailError, label: 'Company Email' }, 
-        { id: companyLandlineInput, error: companyLandlineError, label: 'Company Landline' }, 
         { id: contractorLicenseInput, error: contractorLicenseError, label: 'Contractor License Number' },
         { id: abnInput, error: abnError, label: 'ABN' },
         { id: industryInput, error: industryError, label: 'Industry Expertise' },
@@ -118,8 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     passwordError.textContent = '';
                     confirmPasswordError.textContent = '';
 
-                    // Only proceed if the current step is visible
-                    currentStep++;
+                    // Skip company step if sole_trader, else go to company step
+                    if (companyType && companyType.value === 'sole_trader') {
+                        currentStep += 2; // Skip company step
+                    } else {
+                        currentStep += 1; // Go to company step
+                    }
                     updateStep();
                 }
             } else if (currentStep === 1) { // Step 2 validation (company type || solo trader)
@@ -142,13 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     companyEmailError.textContent = 'Company email is required!';
                     companyEmailInput.focus();
-                }
-
-                // Validate company landline
-                if (companyLandlineInput.value.trim() === '') {
-                    e.preventDefault();
-                    companyLandlineError.textContent = 'Company landline is required!';
-                    companyLandlineInput.focus();
                 }
 
                 // Validate contractor license
@@ -175,16 +169,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if all required fields are filled
                 if (
                     companyNameInput.value.trim() !== '' && companyAddressInput.value.trim() !== '' && 
-                    companyEmailInput.value.trim() !== '' && companyLandlineInput.value.trim() !== '' && 
-                    contractorLicenseInput.value.trim() !== '' && abnInput.value.trim() !== '' && 
-                    industryInput.value.trim() !== ''
+                    companyEmailInput.value.trim() !== '' && contractorLicenseInput.value.trim() !== '' && 
+                    abnInput.value.trim() !== '' && industryInput.value.trim() !== ''
                 ) 
                 {
                     // Clear any previous error messages
                     companyNameError.textContent = '';
                     companyAddressError.textContent = '';
                     companyEmailError.textContent = '';
-                    companyLandlineError.textContent = '';
                     contractorLicenseError.textContent = '';
                     abnError.textContent = '';
                     industryError.textContent = '';

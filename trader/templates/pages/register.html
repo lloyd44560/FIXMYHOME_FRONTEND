@@ -27,13 +27,13 @@
         <div id="step1-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-semibold">1</div>
         <span class="mt-2 text-sm font-medium text-gray-600">Details</span>
       </div>
-      <div class="flex-1 flex flex-col items-center">
+      <div id="step2-div" class="flex-1 flex flex-col items-center">
         <div id="step2-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">2</div>
-        <span id="step2-label" class="mt-2 text-sm font-medium text-gray-600">Sole Trader</span>
+        <span class="mt-2 text-sm font-medium text-gray-600">Company</span>
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step3-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">3</div>
-        <span class="mt-2 text-sm font-medium text-gray-600">Team</span>
+        <span id="step3-label" class="mt-2 text-sm font-medium text-gray-600">Team</span>
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step4-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">4</div>
@@ -47,12 +47,7 @@
           <!-- Step 1 -->
           {% include "components/registerPage/details.html" %} 
           <!-- Step 2 -->
-          <div id="soleTraderSection">
-              {% include "components/registerPage/soleTrader.html" %}
-          </div>
-          <div id="companySection" class="hidden">
-              {% include "components/registerPage/company.html" %}
-          </div>
+          {% include "components/registerPage/company.html" %}
           <!-- Step 3 -->
           {% include "components/registerPage/teams.html" %}
           <!-- Step 4 -->

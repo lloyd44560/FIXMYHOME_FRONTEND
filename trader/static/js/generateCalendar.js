@@ -12,7 +12,7 @@ function generateCalendar(year, month) {
 
     // Add empty slots for days before the 1st
     for (let i = 0; i < firstDay; i++) {
-    calendar.innerHTML += `<div></div>`;
+        calendar.innerHTML += `<div></div>`;
     }
 
     // Add actual days
@@ -23,12 +23,12 @@ function generateCalendar(year, month) {
 
     calendar.innerHTML += `
         <div class="
-        w-8 h-8 mx-auto flex items-center justify-center rounded-full 
-        ${isHoliday ? 'bg-blue-600 text-white font-semibold' : ''}
-        ${isToday && !isHoliday ? 'bg-blue-100 text-blue-700' : ''}
-        hover:bg-blue-200 cursor-pointer
-        ">
-        ${day}
+            w-8 h-8 mx-auto flex items-center justify-center rounded-full 
+            ${isHoliday ? 'bg-blue-600 text-white font-semibold' : ''}
+            ${isToday && !isHoliday ? 'bg-blue-100 text-blue-700' : ''}
+            hover:bg-blue-200 cursor-pointer
+            ">
+            ${day}
         </div>`;
     }
 }
