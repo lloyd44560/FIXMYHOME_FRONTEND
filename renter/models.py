@@ -52,3 +52,11 @@ class FailedLoginAttempt(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.attempts} attempts"
+
+
+# create model for Properties 
+# Assign a user field 
+
+# Create a rooms Model 
+# Assign a user field 
+
