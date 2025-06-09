@@ -177,7 +177,7 @@ def register_renter(request):
 
         #  2. Create the linked Renter
         renter = Renter.objects.create(
-            user=user,  # 💡 Link to auth_user
+            # user=user,  #  Link to auth_user
             phone=phone,
             name=name, 
             email=email,
