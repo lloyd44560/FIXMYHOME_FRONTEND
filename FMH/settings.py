@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'widget_tweaks',  # For customizing form widgets in templates - pip install django-widget-tweaks
     'renter',
     'trader',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +146,12 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/welcome/'
