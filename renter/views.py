@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Renter, FailedLoginAttempt
+from .models import Renter, FailedLoginAttempt, ConditionReport
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
@@ -12,6 +12,8 @@ from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth import get_user_model
+import json
+from django.core.mail import send_mail
 
 User = get_user_model()
 
@@ -156,6 +158,11 @@ def register_renter(request):
         upload_option = request.POST.get('uploadOption')
         property_image = request.FILES.get('propertyImage')
 
+          # Room data
+        condition_data = request.POST.get('conditionData')
+
+        print("✅ Received Condition Data (Raw JSON):", condition_data)
+
         # Optional: Save file
         if property_image:
             fs = FileSystemStorage()
@@ -193,6 +200,22 @@ def register_renter(request):
             property_image=uploaded_file_url
         )
 
+       
+         # Save Condition Report
+        if condition_data:
+            try:
+                condition_json = json.loads(condition_data)
+                print("Parsed Condition Data:", condition_json)
+
+                ConditionReport.objects.create(
+                    renter=renter,
+                    data=condition_json
+                )
+                print("Condition report saved successfully!")
+
+            except json.JSONDecodeError as e:
+                print("Error decoding JSON:", e)
+
         return redirect('/login_renter/')
     else:
         print("Register Form is not submitted")
@@ -228,3 +251,59 @@ def renter_create(request):
     else:
         form = RenterForm()
     return render(request, 'renter_form.html', {'form': form})
+
+
+def send_reset_link(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            # You can later validate if the email exists in your database.
+            subject = 'Password Reset Link'
+            message = 'Here is your password reset link: http://example.com/reset-password/'
+            from_email = 'wsi.jborlagdan@gmail.com'
+            recipient_list = [email]
+
+            try:
+                send_mail(subject, message, from_email, recipient_list)
+                messages.success(request, 'Password reset link sent to your email.')
+                print("Email is sent")
+            except Exception as e:
+                messages.error(request, f'Error sending email: {str(e)}')
+                print(request, f'Error sending email: {str(e)}')
+        else:
+            messages.error(request, 'Please enter your email address.')
+
+    return redirect('/login_renter/')  # Adjust to your login page URL
+
+def renter_account(request):
+    return render(request, 'renter/home/account.html')
+
+def chat_demo(request, job_id):
+    return render(request, 'chat_demo.html', {'job_id': job_id})
+
+def demo_chat(request):
+    chats = [
+        {'image': 'images/user1.jpg', 'job_number': 'QOT-0000391', 'message': 'Good afternoon, I will be...', 'distance': '25m away'},
+        {'image': 'images/user2.jpg', 'job_number': 'QOT-0000392', 'message': 'How was the repair? Did...', 'distance': '33m away'},
+        {'image': 'images/user3.jpg', 'job_number': 'QOT-0000393', 'message': 'No worries. Let me know...', 'distance': '2km away'},
+        {'image': 'images/user4.jpg', 'job_number': 'QOT-0000394', 'message': 'I’m checking if I have the...', 'distance': '2.5km away'},
+        {'image': 'images/user5.jpg', 'job_number': 'QOT-0000395', 'message': 'I will need your confirma...', 'distance': '2.8km away'},
+    ]
+    return render(request, 'renter/home/messages.html', {'chats': chats})
+    
+def demo_chat(request):
+    chats = [
+        {'image': 'images/user1.jpg', 'job_number': 'QOT-0000391', 'message': 'Good afternoon, I will be...', 'distance': '25m away'},
+        {'image': 'images/user2.jpg', 'job_number': 'QOT-0000392', 'message': 'How was the repair? Did...', 'distance': '33m away'},
+        {'image': 'images/user3.jpg', 'job_number': 'QOT-0000393', 'message': 'No worries. Let me know...', 'distance': '2km away'},
+    ]
+    return render(request, 'renter/home/messages.html', {'chats': chats})
+
+def chat_thread(request, job_number):
+    # Dummy messages for the thread
+    messages = [
+        {'sender': 'Lucas', 'message': 'Hi Brooke!', 'is_sender': False},
+        {'sender': 'Lucas', 'message': "It's going well. Thanks for asking!", 'is_sender': False},
+        {'sender': 'You', 'message': "No worries. Let me know if you need any help 😉", 'is_sender': True},
+    ]
+    return render(request, 'renter/home/chat_thread.html', {'job_number': job_number, 'messages': messages})

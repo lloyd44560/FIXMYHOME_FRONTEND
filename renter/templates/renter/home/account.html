@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+
+</head>
+<body class="bg-white min-h-screen p-4">
+    <div class="max-w-md mx-auto">
+
+        <!-- Header -->
+        <div class="flex items-center space-x-4 mb-6">
+            <img src="{% static 'images/user4.jpg' %}" alt="Profile" class="w-16 h-16 rounded-full object-cover">
+            <div>
+                <h2 class="text-lg font-semibold">Harvey Sullivan Hughes</h2>
+                <span class="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-full">PRIOR LAKE, MN 55372</span>
+            </div>
+        </div>
+
+        <!-- Section: Your Account -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-800 mb-4">Your account</h3>
+            <ul class="space-y-4 text-gray-700">
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Personal Information</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Cards and Accounts</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Saved Addresses</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Notifications</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Manage business profile</li>
+            </ul>
+        </div>
+
+        <!-- Section: Benefits -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-800 mb-4">Benefits</h3>
+            <ul class="space-y-4 text-gray-700">
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Properties for Rent</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Properties for Sale</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">FMH Lottery</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">FMH Local Businesses</li>
+            </ul>
+        </div>
+
+        <!-- Section: Support -->
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-800 mb-4">Support</h3>
+            <ul class="space-y-4 text-gray-700">
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Help/FAQs</li>
+                <li class="border-b pb-2 cursor-pointer hover:text-blue-600">Become a Trader</li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>

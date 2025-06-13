@@ -57,6 +57,14 @@ class FailedLoginAttempt(models.Model):
 # create model for Properties 
 # Assign a user field 
 
+# models.py
+class ConditionReport(models.Model):
+    renter = models.OneToOneField('Renter', on_delete=models.CASCADE)  # One condition report per renter
+    data = models.JSONField()  # You can store the entire modal form data as JSON
+
+    def __str__(self):
+        return f"Condition Report for {self.renter.name}"
+
 # Create a rooms Model 
 # Assign a user field 
 

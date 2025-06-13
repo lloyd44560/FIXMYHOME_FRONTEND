@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Thread</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+      {% load static %}
+</head>
+<body class="bg-white min-h-screen flex flex-col justify-between">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 shadow">
+        <div class="flex items-center space-x-2">
+            <a href="{% url 'demo_chat' %}" class="text-xl">&larr;</a>
+            <h1 class="text-lg font-semibold">Job #{{ job_number }}</h1>
+        </div>
+        <img src="{% static 'images/user3.jpg' %}" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+    </div>
+
+    <!-- Messages -->
+    <div class="flex-1 p-4 space-y-4 overflow-y-auto">
+        {% for msg in messages %}
+            {% if msg.is_sender %}
+                <div class="flex justify-end">
+                    <div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs">
+                        {{ msg.message }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="flex justify-start">
+                    <div class="bg-gray-100 text-black p-2 rounded-lg max-w-xs">
+                        <span class="font-bold text-sm block">{{ msg.sender }}</span>
+                        {{ msg.message }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Input -->
+    <div class="flex items-center p-4 border-t">
+        <button class="text-blue-500 text-2xl mr-2">+</button>
+        <input type="text" placeholder="Type a message" class="flex-1 border rounded-full px-4 py-2 focus:outline-none">
+        <button class="text-blue-500 text-2xl ml-2">&#10148;</button>
+    </div>
+
+</body>
+</html>

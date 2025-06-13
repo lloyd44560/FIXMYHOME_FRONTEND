@@ -6,6 +6,7 @@
   <title>Login Page</title>
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   {% load static %}
@@ -14,19 +15,21 @@
 
   <div class="flex justify-center items-center min-h-screen bg-gray-100 px-4">
     <div class="max-w-screen-xl w-full bg-white shadow sm:rounded-lg flex flex-col lg:flex-row justify-center flex-1">
-    
-      <!-- Left side form -->
+
+      <!-- Left Side Form -->
       <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
         <div class="my-6 text-center">
           <div class="text-sm text-gray-600 tracking-wide font-bold mt-4">
-            <!-- Title Header here -->
+            <!-- Optional Title Header -->
           </div>
         </div>
 
         <div class="flex flex-col items-start mt-4">
           <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold">Welcome To</h1>
-          <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-6">Fix My House.</h1>
-            <input type="hidden" name="next" value="{{ next }}">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-6">Fix My House</h1>
+
+          <input type="hidden" name="next" value="{{ next }}">
+
           <div class="w-full mt-4">
             <div class="max-w-md w-full mx-auto">
 
@@ -34,13 +37,14 @@
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                   <strong class="font-bold">Login Failed:</strong>
                   <span class="block sm:inline">{{ error }}</span>
+                </div>
               {% endif %}
+
               {% if lockout %}
-                <div class="text-red-600 text-sm mt-2">
+                <div class="text-red-600 text-sm mt-2 mb-4">
                   Please wait <span id="countdown">{{ remaining_seconds }}</span> seconds before trying again.
                 </div>
               {% endif %}
-               </div>
 
               <div class="mb-4">
                 <input
@@ -51,6 +55,7 @@
                   {% if lockout %}disabled{% endif %}
                 />
               </div>
+
               <div class="mb-4">
                 <input
                   class="w-full px-6 py-3 rounded-lg border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-[#0000FF] focus:bg-white transition duration-200"
@@ -61,7 +66,9 @@
                 />
               </div>
 
-              <span class="text-gray-600 text-sm font-medium cursor-pointer hover:underline">Forgot Password?</span>
+              <div class="mb-4">
+                <a href="{% url 'password_reset' %}" class="text-gray-600 text-sm font-medium hover:underline">Forgot Password?</a>
+              </div>
 
               <button
                 class="w-full font-semibold bg-[#086cfc] text-white py-3 rounded-lg hover:bg-[#4795fd] transition duration-300 flex items-center justify-center"
@@ -69,13 +76,11 @@
                 {% if lockout %}disabled{% endif %}
               >
                 <span class="ml-2">Login</span>
-
               </button>
-           
 
               <div class="text-center mt-4">
                 <span class="text-gray-600 text-sm font-medium">
-                  Not a member? <a href="{% url 'register_submit' %}" class="text-[#086cfc] font-semibold">Register Now</a>
+                  Not a member? <a href="/register" class="text-[#086cfc] font-semibold hover:underline">Register Now</a>
                 </span>
               </div>
 
@@ -86,33 +91,42 @@
               </div>
 
               <div class="flex justify-center space-x-4">
-                <button class="bg-[#DB4437] w-10 h-10 rounded-full text-white font-bold">G</button>
-                <button class="bg-[#1877F2] w-10 h-10 rounded-full text-white font-bold">f</button>
-                <div class="flex justify-center space-x-4">
-                  <a href="{% url 'social:begin' 'google-oauth2' %}" class="bg-[#DB4437] w-10 h-10 rounded-full text-white font-bold flex items-center justify-center">
-                    G
-                  </a>
-                </div>
+                <button class="bg-[#1877F2] w-10 h-10 rounded-full text-white font-bold flex items-center justify-center">f</button>
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="bg-[#DB4437] w-10 h-10 rounded-full text-white font-bold flex items-center justify-center">
+                  G
+                </a>
               </div>
+
             </div>
           </div>
-             <!-- Right Section -->
         </div>
-          <!-- <div class="hidden lg:flex flex-1 bg-indigo-100 text-center" style="background-image: url('{% static 'images/RENTER_BG.jpg' %}');">
-            <div class="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat">
-          </div>
-        </div> -->
       </div>
 
+      <!-- Right Side Video / Animation -->
+        <div class="hidden lg:flex flex-1 bg-gray-200 items-center justify-center overflow-hidden rounded-r-lg relative">
+        
+        <!-- Video (if available) -->
+        <video autoplay loop muted class="w-full h-full object-cover" id="bg-video">
+          <source src="{% static 'videos/background.mp4' %}" type="video/mp4">
+          <!-- If video fails to load, show play button -->
+        </video>
 
-   
-      
-    
+        <!-- Fallback Play Button -->
+        <div id="video-fallback" class="absolute inset-0 flex items-center justify-center bg-gray-200">
+          <button type="button" class="bg-[#086cfc] text-white p-4 rounded-full hover:bg-[#4795fd] transition duration-300 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.5 5.5v9l7-4.5-7-4.5z" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
     </div>
   </div>
   </form>
+
 </body>
+
 <script>
   const countdownEl = document.getElementById('countdown');
   if (countdownEl) {
@@ -128,5 +142,29 @@
       }
     }, 1000);
   }
+
+  const loginForm = document.querySelector('form');
+  loginForm.addEventListener('submit', function(e) {
+    const email = loginForm.querySelector('input[name="email"]').value.trim();
+    const password = loginForm.querySelector('input[name="password"]').value.trim();
+
+    if (email === '' || password === '') {
+      e.preventDefault();
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Fields',
+        text: 'Please enter both email and password before logging in.',
+      });
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('bg-video');
+  const fallback = document.getElementById('video-fallback');
+
+  video.addEventListener('canplay', () => {
+    fallback.style.display = 'none'; // hide the play button if video is working
+  });
+});
 </script>
 </html>

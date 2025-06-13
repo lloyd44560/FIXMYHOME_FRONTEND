@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  {% load static %}
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Renter Registration - Tailwind</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="{% static 'renter/js/property_report.js' %}"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
+
 <body class=" min-h-screen flex items-center justify-center p-4">
 
   <div class="w-full max-w-xl bg-white p-6 rounded-lg">
@@ -26,7 +29,6 @@
               d="M15 19l-7-7 7-7" />
       </svg>
     </button>
-
 
     <h2 class="text-center text-2xl font-bold mb-6">Register as Renter</h2>
 
@@ -53,23 +55,21 @@
     <div id="step1" class="space-y-4">
        <div class="mb-4">
     <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
-    <input
-      type="text"
-      name="name"
-      id="name"
-      placeholder="Name"
-      class="w-full border border-gray-300 rounded-md p-2"
-      oninput="validateFields()"
-    />
-          <p id="nameError" class="text-red-500 text-sm hidden">Name is required.</p>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        placeholder="Name"
+        class="w-full border border-gray-300 rounded-md p-2"
+        oninput="validateFields()"
+      />
+        <p id="nameError" class="text-red-500 text-sm hidden">Name is required.</p>
     </div>
-
 
       <div class="mb-4">
         <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
         <input type="email" name="email" id="email"  placeholder="Email" class="w-full border border-gray-300 rounded-md p-2"  oninput="validateFields()">
       <p id="emailError" class="text-red-500 text-sm hidden">Email is required.</p>
-
       </div>
 
       <div class="mb-4">
@@ -128,8 +128,6 @@
       </div>
     </div>
 
-
-
      <!-- Step 2 -->
     <div id="step2" class="space-y-4 hidden">
       <div class="mb-4">
@@ -144,8 +142,6 @@
         />
       </div>
       <p id="companyError" class="text-red-500 text-sm hidden">Company Name is required.</p>
-
-
 
       <div class="mb-4">
         <label for="contactPerson" class="block text-gray-700 font-medium mb-2">Contact Person*</label>
@@ -275,7 +271,6 @@
           class="w-full border border-gray-300 rounded-md p-2"
         />
       </div>
-
     </div>
 
 
@@ -292,30 +287,48 @@
 
       <div id="manualUploadFields" class="space-y-4 hidden">
         <div class="mb-4">
+
           <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
-          <input
-            type="file"
-            name="propertyImage"
-            id="propertyImage"
-            class="block w-full text-sm text-gray-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-md file:border-0
-              file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100"
-          />
-        </div>
+             <img id="imagePreview" src="" alt="Property Image" class="w-40 h-40 object-cover rounded mb-4 border border-gray-300" />
+            <input
+              type="file"
+              name="propertyImage"
+              id="propertyImage"
+              class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"
+            />
+
+          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
+           
+            <input
+              type="file"
+              name="propertyImage"
+              id="propertyImage"
+              accept="image/*"
+              class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"
+            />
+          </div>
         
         <div class="mb-4">
           <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
-          <input type="text" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
+          <input type="number" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
 
         <div class="mb-4">
           <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
-          <input type="text" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
+          <input type="number" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
 
+        <!-- Surround with blue highlight border -->
         <div class="mb-6">
           <label for="roomType" class="block text-gray-700 font-semibold mb-2">Rooms</label>
 
@@ -342,6 +355,15 @@
           </ul>
         </div>
 
+        <div class="mb-4">
+          <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
+          <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+          
+        <div class="mb-4">
+          <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
+          <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
 
         <div class="mb-4">
           <label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label>
@@ -349,46 +371,36 @@
         </div>
 
         <div class="mb-4">
-          <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2</label>
+          <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2(Optional)</label>
           <input type="text" name="address2" id="address2" placeholder="Address Line 2" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
-
+      
         <div class="mb-4">
-          <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
-          <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
-        </div>
-
-        <div class="mb-4">
-          <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
-          <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
-        </div>
-
-        <div class="mb-4">
-          <label for="houseZip" class="block text-gray-700 font-medium mb-2">ZIP Code</label>
-          <input type="text" name="houseZip" id="houseZip" placeholder="ZIP Code" class="w-full border border-gray-300 rounded-md p-2" />
+          <label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label>
+          <input type="text" name="postalcode" id="postalcode" placeholder="Postal Code" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
       </div>
-
 
     <div id="reportUploadFields" class="space-y-4 hidden flex flex-col items-start" style="text-align: center;">
       <p class="font-semibold mb-2">Select Your Reports</p>
 
-      <button type="button" onclick="openModal('conditionModal')" class="border border-blue-500 text-blue-500 bg-blue-100 py-2 px-4 rounded-md w-64 text-center">
-          Condition Report
-      </button>
-        
-      <button type="button" class="border border-blue-500 text-blue-500 bg-blue-100 py-2 px-4 rounded-md w-64 text-center">
-          Appliance Report
-      </button>
+        <div class="space-y-4">
+            <button type="button" onclick="openModal('conditionModal')" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+                Condition Report
+            </button>
 
-      <button type="button" class="border border-blue-500 text-blue-500 bg-blue-100 py-2 px-4 rounded-md w-64 text-center">
-          Maintenance Report
-      </button>
+            <button type="button" class="applianceReportBtn w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+                Appliance Report
+            </button>
 
-      <button type="button" class="border border-blue-500 text-blue-500 bg-blue-100 py-2 px-4 rounded-md w-64 text-center">
-          Minimum Standard Reports
-      </button>
-      
+            <button type="button" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+                Maintenance Report
+            </button>
+
+            <button type="button" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+                Minimum Standard Reports
+            </button>
+        </div>
       <!-- This modal pops up after clicking the Condition Report button -->
 
     <!-- Main Condition Report Modal -->
@@ -411,9 +423,85 @@
           <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-md">
             Continue
           </button>
+
+          <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-md">
+            Continue
+          </button>
+
         </div>
       </div>
 
+
+      <!-- Appliance Report Modal -->
+    <div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <div class="bg-white w-full max-w-3xl p-6 rounded-md shadow-lg overflow-y-auto max-h-[90vh]">
+        <h2 class="text-xl font-bold mb-4 text-center">Appliance Report</h2>
+
+        <!-- Windows Dimensions -->
+        <div class="mb-4">
+          <label class="font-semibold block">Windows dimensions - Height</label>
+          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter height">
+        </div>
+        <div class="mb-4">
+          <label class="font-semibold block">Windows dimensions - Length</label>
+          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter length">
+        </div>
+        <div class="mb-4">
+          <label class="font-semibold block">Windows dimensions - Width</label>
+          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter width">
+        </div>
+
+        <!-- Heating/Cooling Brand -->
+        <div class="mb-4">
+          <label class="font-semibold block">Heating/Cooling Brand</label>
+          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter brand">
+        </div>
+
+        <!-- Heating/Cooling Model -->
+        <div class="mb-4">
+          <label class="font-semibold block">Heating/Cooling Serial/Model Number</label>
+          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter serial/model number">
+        </div>
+
+        <!-- Location in Room -->
+        <div class="mb-4">
+          <label class="font-semibold block">Location in Room</label>
+          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter location">
+        </div>
+
+        <!-- Photos of Cooling Area -->
+        <div class="mb-4">
+          <label class="font-semibold block">Photos of Cooling Area</label>
+          <input type="file" class="border rounded w-full px-2 py-1">
+        </div>
+
+        <!-- Comments -->
+        <div class="mb-4">
+          <label class="font-semibold block">Comments</label>
+          <textarea class="border rounded w-full px-2 py-1" rows="4" placeholder="Enter comments"></textarea>
+        </div>
+
+        <!-- Continue Button -->
+        <button type="button" onclick="closeModal('applianceModal')" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-md">
+          Continue
+        </button>
+      </div>
+    </div>
+
+
+    <script>
+            // Open Modal
+      document.querySelector('.applianceReportBtn').addEventListener('click', function () {
+          document.getElementById('applianceModal').classList.remove('hidden');
+      });
+
+      // Close Modal Function
+      function closeModal(modalId) {
+          document.getElementById(modalId).classList.add('hidden');
+      }
+    </script>
+
+<!-- All modals and forms related to the Condition Reports -->
       <!-- Add Category Modal -->
       <div id="addCategoryModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
         <div class="bg-white w-full max-w-sm p-6 rounded-md shadow-md">
@@ -426,7 +514,6 @@
           </div>
         </div>
       </div>
-
 
       <!-- Edit Category Name Modal -->
       <div id="editCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
@@ -460,266 +547,19 @@
         </div>
       </div>
 
-  <!-- Script Section for Category Report the modal that opens when the  -->
-  <!-- All the script files will be organized later -->
-  <script>
-    // Set default categories here that will be displayed by default, will change soon based on 
-    let categories = ['Lounge Room', 'Kitchen', 'Bedroom'];
-
-    function populateCategoryDropdown() {
-      const select = document.getElementById("modalRoomCategory");
-      select.innerHTML = '';
-      categories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
-      });
-    }
-
-    function addRoomBlock(categoryName) {
-      const roomContainer = document.getElementById("roomContainer");
-
-      const roomDiv = document.createElement("div");
-      roomDiv.className = "mb-6 border rounded-md p-4";
-
-      roomDiv.innerHTML = `
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="font-semibold text-lg category-name">${categoryName}</h3>
-          <div class="flex gap-2">
-            <button class="text-blue-500" type="button" onclick="openEditModal(this)" data-category="${categoryName}">
-            <i class="fas fa-edit"></i>
-          </button>
-            <button class="text-red-500" type="button" onclick="deleteRoomBlock(this)"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-
-        <table class="w-full text-center border border-blue-500">
-          <thead class="bg-blue-500 text-white">
-            <tr>
-              <th class="py-2">Room area</th>
-              <th>Clean</th>
-              <th>Undamaged</th>
-              <th>Working</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-t">
-              <td class="py-2">Walls</td>
-              <td><input type="checkbox" name="Walls" value="Clean" onclick="checkOnlyOne(this)"></td>
-              <td><input type="checkbox" name="Walls" value="Undamaged" onclick="checkOnlyOne(this)"></td>
-              <td><input type="checkbox" name="Walls" value="Working" onclick="checkOnlyOne(this)"></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <button type="button" onclick="addNewRoomArea(this)" class="mt-3 text-sm text-blue-600 hover:underline">Add new room area</button>
-      `;
-
-      roomContainer.appendChild(roomDiv);
-    }
-
-
-    function addNewCategory() {
-      document.getElementById("newCategoryInput").value = "";
-      document.getElementById("addCategoryModal").classList.remove("hidden");
-    }
-    
-    function addNewRoomArea(button) {
-      const table = button.previousElementSibling.querySelector("tbody");
-      const newRow = document.createElement("tr");
-      newRow.className = "border-t";
-      newRow.innerHTML = `
-        <td class="py-2"><input type="text" placeholder="New area" class="border px-2 py-1 rounded w-4/5 mx-auto text-center" /></td>
-        <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
-        <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
-        <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
-      `;
-      table.appendChild(newRow);
-    }
-
-    function confirmAddCategory() {
-      const input = document.getElementById("newCategoryInput").value.trim();
-      if (input === "") return alert("Category name cannot be empty.");
-      if (categories.includes(input)) return alert("Category already exists.");
-
-      categories.push(input);
-      populateCategoryDropdown();
-      document.getElementById('modalRoomCategory').value = input;
-      addRoomBlock(input);
-      closeAddCategoryModal();
-    }
-
-    function closeAddCategoryModal() {
-      document.getElementById("addCategoryModal").classList.add("hidden");
-    }
-
-    function checkOnlyOne(checkbox) {
-      const row = checkbox.parentElement.parentElement;
-      const checkboxes = row.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(cb => {
-        if (cb !== checkbox) cb.checked = false;
-      });
-    }
-
-    // function to close the Edit Category Modal
-    function closeEditModal() {
-      document.getElementById("editCategoryModal").classList.add("hidden");
-      currentEditingRoomDiv = null;
-    }
-    // Init on load
-    document.addEventListener("DOMContentLoaded", () => {
-      populateCategoryDropdown();
-      categories.forEach(cat => addRoomBlock(cat));
-    });
-
-    // Edit category Name here
-    function editCategoryName(button) {
-      const roomBlock = button.closest("div.mb-6");
-      const heading = roomBlock.querySelector(".category-name");
-
-      const currentName = heading.textContent;
-      const input = document.createElement("input");
-      input.type = "text";
-      input.value = currentName;
-      input.className = "border px-2 py-1 rounded w-full";
-
-      heading.replaceWith(input);
-      input.focus();
-
-      input.addEventListener("blur", () => saveEditedCategoryName(input, roomBlock, currentName));
-      input.addEventListener("keydown", e => {
-        if (e.key === "Enter") input.blur();
-      });
-    }
-
-  function saveEditedCategoryName(input, roomBlock, oldName) {
-    const newName = input.value.trim();
-    if (!newName) {
-      alert("Category name cannot be empty.");
-      input.focus();
-      return;
-    }
-
-    // Prevent duplicates
-    if (categories.includes(newName) && newName !== oldName) {
-      alert("Category name already exists.");
-      input.focus();
-      return;
-    }
-
-  // Update the categories array
-  const index = categories.indexOf(oldName);
-  if (index !== -1) categories[index] = newName;
-
-  // Replace input with heading again
-  const newHeading = document.createElement("h3");
-  newHeading.className = "font-semibold text-lg category-name";
-  newHeading.textContent = newName;
-  input.replaceWith(newHeading);
-
-  // Update dropdown
-  populateCategoryDropdown();
-}
-    
-
-  function openEditModal(button) {
-  const roomDiv = button.closest("div.mb-6");
-  const categoryName = roomDiv.querySelector(".category-name").textContent;
-
-  // Set room name input
-  document.getElementById("editCategoryInput").value = categoryName;
-
-  // Set width/length (optional)
-  document.getElementById("roomWidth").value = roomDiv.getAttribute("data-width") || "";
-  document.getElementById("roomLength").value = roomDiv.getAttribute("data-length") || "";
-
-  // Populate and select current category
-  populateCategoryDropdown(categoryName);
-
-  // Clone the table from roomDiv and inject into modal
-  const originalTable = roomDiv.querySelector("table").cloneNode(true);
-  // Replace IDs so it's not duplicated in DOM
-  originalTable.id = "editRoomAreaTable";
-  // Also change checkbox onclick to work inside modal (optional: you can leave them the same if it's global)
-  const tableWrapper = document.getElementById("editRoomAreaTableWrapper");
-  tableWrapper.innerHTML = ""; // Clear previous
-  tableWrapper.appendChild(originalTable);
-
-  // Show modal
-  const modal = document.getElementById("editCategoryModal");
-  modal.classList.remove("hidden");
-  modal.setAttribute("data-room-div-id", roomDiv.dataset.id || "");
-  modal.setAttribute("data-original-category", categoryName);
-}
-
-  function populateCategoryDropdown(selectedCategory = "") {
-  const dropdown = document.getElementById("modalRoomCategory");
-  dropdown.innerHTML = ""; // Clear current options
-
-  categories.forEach(cat => {
-    const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
-    if (cat === selectedCategory) option.selected = true;
-    dropdown.appendChild(option);
-  });
-}
-
-function saveEditedCategoryFromModal() {
-  const modal = document.getElementById("editCategoryModal");
-
-  const newName = document.getElementById("editCategoryInput").value.trim();
-  const width = document.getElementById("roomWidth").value;
-  const length = document.getElementById("roomLength").value;
-  const selectedCategory = document.getElementById("modalRoomCategory").value;
-
-  if (!newName) {
-    alert("Room Name cannot be empty.");
-    return;
-  }
-
-  const roomDiv = Array.from(document.querySelectorAll(".category-name"))
-    .find(el => el.textContent === modal.getAttribute("data-original-category"))
-    ?.closest(".mb-6");
-
-  if (roomDiv) {
-    // Update name and dimensions
-    roomDiv.querySelector(".category-name").textContent = newName;
-    roomDiv.setAttribute("data-width", width);
-    roomDiv.setAttribute("data-length", length);
-  }
-
-  closeEditModal();
-}
-
-  </script>
+    <!-- Script Section for Category Report the modal that opens when the  -->
+    <!-- All the script files will be organized later -->
         
-      <!-- This modal pops up after clicking the Appliance Report button -->
-      
-      <!-- This modal pops up after clicking the Maintenance Report button -->
+    <!-- This modal pops up after clicking the Appliance Report button -->
+    
+    <!-- This modal pops up after clicking the Maintenance Report button -->
 
-      <!-- This modal pops up after clicking the Minimum Standard Reports button -->
+    <!-- This modal pops up after clicking the Minimum Standard Reports button -->
 
-        <!-- JS for Modal -->
-        <script>
-          function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-              modal.classList.remove('hidden');
-            }
-          }
-
-          function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-              modal.classList.add('hidden');
-            }
-          }
-        </script>
+      <!-- Store here all the Condition Data  -->
+       <input type="hidden" name="conditionData" id="conditionDataInput">
       </div>
     </div>
-
 
       <!-- Navigation Buttons -->
       <div class="flex justify-between">
@@ -953,45 +793,114 @@ function saveEditedCategoryFromModal() {
       document.getElementById("confirmPassword").classList.remove("border-red-500");
     }
   }
-  
-document.getElementById("registrationForm").addEventListener("submit", function (e) {
-
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-  const nameInput = document.getElementById("name");
-  const nameError = document.getElementById("nameError");
-
-  //  Empty field check
-  if (!name || !email || !password || !confirmPassword) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Missing Fields',
-      text: 'Please fill out all fields.',
-    });
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Password Mismatch',
-      text: 'Passwords do not match. Please try again.',
-    });
-    return;
-  }
 
 
-  Swal.fire({
-    icon: 'success',
-    title: 'Success!',
-    text: 'Registration successful!',
-  }).then(() => {
-    // Optional: submit form manually or reset
-    e.target.submit(); // Uncomment if using server-side
+    document.getElementById('propertyImage').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('imagePreview');
 
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = '';
+    }
   });
+  
+  // This part will be about submitting the Registration Form data
+  document.getElementById("registrationForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent default form submission
+
+    // normally collect information about the data 
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const nameInput = document.getElementById("name");
+    const nameError = document.getElementById("nameError");
+
+    // Empty field check
+    if (!name || !email || !password || !confirmPassword) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Missing Fields',
+            text: 'Please fill out all fields.',
+        });
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Password Mismatch',
+            text: 'Passwords do not match. Please try again.',
+        });
+        return;
+    }
+
+    const roomData = [];
+    const roomBlocks = document.querySelectorAll("#roomContainer .mb-6");
+    console.log("Found rooms: ", roomBlocks.length);
+
+    roomBlocks.forEach(roomDiv => {
+        const categoryNameElement = roomDiv.querySelector(".category-name");
+        const categoryName = categoryNameElement ? categoryNameElement.textContent.trim() : "Unknown";
+
+        const width = roomDiv.getAttribute("data-width") || '';
+        const length = roomDiv.getAttribute("data-length") || '';
+
+        const areas = [];
+
+        roomDiv.querySelectorAll("tbody tr").forEach(row => {
+            let areaName = "";
+
+            const input = row.querySelector("td input[type='text']");
+            if (input) {
+                areaName = input.value.trim();
+            } else {
+                const cell = row.querySelector("td");
+                if (cell) {
+                    areaName = cell.textContent.trim();
+                }
+            }
+
+            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+            let status = '';
+            checkboxes.forEach(cb => {
+                if (cb.checked) status = cb.value;
+            });
+
+            areas.push({
+                areaName: areaName,
+                status: status
+            });
+        });
+
+        roomData.push({
+            categoryName: categoryName,
+            width: width,
+            length: length,
+            areas: areas
+        });
+    });
+
+    console.log("Final Room Data:", roomData);
+
+    // Put the serialized roomData into the hidden input
+    document.getElementById('conditionDataInput').value = JSON.stringify(roomData);
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Registration successful!',
+    }).then(() => {
+        // Now submit the form (with the hidden input included)
+        e.target.submit();
+    });
 });
 
 
@@ -1008,6 +917,8 @@ document.getElementById("registrationForm").addEventListener("submit", function 
         modal.classList.add('hidden');
       }
     }
+
+
   </script>
 
 </body>
