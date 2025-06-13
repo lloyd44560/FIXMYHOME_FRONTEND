@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
@@ -38,6 +38,6 @@ class TraderRegistrationCreateView(CreateView):
             formset.instance = trader
             formset.save()
             
-            return reverse_lazy('login')
+            return redirect(self.success_url)
         else:
             return render(request, self.template_name, {'form': form, 'formset': formset})

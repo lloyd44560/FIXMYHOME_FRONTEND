@@ -1,0 +1,6 @@
+renter/__pycache__
+renter/migrations/__pycache__
+
+trader/__pycache__
+trader/migrations/__pycache__
+trader/models/__pycache__

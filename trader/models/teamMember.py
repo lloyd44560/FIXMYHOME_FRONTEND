@@ -15,5 +15,10 @@ class TeamMember(models.Model):
     time_in = models.TimeField(null=True, blank=True)
     time_out = models.TimeField(null=True, blank=True)
 
+    # For Sole Trader
+    IsWorkInHoliday = models.BooleanField(default=False)
+    holidayTime_in = models.TimeField(null=True, blank=True)
+    holidayTime_out = models.TimeField(null=True, blank=True)
+
     def __str__(self):
         return f"{self.name} ({self.id})"

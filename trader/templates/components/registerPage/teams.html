@@ -4,7 +4,7 @@
 <div id="step3" class="space-y-4 hidden">
     <!-- Team Member Name -->
     <div>
-        <label for="teamMemberName" class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
+        <label id="nameLabel" for="teamMemberName" class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
         {{ form.name|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
         <span id="teamMemberNameError" class="text-red-500 text-xs"></span>
     </div>
@@ -91,20 +91,23 @@
 
     <!-- Employee Contact Number -->
     <div>
-        <label class="block text-sm font-medium text-gray-700">Employee contact number (if available) <span class="text-red-500">*</span></label>
+        <label id="contactLabel" class="block text-sm font-medium text-gray-700">Employee contact number (if available) <span class="text-red-500">*</span></label>
         {{ form.contact_number|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="empContactNumber" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Employee Email -->
     <div>
-        <label class="block text-sm font-medium text-gray-700">Employee email (if available)</label>
+        <label id="emailLabel" class="block text-sm font-medium text-gray-700">Employee email (if available)</label>
         {{ form.email|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="empEmail" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Active Postal Codes -->
     <div>
-        <label class="block text-sm font-medium text-gray-700">Active postal codes</label>
+        <label id="postal_nums" class="block text-sm font-medium text-gray-700">Active postal codes</label>
         {{ form.active_postal_codes|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="empPostal" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Holidays* (Not available to work) -->
@@ -129,17 +132,40 @@
         <div class="space-y-6 bg-white p-6 rounded shadow-md w-full max-w-md flex flex-col items-center">
             <!-- Time Block 1 -->
             <div class="w-full">
-                <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
+                <label id="timeIn" class="block font-semibold text-gray-800 mb-2 text-center">Employee time-in*</label>
                 <div class="flex items-center gap-3 justify-center">
                     {{ form.time_in|add_class:"border border-gray-300 px-2 py-1 rounded text-center w-full" }}
                 </div>
+                <span id="empTimeIn" class="text-red-500 text-xs"></span>
             </div>
             <!-- Time Block 2 -->
             <div class="w-full">
-                <label class="block font-semibold text-gray-800 mb-2 text-center">Employee time in-out*</label>
+                <label id="timeOut" class="block font-semibold text-gray-800 mb-2 text-center">Employee time-out</label>
                 <div class="flex items-center gap-3 justify-center">
                     {{ form.time_out|add_class:"border border-gray-300 px-2 py-1 rounded text-center w-full" }}
                 </div>
+                <span id="empTimeOut" class="text-red-500 text-xs"></span>
+            </div>
+            <!-- Do you work in Holidays? -->
+            <div id="wrkInholiday" class="flex items-center space-x-2 hidden">
+                <label for="{{ form.IsWorkInHoliday.id_for_label }}" class="block text-sm font-medium text-gray-700">Do you work in Holidays?</label>
+                {{ form.IsWorkInHoliday|add_class:"toggle-checkbox w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" }}
+            </div>
+            <!-- Holiday Time Block 1 -->
+            <div id="holidayTimeIn_div" class="w-full holiday-time-block hidden">
+                <label id="timeIn" class="block font-semibold text-gray-800 mb-2 text-center">Holiday time-in</label>
+                <div class="flex items-center gap-3 justify-center">
+                    {{ form.holidayTime_in|add_class:"border border-gray-300 px-2 py-1 rounded text-center w-full" }}
+                </div>
+                <span id="holidayTimeIn" class="text-red-500 text-xs"></span>
+            </div>
+            <!-- Holiday Time Block 2 -->
+            <div id="holidayTimeOut_div" class="w-full holiday-time-block hidden">
+                <label id="timeOut" class="block font-semibold text-gray-800 mb-2 text-center">Holiday time-out*</label>
+                <div class="flex items-center gap-3 justify-center">
+                    {{ form.holidayTime_out|add_class:"border border-gray-300 px-2 py-1 rounded text-center w-full" }}
+                </div>
+                <span id="holidayTimeOut" class="text-red-500 text-xs"></span>
             </div>
         </div>
     </div>

@@ -41,6 +41,14 @@ class TraderRegistration(models.Model):
     industry = models.CharField(max_length=100, choices=INDUSTRIES_CHOICES, blank=True, null=True)
     other_expertise = models.CharField(max_length=100, choices=INDUSTRIES_CHOICES, blank=True, null=True)
 
+    # Rates
+    state = models.CharField(max_length=100, blank=True)
+    municipality = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    address_line_1 = models.CharField(max_length=255, blank=True, null=True)
+    address_line_2 = models.CharField(max_length=255, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True)
+
     def __str__(self):
         return self.name
     

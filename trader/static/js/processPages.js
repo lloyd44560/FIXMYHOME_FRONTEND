@@ -46,7 +46,7 @@ backBtn.addEventListener('click', () => {
     console.log(`Current step: ${currentStep + 1} of ${steps.length}`);
     // Only proceed if the current step is visible
     if (!steps[currentStep].classList.contains('hidden') && currentStep > 0) {
-        if (currentStep === 2) {
+        if (currentStep === 2 && companyType.value.trim() === 'sole_trader') {
             currentStep = 0;
             updateStep();
         } else {

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Triggers
     const nextBtn = document.getElementById('nextBtn');
 
+    // ####################################################################################
     // Form Fields- Details
     const nameInput = document.getElementById('id_name');
     const emailInput = document.getElementById('id_email');
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordError = document.getElementById('passwordError');
     const confirmPasswordError = document.getElementById('confirmPasswordError');
 
+    // ####################################################################################
     // Form Fields - Company
     const companyNameInput = document.getElementById('id_company_name');
     const companyAddressInput = document.getElementById('id_company_address');
@@ -40,13 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: phoneInput, label: 'Phone', error: phoneError },
         { id: passwordInput, label: 'Password', error: passwordError },
         { id: confirmPasswordInput, label: 'Confirm Password', error: confirmPasswordError },
-
+        // ####################################################################################
         { id: companyNameInput, error: companyNameError, label: 'Company Name' },
         { id: companyAddressInput, error: companyAddressError, label: 'Company Address' },
         { id: companyEmailInput, error: companyEmailError, label: 'Company Email' }, 
         { id: contractorLicenseInput, error: contractorLicenseError, label: 'Contractor License Number' },
         { id: abnInput, error: abnError, label: 'ABN' },
         { id: industryInput, error: industryError, label: 'Industry Expertise' },
+        // ####################################################################################
     ];
 
     fields.forEach(field => {
@@ -64,7 +67,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     nextBtn.addEventListener('click', function(e) {
+        console.log('CLICKED');
         if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
+            console.log('STEPS', currentStep);
             if (currentStep === 0) { // Step 1 validation (personal details)
                 // Validate Name Input
                 if (nameInput.value.trim() === '') {
@@ -185,6 +190,80 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentStep++;
                     updateStep();
                 }
+            } else if (currentStep === 2) { // Step 3 validation (teams)
+                console.log('PUMAPASOK SA TEAMS')
+                // Get all team member forms by their Django-generated IDs
+                const teamNameInputs = document.querySelectorAll('input[name$="-name"]');
+                const teamPositionInputs = document.querySelectorAll('input[name$="-position"]');
+                const empPostalInputs = document.querySelectorAll('input[name$="-active_postal_codes"]');
+                const teamTimeInInputs = document.querySelectorAll('input[name$="-time_in"]');
+                const teamTimeOutInputs = document.querySelectorAll('input[name$="-time_out"]');
+
+                let hasError = false;
+
+                teamNameInputs.forEach((input) => {
+                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
+                    if (input.value.trim() === '') {
+                        hasError = true;
+                        if (errorSpan) errorSpan.textContent = 'Team member name is required!';
+                        input.focus();
+                    } else if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                });
+
+                teamPositionInputs.forEach((input) => {
+                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
+                    if (input.value.trim() === '') {
+                        hasError = true;
+                        if (errorSpan) errorSpan.textContent = 'Position is required!';
+                        input.focus();
+                    } else if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                });
+
+                empPostalInputs.forEach((input) => {
+                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
+                    if (input.value.trim() === '') {
+                        hasError = true;
+                        if (errorSpan) errorSpan.textContent = 'Postal code is required!';
+                        input.focus();
+                    } else if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                });
+
+                teamTimeInInputs.forEach((input) => {
+                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
+                    if (input.value.trim() === '') {
+                        hasError = true;
+                        if (errorSpan) errorSpan.textContent = 'Time in is required!';
+                        input.focus();
+                    } else if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                });
+
+                teamTimeOutInputs.forEach((input) => {
+                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
+                    if (input.value.trim() === '') {
+                        hasError = true;
+                        if (errorSpan) errorSpan.textContent = 'Time out is required!';
+                        input.focus();
+                    } else if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                });
+
+                if (hasError) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // If all validations pass, proceed to next step
+                currentStep++;
+                updateStep();
             } else {
                 // For other steps, just proceed
                 currentStep++;

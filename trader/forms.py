@@ -13,8 +13,10 @@ class TeamMemberForm(forms.ModelForm):
             'active_postal_codes': forms.TextInput(attrs={'placeholder': '3070, 3071, 3072'}), 
             'labour_rate_per_hour': forms.TextInput(attrs={'placeholder': 'XX.XX'}),
             'callout_rate': forms.TextInput(attrs={'placeholder': 'XX.XX'}),
-            'time_in': forms.TimeInput(attrs={}),
-            'time_out': forms.TimeInput(attrs={})
+            'time_in': forms.TimeInput(attrs={'type': 'time'}),
+            'time_out': forms.TimeInput(attrs={'type': 'time'}),
+            'holidayTime_in': forms.TimeInput(attrs={'type': 'time'}),
+            'holidayTime_out': forms.TimeInput(attrs={'type': 'time'})
         }
 
 TeamMemberFormSet = inlineformset_factory(
