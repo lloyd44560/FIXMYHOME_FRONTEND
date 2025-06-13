@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     nextBtn.addEventListener('click', function(e) {
-        console.log('CLICKED');
         if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
             console.log('STEPS', currentStep);
             if (currentStep === 0) { // Step 1 validation (personal details)

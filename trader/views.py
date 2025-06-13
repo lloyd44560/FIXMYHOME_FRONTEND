@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView
+from django.views.generic import TemplateView, CreateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 
@@ -54,3 +54,7 @@ class TraderRegistrationCreateView(CreateView):
             return redirect(self.success_url)
         else:
             return render(request, self.template_name, {'form': form, 'formset': formset})
+
+# View for the home page
+class TraderHomeView(TemplateView):
+    template_name = 'pages/home.html'

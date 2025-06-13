@@ -19,7 +19,7 @@
       </svg>
     </button>
 
-    <h2 class="text-center text-2xl font-bold mb-6">Register as Trader</h2>
+    <h2 class="text-center text-2xl font-bold mb-6">Register as Agent</h2>
 
     <!-- Stepper -->
     <div class="flex justify-between mb-6">
@@ -33,26 +33,20 @@
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step3-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">3</div>
-        <span id="step3-label" class="mt-2 text-sm font-medium text-gray-600">Team</span>
-      </div>
-      <div class="flex-1 flex flex-col items-center">
-        <div id="step4-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">4</div>
         <span class="mt-2 text-sm font-medium text-gray-600">Rates</span>
       </div>
     </div>
 
     <form class="space-y-4" style="height: 480px; overflow-y: auto;" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-        <div class="mb-4">
+      <div class="mb-4">
           <!-- Step 1 -->
           {% include "components/registerSection/details.html" %} 
           <!-- Step 2 -->
           {% include "components/registerSection/company.html" %}
           <!-- Step 3 -->
-          {% include "components/registerSection/teams.html" %}
-          <!-- Step 4 -->
           {% include "components/registerSection/rates.html" %}
-        </div>
+      </div>
 
       <!-- Navigation Buttons -->
       <div class="flex justify-between">
@@ -73,14 +67,6 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- Functions -->
-<script src="/static/js/AddLicenseFunc.js"></script>
-<script src="/static/js/AddTeamFunc.js"></script>
-<script src="/static/js/generateCalendar.js"></script>
-<script src="/static/js/processPages.js"></script>
-<script src="/static/js/whatTypeCompany.js"></script>
-<script src="/static/js/togglePassword.js"></script>
-
-<!-- Validations -->
-<script src="/static/js/fieldValidation.js"></script>
+<script src="/static/js/processPage.js"></script>
+<script src="/static/js/togglePass.js"></script>
 {% endblock %}
