@@ -24,6 +24,19 @@ class TraderRegistrationCreateView(CreateView):
         print("Form errors:", form.errors)
         print("Formset errors:", formset.errors)
         if form.is_valid() and formset.is_valid():
+            # Duplicate username or email check
+            username = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+
+            if User.objects.filter(username=username).exists():
+                form.add_error('name', 'Username already exists.')
+            if User.objects.filter(email=email).exists():
+                form.add_error('email', 'Email already exists.')
+
+            if form.errors:
+                # Return with form errors due to duplicates
+                return render(request, self.template_name, {'form': form, 'formset': formset})
+        
             trader = form.save(commit=False)
             user = User.objects.create_user(
                 username=form.cleaned_data['name'],

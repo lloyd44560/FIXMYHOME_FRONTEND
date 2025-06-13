@@ -1,3 +1,5 @@
+{% load widget_tweaks %}
+
 <div id="step4" class="space-y-4 hidden">
     <!-- GST Registered Toggle -->
     <div class="flex items-center justify-between">
@@ -26,42 +28,42 @@
     <!-- State -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">State <span class="text-red-500">*</span></label>
-        <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select state</option>
-        </select>
+        {{ form.state|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="rateState" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Municipality -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Municipality <span class="text-red-500">*</span></label>
-        <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select municipality</option>
-        </select>
+        {{ form.municipality|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="rateMunicipality" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- City -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">City <span class="text-red-500">*</span></label>
-        <select class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select city</option>
-        </select>
+        {{ form.city|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="rateCity" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Address Line 1 -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1 <span class="text-red-500">*</span></label>
-        <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        {{ form.address_line_1|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="rateAddressOne" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Address Line 2 -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
-        <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        {{ form.address_line_2|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="rateAddressTwo" class="text-red-500 text-xs"></span>
     </div>
 
     <!-- Postal Code -->
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code <span class="text-red-500">*</span></label>
-        <input type="text" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        {{ form.postal_code|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <span id="ratePostal" class="text-red-500 text-xs"></span>
     </div>
 </div>

@@ -18,17 +18,24 @@ let emailLabel = document.getElementById('emailLabel');
 
 if (companyType && step3Label) {
     companyType.addEventListener('change', function() {
-        console.log('HIDDEN');
         if (companyType.value.trim() === 'company') {
             step3Indicator.textContent = '3';
             step4Indicator.textContent = '4';
             step3Label.textContent = 'Team';
+            postalNums.textContent = 'Active postal codes';
+            contactLabel.textContent = 'Employee contact number (if available)';
+            emailLabel.textContent = 'Employee email (if available)';
+            timeIn.textContent = 'Employee time-in';
+            timeOut.textContent = 'Employee time-out';
+
+            wrkInholiday.classList.add('hidden')
+            holidayTime_in.classList.add('hidden')
+            holidayTime_out.classList.add('hidden')
 
             if (step2div.classList.contains('hidden')) {
                 step2div.classList.remove('hidden')
             }
         } else if (companyType.value.trim() === 'sole_trader') {
-            console.log('SOLE TRADER');
             step2div.classList.add('hidden')
             step3Indicator.textContent = '2';
             step4Indicator.textContent = '3';
@@ -46,7 +53,6 @@ if (companyType && step3Label) {
             if (soleTraderHoliday.classList.contains('hidden')) {
                 step2div.classList.remove('hidden');
             }
-
         } else {
             step3Label.textContent = '';
         }

@@ -191,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateStep();
                 }
             } else if (currentStep === 2) { // Step 3 validation (teams)
-                console.log('PUMAPASOK SA TEAMS')
                 // Get all team member forms by their Django-generated IDs
                 const teamNameInputs = document.querySelectorAll('input[name$="-name"]');
                 const teamPositionInputs = document.querySelectorAll('input[name$="-position"]');
@@ -264,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // If all validations pass, proceed to next step
                 currentStep++;
                 updateStep();
-            } else {
+            }  else {
                 // For other steps, just proceed
                 currentStep++;
                 updateStep();
