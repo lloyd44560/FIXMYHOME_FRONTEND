@@ -63,7 +63,6 @@ def register(request):
 
 def login_page(request):
     return render(request, 'renter/login.html')
-
 def login_view(request):
     locked_until_str = request.session.get('locked_until')
     if locked_until_str:
@@ -77,6 +76,9 @@ def login_view(request):
             })
         else:
             request.session.pop('locked_until', None)
+
+    # Initialize next_url for GET requests
+    next_url = request.GET.get('next', '/welcome/')
 
     if request.method == 'POST':
         email = request.POST.get('email').strip().lower()
@@ -96,13 +98,11 @@ def login_view(request):
                     'remaining_seconds': remaining_seconds
                 })
             elif fail_record.is_locked:
-                # unlock if time passed
                 fail_record.is_locked = False
                 fail_record.attempts = 0
                 fail_record.locked_until = None
                 fail_record.save()
 
-            # 🔐 Check password
             user = authenticate(request, username=user_obj.username, password=password)
             if user:
                 login(request, user)
@@ -110,14 +110,13 @@ def login_view(request):
                 fail_record.save()
                 request.session.pop('locked_until', None)
 
-                # Determine User Role
-                if user_obj.is_staff: # Trader
+                if user_obj.is_staff:
                     next_url = request.GET.get('next', '/trader/home')
                     return redirect(next_url)
-                elif user_obj.is_superuser: # Agent
+                elif user_obj.is_superuser:
                     next_url = request.GET.get('next', '/agent/home')
                     return redirect(next_url)
-                else: # Default Renter
+                else:
                     next_url = request.GET.get('next', '/welcome/')
                     return redirect(next_url)
                 
@@ -136,15 +135,18 @@ def login_view(request):
                 fail_record.save()
                 remaining = 3 - fail_record.attempts
                 return render(request, 'renter/login.html', {
-                    'error': f"Incorrect password. {remaining} attempt(s) left."
+                    'error': f"Incorrect password. {remaining} attempt(s) left.",
+                    'next': next_url
                 })
 
         except User.DoesNotExist:
             return render(request, 'renter/login.html', {
-                'error': 'User with this email does not exist.'
+                'error': 'User with this email does not exist.',
+                'next': next_url
             })
 
     return render(request, 'renter/login.html', {'next': next_url})
+
     
 @csrf_exempt
 def register_renter(request):

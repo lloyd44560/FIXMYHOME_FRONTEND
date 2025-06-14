@@ -4,31 +4,37 @@
     <meta charset="UTF-8">
     <title>Chat Thread</title>
     <script src="https://cdn.tailwindcss.com"></script>
-      {% load static %}
+    {% load static %}
+    {% include 'renter/home/navbar.html' %}
 </head>
-<body class="bg-white min-h-screen flex flex-col justify-between">
+<body class="flex flex-col min-h-screen bg-blue-50">
+
     <!-- Header -->
-    <div class="flex items-center justify-between p-4 shadow">
+    <div class="flex items-center justify-between p-4 shadow bg-blue-50">
         <div class="flex items-center space-x-2">
-            <a href="{% url 'demo_chat' %}" class="text-xl">&larr;</a>
-            <h1 class="text-lg font-semibold">Job #{{ job_number }}</h1>
+            <a href="{% url 'demo_chat' %}" class="text-xl hover:text-blue-600 transition">&larr;</a>
+            <h1 class="text-lg font-semibold text-gray-700">Job #{{ job_number }}</h1>
         </div>
-        <img src="{% static 'images/user3.jpg' %}" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+        </svg>
+        </div>
     </div>
 
     <!-- Messages -->
-    <div class="flex-1 p-4 space-y-4 overflow-y-auto">
+    <div class="flex-1 p-4 space-y-4 overflow-y-auto bg-blue-50">
         {% for msg in messages %}
             {% if msg.is_sender %}
                 <div class="flex justify-end">
-                    <div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs">
+                    <div class="bg-blue-500 text-white p-3 rounded-lg max-w-xs break-words">
                         {{ msg.message }}
                     </div>
                 </div>
             {% else %}
                 <div class="flex justify-start">
-                    <div class="bg-gray-100 text-black p-2 rounded-lg max-w-xs">
-                        <span class="font-bold text-sm block">{{ msg.sender }}</span>
+                    <div class="bg-gray-100 text-black p-3 rounded-lg max-w-xs break-words">
+                        <span class="font-bold text-sm block mb-1">{{ msg.sender }}</span>
                         {{ msg.message }}
                     </div>
                 </div>
@@ -37,11 +43,12 @@
     </div>
 
     <!-- Input -->
-    <div class="flex items-center p-4 border-t">
-        <button class="text-blue-500 text-2xl mr-2">+</button>
-        <input type="text" placeholder="Type a message" class="flex-1 border rounded-full px-4 py-2 focus:outline-none">
-        <button class="text-blue-500 text-2xl ml-2">&#10148;</button>
+    <div class="flex items-center p-4 border-t bg-white sticky bottom-0">
+        <button class="text-blue-500 text-2xl mr-2 hover:text-blue-700 transition">+</button>
+        <input type="text" placeholder="Type a message" class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring focus:border-blue-300">
+        <button class="text-blue-500 text-2xl ml-2 hover:text-blue-700 transition">&#10148;</button>
     </div>
 
+    {% include 'renter/home/footer.html' %}
 </body>
 </html>
