@@ -109,7 +109,17 @@ def login_view(request):
                 fail_record.attempts = 0
                 fail_record.save()
                 request.session.pop('locked_until', None)
-                return redirect(next_url)
+
+                # Determine User Role
+                if user_obj.is_staff: # Trader
+                    next_url = request.GET.get('next', '/trader/home')
+                    return redirect(next_url)
+                elif user_obj.is_superuser: # Agent
+                    next_url = request.GET.get('next', '/agent/home')
+                    return redirect(next_url)
+                else: # Default Renter
+                    next_url = request.GET.get('next', '/welcome/')
+                    return redirect(next_url)
             else:
                 fail_record.attempts += 1
                 if fail_record.attempts >= 3:
@@ -133,7 +143,6 @@ def login_view(request):
                 'error': 'User with this email does not exist.'
             })
 
-    next_url = request.GET.get('next', '/welcome/')
     return render(request, 'renter/login.html', {'next': next_url})
     
 @csrf_exempt
