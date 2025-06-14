@@ -59,6 +59,10 @@
         </svg>
         <span>Account</span>
       </a>
+      <form id="logout-form" method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="text-red-600 font-bold hover:underline">Logout</button>
+      </form>
     </div>
   </nav>
   <!-- Hero Section -->

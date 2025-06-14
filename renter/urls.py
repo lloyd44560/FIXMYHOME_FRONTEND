@@ -11,8 +11,7 @@ urlpatterns = [
     path('login_renter/', views.login_view, name='login_renter'),  # Handles form POST
     path('welcome/', views.welcome, name='welcome'),
     path('login_renter/', views.login_view, name='login_renter'),
-    path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
-    
+    path('logout/', LogoutView.as_view(next_page='/login_renter/', http_method_names=['get', 'post']), name='logout'),
 
     path('password_reset/', auth_views.PasswordResetView.as_view(
         template_name='renter/password_reset_form.html',

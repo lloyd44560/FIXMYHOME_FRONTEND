@@ -159,5 +159,5 @@ AUTHENTICATION_BACKENDS = (
 
 
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/login_renter/'
 LOGIN_REDIRECT_URL = '/welcome/'
