@@ -25,9 +25,10 @@ SECRET_KEY = 'django-insecure-_-8d_oxo-u)l^kd-4e0l&r(k3y@1_(k#ady0^r*%a!zc841q+c
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-# ALLOWED_HOSTS = ['sandbox.fixmh.com']
-ALLOWED_HOSTS = []
+SITE_ID = 1
+ALLOWED_HOSTS = ['sandbox.fixmh.com', 'www.sandbox.fixmh.com', '127.0.0.1', 'localhost']
+DEFAULT_FROM_EMAIL = 'noreply@fixmh.com'
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -40,10 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',  # For customizing form widgets in templates - pip install django-widget-tweaks
-    'social_django',
-    'agent',
     'renter',
     'trader',
+    'social_django',
+     'agent',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'FMH.urls'
@@ -79,7 +81,7 @@ WSGI_APPLICATION = 'FMH.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Uncomment this if production 
+# Uncomment this if production
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -152,7 +154,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.facebook.FacebookOAuth2',
 )
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '631748169703-bsqbbvm2h2dtr15jv6b7eho7lmk25l75.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '693457663468013'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'b605a74188027d7be5c2f5a93abaf1d2'
+
+
+
+# Email backend settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'wsi.jborlagdan@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'klpbiornbuaikiny'  # App password (not your Gmail password)
+DEFAULT_FROM_EMAIL = 'Fix My House <fmhnoreply@gmail.com>'
+
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/welcome/'

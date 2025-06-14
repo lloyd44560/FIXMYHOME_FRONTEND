@@ -14,7 +14,8 @@ from datetime import timedelta
 from django.contrib.auth import get_user_model
 import json
 from django.core.mail import send_mail
-
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
 User = get_user_model()
 
 def home(request):
