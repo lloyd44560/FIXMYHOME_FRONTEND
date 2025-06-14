@@ -162,7 +162,7 @@ def register_renter(request):
           # Room data
         condition_data = request.POST.get('conditionData')
 
-        print("✅ Received Condition Data (Raw JSON):", condition_data)
+        print(" Received Condition Data (Raw JSON):", condition_data)
 
         # Optional: Save file
         if property_image:

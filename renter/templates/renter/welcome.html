@@ -1,101 +1,176 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Welcome Home - FixMyHome</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/heroicons@2.0.16/dist/heroicons.min.js"></script>
 </head>
-<body class="bg-white text-gray-800">
+<body class="bg-gray-50">
 
-  <!-- Navbar -->
-  <nav class="flex justify-between items-center px-6 py-4 border-b shadow-sm">
-    <h1 class="text-2xl font-bold">FixMyHome</h1>
-    <div class="grid grid-cols-3 gap-6">
-      <a href="#" class="text-blue-600 font-medium hover:underline">Home</a>
-      <a href="#" class="text-gray-600 hover:underline">Messages</a>
-      <a href="#" class="text-gray-600 hover:underline">Account</a>
+    <!-- Navbar -->
+  <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
+    <!-- Logo -->
+    <h1 class="text-3xl font-bold text-blue-600 flex items-center space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
+      </svg>
+      <span>FixMyHome</span>
+    </h1>
+
+    <!-- Hamburger Button -->
+    <button id="menu-btn" class="block md:hidden focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Nav Links -->
+    <div id="menu"
+      class="hidden md:flex flex-col md:flex-row md:items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 shadow md:shadow-none z-50 space-y-4 md:space-y-0 md:space-x-8">
+      
+      <!-- Home -->
+      <a href="#" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
+        </svg>
+        <span>Home</span>
+      </a>
+
+      <!-- Messages -->
+      <a href="/chat/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 8h10M7 12h6m-6 4h.01M4 6h16v12H4z" />
+        </svg>
+        <span>Messages</span>
+      </a>
+
+      <!-- Account -->
+      <a href="/account/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Account</span>
+      </a>
     </div>
   </nav>
-
   <!-- Hero Section -->
-  <section class="flex flex-col md:flex-row items-center justify-between px-6 py-10 bg-gray-50">
-    <img src="https://via.placeholder.com/300x200" alt="Hero" class="w-full md:w-1/2 rounded-lg shadow-md mb-6 md:mb-0">
-    <div class="md:w-1/2 md:pl-10">
-      <h2 class="text-3xl font-bold mb-4">Welcome Back {{ renter.name }}!</h2>
-      <p class="text-gray-600 mb-2">Quickly report maintenance issues, track requests, and manage your property with ease.</p>
+  <section class="flex flex-col md:flex-row items-center justify-between px-8 py-16 bg-gradient-to-r from-blue-100 to-blue-50">
+    <img src="https://via.placeholder.com/400x250" alt="Hero" class="w-full md:w-1/2 rounded-lg shadow-lg mb-6 md:mb-0 hover:scale-105 transition">
+    <div class="md:w-1/2 md:pl-12">
+      <h2 class="text-4xl font-bold mb-4 text-gray-800">Welcome Back {{ renter.name }}!</h2>
+      <p class="text-gray-600 mb-6">Quickly report maintenance issues, track requests, and manage your property with ease.</p>
+      <a href="#" class="inline-block bg-blue-600 text-white py-3 px-6 rounded-full shadow hover:bg-blue-700 transition">Get Started</a>
     </div>
   </section>
 
-  <div class="bg-white mx-5 my-4 p-6 rounded-lg shadow">
-    
-  </div>
-  <!-- Section: Report Issue -->
-  <div class="p-6">
-    <div class="border border-blue-500 rounded-xl p-4 mb-4">
-      <h3 class="text-xl text-blue-600 font-bold mb-1">Report Required Maintenance/Issues</h3>
-      <p class="text-gray-600">Create a new request for traders.</p>
+  <!-- Features Section -->
+  <section class="grid md:grid-cols-3 gap-6 px-8 my-12">
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-bold text-blue-600 mb-2">Report Maintenance</h3>
+      <p class="text-gray-600 mb-4">Easily create and track your maintenance requests.</p>
+      <a href="#" class="text-blue-600 hover:underline">Report Issue →</a>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-bold text-blue-600 mb-2">View My Requests</h3>
+      <p class="text-gray-600 mb-4">Monitor the status of all your service requests.</p>
+      <a href="#" class="text-blue-600 hover:underline">View Requests →</a>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-bold text-blue-600 mb-2">Complete Profile</h3>
+      <p class="text-gray-600 mb-4">Complete your profile for a better experience.</p>
+      <a href="#" class="text-blue-600 hover:underline">Update Profile →</a>
+    </div>
+  </section>
+
+  <!-- Progress Section -->
+  <section class="bg-white mx-8 my-6 p-6 rounded-lg shadow">
+    <h3 class="text-2xl font-bold mb-4 text-gray-800">Complete Your Profile</h3>
+    <p class="text-gray-600 mb-4">Profiles that are 100% complete get more attention from traders.</p>
+
+    <div class="w-full bg-blue-100 rounded-full h-3 mb-4">
+      <div class="bg-blue-600 h-3 rounded-full" style="width: 75%;"></div>
     </div>
 
-    <!-- Section: My Requests -->
-    <div class="border border-blue-500 rounded-xl p-4 mb-4">
-      <h3 class="text-xl text-blue-600 font-bold mb-1">My Requests</h3>
-      <p class="text-gray-600">See my Request status.</p>
-    </div>
-
-    <!-- Section: Complete Profile -->
-    <div class="border border-blue-500 rounded-xl p-4">
-      <h3 class="text-md font-semibold text-gray-800 mb-2">Complete your profile</h3>
-      <p class="text-sm text-gray-600 mb-4">By completing all profile details, you have a better chance of getting more Traders to work with you.</p>
-      
-      <!-- Progress Bar -->
-      <div class="w-full bg-blue-100 rounded-full h-2.5 mb-4">
-        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 75%;"></div>
+    <div class="space-y-3">
+      <div class="flex items-center bg-gray-100 p-4 rounded-lg">
+        <span class="text-green-500 text-2xl mr-3">✓</span>
+        <span>Add your personal details</span>
       </div>
-
-      <!-- Checklist -->
-      <div class="space-y-3">
-        <div class="bg-gray-100 rounded-lg p-3 flex items-center">
-          <span class="text-green-500 font-bold text-lg mr-2">✓</span>
-          <span>Add your details</span>
-          
-          <!-- <h2 class="text-xl font-bold mb-4">Your Profile</h2>
-              <p><strong>Email:</strong> {{ renter.email }}</p>
-              <p><strong>Phone:</strong> {{ renter.phone }}</p>
-              <p><strong>Company:</strong> {{ renter.company_name }}</p>
-              <p><strong>Contact Person:</strong> {{ renter.contact_person }} ({{ renter.contact_phone }})</p>
-              <p><strong>Address:</strong> {{ renter.address_line1 }}, {{ renter.city }}, {{ renter.state }}, ZIP {{ renter.zip_code }}</p>
-              {% if renter.property_image %} -->
-      <p class="mt-4"><strong>Uploaded Property Image:</strong></p>
-      <img src="{{ renter.property_image.url }}" alt="Property Image" class="w-64 h-auto rounded shadow mt-2" />
-    {% endif %}
-        </div>
-        <div class="bg-gray-100 rounded-lg p-3 flex items-center">
-          <span class="text-green-500 font-bold text-lg mr-2">✓</span>
-          <span>Add your agent details</span>
-        </div>
-        <div class="bg-blue-50 rounded-lg p-3 flex justify-between items-center">
-          <div class="flex items-center">
-            <span class="text-blue-500 font-bold text-lg mr-2">i</span>
-            <span>Complete Condition Report</span>
-          </div>
-          <a href="#" class="text-blue-600 font-medium">→</a>
-        </div>
+      <div class="flex items-center bg-gray-100 p-4 rounded-lg">
+        <span class="text-green-500 text-2xl mr-3">✓</span>
+        <span>Add your agent details</span>
       </div>
-
-      <!-- View All Tasks -->
-      <div class="mt-4 text-right">
-        <a href="#" class="text-blue-600 font-semibold hover:underline">View all tasks</a>
+      <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
+        <div class="flex items-center">
+          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+          <span>Complete Condition Report</span>
+        </div>
+        <a href="#" class="text-blue-600 hover:underline">→</a>
       </div>
     </div>
-  </div>
+
+    <div class="mt-6 text-right">
+      <a href="#" class="text-blue-600 font-semibold hover:underline">View all tasks</a>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="bg-blue-50 py-12 px-8">
+    <h3 class="text-3xl font-bold text-center mb-8">What Our Users Say</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+        <p class="text-gray-600 italic mb-4">"FixMyHome made it so easy to report maintenance issues. The response time is amazing!"</p>
+        <h4 class="font-bold text-blue-600">- Jane D.</h4>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+        <p class="text-gray-600 italic mb-4">"I love being able to track all my requests in one place. Very user-friendly."</p>
+        <h4 class="font-bold text-blue-600">- Mark S.</h4>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+        <p class="text-gray-600 italic mb-4">"The design is clean and I can complete my profile in minutes. Highly recommended!"</p>
+        <h4 class="font-bold text-blue-600">- Sarah W.</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section class="px-8 py-12">
+    <h3 class="text-3xl font-bold text-center mb-6">Need Help?</h3>
+    <p class="text-center text-gray-600 mb-8">Contact our support team and we'll get back to you as soon as possible.</p>
+    <div class="flex justify-center">
+      <a href="#" class="bg-blue-600 text-white py-3 px-6 rounded-full hover:bg-blue-700 transition">Contact Us</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-gray-800 text-gray-300 py-6">
+    <div class="container mx-auto px-8 flex flex-col md:flex-row justify-between items-center">
+      <p>&copy; 2025 FixMyHome. All rights reserved.</p>
+      <div class="flex space-x-6 mt-4 md:mt-0">
+        <a href="#" class="hover:text-white">Privacy Policy</a>
+        <a href="#" class="hover:text-white">Terms of Service</a>
+        <a href="#" class="hover:text-white">Help</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const menu = document.getElementById('menu');
+
+    menuBtn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
