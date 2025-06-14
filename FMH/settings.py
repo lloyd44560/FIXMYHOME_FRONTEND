@@ -25,9 +25,10 @@ SECRET_KEY = 'django-insecure-_-8d_oxo-u)l^kd-4e0l&r(k3y@1_(k#ady0^r*%a!zc841q+c
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-# ALLOWED_HOSTS = ['sandbox.fixmh.com']
-ALLOWED_HOSTS = []
+SITE_ID = 1
+ALLOWED_HOSTS = ['sandbox.fixmh.com', 'www.sandbox.fixmh.com', '127.0.0.1', 'localhost']
+DEFAULT_FROM_EMAIL = 'noreply@fixmh.com'
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -40,10 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',  # For customizing form widgets in templates - pip install django-widget-tweaks
-    'social_django',
-    'agent',
     'renter',
     'trader',
+    'social_django',
+     'agent',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'FMH.urls'
@@ -79,7 +81,7 @@ WSGI_APPLICATION = 'FMH.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Uncomment this if production 
+# Uncomment this if production
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -152,7 +154,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.facebook.FacebookOAuth2',
 )
+
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/welcome/'
