@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     # path('', views.home, name='home'),  # this calls views.home
     path('', views.login_page, name='login'),  # Just renders login form
-    # path('register/', views.register, name='register'),
+    path('register/', views.register, name='register'),
     path('register_renter/', views.register_renter, name='register_renter'),
     path('login_renter/', views.login_view, name='login_renter'),  # Handles form POST
     path('welcome/', views.welcome, name='welcome'),
@@ -36,9 +36,9 @@ urlpatterns = [
 
     path('account/', views.renter_account, name='renter_account'),
     # path('messages/',  views.messages, name='renter_messages'),
-    path('chat/', views.demo_chat, name='demo_chat'),  
-    path('chat/<str:job_number>/', views.chat_thread, name='chat_thread'),  
-    
+    path('chat/', views.demo_chat, name='demo_chat'),
+    path('chat/<str:job_number>/', views.chat_thread, name='chat_thread'),
+
 
 
 ]

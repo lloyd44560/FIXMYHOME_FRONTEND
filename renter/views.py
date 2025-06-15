@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from .forms import RenterForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth import authenticate, login 
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -63,6 +63,7 @@ def register(request):
 
 def login_page(request):
     return render(request, 'renter/login.html')
+
 def login_view(request):
     locked_until_str = request.session.get('locked_until')
     if locked_until_str:
@@ -79,7 +80,8 @@ def login_view(request):
 
     # Initialize next_url for GET requests
     next_url = request.GET.get('next', '/welcome/')
-
+    user = False
+    user_record=  False
     if request.method == 'POST':
         email = request.POST.get('email').strip().lower()
         password = request.POST.get('password')
@@ -104,11 +106,13 @@ def login_view(request):
                 fail_record.save()
 
             user = authenticate(request, username=user_obj.username, password=password)
+            user_record = User.objects.get(username=user_obj.username)  # Queryset
             if user:
                 login(request, user)
                 fail_record.attempts = 0
                 fail_record.save()
                 request.session.pop('locked_until', None)
+
 
                 if user_obj.is_staff:
                     next_url = request.GET.get('next', '/trader/home')
@@ -119,7 +123,7 @@ def login_view(request):
                 else:
                     next_url = request.GET.get('next', '/welcome/')
                     return redirect(next_url)
-                
+
             else:
                 fail_record.attempts += 1
                 if fail_record.attempts >= 3:
@@ -145,9 +149,9 @@ def login_view(request):
                 'next': next_url
             })
 
-    return render(request, 'renter/login.html', {'next': next_url})
+    return render(request, 'renter/login.html', {'next': next_url, 'user' : user_record})
 
-    
+
 @csrf_exempt
 def register_renter(request):
     if request.method == 'POST':
@@ -198,7 +202,7 @@ def register_renter(request):
         renter = Renter.objects.create(
             # user=user,  #  Link to auth_user
             phone=phone,
-            name=name, 
+            name=name,
             email=email,
             company_name=company,
             contact_person=contact_person,
@@ -212,7 +216,7 @@ def register_renter(request):
             property_image=uploaded_file_url
         )
 
-       
+
          # Save Condition Report
         if condition_data:
             try:
@@ -300,7 +304,7 @@ def demo_chat(request):
         {'image': 'images/user5.jpg', 'job_number': 'QOT-0000395', 'message': 'I will need your confirma...', 'distance': '2.8km away'},
     ]
     return render(request, 'renter/home/messages.html', {'chats': chats})
-    
+
 def demo_chat(request):
     chats = [
         {'image': 'images/user1.jpg', 'job_number': 'QOT-0000391', 'message': 'Good afternoon, I will be...', 'distance': '25m away'},
