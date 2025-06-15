@@ -40,5 +40,10 @@ urlpatterns = [
     path('chat/<str:job_number>/', views.chat_thread, name='chat_thread'),
 
 
+    path('social-auth/', include('social_django.urls', namespace='social')),
+    path('login-error/', views.login_error, name='login_error'),
+    
+
+
 
 ]

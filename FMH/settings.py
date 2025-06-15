@@ -189,3 +189,12 @@ SOCIAL_AUTH_PIPELINE = (
 
 LOGIN_URL = '/login_renter/'
 LOGIN_REDIRECT_URL = '/welcome/'
+
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/login-error/'
+# SOCIAL_AUTH_AUTHENTICATION_ERROR_URL = '/login-error/'
+
+SOCIAL_AUTH_AUTHENTICATION_ERROR_URL = '/login-error/?message=Authentication%20was%20cancelled.'

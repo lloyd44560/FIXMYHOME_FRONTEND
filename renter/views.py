@@ -321,3 +321,6 @@ def chat_thread(request, job_number):
         {'sender': 'You', 'message': "No worries. Let me know if you need any help 😉", 'is_sender': True},
     ]
     return render(request, 'renter/home/chat_thread.html', {'job_number': job_number, 'messages': messages})
+
+def login_error(request):
+    return render(request, 'renter/login_error.html')
