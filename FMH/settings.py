@@ -196,5 +196,9 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/login-error/'
 # SOCIAL_AUTH_AUTHENTICATION_ERROR_URL = '/login-error/'
+# Automatically expire session on logout (this is default)
+SESSION_COOKIE_AGE = 1209600  # 2 weeks (default)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Optional, expire when browser closes
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
 
 SOCIAL_AUTH_AUTHENTICATION_ERROR_URL = '/login-error/?message=Authentication%20was%20cancelled.'

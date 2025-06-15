@@ -14,6 +14,7 @@ from datetime import timedelta
 from django.contrib.auth import get_user_model
 import json
 from django.core.mail import send_mail
+from django.contrib.auth import logout
 
 User = get_user_model()
 
@@ -324,3 +325,13 @@ def chat_thread(request, job_number):
 
 def login_error(request):
     return render(request, 'renter/login_error.html')
+
+
+def custom_logout(request):
+    # Check if the user logged in via Google
+    if request.user.social_auth.filter(provider='google-oauth2').exists():
+        logout(request)  # End Django session
+        return redirect('https://accounts.google.com/Logout?continue=https://sandbox.fixmh.com/login_renter/')
+    else:
+        logout(request)  # End Django session
+        return redirect('/login_renter/')
