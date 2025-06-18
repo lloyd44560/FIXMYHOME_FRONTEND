@@ -11,7 +11,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
+
 <body class=" min-h-screen flex items-center justify-center p-4">
+
+
 
   <div class="w-full max-w-xl bg-white p-6 rounded-lg">
 
@@ -40,7 +43,7 @@
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step2-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">2</div>
-        <span class="mt-2 text-sm font-medium text-gray-600">Property Details</span>
+        <span class="mt-2 text-sm font-medium text-gray-600">Agent Details</span>
       </div>
       <div class="flex-1 flex flex-col items-center">
         <div id="step3-indicator" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600">3</div>
@@ -303,7 +306,7 @@
             />
 
           <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
-           
+
             <input
               type="file"
               name="propertyImage"
@@ -317,7 +320,7 @@
                 hover:file:bg-blue-100"
             />
           </div>
-        
+
         <div class="mb-4">
           <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
           <input type="number" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
@@ -359,7 +362,7 @@
           <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
           <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
-          
+
         <div class="mb-4">
           <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
           <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
@@ -374,7 +377,7 @@
           <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2(Optional)</label>
           <input type="text" name="address2" id="address2" placeholder="Address Line 2" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
-      
+
         <div class="mb-4">
           <label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label>
           <input type="text" name="postalcode" id="postalcode" placeholder="Postal Code" class="w-full border border-gray-300 rounded-md p-2" />
@@ -549,9 +552,9 @@
 
     <!-- Script Section for Category Report the modal that opens when the  -->
     <!-- All the script files will be organized later -->
-        
+
     <!-- This modal pops up after clicking the Appliance Report button -->
-    
+
     <!-- This modal pops up after clicking the Maintenance Report button -->
 
     <!-- This modal pops up after clicking the Minimum Standard Reports button -->
@@ -583,7 +586,7 @@
   </div>
 <!-- All script files will be orgnanized later -->
   <script>
-  // Tracking the current steps 
+  // Tracking the current steps
   const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
   const stepIndicators = [
     document.getElementById('step1-indicator'),
@@ -744,7 +747,7 @@
     });
 
 
-// Form validation Here for required  fielda based on proposal 
+// Form validation Here for required  fielda based on proposal
   const nameInput = document.getElementById("name");
   const nameError = document.getElementById("nameError");
   function validateFields() {
@@ -809,12 +812,12 @@
       preview.src = '';
     }
   });
-  
+
   // This part will be about submitting the Registration Form data
   document.getElementById("registrationForm").addEventListener("submit", function (e) {
     e.preventDefault(); // Prevent default form submission
 
-    // normally collect information about the data 
+    // normally collect information about the data
 
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
