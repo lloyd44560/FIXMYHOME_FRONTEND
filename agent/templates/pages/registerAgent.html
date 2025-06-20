@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Navbar -->
+{% include 'components/navbar.html' %}
+
 <div class=" min-h-screen flex items-center justify-center p-4">
   <div class="w-full max-w-xl bg-white p-6 rounded-lg">
 
@@ -64,7 +67,12 @@
     </form>
   </div>
 </div>
+
+  
+<!-- Footer -->
+{% include 'components/footer.html' %}
 {% endblock %}
+
 
 {% block scripts %}
 <script src="/static/js/processPage.js"></script>

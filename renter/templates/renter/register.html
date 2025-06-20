@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  {% load static %}
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Renter Registration - Tailwind</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="{% static 'renter/js/property_report.js' %}"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Renter Registration - FixMyHome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<body class=" min-h-screen flex items-center justify-center p-4">
-
-
-
-  <div class="w-full max-w-xl bg-white p-6 rounded-lg">
+    <!-- Navbar -->
+    {% include 'renter/navbar.html' %}
+   <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-xl bg-white p-6 rounded-lg shadow-md mt-12">
 
     <button
       type="button"
@@ -291,7 +291,7 @@
       <div id="manualUploadFields" class="space-y-4 hidden">
         <div class="mb-4">
 
-          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
+          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>   
              <img id="imagePreview" src="" alt="Property Image" class="w-40 h-40 object-cover rounded mb-4 border border-gray-300" />
             <input
               type="file"
@@ -584,6 +584,11 @@
 
     </form>
   </div>
+
+      </div>
+    </main>
+<br>
+
 <!-- All script files will be orgnanized later -->
   <script>
   // Tracking the current steps
@@ -923,6 +928,10 @@
 
 
   </script>
+
+  
+  <!-- Footer -->
+  {% include 'renter/home/footer.html' %}
 
 </body>
 </html>

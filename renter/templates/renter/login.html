@@ -9,10 +9,19 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+
+   <!-- Navbar -->
+    {% include 'renter/navbar.html' %}
+
   {% load static %}
   <form method="POST" action="/login_renter/">
   {% csrf_token %}
+  
+  
+  <main class="flex-grow flex justify-center items-center px-4">
 
+    
+  </main>
   <div class="flex justify-center items-center min-h-screen bg-gray-100 px-4">
     <div class="max-w-screen-xl w-full bg-white shadow sm:rounded-lg flex flex-col lg:flex-row justify-center flex-1">
 
@@ -131,6 +140,7 @@
 
     </div>
   </div>
+   </main>
   </form>
 
 </body>
@@ -175,4 +185,9 @@
   });
 });
 </script>
+
+  
+  <!-- Footer -->
+  {% include 'renter/home/footer.html' %}
+
 </html>
