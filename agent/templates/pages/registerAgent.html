@@ -68,13 +68,20 @@
   </div>
 </div>
 
-  
 <!-- Footer -->
 {% include 'components/footer.html' %}
 {% endblock %}
 
-
 {% block scripts %}
 <script src="/static/js/processPage.js"></script>
 <script src="/static/js/togglePass.js"></script>
+
+<script>
+  const menuBtn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+
+  menuBtn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+</script>
 {% endblock %}

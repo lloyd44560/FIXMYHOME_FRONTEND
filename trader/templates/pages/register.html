@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <!-- Navbar -->
-  {% include 'components/navbar.html' %}
-  <div class=" min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-xl bg-white p-6 rounded-lg">
+<!-- Navbar -->
+{% include 'components/navbar.html' %}
 
+<div class=" min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-xl bg-white p-6 rounded-lg">
     <!-- Left arrow back icon -->
-
-
     <button
       type="button"
       id="backBtn"
@@ -75,12 +73,9 @@
   </div>
 </div>
 
-
 <!-- Footer -->
 {% include 'components/footer.html' %}
-
 {% endblock %}
-
 
 {% block scripts %}
 <!-- Functions -->
@@ -93,4 +88,13 @@
 
 <!-- Validations -->
 <script src="/static/js/fieldValidation.js"></script>
+
+<script>
+  const menuBtn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+
+  menuBtn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+</script>
 {% endblock %}
