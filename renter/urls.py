@@ -43,6 +43,8 @@ urlpatterns = [
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('login-error/', views.login_error, name='login_error'),
     
+    path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
+    
 
 
 

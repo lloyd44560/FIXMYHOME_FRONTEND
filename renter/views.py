@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Renter, FailedLoginAttempt, ConditionReport
+from .models import Renter, FailedLoginAttempt, ConditionReport,EmailVerification
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
@@ -15,6 +15,9 @@ from django.contrib.auth import get_user_model
 import json
 from django.core.mail import send_mail
 from django.contrib.auth import logout
+from django.conf import settings
+from django.urls import reverse
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -107,8 +110,10 @@ def login_view(request):
                 fail_record.save()
 
             user = authenticate(request, username=user_obj.username, password=password)
-            user_record = User.objects.get(username=user_obj.username)  # Queryset
+           
             if user:
+                user_record = User.objects.get(username=user_obj.username)  # Queryset
+                renter_record = Renter.objects.get(email=user_obj.email)  # Queryset
                 login(request, user)
                 fail_record.attempts = 0
                 fail_record.save()
@@ -150,7 +155,7 @@ def login_view(request):
                 'next': next_url
             })
 
-    return render(request, 'renter/login.html', {'next': next_url, 'user' : user_record})
+    return render(request, 'renter/login.html', {'next': next_url})
 
 
 @csrf_exempt
@@ -166,6 +171,7 @@ def register_renter(request):
         contact_person = request.POST.get('contactPerson')
         contact_email = request.POST.get('contactPersonEmail')
         contact_phone = request.POST.get('contactPhone')
+
         state = request.POST.get('state')
         city = request.POST.get('city')
         zip_code = request.POST.get('zip')
@@ -217,6 +223,27 @@ def register_renter(request):
             property_image=uploaded_file_url
         )
 
+        # 3. Create email-verification token
+        ev = EmailVerification.objects.create(user=user)
+
+
+         # 4. Send verification email
+        verify_url = request.build_absolute_uri(
+            reverse('verify_email', args=[str(ev.token)])
+        )
+        send_mail(
+            subject="Please verify your email",
+            message=(
+                f"Hi {user.first_name},\n\n"
+                f"Thanks for registering! Please click the link below to verify your email:\n\n"
+                f"{verify_url}\n\n"
+                "If you didn’t sign up, just ignore this email."
+            ),
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email],
+        )
+
+        return render(request, 'renter/verify_sent.html')  # a “check your inbox” page
 
          # Save Condition Report
         if condition_data:
@@ -247,6 +274,26 @@ def register_renter(request):
 #         form = RenterForm()
 #     return render(request, 'register.html', {'form': form})
 
+def verify_email(request, token):
+    try:
+        ev = EmailVerification.objects.get(token=token)
+    except EmailVerification.DoesNotExist:
+        # Token not found or already used
+        return render(request, 'renter/verify_invalid.html')
+
+    # If token expired (>24h), delete it and show expired page
+    if timezone.now() > ev.created_at + timedelta(hours=24):
+        ev.delete()
+        return render(request, 'renter/verify_expired.html')
+
+    # Otherwise activate the user
+    user = ev.user
+    user.is_active = True
+    user.save()
+    ev.delete()  # one-time use
+
+    return render(request, 'renter/verified.html', {'user': user})
+    
 @login_required
 def welcome(request):
     try:

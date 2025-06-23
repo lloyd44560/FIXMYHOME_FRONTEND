@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import uuid
+from django.conf import settings
 
 class Renter(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
@@ -67,4 +69,13 @@ class ConditionReport(models.Model):
 
 # Create a rooms Model 
 # Assign a user field 
+
+class EmailVerification(models.Model):
+    user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token      = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} — {self.token}"
+
 
