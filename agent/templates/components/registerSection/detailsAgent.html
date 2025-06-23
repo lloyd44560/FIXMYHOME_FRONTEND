@@ -21,7 +21,7 @@
     {{ form.email | add_class:"w-full border border-gray-300 rounded-md p-2" }}
     <span id="emailError" class="text-red-500 text-xs"></span>
     {% if form.email.errors %}
-        <span id="nameError" class="text-red-500 text-xs">{{ form.email.errors.0 }}</span>
+        <span id="emailError" class="text-red-500 text-xs">{{ form.email.errors.0 }}</span>
     {% endif %}
   </div>
 
@@ -67,7 +67,7 @@
         Notes <span class="text-red-500">*</span>
     </label>
     {{ form.notes | add_class:"w-full border border-gray-300 rounded-md p-2" }}
-    <span id="websiteError" class="text-red-500 text-xs"></span>
+    <span id="notesError" class="text-red-500 text-xs"></span>
   </div>
 
   <!-- Password -->

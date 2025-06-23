@@ -4,13 +4,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
 
     // Form ID
-    const traderForm = document.getElementById('traderForm');
+    const agentForm = document.getElementById('agentForm');
 
     // ####################################################################################
     // Form Fields- Details
     const nameInput = document.getElementById('id_name');
     const emailInput = document.getElementById('id_email');
     const phoneInput = document.getElementById('id_phone');
+    const contactPersonInput = document.getElementById('id_contact_person');
+    const agencyIDInput = document.getElementById('id_agency_id');
+    const websiteInput = document.getElementById('id_website');
+    const notesInput = document.getElementById('id_notes');
     const passwordInput = document.getElementById('id_password');
     const confirmPasswordInput = document.getElementById('id_confirm_password');
 
@@ -18,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const nameError = document.getElementById('nameError');
     const emailError = document.getElementById('emailError');
     const phoneError = document.getElementById('phoneError');
+    const contactPersonError = document.getElementById('contactPersonError');
+    const agentIDError = document.getElementById('agentIDError');
+    const websiteError = document.getElementById('websiteError');
+    const notesError = document.getElementById('notesError');
     const passwordError = document.getElementById('passwordError');
     const confirmPasswordError = document.getElementById('confirmPasswordError');
 
@@ -25,19 +33,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form Fields - Company
     const companyNameInput = document.getElementById('id_company_name');
     const companyAddressInput = document.getElementById('id_company_address');
-    const companyEmailInput = document.getElementById('id_company_email');
     const contractorLicenseInput = document.getElementById('id_contractor_license');
-    const abnInput = document.getElementById('id_abn');
-    const industryInput = document.getElementById('id_industry');
-    let gst_registered = document.getElementById('id_gst_registered');
+    const serviceInput = document.getElementById('id_service');
 
     // Validation Error Elements - Company
     const companyNameError = document.getElementById('companyNameError');
     const companyAddressError = document.getElementById('companyAddressError');
-    const companyEmailError = document.getElementById('companyEmailError');
     const contractorLicenseError = document.getElementById('contractorLicenseError');
-    const abnError = document.getElementById('abnError');
-    const industryError = document.getElementById('industryError');
+    const serviceError = document.getElementById('serviceError');
 
     // ####################################################################################
     // Form Fields - Rates
@@ -59,25 +62,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Validation fields array for easy iteration
     const fields = [
-        { id: nameInput, label: 'Name', error: nameError },
-        { id: emailInput, label: 'Email', error: emailError },
-        { id: phoneInput, label: 'Phone', error: phoneError },
-        { id: passwordInput, label: 'Password', error: passwordError },
-        { id: confirmPasswordInput, label: 'Confirm Password', error: confirmPasswordError },
+        { id: nameInput, label: 'Name', error: nameError},
+        { id: emailInput, label: 'Email', error: emailError},
+        { id: phoneInput, label: 'Phone', error: phoneError},
+        { id: contactPersonInput, label: 'Contact Person', error: contactPersonError},
+        { id: agencyIDInput, label: 'Agent ID', error: agentIDError},
+        { id: websiteInput, label: 'Website', error: websiteError},
+        { id: notesInput, label: 'Notes', error: notesError},
+        { id: passwordInput, label: 'Password', error: passwordError},
+        { id: confirmPasswordInput, label: 'Confirm Password', error: confirmPasswordError},
         // ####################################################################################
-        { id: companyNameInput, error: companyNameError, label: 'Company Name' },
+        { id: companyNameInput, error: companyNameError, label: 'Company Name'},
         { id: companyAddressInput, error: companyAddressError, label: 'Company Address' },
-        { id: companyEmailInput, error: companyEmailError, label: 'Company Email' }, 
-        { id: contractorLicenseInput, error: contractorLicenseError, label: 'Contractor License Number' },
-        { id: abnInput, error: abnError, label: 'ABN' },
-        { id: industryInput, error: industryError, label: 'Industry Expertise' },
+        { id: contractorLicenseInput, error: contractorLicenseError, label: 'License Number'},
+        { id: serviceInput, error: serviceError, label: 'Service'},
         // ####################################################################################
-        { id: stateInput, error: stateError, label: 'State' },
-        { id: municipalityInput, error: municipalityError, label: 'Municipality' },
-        { id: cityInput, error: cityError, label: 'City' },
-        { id: addressOneInput, error: addressOneError, label: 'Address Line One' },
-        { id: addressTwoInput, error: addressTwoError, label: 'Address Line Two' },
-        { id: postalCodeInput, error: postalError, label: 'Postal Code' },
+        { id: stateInput, error: stateError, label: 'State'},
+        { id: municipalityInput, error: municipalityError, label: 'Municipality'},
+        { id: cityInput, error: cityError, label: 'City'},
+        { id: addressOneInput, error: addressOneError, label: 'Address Line One'},
+        { id: addressTwoInput, error: addressTwoError, label: 'Address Line Two'},
+        { id: postalCodeInput, error: postalError, label: 'Postal Code'},
     ];
 
     fields.forEach(field => {
@@ -95,8 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     nextBtn.addEventListener('click', function(e) {
+        console.log(currentStep, '==================>>')
         if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
-            if (currentStep === 0) { // Step 1 validation (personal details)
+            if (currentStep === 0) { // Step 1 validation (Personal Details)
                 let hasError = false;
 
                 // Validate Name Input
@@ -129,6 +135,46 @@ document.addEventListener('DOMContentLoaded', function() {
                     phoneError.textContent = ''
                 }
 
+                // Validate Contact Person Input
+                if (contactPersonInput.value.trim() === '') {
+                    hasError = true;
+                    e.preventDefault();
+                    contactPersonError.textContent = 'Contact Person is required!';
+                    contactPersonInput.focus();
+                } else {
+                    contactPersonError.textContent = ''
+                }
+
+                // Validate Agent ID Input
+                if (agencyIDInput.value.trim() === '') {
+                    hasError = true;
+                    e.preventDefault();
+                    agentIDError.textContent = 'Agent ID is required!';
+                    agencyIDInput.focus();
+                } else {
+                    agentIDError.textContent = ''
+                }
+
+                // Validate Website Input
+                if (websiteInput.value.trim() === '') {
+                    hasError = true;
+                    e.preventDefault();
+                    websiteError.textContent = 'Website is required!';
+                    websiteInput.focus();
+                } else {
+                    websiteError.textContent = ''
+                }
+
+                // Validate Notes Input
+                if (notesInput.value.trim() === '') {
+                    hasError = true;
+                    e.preventDefault();
+                    notesError.textContent = 'Notes is required!';
+                    notesInput.focus();
+                } else {
+                    notesError.textContent = ''
+                }
+
                 // Validate Password Input
                 if (passwordInput.value.trim() === '') {
                     hasError = true;
@@ -155,22 +201,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
 
                 } else {
-                    // Skip company step if sole_trader, else go to company step
-                    if (companyType && companyType.value === 'sole_trader') {
-                        currentStep += 2; // Skip company step
-                    } else {
-                        currentStep += 1; // Go to company step
-                    }
+                    currentStep++;
                     updateStep();
                 }
                 
-            } else if (currentStep === 1) { // Step 2 validation (company type || solo trader)
+            } else if (currentStep === 1) { // Step 2 validation (Company Details)
                 let hasError = false;
 
                 // Validate company name
                 if (companyNameInput.value.trim() === '') {
                     hasError = true;
-                    companyNameError.textContent = 'Company Name is required!';
+                    companyNameError.textContent = 'Name is required!';
                     companyNameInput.focus();
                 } else {
                     companyNameError.textContent = ''
@@ -185,135 +226,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     companyAddressError.textContent = ''
                 }
 
-                // Validate company email
-                if (companyEmailInput.value.trim() === '') {
-                    hasError = true;
-                    companyEmailError.textContent = 'Company email is required!';
-                    companyEmailInput.focus();
-                } else {
-                    companyEmailError.textContent = ''
-                }
-
-                // Validate contractor license
+                // Validate License number
                 if (contractorLicenseInput.value.trim() === '') {
                     hasError = true;
-                    contractorLicenseError.textContent = 'Contractor license number is required!';
+                    contractorLicenseError.textContent = 'License number is required';
                     contractorLicenseInput.focus();
                 } else {
-                    contractorLicenseError.textContent = ''
+                    companyAddressError.textContent = ''
                 }
 
-                // Validate ABN
-                if (abnInput.value.trim() === '') {
+                // Service
+                if (serviceInput.value.trim() === '') {
                     hasError = true;
-                    abnError.textContent = 'ABN is required!';
-                    abnInput.focus();
+                    serviceError.textContent = 'Service is required!';
+                    serviceInput.focus();
                 } else {
-                    abnError.textContent = ''
+                    serviceError.textContent = ''
                 }
 
-                // Validate industry expertise
-                if (industryInput.value.trim() === '') {
-                    hasError = true;
-                    industryError.textContent = 'Industry expertise is required!';
-                    industryInput.focus();
-                } else {
-                    industryError.textContent = ''
-                }
-
+                // Check if all required fields are filled
                 if (hasError) {
                     e.preventDefault();
                     return;
+
                 } else {
-                    // Only proceed if the current step is visible
                     currentStep++;
                     updateStep();
                 }
-
-            } else if (currentStep === 2) { // Step 3 validation (teams)
-                // Get all team member forms by their Django-generated IDs
-                const teamNameInputs = document.querySelectorAll('input[name$="-name"]');
-                const teamPositionInputs = document.querySelectorAll('input[name$="-position"]');
-                const empPostalInputs = document.querySelectorAll('input[name$="-active_postal_codes"]');
-                const teamTimeInInputs = document.querySelectorAll('input[name$="-time_in"]');
-                const teamTimeOutInputs = document.querySelectorAll('input[name$="-time_out"]');
-
-                let hasError = false;
-
-                teamNameInputs.forEach((input) => {
-                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
-                    if (input.value.trim() === '') {
-                        hasError = true;
-                        if (errorSpan) errorSpan.textContent = 'Team member name is required!';
-                        input.focus();
-                    } else if (errorSpan) {
-                        errorSpan.textContent = '';
-                    }
-                });
-
-                teamPositionInputs.forEach((input) => {
-                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
-                    if (input.value.trim() === '') {
-                        hasError = true;
-                        if (errorSpan) errorSpan.textContent = 'Position is required!';
-                        input.focus();
-                    } else if (errorSpan) {
-                        errorSpan.textContent = '';
-                    }
-                });
-
-                empPostalInputs.forEach((input) => {
-                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
-                    if (input.value.trim() === '') {
-                        hasError = true;
-                        if (errorSpan) errorSpan.textContent = 'Postal code is required!';
-                        input.focus();
-                    } else if (errorSpan) {
-                        errorSpan.textContent = '';
-                    }
-                });
-
-                teamTimeInInputs.forEach((input) => {
-                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
-                    if (input.value.trim() === '') {
-                        hasError = true;
-                        if (errorSpan) errorSpan.textContent = 'Time in is required!';
-                        input.focus();
-                    } else if (errorSpan) {
-                        errorSpan.textContent = '';
-                    }
-                });
-
-                teamTimeOutInputs.forEach((input) => {
-                    const errorSpan = input.parentElement.querySelector('.text-red-500.text-xs');
-                    if (input.value.trim() === '') {
-                        hasError = true;
-                        if (errorSpan) errorSpan.textContent = 'Time out is required!';
-                        input.focus();
-                    } else if (errorSpan) {
-                        errorSpan.textContent = '';
-                    }
-                });
-
-                if (hasError) {
-                    e.preventDefault();
-                    return;
-                }
-
-                // If all validations pass, proceed to next step
-                currentStep++;
-                updateStep();
-            }  else {
-                // For other steps, just proceed
-                currentStep++;
-                updateStep();
-            }
+            }  
         }
     });
 
     submitBtn.addEventListener('click', function(e) {
         if (currentStep === steps.length - 1) {
-            if (currentStep === 3) {
+            if (currentStep === 2) {
                 let hasError = false;
 
                 // Validate State Input
@@ -374,12 +320,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     return;
                 } else {
-                    // Fill GST Field
-                    if (gstCheckDpl) {
-                        gst_registered.checked = true;
-                    }
                     // Submit form
-                    traderForm.submit()
+                    agentForm.submit()
                 }
             }
         }

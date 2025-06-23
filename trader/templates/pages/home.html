@@ -1,94 +1,24 @@
-{% extends "base.html" %}
+{% extends "baseTrader.html" %}
 
 {% block content %}
 <!-- Top Navigation -->
-<header class="bg-white border-b shadow-sm sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <h1 class="text-xl md:text-2xl font-bold text-blue-600">Trader Portal</h1>
-    <div class="flex items-center space-x-4">
-      <a href="/trader/logout-trader" class="text-sm md:text-base text-red-600 border border-red-600 px-4 py-1.5 rounded hover:bg-red-600 hover:text-white transition">
-        Logout
-      </a>
-      <img src="https://img.icons8.com/?size=100&id=81139&format=png&color=000000" alt="Profile" class="w-10 h-10 rounded-full border" />
-    </div>
-  </div>
-</header>
+{% include 'components/home/navigatorBase.html' %}
 
 <!-- Page Content -->
 <main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
   <!-- Dashboard Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-      <h2 class="font-bold text-blue-600 text-lg mb-2">To Quote Requests</h2>
-      <p class="text-sm">0 urgent</p>
-      <p class="text-sm">1 non-urgent</p>
-    </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-      <h2 class="font-bold text-blue-600 text-lg mb-2">Pending Quotes</h2>
-      <p class="text-sm">0 urgent</p>
-      <p class="text-sm">1 non-urgent</p>
-    </div>
-    <div class="border rounded-xl p-6 text-center relative shadow hover:shadow-md transition">
-      <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">9</div>
-      <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Today</h2>
-      <p class="text-sm font-bold text-black">3 <span class="font-normal">urgent</span></p>
-      <p class="text-sm">6 non-urgent</p>
-    </div>
-    <div class="border rounded-xl p-6 text-center relative shadow hover:shadow-md transition">
-      <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
-      <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Approved</h2>
-      <p class="text-sm">0 urgent</p>
-      <p class="text-sm">2 non-urgent</p>
-    </div>
-  </div>
+  {% include 'components/home/dashboard_cards.html' %}
 
   <!-- New Messages -->
-  <section>
-    <h2 class="text-blue-600 font-bold text-xl mb-3">New Messages</h2>
-    <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
-      No new messages at the moment.
-    </div>
-  </section>
+  {% include 'components/home/messages_section.html' %}
 
   <!-- Calendar -->
-  <section>
-    <h2 class="text-blue-600 font-bold text-xl mb-3">Calendar</h2>
-    <div class="flex items-center justify-between border rounded-xl px-6 py-4 bg-gray-50 shadow w-full max-w-sm">
-      <button class="text-blue-600 text-xl font-bold">&lt;</button>
-      <span class="font-medium">June 2024</span>
-      <button class="text-blue-600 text-xl font-bold">&gt;</button>
-    </div>
-  </section>
+  {% include 'components/home/calendar_section.html' %}
 </main>
 
-<!-- Optional Bottom Navigation (Mobile Only) -->
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center py-3 md:hidden">
-  <div class="text-blue-600 flex flex-col items-center text-xs">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z" />
-    </svg>
-    Home
-  </div>
-  <div class="text-gray-400 flex flex-col items-center text-xs">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2z" />
-    </svg>
-    Messages
-  </div>
-  <div class="text-gray-400 flex flex-col items-center text-xs">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-    Account
-  </div>
-</nav>
+{% include 'components/footer.html' %}
 {% endblock %}
 
 {% block scripts %}
+  <!-- JS Scripts Here -->
 {% endblock %}
