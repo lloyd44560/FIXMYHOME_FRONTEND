@@ -49,13 +49,5 @@ backBtn.addEventListener('click', () => {
     }
 });
 
-nextBtn.addEventListener('click', function(e) {
-    if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
-        // If all validations pass, proceed to next step
-        currentStep++;
-        updateStep();
-    }
-});
-
 // Initialize
 updateStep();

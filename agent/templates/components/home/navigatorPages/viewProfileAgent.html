@@ -1,0 +1,67 @@
+{% extends "baseAgent.html" %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+<!-- Main Content -->
+<div class="flex-grow bg-blue-50">
+  <!-- Full Height Container -->
+  <div class="flex-1 flex justify-center items-start p-4">
+    <!-- Content Wrapper -->
+    <div class="bg-white shadow-lg rounded-lg w-full flex flex-col md:flex-row lg:px-32">
+      <!-- Sidebar -->
+      <div class="md:w-1/4 bg-gray-50 p-6 flex flex-col items-center text-center border-r">
+        <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold mb-2"> {{ full_name }}</h2>
+        <span class="text-blue-600 text-xs bg-blue-100 px-3 py-1 rounded-full">{{ email }} </span>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="flex-1 p-6 space-y-10">
+        <!-- Your Account Section -->
+        <div>
+            <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Your Account</h3>
+            <ul class="space-y-4 text-gray-700">
+              <li class="cursor-pointer hover:text-blue-600">Personal Information</li>
+              <li class="cursor-pointer hover:text-blue-600">Cards and Accounts</li>
+              <li class="cursor-pointer hover:text-blue-600">Saved Addresses</li>
+              <li class="cursor-pointer hover:text-blue-600">Notifications</li>
+              <li class="cursor-pointer hover:text-blue-600">Manage Business Profile</li>
+            </ul>
+        </div>
+
+        <!-- Benefits Section -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Benefits</h3>
+          <ul class="space-y-4 text-gray-700">
+            <li class="cursor-pointer hover:text-blue-600">Properties for Rent</li>
+            <li class="cursor-pointer hover:text-blue-600">Properties for Sale</li>
+            <li class="cursor-pointer hover:text-blue-600">FMH Lottery</li>
+            <li class="cursor-pointer hover:text-blue-600">FMH Local Businesses</li>
+          </ul>
+        </div>
+
+        <!-- Support Section -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Support</h3>
+          <ul class="space-y-4 text-gray-700">
+            <li class="cursor-pointer hover:text-blue-600">Help / FAQs</li>
+            <li class="cursor-pointer hover:text-blue-600">Become a Trader</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <!-- JS Scripts Here -->
+{% endblock %}

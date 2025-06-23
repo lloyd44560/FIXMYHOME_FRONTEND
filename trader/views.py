@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, CreateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
@@ -56,5 +58,23 @@ class TraderRegistrationCreateView(CreateView):
             return render(request, self.template_name, {'form': form, 'formset': formset})
 
 # View for the home page
+@method_decorator(login_required, name='dispatch')
 class TraderHomeView(TemplateView):
     template_name = 'pages/home.html'
+
+@method_decorator(login_required, name='dispatch')
+class TraderProfileView(TemplateView):
+    template_name = 'components/home/navigatorPages/viewProfileTrader.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        try:
+            trader = TraderRegistration.objects.get(user=user)
+            context['full_name'] = user.get_full_name() or trader.name
+            context['email'] = user.email
+        except TraderRegistration.DoesNotExist:
+            context['error'] = "Trader profile not found."
+
+        return context

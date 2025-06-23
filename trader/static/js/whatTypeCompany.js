@@ -50,9 +50,6 @@ if (companyType && step3Label) {
             holidayTime_in.classList.remove('hidden')
             holidayTime_out.classList.remove('hidden')
 
-            if (soleTraderHoliday.classList.contains('hidden')) {
-                step2div.classList.remove('hidden');
-            }
         } else {
             step3Label.textContent = '';
         }

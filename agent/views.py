@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
+
 from django.views.generic import TemplateView, CreateView
 from django.contrib.auth.models import User
-from django.urls import reverse_lazy
 
 from .models import AgentRegister
 from .forms import AgentFormClass
@@ -47,5 +50,23 @@ class AgentRegistrationCreateView(CreateView):
             return render(request, self.template_name, {'form': form})
 
 # View for the home page
+@method_decorator(login_required, name='dispatch')
 class AgentHomeView(TemplateView):
     template_name = 'pages/homeAgent.html'
+
+@method_decorator(login_required, name='dispatch')
+class AgentProfileView(TemplateView):
+    template_name = 'components/home/navigatorPages/viewProfileAgent.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        try:
+            agent = AgentRegister.objects.get(user=user)
+            context['full_name'] = user.get_full_name() or agent.name
+            context['email'] = user.email
+        except AgentRegister.DoesNotExist:
+            context['error'] = "Agent profile not found."
+
+        return context

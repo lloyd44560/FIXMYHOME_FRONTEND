@@ -1,9 +1,12 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
 from django.contrib.auth.views import LogoutView
 from . import views  # Import your views module
 
 urlpatterns = [
-    path('home/', views.TraderHomeView.as_view(), name='home_trader'),
     path('register/', views.TraderRegistrationCreateView.as_view(), name='register_submit'),
-    path('logout-trader/', LogoutView.as_view(next_page='/login/'), name='logout_trader'),
+    path('logout-trader/', LogoutView.as_view(next_page=reverse_lazy('login'), http_method_names=['post']), name='logout_trader'),
+
+    # =============== Middleware added: Login Required =============== 
+    path('home/', views.TraderHomeView.as_view(), name='home_trader'),
+    path('view-profile/', views.TraderProfileView.as_view(), name='profile_trader'),
 ]
