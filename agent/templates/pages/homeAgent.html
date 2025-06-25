@@ -7,13 +7,48 @@
 <!-- Page Content -->
 <main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
   <!-- Dashboard Cards -->
-  {% include 'components/home/dashboardCard.html' %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
+        <h2 class="font-bold text-blue-600 text-lg mb-2">To Quote Requests</h2>
+        <p class="text-sm">0 urgent</p>
+        <p class="text-sm">1 non-urgent</p>
+    </div>
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Pending Quotes</h2>
+        <p class="text-sm">0 urgent</p>
+        <p class="text-sm">1 non-urgent</p>
+    </div>
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
+        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">9</div>
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Today</h2>
+        <p class="text-sm font-bold text-black">3 <span class="font-normal">urgent</span></p>
+        <p class="text-sm">6 non-urgent</p>
+    </div>
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
+        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Approved</h2>
+        <p class="text-sm">0 urgent</p>
+        <p class="text-sm">2 non-urgent</p>
+    </div>
+  </div>
 
   <!-- New Messages -->
-  {% include 'components/home/messagesSection.html' %}
+  <section>
+    <h2 class="text-blue-600 font-bold text-xl mb-3">New Messages</h2>
+      <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
+          No new messages at the moment.
+      </div>
+  </section>
 
   <!-- Calendar -->
-  {% include 'components/home/calendarSection.html' %}
+  <section>
+    <h2 class="text-blue-600 font-bold text-xl mb-3">Calendar</h2>
+      <div class="flex items-center justify-between border rounded-xl px-6 py-4 bg-gray-50 shadow w-full max-w-sm">
+          <button class="text-blue-600 text-xl font-bold">&lt;</button>
+          <span class="font-medium">June 2024</span>
+          <button class="text-blue-600 text-xl font-bold">&gt;</button>
+      </div>
+  </section>
 
   <!-- Properties -->
   {% include 'components/home/propertiesSection.html' %}

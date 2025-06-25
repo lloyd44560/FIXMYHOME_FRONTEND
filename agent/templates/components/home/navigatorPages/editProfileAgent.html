@@ -1,0 +1,121 @@
+{% load widget_tweaks %}
+<!-- Agent Details -->
+<div class="bg-white shadow rounded-xl p-6">
+    <h2 class="text-xl font-semibold text-blue-600 mb-4">Agent Details</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Name</label>
+        {{ form.name|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.name.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        {{ form.email|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.email.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Phone</label>
+        {{ form.phone|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.phone.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Contact Person</label>
+        {{ form.contact_person|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.contact_person.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Agency ID</label>
+        {{ form.agency_id|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.agency_id.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Website</label>
+        {{ form.website|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.website.errors }}
+    </div>
+    <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Notes</label>
+        {{ form.notes|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.notes.errors }}
+    </div>
+    <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        {{ form.password|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.password.errors }}
+    </div>
+    </div>
+</div>
+
+<!-- Company Details -->
+<div class="bg-white shadow rounded-xl p-6">
+    <h2 class="text-xl font-semibold text-blue-600 mb-4">Company Details</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Company Name</label>
+        {{ form.company_name|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.company_name.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Company Address</label>
+        {{ form.company_address|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.company_address.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Company Email</label>
+        {{ form.company_email|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.company_email.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Company Landline</label>
+        {{ form.company_landline|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.company_landline.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Contractor License</label>
+        {{ form.contractor_license|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.contractor_license.errors }}
+    </div>
+    <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Service</label>
+        {{ form.service|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.service.errors }}
+    </div>
+    </div>
+</div>
+
+<!-- Address / Rates -->
+<div class="bg-white shadow rounded-xl p-6">
+    <h2 class="text-xl font-semibold text-blue-600 mb-4">Address / Rates</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-700">State</label>
+        {{ form.state|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.state.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Municipality</label>
+        {{ form.municipality|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.municipality.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">City</label>
+        {{ form.city|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.city.errors }}
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Postal Code</label>
+        {{ form.postal_code|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.postal_code.errors }}
+    </div>
+    <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Address Line 1</label>
+        {{ form.address_line_1|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.address_line_1.errors }}
+    </div>
+    <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Address Line 2</label>
+        {{ form.address_line_2|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+        {{ form.address_line_2.errors }}
+    </div>
+    </div>
+</div>

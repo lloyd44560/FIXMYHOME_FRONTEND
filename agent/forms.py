@@ -3,7 +3,7 @@ from django import forms
 
 from .models import AgentRegister
 
-class AgentFormClass(forms.ModelForm):
+class CreateAgentFormClass(forms.ModelForm):
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={}),
         label="Confirm Password"
@@ -18,3 +18,12 @@ class AgentFormClass(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+class AgentEditProfileForm(forms.ModelForm):
+    class Meta:
+        model = AgentRegister
+        fields = '__all__'
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': 3}),
+            'email': forms.EmailInput(attrs={'readonly': True}),  # Optional: lock email
+        }

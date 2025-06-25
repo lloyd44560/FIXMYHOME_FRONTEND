@@ -8,5 +8,5 @@ urlpatterns = [
 
     # =============== Middleware added: Login Required =============== 
     path('home/', views.AgentHomeView.as_view(), name='home_agent'),
-    path('view-profile/', views.AgentProfileView.as_view(), name='profile_agent'),
+    path('profile/', views.AgentEditProfileView.as_view(), name='profile_agent'),
 ]

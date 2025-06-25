@@ -8,6 +8,19 @@ class AgentRegister(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     # Trader Details
+    SERVICE_CHOICES = [
+        ('air_conditioning', 'Air Conditioning'),
+        ('cleaning', 'Cleaning'),
+        ('electrical', 'Electrical'),
+        ('gardening', 'Gardening'),
+        ('general_merchandise', 'General Merchandise'),
+        ('glazing', 'Glazing'),
+        ('pest_control', 'Pest Control'),
+        ('plumbing-gas', 'Plumbing / Gas'),
+        ('tree_cutting', 'Tree Cutting'),
+        ('steel_works', 'Steel Works'),
+    ]
+    
     name = models.CharField(max_length=255)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
@@ -23,18 +36,6 @@ class AgentRegister(models.Model):
     company_email = models.EmailField(blank=True, null=True)
     company_landline = models.CharField(max_length=50, blank=True, null=True)
     contractor_license = models.CharField(max_length=100, blank=True)
-    SERVICE_CHOICES = [
-        ('air_conditioning', 'Air Conditioning'),
-        ('cleaning', 'Cleaning'),
-        ('electrical', 'Electrical'),
-        ('gardening', 'Gardening'),
-        ('general_merchandise', 'General Merchandise'),
-        ('glazing', 'Glazing'),
-        ('pest_control', 'Pest Control'),
-        ('plumbing-gas', 'Plumbing / Gas'),
-        ('tree_cutting', 'Tree Cutting'),
-        ('steel_works', 'Steel Works'),
-    ]
     service = models.CharField(max_length=100, choices=SERVICE_CHOICES, blank=True, null=True)
 
     # Rates
