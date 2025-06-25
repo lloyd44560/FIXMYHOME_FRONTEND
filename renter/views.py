@@ -112,8 +112,7 @@ def login_view(request):
             user = authenticate(request, username=user_obj.username, password=password)
            
             if user:
-                user_record = User.objects.get(username=user_obj.username)  # Queryset
-                renter_record = Renter.objects.get(email=user_obj.email)  # Queryset
+
                 login(request, user)
                 fail_record.attempts = 0
                 fail_record.save()
