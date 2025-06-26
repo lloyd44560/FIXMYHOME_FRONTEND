@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Home - FixMyHome</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+{% load static %}
+<body class="bg-gray-50">
+
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
+    <!-- Logo -->
+    <h1 class="text-3xl font-bold text-blue-600 flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
+      </svg>
+      <span>FixMyHome</span>
+    </h1>
+
+    <!-- Hamburger Button -->
+    <button id="menu-btn" class="block md:hidden focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Nav Links -->
+    <div id="menu" class="hidden md:flex flex-col md:flex-row md:items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 shadow md:shadow-none z-50 space-y-4 md:space-y-0 md:space-x-8">
+      <a href="#" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
+        </svg>
+        <span>Home</span>
+      </a>
+
+      <!-- <a href="/chat/" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 4h.01M4 6h16v12H4z" />
+        </svg>
+        <span>Messages</span>
+      </a> -->
+
+      <a href="/third_party/account/" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Account</span>
+      </a>
+
+      
+      <form id="logout-form" method="POST" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
+              <!-- Logout Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+              </svg>
+              Logout
+          </button>
+      </form>
+    </div>
+  </nav>
+ 
+    <!-- Hero Section with Background -->
+
+
+<section class="max-w-7xl mx-auto px-6 py-10">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-6">Quick Stats Overview</h2>
+  
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Users -->
+    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm text-gray-500">Users</h3>
+          <p class="text-2xl font-bold text-blue-600 mt-1">{{ users_count }}</p>
+        </div>
+        <div class="bg-blue-100 p-2 rounded-full">
+          <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agents -->
+    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm text-gray-500">Agents</h3>
+          <p class="text-2xl font-bold text-green-600 mt-1">{{ agents_count }}</p>
+        </div>
+        <div class="bg-green-100 p-2 rounded-full">
+          <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Traders -->
+    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm text-gray-500">Traders</h3>
+          <p class="text-2xl font-bold text-yellow-600 mt-1">{{ traders_count }}</p>
+        </div>
+        <div class="bg-yellow-100 p-2 rounded-full">
+          <svg class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 9l3 3-3 3m5-6h3m-6 3H5" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Properties -->
+    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm text-gray-500">Properties</h3>
+          <p class="text-2xl font-bold text-purple-600 mt-1">{{ properties_count }}</p>
+        </div>
+        <div class="bg-purple-100 p-2 rounded-full">
+          <svg class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 10l1.553-1.553A2 2 0 015.764 8h12.472a2 2 0 011.21.447L21 10m-9 10V14m-4 0v6m8-6v6" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm text-gray-500">Condition Reports</h3>
+          <p class="text-2xl font-bold text-red-600 mt-1">{{ reports_count }}</p>
+        </div>
+        <div class="bg-red-100 p-2 rounded-full">
+          <svg class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 17v-6h6v6m2 4H7a2 2 0 01-2-2V7a2 2 0 012-2h3l2-2h2l2 2h3a2 2 0 012 2v12a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+  <!-- Progress Section -->
+
+  
+
+  <section class="bg-white mx-8 my-16 p-6 rounded-lg shadow">
+  
+    <p class="text-4xl md:text-5xl font-medium text-gray-800 tracking-wide my-8 px-4">
+      Welcome back, {{ user.first_name }}.
+    </p>
+
+
+<!-- Notebook Layout Container -->
+<div class="max-w-7xl mx-auto px-4">
+  <!-- Tab Buttons (Notebook Pages) -->
+  <div class="flex space-x-4 border-b mb-6">
+    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 active-tab border-b-2 border-blue-600" data-tab="properties">Properties</button>
+    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="renters">Renters</button>
+    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="agents">Agents</button>
+    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="traders">Traders</button>
+  </div>
+
+  <!-- Tab Pages -->
+  <div id="tab-properties" class="tab-content">
+      
+  <!-- Properties Table Section -->
+        <section class="mx-8 my-16">
+          <h3 class="text-3xl font-bold mb-6 text-gray-800">Properties</h3>
+
+          {% if properties %}
+              <div class="overflow-x-auto">
+                  <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
+                      <thead class="bg-blue-600 text-white">
+                          <tr>
+                              <th class="py-3 px-6 text-left">Image</th> <!-- Add this -->
+                              <th class="py-3 px-6 text-left">Property Name</th>
+                              <th class="py-3 px-6 text-left">Floor Count</th>
+                              <th class="py-3 px-6 text-left">Address Line 1</th>
+                              <th class="py-3 px-6 text-left">Address Line 2</th>
+                              <th class="py-3 px-6 text-left">State</th>
+                              <th class="py-3 px-6 text-left">Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for property in properties %}
+                              <tr class="border-b hover:bg-gray-100">
+                                  <!-- Display image -->
+                                  <td class="py-3 px-6">
+                                      <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
+                                  </td>
+                                  <td class="py-3 px-6">{{ property.property_name }}</td>
+                                  <td class="py-3 px-6">{{ property.floor_count }}</td>
+                                  <td class="py-3 px-6">{{ property.address_line1 }}</td>
+                                  <td class="py-3 px-6">{{ property.address_line2 }}</td>
+                                  <td class="py-3 px-6">{{ property.state }}</td>
+                                  <td class="py-3 px-6 flex space-x-4">
+                                    <!-- View Icon -->
+                                    <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </a>
+
+                                    <!-- Edit Icon -->
+                                    <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
+                                        </svg>
+                                    </a> -->
+
+                                    <!-- Delete Icon -->
+                                    <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
+                                        </svg>
+                                    </a> -->
+                                </td>
+
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+          {% else %}
+              <p class="text-gray-600">You don't have any properties listed yet.</p>
+          {% endif %}
+      </section>
+        
+  </div>
+
+  <div id="tab-renters" class="tab-content hidden">
+       <section class="mx-8 my-16">
+    <h3 class="text-3xl font-bold mb-6 text-gray-800">Renters</h3>
+
+    {% if renters %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <!-- <th class="py-3 px-6 text-left">Image</th>  -->
+                        <th class="py-3 px-6 text-left">Renter Name</th>
+                        <th class="py-3 px-6 text-left">Renter Email</th>
+                        <th class="py-3 px-6 text-left">Phone</th>
+                        <th class="py-3 px-6 text-left">Company Name</th>
+                        <th class="py-3 px-6 text-left">Address Line</th>
+                        <th class="py-3 px-6 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rent in renters %}
+                        <tr class="border-b hover:bg-gray-100">
+                            <!-- Display image -->
+                            <!-- <td class="py-3 px-6">
+                                <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
+                            </td> -->
+                            <td class="py-3 px-6">{{ rent.name }}</td>
+                            <td class="py-3 px-6">{{ rent.email }}</td>
+                            <td class="py-3 px-6">{{ rent.phone }}</td>
+                            <td class="py-3 px-6">{{ rent.company_name }}</td>
+                            <td class="py-3 px-6">{{ rent.address_line }}</td>
+                            <td class="py-3 px-6 flex space-x-4">
+                              <!-- View Icon -->
+                              <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                  </svg>
+                              </a>
+
+                              <!-- Edit Icon -->
+                              <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
+                                  </svg>
+                              </a> -->
+
+                              <!-- Delete Icon -->
+                              <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
+                                  </svg>
+                              </a> -->
+                          </td>
+
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-gray-600">You don't have any renters listed yet.</p>
+    {% endif %}
+  </section>
+
+
+  </div>
+
+  <div id="tab-agents" class="tab-content hidden">
+    
+    <section class="mx-8 my-16">
+      <h3 class="text-3xl font-bold mb-6 text-gray-800">Agents</h3>
+
+      {% if agents %}
+          <div class="overflow-x-auto">
+              <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
+                  <thead class="bg-blue-600 text-white">
+                      <tr>
+                          <!-- <th class="py-3 px-6 text-left">Image</th>  -->
+                          <th class="py-3 px-6 text-left">Agent Name</th>
+                          <th class="py-3 px-6 text-left">Agent Email</th>
+                          <th class="py-3 px-6 text-left">Agent Phone Number</th>
+                          <th class="py-3 px-6 text-left">Agent Company Name</th>
+                          <th class="py-3 px-6 text-left">Agent Company Email</th>
+                          <th class="py-3 px-6 text-left">Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for agent in agents %}
+                          <tr class="border-b hover:bg-gray-100">
+                              <!-- Display image -->
+                              <!-- <td class="py-3 px-6">
+                                  <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
+                              </td> -->
+                              <td class="py-3 px-6">{{ agent.name }}</td>
+                              <td class="py-3 px-6">{{ agent.email }}</td>
+                              <td class="py-3 px-6">{{ agent.phone }}</td>
+                              <td class="py-3 px-6">{{ agent.company_name }}</td>
+                              <td class="py-3 px-6">{{  agent.company_email }}</td>
+                              <td class="py-3 px-6 flex space-x-4">
+                                <!-- View Icon -->
+                                <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+
+                                <!-- Edit Icon -->
+                                <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
+                                    </svg>
+                                </a> -->
+
+                                <!-- Delete Icon -->
+                                <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
+                                    </svg>
+                                </a> -->
+                            </td>
+
+                          </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      {% else %}
+          <p class="text-gray-600">You don't have any properties listed yet.</p>
+      {% endif %}
+    </section>
+  </div>
+
+  <div id="tab-traders" class="tab-content hidden">
+        
+
+<section class="mx-8 my-16">
+  <h3 class="text-3xl font-bold mb-6 text-gray-800">Traders</h3>
+
+  {% if traders %}
+      <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
+              <thead class="bg-blue-600 text-white">
+                  <tr>
+                      <!-- <th class="py-3 px-6 text-left">Image</th> -->
+                      <th class="py-3 px-6 text-left">Trader Name</th>
+                      <th class="py-3 px-6 text-left">Trader Email</th>
+                      <th class="py-3 px-6 text-left">Address Line</th>
+                      <th class="py-3 px-6 text-left">Trader Company Name</th>
+                      <th class="py-3 px-6 text-left">Trader Company Address</th>
+        
+                      <th class="py-3 px-6 text-left">Actions</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for trader in traders %}
+                      <tr class="border-b hover:bg-gray-100">
+                          <!-- Display image -->
+                          <!-- <td class="py-3 px-6">
+                              <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
+                          </td> -->
+                          <td class="py-3 px-6">{{ trader.name }}</td>
+                          <td class="py-3 px-6">{{ trader.email }}</td>
+                          <td class="py-3 px-6">{{ trader.address_line_1 }}</td>
+                          <td class="py-3 px-6">{{ trader.company_name }}</td>
+                          <td class="py-3 px-6">{{ trader.company_address }}</td>
+                          <td class="py-3 px-6 flex space-x-4">
+                            <!-- View Icon -->
+                            <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+
+                            <!-- Edit Icon -->
+                            <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
+                                </svg>
+                            </a> -->
+
+                            <!-- Delete Icon -->
+                            <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
+                                </svg>
+                            </a> -->
+                        </td>
+
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  {% else %}
+      <p class="text-gray-600">You don't have any properties listed yet.</p>
+  {% endif %}
+</section>
+  </div>
+</div>
+
+  </section>
+
+    <div class="mt-6 text-right">
+      <a href="#" class="text-blue-600 font-semibold hover:underline">View all tasks</a>
+    </div>
+  </section>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const menu = document.getElementById('menu');
+    menuBtn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('border-blue-600', 'text-blue-600', 'active-tab');
+        b.classList.add('border-transparent');
+      });
+      btn.classList.add('border-blue-600', 'text-blue-600', 'active-tab');
+
+      const tab = btn.getAttribute('data-tab');
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+    });
+  });
+  </script>
+  <!-- Footer -->
+  {% include 'renter/home/footer.html' %}
+
+
+
+</body>
+
+</html>

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'trader',
     'social_django',
      'agent',
+     'thirdparty'
 ]
 
 MIDDLEWARE = [
@@ -202,3 +203,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Optional, expire when browser closes
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
 
 SOCIAL_AUTH_AUTHENTICATION_ERROR_URL = '/login-error/?message=Authentication%20was%20cancelled.'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'static/renter/images/uploads'
+
+

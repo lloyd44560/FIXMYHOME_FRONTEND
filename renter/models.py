@@ -79,3 +79,39 @@ class EmailVerification(models.Model):
         return f"{self.user.email} — {self.token}"
 
 
+
+class Property(models.Model):
+
+    renter = models.ForeignKey('Renter', on_delete=models.CASCADE, related_name='properties')
+    agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_properties')
+    property_name = models.CharField(max_length=255)
+
+    floor_count = models.PositiveIntegerField()
+    
+    state = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, blank=True, null=True)
+    postal_code = models.CharField(max_length=20)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    property_photo = models.ImageField(upload_to='property_photos/', blank=True, null=True)
+    condition_report = models.ImageField(upload_to='condition_reports/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.property_name} ({self.city}, {self.state})'
+
+
+class Room(models.Model):
+
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rooms')
+    room_name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    renter = models.ForeignKey('Renter', on_delete=models.CASCADE, related_name='room_items', null=True)
+
+    
+
+    def __str__(self):
+        return self.room_name

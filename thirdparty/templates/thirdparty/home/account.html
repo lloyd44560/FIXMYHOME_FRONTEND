@@ -12,7 +12,7 @@
 <body class="flex flex-col min-h-screen bg-blue-50">
 
     <!-- Navbar -->
-    {% include 'renter/home/navbar.html' %}
+    {% include 'thirdparty/home/navbar.html' %}
 
     <!-- Main Content -->
     <div class="flex-grow bg-blue-50">
@@ -38,13 +38,13 @@
                             <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Your Account</h3>
                             <ul id="accountNav" class="space-y-4 text-gray-700">
                                 <li data-section="personalInfo" class="cursor-pointer hover:text-blue-600">Personal Information</li>
-                                <li data-section="cards" class="cursor-pointer hover:text-blue-600">Cards and Accounts</li>
+                                <!-- <li data-section="cards" class="cursor-pointer hover:text-blue-600">Cards and Accounts</li> -->
                                 <li data-section="addresses" class="cursor-pointer hover:text-blue-600">Saved Addresses</li>
                                 <li data-section="notifications" class="cursor-pointer hover:text-blue-600">Notifications</li>
-                                <li data-section="business" class="cursor-pointer hover:text-blue-600">Manage Business Profile</li>
+                                <!-- <li data-section="business" class="cursor-pointer hover:text-blue-600">Manage Business Profile</li> -->
                                 <!-- <li data-section="benefits" class="cursor-pointer hover:text-blue-600">Benefits</li> -->
 
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Benefits</h3>
+                                <!-- <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Benefits</h3>
                                     <ul class="text-gray-700 space-y-2">
                                         <li class="hover:text-blue-600 cursor-pointer">Properties for Sale</li>
                                         <li class="hover:text-blue-600 cursor-pointer">FMH Lottery</li>
@@ -58,7 +58,7 @@
                                         <li class="hover:text-blue-600 cursor-pointer">Become a Trader</li>
                                         <li class="hover:text-blue-600 cursor-pointer">Rate the App</li>
                                     </ul>
-                                
+                                 -->
                                 <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Preferences</h3>
                                     <ul class="text-gray-700 space-y-2">
                                         <li class="hover:text-blue-600 cursor-pointer">Language</li>
@@ -81,21 +81,22 @@
                             <!-- Personal Information -->
                             <section id="personalInfo" class="account-section">
                                 <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Personal Information</h3>
-                                <form method="POST" action="{% url 'renter_account' %}" class="space-y-4">
+                                <form method="POST" action="" class="space-y-4">
                                     {% csrf_token %}
                                     <div>
                                         <label class="block text-gray-700 mb-1">Name</label>
                                         <input type="text" name="name" value="{{ user.first_name }} {{ user.last_name }}" class="w-full border rounded px-3 py-2" />
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Phone Number</label>
-
-                                        <input type="tel" name="phone" value="{{ request.session.renter_phone }}" class="w-full border rounded px-3 py-2" />
+                                        <label class="block text-gray-700 mb-1">Email</label>
+                                       <input type="email" name="contact_email" value="{{ thirdparty.contact_email }}" class="w-full border rounded px-3 py-2" />
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Email</label>
-                                        <input type="email" name="email" value="{{ user.email }}" class="w-full border rounded px-3 py-2" />
+                                        <label class="block text-gray-700 mb-1">Phone Number</label>
+
+                                        <input type="tel" name="phone" value="{{ thirdparty.phone }}" class="w-full border rounded px-3 py-2" />
                                     </div>
+
                                     <div>
                                         <label class="block text-gray-700 mb-1">PIN</label>
                                         <input type="password" name="pin" placeholder="Enter PIN" class="w-full border rounded px-3 py-2" />
@@ -103,14 +104,16 @@
                                     <div>
                                         <label class="block text-gray-700 mb-1">Gender</label>
                                         <select name="gender" class="w-full border rounded px-3 py-2">
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
+                                            <option value="Male" {% if thirdparty.gender == "Male" %}selected{% endif %}>Male</option>
+                                            <option value="Female" {% if thirdparty.gender == "Female" %}selected{% endif %}>Female</option>
+                                            <option value="Other" {% if thirdparty.gender == "Other" %}selected{% endif %}>Other</option>
                                         </select>
+
                                     </div>
                                     <div>
                                         <label class="block text-gray-700 mb-1">Date of Birth</label>
-                                        <input type="date" name="dob" class="w-full border rounded px-3 py-2" />
+                                        <!-- DOB from ThirdParty model -->
+                                        <input type="date" name="dob" value="{{ thirdparty.dob|date:'Y-m-d' }}" class="w-full border rounded px-3 py-2" />
                                     </div>
                                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
                                 </form>

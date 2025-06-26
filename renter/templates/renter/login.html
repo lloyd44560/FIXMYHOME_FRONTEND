@@ -88,12 +88,60 @@
               </button>
 
              <div class="text-center mt-6">
-                <span class="text-gray-600 text-sm font-medium block mb-2">Not a member? <a href="/register/" class="text-[#086cfc] font-semibold hover:underline hover:text-blue-700 transition">Are you a Renter,</a>
-                  <a href="/trader/register/" class="text-[#086cfc] font-semibold hover:underline hover:text-blue-700 transition">Trader,</a>
-                  <a href="/agent/register/" class="text-[#086cfc] font-semibold hover:underline hover:text-blue-700 transition">or Agent?</a> </span>
-                <ul class="space-y-2">
 
-                </ul>
+                <span class="text-gray-600 text-sm font-medium block mb-2">
+                  Not a member?  
+                  <button type="button" onclick="openSignupModal()" class="text-[#086cfc] font-semibold hover:underline hover:text-blue-700 transition">
+                   Sign Up Here
+                  </button>
+                </span>
+
+
+                <!-- Signup Role Modal -->
+                <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                  <div class="bg-white rounded-xl p-8 max-w-4xl w-full relative">
+                    <button onclick="closeSignupModal()" class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">&times;</button>
+                    <h1 class="text-2xl font-bold mb-6 text-center">Select Your Role</h1>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <!-- Renter -->
+                      <a href="/register/" class="flex items-start bg-blue-100 hover:bg-blue-200 transition rounded-2xl p-6 shadow-md hover:shadow-xl">
+                        <svg class="h-8 w-8 text-blue-700 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10l9-7 9 7v10a2 2 0 01-2 2h-3m-4 0v-6h-4v6H5a2 2 0 01-2-2V10z" />
+                        </svg>
+                        <div>
+                          <h2 class="text-xl font-semibold text-blue-900 mb-1">Renter</h2>
+                          <p class="text-sm text-blue-800">Looking for help fixing your home.</p>
+                        </div>
+                      </a>
+
+                      <!-- Trader -->
+                      <a href="/trader/register/" class="flex items-start bg-green-100 hover:bg-green-200 transition rounded-2xl p-6 shadow-md hover:shadow-xl">
+                        <svg class="h-8 w-8 text-green-700 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h2l1 2h13M7 21h10a1 1 0 001-1V6a1 1 0 00-1-1H7a1 1 0 00-1 1v14a1 1 0 001 1z" />
+                        </svg>
+                        <div>
+                          <h2 class="text-xl font-semibold text-green-900 mb-1">Trader</h2>
+                          <p class="text-sm text-green-800">Offer your services and find work.</p>
+                        </div>
+                      </a>
+
+                      <!-- Agent -->
+                      <a href="/agent/register/" class="flex items-start bg-yellow-100 hover:bg-yellow-200 transition rounded-2xl p-6 shadow-md hover:shadow-xl">
+                        <svg class="h-8 w-8 text-yellow-700 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17a4 4 0 004-4V5a4 4 0 10-8 0v8a4 4 0 004 4z" />
+                        </svg>
+                        <div>
+                          <h2 class="text-xl font-semibold text-yellow-900 mb-1">Agent</h2>
+                          <p class="text-sm text-yellow-800">Manage and oversee repairs and requests.</p>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                
             </div>
 
 
@@ -146,6 +194,20 @@
 </body>
 
 <script>
+
+  function openSignupModal() {
+    document.getElementById('signupModal').classList.remove('hidden');
+  }
+
+  function closeSignupModal() {
+    document.getElementById('signupModal').classList.add('hidden');
+  }
+
+  // Optional: Close with ESC
+  document.addEventListener('keydown', function (e) {
+    if (e.key === "Escape") closeSignupModal();
+  });
+
   const countdownEl = document.getElementById('countdown');
   if (countdownEl) {
     let seconds = parseInt(countdownEl.innerText);

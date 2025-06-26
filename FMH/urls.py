@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('renter.urls')),
     path('agent/', include('agent.urls')),
     path('trader/', include('trader.urls')),
+    path('third_party/', include('thirdparty.urls')),
 ]
