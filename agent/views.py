@@ -60,26 +60,46 @@ class AgentEditProfileView(UpdateView):
     model = AgentRegister
     form_class = AgentEditProfileForm
     template_name = "components/home/navigatorPages/viewProfileAgent.html"
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('profile_agent')
+
+    def get_object(self, queryset=None):
+        try:
+            fetchByRelatedField = self.model.objects.filter(user=self.request.user).first()
+            fetchByName = self.model.objects.filter(name=str(self.request.user)).first()
+            return fetchByRelatedField or fetchByName
+
+        except self.model.DoesNotExist:
+            return None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        context['full_name'] = user.get_full_name() or user
-        try:
-            agent = AgentRegister.objects.get(user=user)
+        agent = self.get_object()
+
+        if agent: 
             context['full_name'] = user.get_full_name() or agent.name
             context['email'] = user.email
-        except AgentRegister.DoesNotExist:
+        else:
             context['error'] = "Agent profile not found."
 
         return context
 
-    def get_object(self, queryset=None):
-        try:
-            return AgentRegister.objects.get(user=self.request.user)
-        except AgentRegister.DoesNotExist:
-            return None
+    def form_valid(self, form):
+        objectUpdate = self.get_object()
+
+        # Fields to update
+        fields = [
+            'name', 'email', 'phone', 'agency_id', 'website', 'notes', 'password',
+            'company_name', 'company_address', 'company_email', 'company_landline',
+            'contractor_license', 'service', 'state', 'municipality', 'city',
+            'postal_code', 'address_line_1', 'address_line_2'
+        ]
+
+        for field in fields:
+            setattr(objectUpdate, field, form.cleaned_data[field])
+
+        objectUpdate.save(update_fields=fields)
+        return redirect(self.success_url)
 
     def form_invalid(self, form):
         context = self.get_context_data(form=form)

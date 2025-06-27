@@ -24,6 +24,5 @@ class AgentEditProfileForm(forms.ModelForm):
         model = AgentRegister
         fields = '__all__'
         widgets = {
-            'notes': forms.Textarea(attrs={'rows': 3}),
-            'email': forms.EmailInput(attrs={'readonly': True}),  # Optional: lock email
+            'notes': forms.Textarea(attrs={'rows': 3})
         }

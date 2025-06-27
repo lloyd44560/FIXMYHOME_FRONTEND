@@ -3,46 +3,41 @@
 <div class="bg-white shadow rounded-xl p-6">
     <h2 class="text-xl font-semibold text-blue-600 mb-4">Agent Details</h2>
     <div class="grid md:grid-cols-2 gap-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Name</label>
-        {{ form.name|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.name.errors }}
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Email</label>
-        {{ form.email|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.email.errors }}
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Phone</label>
-        {{ form.phone|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.phone.errors }}
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Contact Person</label>
-        {{ form.contact_person|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.contact_person.errors }}
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Agency ID</label>
-        {{ form.agency_id|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.agency_id.errors }}
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Website</label>
-        {{ form.website|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.website.errors }}
-    </div>
-    <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700">Notes</label>
-        {{ form.notes|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.notes.errors }}
-    </div>
-    <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700">Password</label>
-        {{ form.password|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-        {{ form.password.errors }}
-    </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Name</label>
+            {{ form.name|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.name.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            {{ form.email|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.email.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Phone</label>
+            {{ form.phone|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.phone.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Contact Person</label>
+            {{ form.contact_person|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.contact_person.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Agency ID</label>
+            {{ form.agency_id|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.agency_id.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Website</label>
+            {{ form.website|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.website.errors }}
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700">Notes</label>
+            {{ form.notes|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.notes.errors }}
+        </div>
     </div>
 </div>
 
