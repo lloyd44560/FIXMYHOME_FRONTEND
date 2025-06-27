@@ -39,3 +39,9 @@ class TraderRegistrationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+class TraderEditProfileForm(forms.ModelForm):
+    class Meta:
+        model = TraderRegistration
+        fields = '__all__'
+        widgets = {}

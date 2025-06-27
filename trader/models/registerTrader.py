@@ -11,7 +11,7 @@ class TraderRegistration(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
-    password = models.CharField(max_length=255, null=True)
+    password = models.CharField(max_length=255, null=True, blank=True)
     
     # Company Details
     COMPANY_TYPE_CHOICES = [

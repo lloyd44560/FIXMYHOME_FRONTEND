@@ -1,5 +1,5 @@
 {% load widget_tweaks %}
-<!-- Agent Details -->
+<!-- Trader Details -->
 <div class="bg-white shadow rounded-xl p-6">
     <h2 class="text-xl font-semibold text-blue-600 mb-4">Personal Details</h2>
     <div class="grid md:grid-cols-2 gap-4">
@@ -18,26 +18,6 @@
             {{ form.phone|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
             {{ form.phone.errors }}
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Contact Person</label>
-            {{ form.contact_person|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.contact_person.errors }}
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Agency ID</label>
-            {{ form.agency_id|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.agency_id.errors }}
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Website</label>
-            {{ form.website|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.website.errors }}
-        </div>
-        <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">Notes</label>
-            {{ form.notes|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.notes.errors }}
-        </div>
     </div>
 </div>
 
@@ -45,6 +25,11 @@
 <div class="bg-white shadow rounded-xl p-6">
     <h2 class="text-xl font-semibold text-blue-600 mb-4">Company Details</h2>
     <div class="grid md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Company Type</label>
+            {{ form.company_type|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.company_type.errors }}
+        </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Company Name</label>
             {{ form.company_name|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
@@ -71,9 +56,19 @@
             {{ form.contractor_license.errors }}
         </div>
         <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">Service</label>
-            {{ form.service|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.service.errors }}
+            <label class="block text-sm font-medium text-gray-700">Australian Business Number (ABN)</label>
+            {{ form.abn|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.abn.errors }}
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700">Industry</label>
+            {{ form.industry|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.industry.errors }}
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700">Other Expertise</label>
+            {{ form.other_expertise|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
+            {{ form.other_expertise.errors }}
         </div>
     </div>
 </div>

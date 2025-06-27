@@ -19,7 +19,6 @@ class AgentRegistrationCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        print("Form errors:", form.errors)
 
         if form.is_valid():
             # Duplicate username or email check
@@ -78,7 +77,10 @@ class AgentEditProfileView(UpdateView):
 
         if agent: 
             context['full_name'] = user.get_full_name() or agent.name
-            context['email'] = user.email
+            context['email'] = agent.email
+            context['phone'] = agent.phone
+            context['address'] = agent.address_line_1
+
         else:
             context['error'] = "Agent profile not found."
 

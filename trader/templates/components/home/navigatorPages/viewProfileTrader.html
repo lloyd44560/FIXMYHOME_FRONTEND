@@ -5,63 +5,105 @@
 {% include 'components/home/navigatorBase.html' %}
 
 <!-- Main Content -->
-<div class="flex-grow bg-blue-50">
-  <!-- Full Height Container -->
-  <div class="flex-1 flex justify-center items-start p-4">
-    <!-- Content Wrapper -->
-    <div class="bg-white shadow-lg rounded-lg w-full flex flex-col md:flex-row lg:px-32">
-      <!-- Sidebar -->
-      <div class="md:w-1/4 bg-gray-50 p-6 flex flex-col items-center text-center border-r">
-        <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
-          </svg>
+<div x-data="{ showModal: false }" class="max-w-5xl mx-auto py-10 px-4">
+
+  <!-- Profile View Section -->
+  <div class="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row gap-8 justify-between">
+    
+    <!-- Left Panel -->
+    <div class="flex flex-col items-center md:w-1/2 border-r pr-6">
+        {% if error %}
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {{ error }}
+          </div>
+        {% endif %}
+      <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl text-purple-600">
+        👤
+      </div>
+      <div class="mt-6 w-full">
+        <label class="block text-sm font-semibold text-gray-700 text-center">Full Name</label>
+        <div class="mt-1 text-center bg-gray-50 px-4 py-2 rounded border">{{ full_name }}</div>
+      </div>
+      <div class="mt-4 w-full">
+        <label class="block text-sm font-semibold text-gray-700 text-center">Email</label>
+        <div class="mt-1 text-center bg-gray-50 px-4 py-2 rounded border">{{ email }}</div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="md:w-1/2 pl-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Your Account</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Phone Number</label>
+          <div class="bg-gray-50 mt-1 px-4 py-2 rounded border text-gray-500">{{ phone }}</div>
         </div>
-        <h2 class="text-xl font-semibold mb-2"> {{ full_name }}</h2>
-        <span class="text-blue-600 text-xs bg-blue-100 px-3 py-1 rounded-full">{{ email }} </span>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Address</label>
+          <div class="bg-gray-50 mt-1 px-4 py-2 rounded border text-gray-500">{{ address }}</div>
+        </div>
       </div>
 
-      <!-- Main Content Area -->
-      <div class="flex-1 p-6 space-y-10">
-        <!-- Your Account Section -->
-        <div>
-            <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Your Account</h3>
-            <ul class="space-y-4 text-gray-700">
-              <li class="cursor-pointer hover:text-blue-600">Personal Information</li>
-              <li class="cursor-pointer hover:text-blue-600">Cards and Accounts</li>
-              <li class="cursor-pointer hover:text-blue-600">Saved Addresses</li>
-              <li class="cursor-pointer hover:text-blue-600">Notifications</li>
-              <li class="cursor-pointer hover:text-blue-600">Manage Business Profile</li>
-            </ul>
-        </div>
+      <div>
+        <h3 class="font-semibold text-gray-800">Benefits</h3>
+        <ul class="list-disc ml-6 text-blue-600 mt-2 space-y-1 text-sm">
+          <li><a href="#">FMH Lottery</a></li>
+          <li><a href="#">FMH Local Businesses</a></li>
+        </ul>
+      </div>
 
-        <!-- Benefits Section -->
-        <div>
-          <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Benefits</h3>
-          <ul class="space-y-4 text-gray-700">
-            <li class="cursor-pointer hover:text-blue-600">Properties for Rent</li>
-            <li class="cursor-pointer hover:text-blue-600">Properties for Sale</li>
-            <li class="cursor-pointer hover:text-blue-600">FMH Lottery</li>
-            <li class="cursor-pointer hover:text-blue-600">FMH Local Businesses</li>
-          </ul>
-        </div>
+      <div class="mt-4">
+        <h3 class="font-semibold text-gray-800">Support</h3>
+        <ul class="list-disc ml-6 text-blue-600 mt-2 space-y-1 text-sm">
+          <li><a href="#">Help / FAQs</a></li>
+          <li><a href="#">Rate the App</a></li>
+        </ul>
+      </div>
 
-        <!-- Support Section -->
-        <div>
-          <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Support</h3>
-          <ul class="space-y-4 text-gray-700">
-            <li class="cursor-pointer hover:text-blue-600">Help / FAQs</li>
-            <li class="cursor-pointer hover:text-blue-600">Become a Trader</li>
-          </ul>
-        </div>
+      <div class="mt-6">
+        <button @click="showModal = true"
+          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+          Edit Profile
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <!-- Modal Box -->
+    <div class="relative w-full h-screen max-w-6xl bg-white rounded shadow-xl overflow-hidden">
+      <!-- Modal Header (Fixed) -->
+      <div class="sticky top-0 z-10 bg-white border-b flex items-center justify-between px-6 py-4">
+        <h2 class="text-2xl font-bold text-gray-800">Edit Trader Profile</h2>
+        <button @click="showModal = false" class="text-gray-500 hover:text-gray-700 text-2xl leading-none">
+          &times;
+        </button>
+      </div>
+
+      <!-- Scrollable Modal Body -->
+      <div class="overflow-y-auto h-[calc(100vh-72px)] px-6 py-6">
+        <form method="POST">
+          {% csrf_token %}
+          <!-- Form Fields -->
+          {% include 'components/home/navigatorPages/editProfileTrader.html' %}
+
+          <div class="text-right">
+            <button type="submit"
+              class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+              Save Profile
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
-{% include 'components/footerAgent.html' %}
+{% include 'components/footerTrader.html' %}
 {% endblock %}
 
 {% block scripts %}
-  <!-- JS Scripts Here -->
+  <!-- Alpine.js CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}
