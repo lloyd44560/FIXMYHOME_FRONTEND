@@ -6,8 +6,8 @@ from django.views.generic.edit import UpdateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 
-from .models import TraderRegistration
-from .forms import TraderRegistrationForm, TeamMemberFormSet, TraderEditProfileForm
+from .models import TraderRegistration, TeamMember, ContractorLicense
+from .forms import TraderRegistrationForm, TeamMemberFormSet, ContractorLicenseSet, TraderEditProfileForm
 
 # View for the registration page
 class TraderRegistrationCreateView(CreateView):
@@ -19,14 +19,19 @@ class TraderRegistrationCreateView(CreateView):
     def get(self, request, *args, **kwargs):
         form = self.form_class()
         formset = TeamMemberFormSet()
-        return render(request, self.template_name, {'form': form, 'formset': formset})
+        form_license = ContractorLicenseSet()
+        return render(request, self.template_name, {
+            'form': form, 
+            'formset': formset, 
+            'formLicense': form_license
+        })
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         formset = TeamMemberFormSet(request.POST)
-        print("Form errors:", form.errors)
-        print("Formset errors:", formset.errors)
-        if form.is_valid() and formset.is_valid():
+        form_license = ContractorLicenseSet(request.POST)
+        
+        if form.is_valid() and formset.is_valid() and form_license.is_valid():
             # Duplicate username or email check
             username = form.cleaned_data['name']
             email = form.cleaned_data['email']
@@ -51,8 +56,36 @@ class TraderRegistrationCreateView(CreateView):
             trader.password = None
             trader.save()
 
-            formset.instance = trader
-            formset.save()
+            # ✅ Now loop the team member lists
+            team_names = request.POST.getlist('team_name')
+            team_positions = request.POST.getlist('team_position')
+            form_data = formset.cleaned_data[0]
+
+            for name, position in zip(team_names, team_positions):
+                TeamMember.objects.create(
+                    trader=trader, # <--- FK relation
+                    teamName=name,
+                    position=position,  
+                    labour_rate_per_hour = form_data['labour_rate_per_hour'],
+                    callout_rate = form_data['callout_rate'],
+                    contact_number = form_data['contact_number'],
+                    active_postal_codes = form_data['active_postal_codes'],
+                    holidays = form_data['holidays'],
+                    time_in = form_data['time_in'],
+                    time_out = form_data['time_out'],
+                    IsWorkInHoliday = form_data['IsWorkInHoliday'],
+                    holidayTime_in = form_data['holidayTime_in'],
+                    holidayTime_out = form_data['holidayTime_out']
+                )
+            
+            # ✅ Now loop the contract license lists
+            license_number = request.POST.getlist('license_number')
+
+            for licenses in license_number:
+                ContractorLicense.objects.create(
+                    trader=trader, # <--- FK relation
+                    contractorLicense=licenses
+                )
             
             return redirect(self.success_url)
         else:
@@ -89,6 +122,7 @@ class TraderProfileView(UpdateView):
             context['email'] = user.email or trader.email
             context['phone'] = trader.phone
             context['address'] = trader.address_line_1
+            context['addressTwo'] = trader.address_line_2
 
         else:
             context['error'] = "Trader profile not found."
@@ -114,6 +148,5 @@ class TraderProfileView(UpdateView):
     
     def form_invalid(self, form):
         context = self.get_context_data(form=form)
-        print('Form Errors', form.errors)
         context['error'] = "There was an error updating your profile."
         return self.render_to_response(context)

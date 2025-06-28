@@ -5,7 +5,7 @@
     <!-- Team Member Name -->
     <div>
         <label id="nameLabel" for="teamMemberName" class="block text-sm font-medium text-gray-700">Team member name <span class="text-red-500">*</span></label>
-        {{ form.name|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        {{ form.teamName|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
         <span id="teamMemberNameError" class="text-red-500 text-xs"></span>
     </div>
 
@@ -170,4 +170,5 @@
         </div>
     </div>
 </div>
+
 {% endfor %}

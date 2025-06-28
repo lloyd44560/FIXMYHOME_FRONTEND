@@ -80,6 +80,7 @@ class AgentEditProfileView(UpdateView):
             context['email'] = agent.email
             context['phone'] = agent.phone
             context['address'] = agent.address_line_1
+            context['addressTwo'] = agent.address_line_2
 
         else:
             context['error'] = "Agent profile not found."

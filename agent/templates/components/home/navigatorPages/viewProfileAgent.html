@@ -6,67 +6,50 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 <!-- Main Content -->
-<div x-data="{ showModal: false }" class="max-w-5xl mx-auto py-10 px-4">
-
-  <!-- Profile View Section -->
-  <div class="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row gap-8 justify-between">
-    
-    <!-- Left Panel -->
-    <div class="flex flex-col items-center md:w-1/2 border-r pr-6">
-        {% if error %}
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            {{ error }}
-          </div>
-        {% endif %}
-      <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl text-purple-600">
-        👤
+<div x-data="{ showModal: false }" class="flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-xl rounded-2xl p-8 max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Profile Info -->
+    <div class="flex flex-col items-center text-center">
+      <div class="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center">
+        <svg class="w-14 h-14 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
       </div>
-      <div class="mt-6 w-full">
-        <label class="block text-sm font-semibold text-gray-700 text-center">Full Name</label>
-        <div class="mt-1 text-center bg-gray-50 px-4 py-2 rounded border">{{ full_name }}</div>
-      </div>
-      <div class="mt-4 w-full">
-        <label class="block text-sm font-semibold text-gray-700 text-center">Email</label>
-        <div class="mt-1 text-center bg-gray-50 px-4 py-2 rounded border">{{ email }}</div>
-      </div>
+      <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ full_name }}</h2>
+      <p class="text-gray-500 mt-1">{{ email }}</p>
     </div>
 
-    <!-- Right Panel -->
-    <div class="md:w-1/2 pl-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Your Account</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <!-- Account Info -->
+    <div class="flex flex-col justify-between">
+      <div class="space-y-4">
         <div>
-          <label class="text-sm font-medium text-gray-700">Phone Number</label>
-          <div class="bg-gray-50 mt-1 px-4 py-2 rounded border text-gray-500">{{ phone }}</div>
+          <label class="text-sm font-medium text-gray-600">Phone Number</label>
+          <input type="text" value="{{ phone }}" class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled/>
         </div>
         <div>
-          <label class="text-sm font-medium text-gray-700">Address</label>
-          <div class="bg-gray-50 mt-1 px-4 py-2 rounded border text-gray-500">{{ address }}</div>
+          <label class="text-sm font-medium text-gray-600">Address</label>
+          <input type="text" value="{{ address }}" class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled/>
+          <input type="text" value="{{ addressTwo }}" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled/>
         </div>
       </div>
 
-      <div>
-        <h3 class="font-semibold text-gray-800">Benefits</h3>
-        <ul class="list-disc ml-6 text-blue-600 mt-2 space-y-1 text-sm">
-          <li><a href="#">FMH Lottery</a></li>
-          <li><a href="#">FMH Local Businesses</a></li>
-        </ul>
-      </div>
-
-      <div class="mt-4">
-        <h3 class="font-semibold text-gray-800">Support</h3>
-        <ul class="list-disc ml-6 text-blue-600 mt-2 space-y-1 text-sm">
-          <li><a href="#">Help / FAQs</a></li>
-          <li><a href="#">Rate the App</a></li>
+      <div class="mt-6">
+        <h3 class="text-sm font-semibold text-gray-700 mb-2">Benefits</h3>
+        <ul class="list-disc list-inside text-gray-600 space-y-1">
+          <li><a href="#" class="text-blue-600 hover:underline">FMH Lottery</a></li>
+          <li><a href="#" class="text-blue-600 hover:underline">FMH Local Businesses</a></li>
         </ul>
       </div>
 
       <div class="mt-6">
-        <button @click="showModal = true"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-          Edit Profile
-        </button>
+        <h3 class="text-sm font-semibold text-gray-700 mb-2">Support</h3>
+        <ul class="list-disc list-inside text-gray-600 space-y-1">
+          <li><a href="#" class="text-blue-600 hover:underline">Help / FAQs</a></li>
+          <li><a href="#" class="text-blue-600 hover:underline">Rate the App</a></li>
+        </ul>
       </div>
+
+      <button @click="showModal = true" class="mt-8 bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition w-full md:w-auto">Edit Profile</button>
     </div>
   </div>
 
@@ -76,7 +59,7 @@
     <div class="relative w-full h-screen max-w-6xl bg-white rounded shadow-xl overflow-hidden">
       <!-- Modal Header (Fixed) -->
       <div class="sticky top-0 z-10 bg-white border-b flex items-center justify-between px-6 py-4">
-        <h2 class="text-2xl font-bold text-gray-800">Edit Agent Profile</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Edit Trader Profile</h2>
         <button @click="showModal = false" class="text-gray-500 hover:text-gray-700 text-2xl leading-none">
           &times;
         </button>
