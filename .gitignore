@@ -1,4 +1,3 @@
 # Ignore this files
 **/__pycache__/
 FMH\__pycache__
-db.sqlite3
