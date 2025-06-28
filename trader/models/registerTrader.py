@@ -18,14 +18,6 @@ class TraderRegistration(models.Model):
         ('sole_trader', 'Sole Trader'),
         ('company', 'Company'),
     ]
-    company_type = models.CharField(max_length=100, choices=COMPANY_TYPE_CHOICES, default='company')
-    company_name = models.CharField(max_length=255, blank=True, null=True)
-    company_address = models.CharField(max_length=255, blank=True, null=True)
-    company_email = models.EmailField(blank=True, null=True)
-    company_landline = models.CharField(max_length=50, blank=True, null=True)
-    contractor_license = models.CharField(max_length=100, blank=True)
-    gst_registered = models.BooleanField(default=False)
-    abn = models.CharField(max_length=20, blank=True, null=True)
     INDUSTRIES_CHOICES = [
         ('air_conditioning', 'Air Conditioning'),
         ('cleaning', 'Cleaning'),
@@ -38,6 +30,14 @@ class TraderRegistration(models.Model):
         ('tree_cutting', 'Tree Cutting'),
         ('steel_works', 'Steel Works'),
     ]
+
+    company_type = models.CharField(max_length=100, choices=COMPANY_TYPE_CHOICES, default='company')
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    company_address = models.CharField(max_length=255, blank=True, null=True)
+    company_email = models.EmailField(blank=True, null=True)
+    company_landline = models.CharField(max_length=50, blank=True, null=True)
+    gst_registered = models.BooleanField(default=False)
+    abn = models.CharField(max_length=20, blank=True, null=True)
     industry = models.CharField(max_length=100, choices=INDUSTRIES_CHOICES, blank=True, null=True)
     other_expertise = models.CharField(max_length=100, choices=INDUSTRIES_CHOICES, blank=True, null=True)
 

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const companyNameInput = document.getElementById('id_company_name');
     const companyAddressInput = document.getElementById('id_company_address');
     const companyEmailInput = document.getElementById('id_company_email');
-    const contractorLicenseInput = document.getElementById('id_contractor_license');
+    const contractorLicenseInput = document.querySelector('input[name$="-contractorLicense"]');
     const abnInput = document.getElementById('id_abn');
     const industryInput = document.getElementById('id_industry');
     let gst_registered = document.getElementById('id_gst_registered');

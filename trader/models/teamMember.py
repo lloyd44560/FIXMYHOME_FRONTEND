@@ -4,7 +4,7 @@ from .registerTrader import TraderRegistration
 class TeamMember(models.Model):
     trader = models.ForeignKey(TraderRegistration, 
         on_delete=models.CASCADE, related_name='team_members')
-    name = models.CharField(max_length=255)
+    teamName = models.CharField(max_length=255)
     position = models.CharField(max_length=100)
     labour_rate_per_hour = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     callout_rate = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
@@ -21,4 +21,4 @@ class TeamMember(models.Model):
     holidayTime_out = models.TimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name} ({self.id})"
+        return f"{self.teamName} ({self.id})"
