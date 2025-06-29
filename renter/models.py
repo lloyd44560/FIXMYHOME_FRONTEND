@@ -7,6 +7,7 @@ from django.conf import settings
 
 class Renter(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
+
     # Step 1 - Personal Info
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -45,7 +46,6 @@ class Renter(models.Model):
     def __str__(self):
         return self.name
 
-
 class FailedLoginAttempt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     attempts = models.IntegerField(default=0)
@@ -55,20 +55,12 @@ class FailedLoginAttempt(models.Model):
     def __str__(self):
         return f"{self.user.email} - {self.attempts} attempts"
 
-
-# create model for Properties 
-# Assign a user field 
-
-# models.py
 class ConditionReport(models.Model):
     renter = models.OneToOneField('Renter', on_delete=models.CASCADE)  # One condition report per renter
     data = models.JSONField()  # You can store the entire modal form data as JSON
 
     def __str__(self):
         return f"Condition Report for {self.renter.name}"
-
-# Create a rooms Model 
-# Assign a user field 
 
 class EmailVerification(models.Model):
     user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -78,22 +70,17 @@ class EmailVerification(models.Model):
     def __str__(self):
         return f"{self.user.email} — {self.token}"
 
-
-
+# create model for Properties 
 class Property(models.Model):
-
-    renter = models.ForeignKey('Renter', on_delete=models.CASCADE, related_name='properties')
-    agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_properties')
+    renter = models.ForeignKey('Renter', on_delete=models.SET_NULL, related_name='properties', null=True, blank=True)
+    agent = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='assigned_properties')
     property_name = models.CharField(max_length=255)
-
     floor_count = models.PositiveIntegerField()
-    
     state = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     address_line1 = models.CharField(max_length=255)
     address_line2 = models.CharField(max_length=255, blank=True, null=True)
     postal_code = models.CharField(max_length=20)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     property_photo = models.ImageField(upload_to='property_photos/', blank=True, null=True)
@@ -103,15 +90,12 @@ class Property(models.Model):
     def __str__(self):
         return f'{self.property_name} ({self.city}, {self.state})'
 
-
+# Create a rooms Model 
 class Room(models.Model):
-
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rooms')
     room_name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     renter = models.ForeignKey('Renter', on_delete=models.CASCADE, related_name='room_items', null=True)
-
-    
 
     def __str__(self):
         return self.room_name
