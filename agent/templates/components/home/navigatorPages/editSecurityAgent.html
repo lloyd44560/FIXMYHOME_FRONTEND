@@ -1,0 +1,53 @@
+{% extends "baseAgent.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white shadow-xl rounded-lg p-8 mt-10">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Edit Security</h2>
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label for="{{ form.old_password.id_for_label }}" class="block text-gray-700 font-medium">
+        Old Password
+      </label>
+      {{ form.old_password|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+      {% if form.old_password.errors %}
+        <span class="text-red-500 text-xs">{{ form.old_password.errors }}</span>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ form.new_password1.id_for_label }}" class="block text-gray-700 font-medium">
+        New Password
+      </label>
+      {{ form.new_password1|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+      {% if form.new_password1.errors %}
+        <span class="text-red-500 text-xs">{{ form.new_password1.errors }}</span>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ form.new_password2.id_for_label }}" class="block text-gray-700 font-medium">
+        Confirm New Password
+      </label>
+      {{ form.new_password2|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+      {% if form.new_password2.errors %}
+        <span class="text-red-500 text-xs">{{ form.new_password2.errors }}</span>
+      {% endif %}
+    </div>
+
+    <button type="submit"
+      class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+      Update Password
+    </button>
+  </form>
+
+  <div class="mt-4 text-center">
+    <a href="{% url 'profile_agent' %}" class="text-blue-600 hover:underline">
+      Back to Profile
+    </a>
+  </div>
+</div>
+{% endblock %}

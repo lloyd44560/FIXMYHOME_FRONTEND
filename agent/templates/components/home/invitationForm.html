@@ -1,0 +1,36 @@
+{% extends "baseAgent.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+<!-- Hero Section for Invitation -->
+<section class="bg-blue-50 py-10">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Invite a Renter</h2>
+        <p class="text-gray-600 mb-6">Send an invitation link to a renter via email.</p>
+
+        <form method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-xl mx-auto">
+        {% csrf_token %}
+        <div>
+            <label for="id_name" class="block text-left text-gray-700 font-semibold">Renter Name</label>
+            {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+        <div>
+            <label for="id_email" class="block text-left text-gray-700 font-semibold">Renter Email</label>
+            {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+            Send Invitation
+        </button>
+        </form>
+    </div>
+</section>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{% endblock %}

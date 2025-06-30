@@ -1,0 +1,146 @@
+{% extends "baseAgent.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+<div x-data="{ open: false }" class="max-w-4xl mx-auto p-6 mt-6 bg-white shadow-md rounded-lg">
+  <h2 class="text-2xl font-bold mb-4 text-blue-700">Property Details</h2>
+
+  <div class="grid grid-cols-2 gap-4 text-sm">
+    <div><strong>Name:</strong> {{ property.name }}</div>
+    <div><strong>Status:</strong> {{ property.get_status_display }}</div>
+    <div><strong>Address:</strong> {{ property.address }}</div>
+    <div><strong>City:</strong> {{ property.city }}</div>
+    <div><strong>State:</strong> {{ property.state }}</div>
+    <div><strong>Postal Code:</strong> {{ property.postal_code }}</div>
+    <div><strong>Floor Count:</strong> {{ property.floor_count }}</div>
+    <div><strong>Rent:</strong> ₱{{ property.rent }}</div>
+    <div><strong>Lease Period:</strong> {{ property.lease_start }} to {{ property.lease_end }}</div>
+    <div><strong>Renter:</strong> {{ property.renter_name }} ({{ property.renter_contact }})</div>
+    <div><strong>Agent:</strong> {{ property.agent.user.username }}</div>
+  </div>
+
+  {% if property.property_photo %}
+    <div class="mt-4">
+      <strong>Photo:</strong><br>
+      <img src="{{ property.property_photo.url }}" alt="Property Photo" class="w-64 h-auto rounded">
+    </div>
+  {% endif %}
+
+  {% if property.condition_report %}
+    <div class="mt-4">
+      <strong>Condition Report:</strong><br>
+      <img src="{{ property.condition_report.url }}" alt="Condition Report" class="w-64 h-auto rounded">
+    </div>
+  {% endif %}
+
+  <hr class="my-6">
+
+  <h3 class="text-xl font-semibold text-gray-700 mb-2">Rooms</h3>
+
+  <!-- Add Room Button -->
+  <button @click="open = true" class="mb-4 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+    ➕ Add Room
+  </button>
+
+  <!-- Modal -->
+  <div x-show="open" x-cloak
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div @click.away="open = false"
+        class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg transition-all">
+      <h2 class="text-lg font-semibold mb-4">Create Room</h2>
+
+      <form method="POST" action="">
+        {% csrf_token %}
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Room Name</label>
+          {{ room_form.room_name|add_class:"w-full border-gray-300 rounded-md shadow-sm" }}
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Description</label>
+          {{ room_form.description|add_class:"w-full border-gray-300 rounded-md shadow-sm" }}
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Renter</label>
+          {{ room_form.renter|add_class:"w-full border-gray-300 rounded-md shadow-sm" }}
+        </div>
+
+        <div class="flex justify-end space-x-2">
+          <button type="button" @click="open = false"
+                  class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
+          <button type="submit"
+                  class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if property.property_rooms.all %}
+    <table class="w-full text-sm border border-gray-300 rounded-md">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2 border">Room Name</th>
+          <th class="px-4 py-2 border">Description</th>
+          <th class="px-4 py-2 border">Renter</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for room in property.property_rooms.all %}
+        <tr>
+          <td class="px-4 py-2 border">{{ room.room_name }}</td>
+          <td class="px-4 py-2 border">{{ room.description }}</td>
+          <td class="px-4 py-2 border">
+            {% if room.renter %}
+              {{ room.renter.name }}
+            {% else %}
+              <span class="text-gray-400">Vacant</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-gray-500">No rooms found for this property.</p>
+  {% endif %}
+
+  <div class="mt-6">
+    <a href="javascript:history.back()" class="text-blue-600 hover:underline">← Back to Homepage</a>
+  </div>
+
+  {% if messages %}
+    <div
+      x-data="{ show: true }"
+      x-init="setTimeout(() => show = false, 4000)"
+      x-show="show"
+      class="fixed top-6 right-6 z-50 transition ease-in-out"
+    >
+      {% for message in messages %}
+        <div
+          class="
+            {% if 'error' in message.tags %}
+              bg-red-100 text-red-800
+            {% elif 'success' in message.tags %}
+              bg-green-100 text-green-800
+            {% elif 'warning' in message.tags %}
+              bg-yellow-100 text-yellow-800
+            {% else %}
+              bg-blue-100 text-blue-800
+            {% endif %}
+            px-4 py-2 rounded
+          ">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{% endblock %}

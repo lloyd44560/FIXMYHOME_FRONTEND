@@ -9,4 +9,5 @@ urlpatterns = [
     # =============== Middleware added: Login Required =============== 
     path('home/', views.TraderHomeView.as_view(), name='home_trader'),
     path('profile-trader/', views.TraderProfileView.as_view(), name='profile_trader'),
+    path('profile/security/', views.TraderEditSecurityView.as_view(), name='trader_edit_security'),
 ]

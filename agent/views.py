@@ -1,14 +1,24 @@
-from django.shortcuts import render, redirect
+import uuid
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
+from django.contrib.auth import update_session_auth_hash
+from django.conf import settings
 from django.urls import reverse_lazy
 
-from django.views.generic import TemplateView, CreateView
-from django.views.generic.edit import UpdateView
+from django.views import View
+from django.views.generic import TemplateView, CreateView, ListView
+from django.contrib.auth.forms import PasswordChangeForm
+from django.views.generic.edit import UpdateView, FormView, DeleteView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.models import User
+from django.contrib import messages
 
-from .models import AgentRegister
+from .models import AgentRegister, Property
 from .forms import CreateAgentFormClass, AgentEditProfileForm
+from .forms import InvitationForm, AgentCreatePropertyForm, AgentCreateRoomForm
 
 # Create your views here.
 class AgentRegistrationCreateView(CreateView):
@@ -51,8 +61,39 @@ class AgentRegistrationCreateView(CreateView):
 
 # View for the home page
 @method_decorator(login_required, name='dispatch')
-class AgentHomeView(TemplateView):
+class AgentHomeView(FormView):
     template_name = 'pages/homeAgent.html'
+    form_class = InvitationForm
+    success_url = reverse_lazy("home_agent")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['properties'] = Property.objects.all()
+        return context
+
+    def form_valid(self, form):
+        name = form.cleaned_data["name"]
+        email = form.cleaned_data["email"]
+        token = str(uuid.uuid4())
+
+        # Save the invitation
+        # Invitation.objects.create(
+        #     email=email,
+        #     token=token,
+        #     invited_by=self.request.user  # you must be logged in!
+        # )
+
+        invitation_link = self.request.build_absolute_uri(f"/register/")
+
+        send_mail(
+            subject="You're invited to join!",
+            message=f"Hi {name},\n\nYou've been invited! Register here: {invitation_link}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        messages.success(self.request, "Invitation sent successfully!")
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class AgentEditProfileView(UpdateView):
@@ -108,3 +149,82 @@ class AgentEditProfileView(UpdateView):
         context = self.get_context_data(form=form)
         context['error'] = "There was an error updating your profile."
         return self.render_to_response(context)
+
+@method_decorator(login_required, name='dispatch')
+class AgentEditSecurityView(FormView):
+    template_name = "components/home/navigatorPages/editSecurityAgent.html"
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('profile_agent')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # PasswordChangeForm needs user
+        return kwargs
+
+    def form_valid(self, form):
+        user = form.save()
+        update_session_auth_hash(self.request, user)  # Keeps session
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+class PropertyCreateView(CreateView):
+    template_name = "components/home/property_form.html"
+    model = Property
+    form_class = AgentCreatePropertyForm
+    success_url = reverse_lazy("home_agent") 
+
+    def form_valid(self, form):
+        messages.success(self.request, "Property created successfully!")
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        print('Form Errors:', form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
+
+class PropertyUpdateView(UpdateView):
+    model = Property
+    form_class = AgentCreatePropertyForm
+    template_name = 'components/home/property_form.html'
+    success_url = reverse_lazy('home_agent')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        property = self.get_object()
+
+        if not property.renter_name:
+            initial['renter_name'] = "Unknown"
+
+        return initial
+
+@require_POST
+def delete_property(request, pk):
+    property = get_object_or_404(Property, pk=pk)
+    property.delete()
+    messages.success(request, f"Property '{property.name}' deleted.")
+    return redirect('home_agent')
+
+class PropertyDetailView(DetailView):
+    model = Property
+    template_name = 'components/home/property_detail.html'
+    context_object_name = 'property'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['room_form'] = AgentCreateRoomForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = AgentCreateRoomForm(request.POST)
+        if form.is_valid():
+            room = form.save(commit=False)
+            room.property = self.object
+            room.save()
+
+            messages.success(request, f"Room created successfully!")
+        else:
+            messages.error(request, f"{form.errors}")
+
+        return self.get(request, *args, **kwargs)

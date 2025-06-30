@@ -1,120 +1,59 @@
-<!-- Properties -->
-<section>
-    <h2 class="text-blue-600 font-bold text-xl mb-3">Properties</h2>
-    <div class="overflow-x-auto border rounded-xl bg-gray-50 shadow w-full">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-blue-600 text-white">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Property</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Renter</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Lease Dates</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Rent</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">Beachfront Apartment<br><span class="text-gray-500 text-sm">12 Bondi Road, Bondi Beach, NSW 2026</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap">Oliver Jackson<br><span class="text-gray-500 text-sm">+61 412 345 678</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap">2025-01-01 - 2025-12-31</td>
-                    <td class="px-6 py-4 whitespace-nowrap">$800/week</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="text-green-600 font-semibold">Occupied</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap space-x-4 flex items-center">
-                        <!-- View -->
-                        <a href="#" class="flex items-center text-blue-600 hover:underline text-sm space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <span>View</span>
-                        </a>
+<!-- Properties Table Section -->
+<div x-data="{ showModal: false, modalData: null }" class="mt-8">
+    <h2 class="text-2xl font-bold mb-4 text-blue-700">Properties</h2>
 
-                        <!-- Edit -->
-                        <a href="#" class="flex items-center text-yellow-600 hover:underline text-sm space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 4v2m6.364 1.636a9 9 0 11-12.728 0 9 9 0 0112.728 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z" />
-                        </svg>
-                        <span>Edit</span>
-                        </a>
+    <div class="mb-4">
+        <a href="{% url 'property_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            ➕ Create Property
+        </a>
+    </div>
 
-                        <!-- Terminate -->
-                        <a href="#" class="flex items-center text-red-600 hover:underline text-sm space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-                        </svg>
-                        <span>Terminate</span>
-                        </a>
-                    </td>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full table-auto">
+        <thead class="bg-blue-700 text-white">
+            <tr>
+            <th class="px-4 py-2 text-left">Property</th>
+            <th class="px-4 py-2 text-left">Renter</th>
+            <th class="px-4 py-2 text-left">Lease Dates</th>
+            <th class="px-4 py-2 text-left">Rent</th>
+            <th class="px-4 py-2 text-left">Status</th>
+            <th class="px-4 py-2 text-left">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for property in properties %}
+                <tr class="border-t">
+                <td class="px-4 py-2">
+                    <div class="font-semibold">{{ property.name }}</div>
+                    <div class="text-sm text-gray-500">{{ property.address }}</div>
+                </td>
+                <td class="px-4 py-2">
+                    <div>{{ property.renter_name }}</div>
+                    <div class="text-sm text-gray-500">{{ property.renter_contact }}</div>
+                </td>
+                <td class="px-4 py-2">{{ property.lease_start }} - {{ property.lease_end }}</td>
+                <td class="px-4 py-2">${{ property.rent }}/week</td>
+                <td class="px-4 py-2">
+                    <span class="{% if property.status == 'occupied' %}text-green-600{% else %}text-red-600{% endif %}">
+                    {{ property.status|title }}
+                    </span>
+                </td>
+                <td class="px-4 py-2 space-x-2 text-sm">
+                    <a href="{% url 'property_view' property.pk %}" class="text-blue-600 hover:underline">🔍 View</a>
+                    <a href="{% url 'property_edit' property.pk %}" class="text-yellow-600 hover:underline">✏ Edit</a>
+                    <form method="post" action="{% url 'property_delete' property.pk %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this property?')"
+                            class="text-red-600 hover:underline">🗑 Delete</button>
+                    </form>
+                </td>
                 </tr>
+            {% empty %}
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">City View Condo<br><span class="text-gray-500 text-sm">88 Collins Street, Melbourne, VIC 3000</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap">Sophie Williams<br><span class="text-gray-500 text-sm">+61 400 987 654</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap">2025-03-15 - 2026-03-14</td>
-                    <td class="px-6 py-4 whitespace-nowrap">$620/week</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="text-green-600 font-semibold">Occupied</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap space-x-4 flex items-center">
-                    <!-- View -->
-                    <a href="#" class="flex items-center text-blue-600 hover:underline text-sm space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <span>View</span>
-                    </a>
-
-                    <!-- Edit -->
-                    <a href="#" class="flex items-center text-yellow-600 hover:underline text-sm space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 4v2m6.364 1.636a9 9 0 11-12.728 0 9 9 0 0112.728 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z" />
-                        </svg>
-                        <span>Edit</span>
-                    </a>
-
-                    <!-- Terminate -->
-                    <a href="#" class="flex items-center text-red-600 hover:underline text-sm space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-                        </svg>
-                        <span>Terminate</span>
-                    </a>
-                    </td>
+                <td colspan="6" class="text-center py-4 text-gray-500">No properties available.</td>
                 </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">Suburban House<br><span class="text-gray-500 text-sm">7 Kangaroo Avenue, Brisbane, QLD 4000</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap">Liam Smith<br><span class="text-gray-500 text-sm">+61 401 223 344</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap">2025-02-01 - 2026-01-31</td>
-                    <td class="px-6 py-4 whitespace-nowrap">$550/week</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="text-red-600 font-semibold">Vacant</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap space-x-4 flex items-center">
-                        <!-- View -->
-                        <a href="#" class="flex items-center text-blue-600 hover:underline text-sm space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            <span>View</span>
-                        </a>
-                        <!-- Edit -->
-                        <a href="#" class="flex items-center text-yellow-600 hover:underline text-sm space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M12 4v2m6.364 1.636a9 9 0 11-12.728 0 9 9 0 0112.728 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z" />
-                            </svg>
-                            <span>Edit</span>
-                        </a>
-                        <!-- Terminate -->
-                        <a href="#" class="flex items-center text-red-600 hover:underline text-sm space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-                            </svg>
-                            <span>Terminate</span>
-                        </a>
-                    </td>
-                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
-</section>
+</div>

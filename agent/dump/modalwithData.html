@@ -1,0 +1,35 @@
+<!-- Use Alpine JS -->
+<!-- Pop-up form with data (No need for context from Python) -->
+
+<button
+@click='showModal = true; modalData = {
+    name: "{{ property.name|escapejs }}",
+    address: "{{ property.address|escapejs }}",
+    renter_name: "{{ property.renter_name|escapejs }}",
+    renter_contact: "{{ property.renter_contact|escapejs }}",
+    lease_start: "{{ property.lease_start }}",
+    lease_end: "{{ property.lease_end }}",
+    rent: "{{ property.rent }}",
+    status: "{{ property.status }}"
+}'
+class="text-blue-500 hover:underline"
+>👁 View</button>
+
+<!-- Modal -->
+<div x-show="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white p-6 rounded-lg w-1/2 shadow-xl" @click.outside="showModal = false">
+    <h3 class="text-lg font-bold mb-4">Property Details</h3>
+    <template x-if="modalData">
+        <div>
+        <p><strong>Property:</strong> <span x-text="modalData.name"></span></p>
+        <p><strong>Address:</strong> <span x-text="modalData.address"></span></p>
+        <p><strong>Renter:</strong> <span x-text="modalData.renter_name"></span></p>
+        <p><strong>Contact:</strong> <span x-text="modalData.renter_contact"></span></p>
+        <p><strong>Lease:</strong> <span x-text="modalData.lease_start"></span> to <span x-text="modalData.lease_end"></span></p>
+        <p><strong>Rent:</strong> $<span x-text="modalData.rent"></span>/week</p>
+        <p><strong>Status:</strong> <span x-text="modalData.status"></span></p>
+        </div>
+    </template>
+    <button @click="showModal = false" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Close</button>
+    </div>
+</div>

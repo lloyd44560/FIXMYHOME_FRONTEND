@@ -7,6 +7,13 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('login'), http_method_names=['post']), name='logout_agent'),
 
     # =============== Middleware added: Login Required =============== 
+    # path('send-invitation-renter/', views.AgentSendInvitation.as_view(), name='renter_invitation'),
     path('home/', views.AgentHomeView.as_view(), name='home_agent'),
     path('profile-agent/', views.AgentEditProfileView.as_view(), name='profile_agent'),
+    path('profile/security/', views.AgentEditSecurityView.as_view(), name='agent_edit_security'),
+
+    path('property/create/', views.PropertyCreateView.as_view(), name='property_create'),
+    path('property/<int:pk>/edit/', views.PropertyUpdateView.as_view(), name='property_edit'),
+    path('property/<int:pk>/delete/', views.delete_property, name='property_delete'),
+    path('property/<int:pk>/view/', views.PropertyDetailView.as_view(), name='property_view'),
 ]
