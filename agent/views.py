@@ -8,6 +8,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.conf import settings
 from django.urls import reverse_lazy
 
+from django.http import JsonResponse
 from django.views import View
 from django.views.generic import TemplateView, CreateView, ListView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -16,9 +17,11 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.models import User
 from django.contrib import messages
 
+from renter.models import Renter
 from .models import AgentRegister, Property
 from .forms import CreateAgentFormClass, AgentEditProfileForm
 from .forms import InvitationForm, AgentCreatePropertyForm, AgentCreateRoomForm
+from .forms import RenterUpdateForm
 
 # Create your views here.
 class AgentRegistrationCreateView(CreateView):
@@ -176,10 +179,16 @@ class PropertyCreateView(CreateView):
     success_url = reverse_lazy("home_agent") 
 
     def form_valid(self, form):
+        userAgent = AgentRegister.objects.get(user=self.request.user)
+        property = form.save(commit=False)
+        property.agent = userAgent
+        form.save()
+
         messages.success(self.request, "Property created successfully!")
         return super().form_valid(form)
     
     def form_invalid(self, form):
+        print(form, self.form_class(self.request.POST), '==============>>')
         print('Form Errors:', form.errors)
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -228,3 +237,15 @@ class PropertyDetailView(DetailView):
             messages.error(request, f"{form.errors}")
 
         return self.get(request, *args, **kwargs)
+
+# ################## Manage Renters ##################
+class RenterListView(ListView):
+    model = Renter
+    template_name = 'components/home/manageRenters.html'  # you’ll create this
+    context_object_name = 'renters'
+
+class RenterUpdateView(UpdateView):
+    model = Renter
+    form_class = RenterUpdateForm
+    template_name = 'components/home/editRenters.html'  # you’ll create this
+    success_url = reverse_lazy('manage_renters')  # name of the list view URL

@@ -1,0 +1,49 @@
+{% extends "baseAgent.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+<div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-8 m-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Renters</h2>
+
+    <div class="overflow-x-auto bg-white shadow rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
+            {% for renter in renters %}
+            <tr class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">{{ renter.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ renter.email }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ renter.phone }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right">
+                    <a href="{% url 'edit_renter' renter.id %}" 
+                        class="inline-flex items-center px-4 py-1.5 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="px-6 py-4 text-center text-gray-500">No renters found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{% endblock %}

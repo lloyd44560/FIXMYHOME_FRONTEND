@@ -16,4 +16,6 @@ urlpatterns = [
     path('property/<int:pk>/edit/', views.PropertyUpdateView.as_view(), name='property_edit'),
     path('property/<int:pk>/delete/', views.delete_property, name='property_delete'),
     path('property/<int:pk>/view/', views.PropertyDetailView.as_view(), name='property_view'),
+    path('renters/', views.RenterListView.as_view(), name='manage_renters'),
+    path('renters/<int:pk>/edit/', views.RenterUpdateView.as_view(), name='edit_renter'),
 ]

@@ -27,6 +27,10 @@
           Send Invitation
         </button>
       </form>
+
+      <div style="text-align: center; margin-top: 1rem;">
+        <a href="{% url 'manage_renters' %}" class="btn btn-outline-secondary hover:underline">Manage Renters</a>
+      </div>
     </div>
   </section>
 
@@ -74,6 +78,9 @@
       </div>
   </section>
 
+  <!-- Properties -->
+  {% include 'components/home/propertiesSection.html' %}
+
   {% if messages %}
     <div
       x-data="{ show: true }"
@@ -86,9 +93,6 @@
       {% endfor %}
     </div>
   {% endif %}
-
-  <!-- Properties -->
-  {% include 'components/home/propertiesSection.html' %}
 </main>
 
 {% include 'components/footerAgent.html' %}

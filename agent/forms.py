@@ -1,6 +1,7 @@
 from django import forms
 # from django.forms import inlineformset_factory
 
+from renter.models import Renter
 from .models import AgentRegister, Property, Rooms
 
 class CreateAgentFormClass(forms.ModelForm):
@@ -30,7 +31,7 @@ class AgentEditProfileForm(forms.ModelForm):
 class AgentCreatePropertyForm(forms.ModelForm):
     class Meta:
         model = Property
-        fields = '__all__'
+        exclude = ['agent']
         widgets = {
             'lease_start': forms.DateInput(attrs={
                 'type': 'date',
@@ -50,4 +51,12 @@ class AgentCreateRoomForm(forms.ModelForm):
         exclude = ['property']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3})
+        }
+
+class RenterUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Renter
+        exclude = ['user', 'password']  # exclude sensitive fields unless needed
+        widgets = {
+            'rooms': forms.Textarea(attrs={'rows': 3}),
         }

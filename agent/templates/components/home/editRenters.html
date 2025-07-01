@@ -1,0 +1,85 @@
+{% extends "baseAgent.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+<div class="max-w-4xl mx-auto bg-white shadow-md rounded-md p-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Edit Renter</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <!-- Name -->
+        <div>
+            <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700">Name</label>
+            {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+            {% if form.name.errors %}
+                <p class="text-red-500 text-sm">{{ form.name.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">Email</label>
+            {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+            {% if form.email.errors %}
+                <p class="text-red-500 text-sm">{{ form.email.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div>
+            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700">Phone</label>
+            {{ form.phone|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+            {% if form.phone.errors %}
+                <p class="text-red-500 text-sm">{{ form.phone.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Company Name -->
+        <div>
+            <label for="{{ form.company_name.id_for_label }}" class="block text-sm font-medium text-gray-700">Company Name</label>
+            {{ form.company_name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+
+        <!-- Contact Person -->
+        <div>
+            <label for="{{ form.contact_person.id_for_label }}" class="block text-sm font-medium text-gray-700">Contact Person</label>
+            {{ form.contact_person|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+
+        <!-- City -->
+        <div>
+            <label for="{{ form.city.id_for_label }}" class="block text-sm font-medium text-gray-700">City</label>
+            {{ form.city|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+
+        <!-- State -->
+        <div>
+            <label for="{{ form.state.id_for_label }}" class="block text-sm font-medium text-gray-700">State</label>
+            {{ form.state|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+
+        <!-- Zip Code -->
+        <div>
+            <label for="{{ form.zip_code.id_for_label }}" class="block text-sm font-medium text-gray-700">Zip Code</label>
+            {{ form.zip_code|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-end gap-3 mt-6">
+            <a href="{% url 'manage_renters' %}" class="text-gray-500 hover:underline text-sm">Cancel</a>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <!-- JavaScript Links Here -->
+{% endblock %}
