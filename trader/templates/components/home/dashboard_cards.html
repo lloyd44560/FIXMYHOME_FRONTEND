@@ -1,24 +1,45 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- To Quote Requests -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <h2 class="font-bold text-blue-600 text-lg mb-2">To Quote Requests</h2>
-        <p class="text-sm">0 urgent</p>
-        <p class="text-sm">1 non-urgent</p>
+        <h3 class="text-blue-700 font-semibold">To Quote Requests</h3>
+        <a href="{% url 'job_list' %}?status=quoted&priority=true">
+            <p class="text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'job_list' %}?status=quoted&priority=false">
+            <p class="text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
+        </a>
     </div>
+
+    <!-- Pending Quotes -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Pending Quotes</h2>
-        <p class="text-sm">0 urgent</p>
-        <p class="text-sm">1 non-urgent</p>
+        <h3 class="text-blue-700 font-semibold">Pending Quotes</h3>
+        <a href="{% url 'job_list' %}?status=quoted&priority=true">
+            <p class="text-sm hover:underline">{{ pending_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'job_list' %}?status=quoted&priority=false">
+            <p class="text-sm hover:underline">{{ pending_non_urgent }} non-urgent</p>
+        </a>
     </div>
+
+    <!-- Jobs Today -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">9</div>
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Today</h2>
-        <p class="text-sm font-bold text-black">3 <span class="font-normal">urgent</span></p>
-        <p class="text-sm">6 non-urgent</p>
+        <h3 class="text-blue-700 font-semibold">Jobs Today</h3>
+        <a href="{% url 'job_list' %}?status=scheduled&priority=true">
+            <p class="text-sm hover:underline">{{ today_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'job_list' %}?status=scheduled&priority=false">
+            <p class="text-sm hover:underline">{{ today_non_urgent }} non-urgent</p>
+        </a>
     </div>
+
+    <!-- Jobs Approved -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Approved</h2>
-        <p class="text-sm">0 urgent</p>
-        <p class="text-sm">2 non-urgent</p>
+        <h3 class="text-blue-700 font-semibold">Jobs Approved</h3>
+        <a href="{% url 'job_list' %}?status=approved&priority=true">
+            <p class="text-sm hover:underline">{{ approved_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'job_list' %}?status=approved&priority=false">
+            <p class="text-sm hover:underline">{{ approved_non_urgent }} non-urgent</p>
+        </a>
     </div>
 </div>

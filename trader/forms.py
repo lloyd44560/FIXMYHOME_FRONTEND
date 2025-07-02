@@ -4,6 +4,7 @@ from django.forms import inlineformset_factory
 from .models import TraderRegistration
 from .models import TeamMember
 from .models import ContractorLicense
+from .models import Jobs
 
 class TeamMemberForm(forms.ModelForm):
     class Meta:
@@ -56,3 +57,20 @@ class TraderEditProfileForm(forms.ModelForm):
         model = TraderRegistration
         fields = '__all__'
         widgets = {}
+
+class JobScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Jobs
+        exclude = ['agent']
+        widgets = {
+            'scheduled_at': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'w-full border border-gray-300 rounded-md p-2'
+            }),
+            'priority': forms.CheckboxInput(attrs={
+                'class': 'h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded'
+            }),
+        }
+        labels = {
+            'priority': 'Mark as High Priority',
+        }

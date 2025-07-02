@@ -18,4 +18,5 @@ urlpatterns = [
     path('property/<int:pk>/view/', views.PropertyDetailView.as_view(), name='property_view'),
     path('renters/', views.RenterListView.as_view(), name='manage_renters'),
     path('renters/<int:pk>/edit/', views.RenterUpdateView.as_view(), name='edit_renter'),
+    path('agent/jobs/create/', views.AgentJobCreateView.as_view(), name='agent_job_create')
 ]

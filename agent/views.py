@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
 from django.contrib.auth import update_session_auth_hash
+from django.utils.timezone import now
 from django.conf import settings
 from django.urls import reverse_lazy
 
@@ -18,10 +19,11 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 
 from renter.models import Renter
+from trader.models import Jobs
 from .models import AgentRegister, Property
 from .forms import CreateAgentFormClass, AgentEditProfileForm
 from .forms import InvitationForm, AgentCreatePropertyForm, AgentCreateRoomForm
-from .forms import RenterUpdateForm
+from .forms import RenterUpdateForm, AgentCreateJobForm
 
 # Create your views here.
 class AgentRegistrationCreateView(CreateView):
@@ -72,6 +74,23 @@ class AgentHomeView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['properties'] = Property.objects.all()
+        agent = AgentRegister.objects.get(user=self.request.user)
+
+        # Count by status & priority
+        context['to_quote_urgent'] = Jobs.objects.filter(agent=agent, status='quoted', priority=True).count()
+        context['to_quote_non_urgent'] = Jobs.objects.filter(agent=agent, status='quoted', priority=False).count()
+
+        context['pending_urgent'] = Jobs.objects.filter(agent=agent, status='confirmed', priority=True).count()
+        context['pending_non_urgent'] = Jobs.objects.filter(agent=agent, status='confirmed', priority=False).count()
+
+        context['approved_urgent'] = Jobs.objects.filter(agent=agent, status='approved', priority=True).count()
+        context['approved_non_urgent'] = Jobs.objects.filter(agent=agent, status='approved', priority=False).count()
+
+        # Jobs Today (scheduled today)
+        today = now().date()
+        context['today_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=True).count()
+        context['today_non_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=False).count()
+        
         return context
 
     def form_valid(self, form):
@@ -188,8 +207,6 @@ class PropertyCreateView(CreateView):
         return super().form_valid(form)
     
     def form_invalid(self, form):
-        print(form, self.form_class(self.request.POST), '==============>>')
-        print('Form Errors:', form.errors)
         return self.render_to_response(self.get_context_data(form=form))
 
 class PropertyUpdateView(UpdateView):
@@ -214,6 +231,7 @@ def delete_property(request, pk):
     messages.success(request, f"Property '{property.name}' deleted.")
     return redirect('home_agent')
 
+@method_decorator(login_required, name='dispatch')
 class PropertyDetailView(DetailView):
     model = Property
     template_name = 'components/home/property_detail.html'
@@ -239,6 +257,7 @@ class PropertyDetailView(DetailView):
         return self.get(request, *args, **kwargs)
 
 # ################## Manage Renters ##################
+@method_decorator(login_required, name='dispatch')
 class RenterListView(ListView):
     model = Renter
     template_name = 'components/home/manageRenters.html'  # you’ll create this
@@ -249,3 +268,15 @@ class RenterUpdateView(UpdateView):
     form_class = RenterUpdateForm
     template_name = 'components/home/editRenters.html'  # you’ll create this
     success_url = reverse_lazy('manage_renters')  # name of the list view URL
+
+# ################## Create Job Order ##################
+@method_decorator(login_required, name='dispatch')
+class AgentJobCreateView(CreateView):
+    model = Jobs
+    form_class = AgentCreateJobForm
+    template_name = 'components/home/agent_job_form.html'
+    success_url = reverse_lazy('agent_job_create')
+
+    def form_valid(self, form):
+        form.instance.agent = AgentRegister.objects.get(user=self.request.user)
+        return super().form_valid(form)

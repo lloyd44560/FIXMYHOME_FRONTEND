@@ -10,4 +10,5 @@ urlpatterns = [
     path('home/', views.TraderHomeView.as_view(), name='home_trader'),
     path('profile-trader/', views.TraderProfileView.as_view(), name='profile_trader'),
     path('profile/security/', views.TraderEditSecurityView.as_view(), name='trader_edit_security'),
+    path('jobs/', views.JobListView.as_view(), name='job_list'),
 ]
