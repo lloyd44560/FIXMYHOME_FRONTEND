@@ -199,6 +199,7 @@ class TraderEditSecurityView(FormView):
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
 
+@method_decorator(login_required, name='dispatch')
 class JobListView(ListView):
     model = Jobs
     template_name = 'components/home/job_list.html'
@@ -225,4 +226,5 @@ class JobListView(ListView):
         context['selected_status'] = self.request.GET.get('status', '')
         context['selected_priority'] = self.request.GET.get('priority', '')
         context['status_options'] = dict(Jobs._meta.get_field('status').choices)
+
         return context

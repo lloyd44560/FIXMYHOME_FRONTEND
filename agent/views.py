@@ -280,3 +280,33 @@ class AgentJobCreateView(CreateView):
     def form_valid(self, form):
         form.instance.agent = AgentRegister.objects.get(user=self.request.user)
         return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class JobListView(ListView):
+    model = Jobs
+    template_name = 'components/home/jobListAgent.html'
+    context_object_name = 'jobs'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        status = self.request.GET.get('status')
+        priority = self.request.GET.get('priority')  # 'true' or 'false'
+
+        if status:
+            queryset = queryset.filter(status=status)
+        if priority == 'true':
+            queryset = queryset.filter(priority=True)
+        elif priority == 'false':
+            queryset = queryset.filter(priority=False)
+
+        # Order priority=True first, then by quoted_at descending
+        return queryset.order_by('-priority', '-quoted_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_status'] = self.request.GET.get('status', '')
+        context['selected_priority'] = self.request.GET.get('priority', '')
+        context['status_options'] = dict(Jobs._meta.get_field('status').choices)
+        
+        return context
