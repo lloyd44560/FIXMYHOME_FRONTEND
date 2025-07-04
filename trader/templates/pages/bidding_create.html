@@ -1,0 +1,11 @@
+{% extends "baseTrader.html" %}
+{% block content %}
+<main class="max-w-2xl mx-auto p-6">
+  <h2 class="text-2xl font-bold mb-4">Create a Bid</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Bid</button>
+  </form>
+</main>
+{% endblock %}

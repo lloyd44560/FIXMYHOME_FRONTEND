@@ -20,4 +20,6 @@ urlpatterns = [
     path('renters/<int:pk>/edit/', views.RenterUpdateView.as_view(), name='edit_renter'),
     path('agent/jobs/create/', views.AgentJobCreateView.as_view(), name='agent_job_create'),
     path('agent/job-list/', views.JobListView.as_view(), name='job_list_agent'),
+    path('bids/', views.AgentBidListView.as_view(), name='agent_bid_list'),
+    path('bidding/<int:pk>/approve/', views.BiddingApprovalView.as_view(), name='bidding_approval'),
 ]

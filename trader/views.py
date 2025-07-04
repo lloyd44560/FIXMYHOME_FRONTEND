@@ -5,6 +5,9 @@ from django.contrib.auth import update_session_auth_hash
 from django.core.mail import send_mail
 from django.utils.timezone import now
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
+from django.utils import timezone
 
 from django.views.generic import TemplateView, CreateView, ListView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -12,11 +15,11 @@ from django.views.generic.edit import UpdateView, FormView
 from django.contrib.auth.models import User
 
 from .models import TraderRegistration, TeamMember, ContractorLicense
-from .models import Jobs
+from .models import Jobs, Bidding
 from agent.models import AgentRegister
 from .forms import TraderRegistrationForm, TeamMemberFormSet
 from .forms import ContractorLicenseSet, TraderEditProfileForm
-from .forms import JobScheduleForm
+from .forms import BiddingForm
 
 # View for the registration page
 class TraderRegistrationCreateView(CreateView):
@@ -228,3 +231,22 @@ class JobListView(ListView):
         context['status_options'] = dict(Jobs._meta.get_field('status').choices)
 
         return context
+
+class BiddingCreateView(LoginRequiredMixin, CreateView):
+    model = Bidding
+    form_class = BiddingForm
+    template_name = 'pages/bidding_create.html'
+    success_url = reverse_lazy('bidding_create')  # Redirect to job list or bidding list
+
+    def form_valid(self, form):
+        # Set trader as current user
+        trader = TraderRegistration.objects.filter(user=self.request.user).first()
+        form.instance.trader = trader
+        return super().form_valid(form)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # Only filter team_member by trader, not jobs
+        trader = TraderRegistration.objects.filter(user=self.request.user).first()
+        form.fields['team_member'].queryset = form.fields['team_member'].queryset.filter(trader=trader)
+        return form

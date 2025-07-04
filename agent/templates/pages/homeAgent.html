@@ -60,11 +60,12 @@
         <p class="text-sm font-bold text-black">3 <span class="font-normal">urgent</span></p>
         <p class="text-sm">6 non-urgent</p>
     </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
         <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Approved</h2>
         <p class="text-sm">0 urgent</p>
         <p class="text-sm">2 non-urgent</p>
+        <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">Bid Approvals</a>
     </div>
   </div>
 

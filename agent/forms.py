@@ -2,7 +2,7 @@ from django import forms
 # from django.forms import inlineformset_factory
 
 from renter.models import Renter
-from trader.models import Jobs
+from trader.models import Jobs, Bidding
 from .models import AgentRegister, Property, Rooms
 
 class CreateAgentFormClass(forms.ModelForm):
@@ -83,4 +83,12 @@ class AgentCreateJobForm(forms.ModelForm):
 
         labels = {
             'priority': 'Mark as High Priority',
+        }
+
+class BiddingApprovalForm(forms.ModelForm):
+    class Meta:
+        model = Bidding
+        fields = ['is_approved', 'approval_notes']
+        widgets = {
+            'approval_notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Approval notes (optional)'}),
         }

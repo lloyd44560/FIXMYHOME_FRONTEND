@@ -17,13 +17,15 @@ from django.views.generic.edit import UpdateView, FormView, DeleteView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils import timezone
 
 from renter.models import Renter
-from trader.models import Jobs
+from trader.models import Jobs, Bidding
 from .models import AgentRegister, Property
 from .forms import CreateAgentFormClass, AgentEditProfileForm
 from .forms import InvitationForm, AgentCreatePropertyForm, AgentCreateRoomForm
-from .forms import RenterUpdateForm, AgentCreateJobForm
+from .forms import RenterUpdateForm, AgentCreateJobForm, BiddingApprovalForm
 
 # Create your views here.
 class AgentRegistrationCreateView(CreateView):
@@ -310,3 +312,40 @@ class JobListView(ListView):
         context['status_options'] = dict(Jobs._meta.get_field('status').choices)
         
         return context
+
+@method_decorator(login_required, name='dispatch')
+class AgentBidListView(ListView):
+    model = Bidding
+    template_name = 'components/home/agent_bid_list.html'
+    context_object_name = 'bids'
+
+    def get_queryset(self):
+        return Bidding.objects.order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_options'] = {
+            None: 'Pending',
+            True: 'Approved',
+            False: 'Rejected',
+        }
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class BiddingApprovalView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Bidding
+    form_class = BiddingApprovalForm
+    template_name = 'pages/bidding_approval.html'
+    success_url = reverse_lazy('job_list_agent')
+
+    def test_func(self):
+        # Only allow agents to approve
+        return hasattr(self.request.user, 'agentregister')
+
+    def form_valid(self, form):
+        bidding = form.save(commit=False)
+        bidding.approved_at = timezone.now()
+        bidding.approved_by = AgentRegister.objects.filter(user=self.request.user).first()
+        bidding.save()
+        messages.success(self.request, 'Bid approval status updated.')
+        return super().form_valid(form)

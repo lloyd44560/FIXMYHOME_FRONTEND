@@ -5,6 +5,7 @@ from .models import TraderRegistration
 from .models import TeamMember
 from .models import ContractorLicense
 from .models import Jobs
+from .models import Bidding
 
 class TeamMemberForm(forms.ModelForm):
     class Meta:
@@ -74,3 +75,8 @@ class JobScheduleForm(forms.ModelForm):
         labels = {
             'priority': 'Mark as High Priority',
         }
+
+class BiddingForm(forms.ModelForm):
+    class Meta:
+        model = Bidding
+        exclude = ['trader', 'is_approved', 'approved_at', 'approved_by', 'approval_notes', 'created_at']

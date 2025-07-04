@@ -27,6 +27,12 @@ class Bidding(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Approval fields
+    is_approved = models.BooleanField(null=True, blank=True, default=None, help_text="None=pending, True=approved, False=rejected")
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(AgentRegister, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_bids')
+    approval_notes = models.TextField(blank=True, null=True)
+
     def subtotal(self):
         return (
             (self.labour_per_hour or 0) * (self.hours or 0)

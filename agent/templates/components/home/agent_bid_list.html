@@ -1,0 +1,39 @@
+{% extends "baseAgent.html" %}
+{% block content %}
+<main class="max-w-4xl mx-auto p-6">
+  <h2 class="text-2xl font-bold mb-4">Bids for Your Jobs</h2>
+  <table class="min-w-full bg-white border">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Job</th>
+        <th class="px-4 py-2">Trader</th>
+        <th class="px-4 py-2">Team Member</th>
+        <th class="px-4 py-2">Created</th>
+        <th class="px-4 py-2">Status</th>
+        <th class="px-4 py-2">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for bid in bids %}
+      <tr class="border-t">
+        <td class="px-4 py-2">{{ bid.jobs }}</td>
+        <td class="px-4 py-2">{{ bid.trader }}</td>
+        <td class="px-4 py-2">{{ bid.team_member }}</td>
+        <td class="px-4 py-2">{{ bid.created_at|date:"Y-m-d H:i" }}</td>
+        <td class="px-4 py-2">
+          {% if bid.is_approved is None %}Pending
+          {% elif bid.is_approved %}Approved
+          {% else %}Rejected
+          {% endif %}
+        </td>
+        <td class="px-4 py-2">
+          <a href="{% url 'bidding_approval' bid.pk %}" class="btn btn-primary">Review</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center py-4">No bids found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</main>
+{% endblock %}
