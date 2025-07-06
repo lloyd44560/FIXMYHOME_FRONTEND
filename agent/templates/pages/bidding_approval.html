@@ -1,5 +1,9 @@
 {% extends "baseAgent.html" %}
+
 {% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
 <main class="max-w-2xl mx-auto p-6">
   <h2 class="text-2xl font-bold mb-4">Approve or Reject Bid</h2>
   <form method="post">
@@ -15,4 +19,10 @@
     <button type="submit" class="btn btn-success">Save</button>
   </form>
 </main>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <!-- JS Scripts Here! -->
 {% endblock %}

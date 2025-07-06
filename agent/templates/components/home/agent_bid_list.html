@@ -1,5 +1,9 @@
 {% extends "baseAgent.html" %}
+
 {% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
 <main class="max-w-4xl mx-auto p-6">
   <h2 class="text-2xl font-bold mb-4">Bids for Your Jobs</h2>
   <table class="min-w-full bg-white border">
@@ -36,4 +40,10 @@
     </tbody>
   </table>
 </main>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <!-- JS Scripts Here! -->
 {% endblock %}
