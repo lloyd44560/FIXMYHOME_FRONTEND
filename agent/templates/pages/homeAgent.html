@@ -7,33 +7,6 @@
 
 <!-- Page Content -->
 <main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
-  <!-- Hero Section for Invitation -->
-  <section class="bg-blue-50 py-10">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-gray-800 mb-4">Invite a Renter</h2>
-      <p class="text-gray-600 mb-6">Send an invitation link to a renter via email.</p>
-
-      <form method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-xl mx-auto">
-        {% csrf_token %}
-        <div>
-          <label for="id_name" class="block text-left text-gray-700 font-semibold">Renter Name</label>
-          {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
-        </div>
-        <div>
-          <label for="id_email" class="block text-left text-gray-700 font-semibold">Renter Email</label>
-          {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
-        </div>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-          Send Invitation
-        </button>
-      </form>
-
-      <div style="text-align: center; margin-top: 1rem;">
-        <a href="{% url 'manage_renters' %}" class="btn btn-outline-secondary hover:underline">Manage Renters</a>
-      </div>
-    </div>
-  </section>
-
   <!-- Create Button Above Cards -->
   <div class="flex justify-start">
     <a href="{% url 'agent_job_create' %}"
@@ -44,28 +17,31 @@
 
   <!-- Dashboard Cards -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <h2 class="font-bold text-blue-600 text-lg mb-2">To Quote Requests</h2>
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Quote Requests</h2>
         <p class="text-sm">0 urgent</p>
-        <p class="text-sm">1 non-urgent</p>
-    </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Pending Quotes</h2>
-        <p class="text-sm">0 urgent</p>
-        <p class="text-sm">1 non-urgent</p>
-    </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">9</div>
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Today</h2>
-        <p class="text-sm font-bold text-black">3 <span class="font-normal">urgent</span></p>
-        <p class="text-sm">6 non-urgent</p>
+        <p class="text-sm">2 non-urgent</p>
+        <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Approved</h2>
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Properties</h2>
+        <p class="text-sm">Manage all listed rental properties and their details.</p>
+        <a href="{% url 'manage_properties' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Properties</a>
+    </div>
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Renters</h2>
+        <p class="text-sm">View and manage tenant profiles and rental applications.</p>
+        <a href="{% url 'manage_renters' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Renters</a>
+    </div>
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <h2 class="font-bold text-blue-600 text-lg mb-2">Traders</h2>
         <p class="text-sm">0 urgent</p>
         <p class="text-sm">2 non-urgent</p>
-        <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">Bid Approvals</a>
+        <a class="mt-4 inline-block bg-gray-400 text-white font-medium px-3 py-1 rounded transition">View Traders</a>
     </div>
   </div>
 
@@ -87,9 +63,6 @@
       </div>
   </section>
 
-  <!-- Properties -->
-  {% include 'components/home/propertiesSection.html' %}
-
   {% if messages %}
     <div
       x-data="{ show: true }"
@@ -108,5 +81,5 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- JS Scripts Here! -->
 {% endblock %}

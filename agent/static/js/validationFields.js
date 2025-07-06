@@ -12,9 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailInput = document.getElementById('id_email');
     const phoneInput = document.getElementById('id_phone');
     const contactPersonInput = document.getElementById('id_contact_person');
-    const agencyIDInput = document.getElementById('id_agency_id');
-    const websiteInput = document.getElementById('id_website');
-    const notesInput = document.getElementById('id_notes');
     const passwordInput = document.getElementById('id_password');
     const confirmPasswordInput = document.getElementById('id_confirm_password');
 
@@ -23,9 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailError = document.getElementById('emailError');
     const phoneError = document.getElementById('phoneError');
     const contactPersonError = document.getElementById('contactPersonError');
-    const agentIDError = document.getElementById('agentIDError');
-    const websiteError = document.getElementById('websiteError');
-    const notesError = document.getElementById('notesError');
     const passwordError = document.getElementById('passwordError');
     const confirmPasswordError = document.getElementById('confirmPasswordError');
 
@@ -33,12 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form Fields - Company
     const companyNameInput = document.getElementById('id_company_name');
     const companyAddressInput = document.getElementById('id_company_address');
+    const agencyIDInput = document.getElementById('id_agency_id');
+    const websiteInput = document.getElementById('id_website');
     const contractorLicenseInput = document.getElementById('id_contractor_license');
     const serviceInput = document.getElementById('id_service');
 
     // Validation Error Elements - Company
     const companyNameError = document.getElementById('companyNameError');
     const companyAddressError = document.getElementById('companyAddressError');
+    const agentIDError = document.getElementById('agentIDError');
+    const websiteError = document.getElementById('websiteError');
     const contractorLicenseError = document.getElementById('contractorLicenseError');
     const serviceError = document.getElementById('serviceError');
 
@@ -68,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: contactPersonInput, label: 'Contact Person', error: contactPersonError},
         { id: agencyIDInput, label: 'Agent ID', error: agentIDError},
         { id: websiteInput, label: 'Website', error: websiteError},
-        { id: notesInput, label: 'Notes', error: notesError},
         { id: passwordInput, label: 'Password', error: passwordError},
         { id: confirmPasswordInput, label: 'Confirm Password', error: confirmPasswordError},
         // ####################################################################################
@@ -92,23 +89,26 @@ document.addEventListener('DOMContentLoaded', function() {
             input.addEventListener('change', function() {
               console.log(`${field.label} changed:`, input.value);
               if (input.value.trim() !== '') {
-                  console.log(`Clearing error for ${field.label}`);
-                  field.error.textContent = '';
+                  console.log(`Clearing error for ${input.label}`);
+                  input.error.textContent = '';
               } 
             });
         }
     });
     
     nextBtn.addEventListener('click', function(e) {
-        console.log(currentStep, '==================>>')
         if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
             if (currentStep === 0) { // Step 1 validation (Personal Details)
+                // Regex for at least one number and one special character
+                const specialCharRegex = /[!@#$%^&*(),.?":{}|<>_]/;
+                const hasNumber = /\d/;
+                const onlyNumbers = /^\d+$/;
+                
                 let hasError = false;
 
                 // Validate Name Input
                 if (nameInput.value.trim() === '') {
                     hasError = true;
-                    e.preventDefault();
                     nameError.textContent = 'Name is required!';
                     nameInput.focus();
                 } else {
@@ -118,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Validate Email Input
                 if (emailInput.value.trim() === '') {
                     hasError = true;
-                    e.preventDefault();
                     emailError.textContent = 'Email is required!';
                     emailInput.focus();
                 } else {
@@ -128,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Validate Phone Input
                 if (phoneInput.value.trim() === '') {
                     hasError = true;
-                    e.preventDefault();
                     phoneError.textContent = 'Phone number is required!';
                     phoneInput.focus();
                 } else {
@@ -138,57 +136,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Validate Contact Person Input
                 if (contactPersonInput.value.trim() === '') {
                     hasError = true;
-                    e.preventDefault();
                     contactPersonError.textContent = 'Contact Person is required!';
                     contactPersonInput.focus();
                 } else {
                     contactPersonError.textContent = ''
                 }
 
-                // Validate Agent ID Input
-                if (agencyIDInput.value.trim() === '') {
-                    hasError = true;
-                    e.preventDefault();
-                    agentIDError.textContent = 'Agent ID is required!';
-                    agencyIDInput.focus();
-                } else {
-                    agentIDError.textContent = ''
-                }
-
-                // Validate Website Input
-                if (websiteInput.value.trim() === '') {
-                    hasError = true;
-                    e.preventDefault();
-                    websiteError.textContent = 'Website is required!';
-                    websiteInput.focus();
-                } else {
-                    websiteError.textContent = ''
-                }
-
-                // Validate Notes Input
-                if (notesInput.value.trim() === '') {
-                    hasError = true;
-                    e.preventDefault();
-                    notesError.textContent = 'Notes is required!';
-                    notesInput.focus();
-                } else {
-                    notesError.textContent = ''
-                }
-
                 // Validate Password Input
                 if (passwordInput.value.trim() === '') {
                     hasError = true;
-                    e.preventDefault();
                     passwordError.textContent = 'Password is required!';
                     passwordInput.focus();
+                } else if (passwordInput.value.length < 8) {
+                    hasError = true;
+                    passwordError.textContent = 'Password must be at least 8 characters.';
+                    passwordInput.focus();
+                } else if (onlyNumbers.test(passwordInput.value)) {
+                    hasError = true;
+                    passwordError.textContent = 'Password cannot be only numbers.';
+                    passwordInput.focus();
+                } else if (!specialCharRegex.test(passwordInput.value)) {
+                    hasError = true;
+                    passwordError.textContent = 'Password must contain at least one special character.';
+                    passwordInput.focus();
+                } else if (!hasNumber.test(passwordInput.value)) {
+                    console.log(!hasNumber.test(passwordInput.value), 'Has Number Test');
+                    hasError = true;
+                    passwordError.textContent = 'Password must contain at least one number.';
+                    passwordInput.focus();
                 } else {
-                    passwordError.textContent = ''
+                    passwordError.textContent = '';
                 }
-
+                
                 // Validate Confirm Password Input
                 if (passwordInput.value.trim() !== confirmPasswordInput.value.trim()) {
                     hasError = true;
-                    e.preventDefault();
                     confirmPasswordError.textContent = 'Passwords do not match!';
                     confirmPasswordInput.focus();
                 } else {
@@ -224,6 +206,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     companyAddressInput.focus();
                 } else {
                     companyAddressError.textContent = ''
+                }
+
+                // Validate Agent ID Input
+                if (agencyIDInput.value.trim() === '') {
+                    hasError = true;
+                    e.preventDefault();
+                    agentIDError.textContent = 'Agent ID is required!';
+                    agencyIDInput.focus();
+                } else {
+                    agentIDError.textContent = ''
+                }
+
+                // Validate Website Input
+                if (websiteInput.value.trim() === '') {
+                    hasError = true;
+                    e.preventDefault();
+                    websiteError.textContent = 'Website is required!';
+                    websiteInput.focus();
+                } else {
+                    websiteError.textContent = ''
                 }
 
                 // Validate License number

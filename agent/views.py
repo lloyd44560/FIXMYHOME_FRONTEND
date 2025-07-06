@@ -68,9 +68,8 @@ class AgentRegistrationCreateView(CreateView):
 
 # View for the home page
 @method_decorator(login_required, name='dispatch')
-class AgentHomeView(FormView):
+class AgentHomeView(TemplateView):
     template_name = 'pages/homeAgent.html'
-    form_class = InvitationForm
     success_url = reverse_lazy("home_agent")
 
     def get_context_data(self, **kwargs):
@@ -94,30 +93,6 @@ class AgentHomeView(FormView):
         context['today_non_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=False).count()
         
         return context
-
-    def form_valid(self, form):
-        name = form.cleaned_data["name"]
-        email = form.cleaned_data["email"]
-        token = str(uuid.uuid4())
-
-        # Save the invitation
-        # Invitation.objects.create(
-        #     email=email,
-        #     token=token,
-        #     invited_by=self.request.user  # you must be logged in!
-        # )
-
-        invitation_link = self.request.build_absolute_uri(f"/register/")
-
-        send_mail(
-            subject="You're invited to join!",
-            message=f"Hi {name},\n\nYou've been invited! Register here: {invitation_link}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-        )
-
-        messages.success(self.request, "Invitation sent successfully!")
-        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class AgentEditProfileView(UpdateView):
@@ -215,7 +190,7 @@ class PropertyUpdateView(UpdateView):
     model = Property
     form_class = AgentCreatePropertyForm
     template_name = 'components/home/property_form.html'
-    success_url = reverse_lazy('home_agent')
+    success_url = reverse_lazy('manage_properties')
 
     def get_initial(self):
         initial = super().get_initial()
@@ -225,6 +200,11 @@ class PropertyUpdateView(UpdateView):
             initial['renter_name'] = "Unknown"
 
         return initial
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Property details updated successfully.')
+        return response
 
 @require_POST
 def delete_property(request, pk):
@@ -332,11 +312,11 @@ class AgentBidListView(ListView):
         return context
 
 @method_decorator(login_required, name='dispatch')
-class BiddingApprovalView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class BiddingApprovalView(UserPassesTestMixin, UpdateView):
     model = Bidding
     form_class = BiddingApprovalForm
     template_name = 'pages/bidding_approval.html'
-    success_url = reverse_lazy('job_list_agent')
+    success_url = reverse_lazy('agent_bid_list')
 
     def test_func(self):
         # Only allow agents to approve
@@ -348,4 +328,37 @@ class BiddingApprovalView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         bidding.approved_by = AgentRegister.objects.filter(user=self.request.user).first()
         bidding.save()
         messages.success(self.request, 'Bid approval status updated.')
+        return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class PropertiesListView(ListView):
+    model = Property
+    template_name = 'components/home/propertiesList.html'
+    context_object_name = 'properties'
+
+@method_decorator(login_required, name='dispatch')
+class InviteRenterView(FormView):
+    template_name = 'components/home/invitationForm.html'
+    form_class = InvitationForm
+    success_url = reverse_lazy("renter_invitation")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        # Get extra POST data from modal
+        name = form.cleaned_data["name"]
+        email = form.cleaned_data["email"]
+        token = str(uuid.uuid4())
+
+        invitation_link = self.request.build_absolute_uri(f"/register/?token={token}")
+        send_mail(
+            subject="You're invited to join!",
+            message=f"Hi {name},\n\nYou've been invited! Register here: {invitation_link}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+        messages.success(self.request, "Invitation sent successfully!")
+
         return super().form_valid(form)
