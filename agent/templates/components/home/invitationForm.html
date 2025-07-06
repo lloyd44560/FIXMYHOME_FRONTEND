@@ -12,20 +12,33 @@
         <p class="text-gray-600 mb-6">Send an invitation link to a renter via email.</p>
 
         <form method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-xl mx-auto">
-        {% csrf_token %}
-        <div>
-            <label for="id_name" class="block text-left text-gray-700 font-semibold">Renter Name</label>
-            {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
-        </div>
-        <div>
-            <label for="id_email" class="block text-left text-gray-700 font-semibold">Renter Email</label>
-            {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
-        </div>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-            Send Invitation
-        </button>
+            {% csrf_token %}
+            <div>
+                <label for="id_name" class="block text-left text-gray-700 font-semibold">Renter Name</label>
+                {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+            </div>
+            <div>
+                <label for="id_email" class="block text-left text-gray-700 font-semibold">Renter Email</label>
+                {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                Send Invitation
+            </button>
         </form>
     </div>
+
+    {% if messages %}
+        <div
+        x-data="{ show: true }"
+        x-init="setTimeout(() => show = false, 4000)"
+        x-show="show"
+        class="fixed top-6 right-6 z-50 bg-green-500 text-white px-4 py-2 rounded shadow-md transition ease-in-out"
+        >
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
 </section>
 
 {% include 'components/footerAgent.html' %}

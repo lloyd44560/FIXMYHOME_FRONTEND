@@ -169,11 +169,10 @@ SOCIAL_AUTH_FACEBOOK_SECRET = 'b605a74188027d7be5c2f5a93abaf1d2'
 # Email backend settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_USE_TLS = False
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'shunngerold17@gmail.com'  # Your Gmail address
-EMAIL_HOST_PASSWORD = 'uswvwdrbrthajef'  # App password (not your Gmail password)
+EMAIL_HOST_PASSWORD = 'wvcrpiwqxexrqihw'  # App password (not your Gmail password)
 
 # EMAIL_HOST_USER = 'wsi.jborlagdan@gmail.com'  # Your Gmail address
 # EMAIL_HOST_PASSWORD = 'klpbiornbuaikiny'  # App password (not your Gmail password)
