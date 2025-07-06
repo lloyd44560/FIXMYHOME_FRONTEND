@@ -1,32 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Email Verified</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Email Verified</title>
+  </head>
 
+  <body class="bg-green-50 flex flex-col min-h-screen">
     <!-- Navbar -->
     {% include 'renter/navbar.html' %}
 
-<body class="bg-green-50 flex items-center justify-center min-h-screen p-4">
-  <div class="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-    <h1 class="text-2xl font-bold text-green-600 mb-4">Email Confirmed!</h1>
-    <p class="text-gray-700 mb-6">
-      Welcome, {{ user.first_name }}. Your account is now active.
-    </p>
-    <a href="{% url 'login_renter' %}"
-       class="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition">
-      Proceed to Login
-    </a>
-  </div>
- 
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4">
+      <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md text-center">
+        <h1 class="text-2xl sm:text-3xl font-bold text-green-600 mb-4">Email Confirmed!</h1>
+        <p class="text-gray-700 mb-6 text-sm sm:text-base">
+          Welcome, {{ user.first_name }}. Your account is now active.
+        </p>
+        <a href="{% url 'login_renter' %}"
+          class="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition">
+          Proceed to Login
+        </a>
+      </div>
+    </main>
 
     <!-- Footer -->
     {% include 'renter/home/footer.html' %}
-
-</body>
+  </body>
 </html>
-
-

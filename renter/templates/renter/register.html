@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    {% load static %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Renter Registration - FixMyHome</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{% static '/renter/js/property_report.js' %}"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-</head>
+  <head>
+      {% load static %}
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Renter Registration - FixMyHome</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="{% static '/renter/js/property_report.js' %}"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
@@ -55,29 +55,29 @@
     <form id="registrationForm" class="space-y-4" method="POST" style="height: 480px; overflow-y: auto;" action="{% url 'register_renter' %}" enctype="multipart/form-data">
 
     {% csrf_token %}
-      <!-- Step 1 -->
+    <!-- Step 1 For Personal Details -->
     <div id="step1" class="space-y-4">
        <div class="mb-4">
-    <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
-      <input
-        type="text"
-        name="name"
-        id="name"
-        placeholder="Name"
-        class="w-full border border-gray-300 rounded-md p-2"
-        oninput="validateFields()"
-      />
+      <label for="name" class="block text-gray-700 font-medium mb-2">Name*</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          placeholder="Name"
+          class="w-full border border-gray-300 rounded-md p-2"
+          oninput="validateFields()"
+        />
         <p id="nameError" class="text-red-500 text-sm hidden">Name is required.</p>
     </div>
 
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
-        <input type="email" name="email" id="email"  placeholder="Email" class="w-full border border-gray-300 rounded-md p-2"  oninput="validateFields()">
+    <div class="mb-4">
+      <label for="email" class="block text-gray-700 font-medium mb-2">Email*</label>
+      <input type="email" name="email" id="email"  placeholder="Email" class="w-full border border-gray-300 rounded-md p-2"  oninput="validateFields()">
       <p id="emailError" class="text-red-500 text-sm hidden">Email is required.</p>
-      </div>
+    </div>
 
-      <div class="mb-4">
-        <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number*</label>
+    <div class="mb-4">
+      <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number*</label>
         <input
           type="tel"
           name="phone"
@@ -86,53 +86,53 @@
           oninput="validateFields()"
           class="w-full border border-gray-300 rounded-md p-2"
         />
-        <p id="phoneError" class="text-red-500 text-sm hidden">Phone Number is required.</p>
-      </div>
+      <p id="phoneError" class="text-red-500 text-sm hidden">Phone Number is required.</p>
+    </div>
 
-      <div class="mb-4 relative">
-        <label for="password" class="block text-gray-700 font-medium mb-2">Password*</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Password"
-          oninput="validateFields()"
-          class="w-full border border-gray-300 rounded-md p-2 pr-10"
-        />
-        <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
+    <div class="mb-4 relative">
+      <label for="password" class="block text-gray-700 font-medium mb-2">Password*</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Password"
+        oninput="validateFields()"
+        class="w-full border border-gray-300 rounded-md p-2 pr-10"
+      />
+      <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
 
-        <button
-          type="button"
-          id="togglePassword"
-          class="absolute right-2 top-9 text-sm text-gray-600"
-        >
-          Show
-        </button>
-      </div>
+      <button
+        type="button"
+        id="togglePassword"
+        class="absolute right-2 top-9 text-sm text-gray-600"
+      >
+        Show
+      </button>
+    </div>
 
-      <div class="mb-4 relative">
-        <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">Confirm Password*</label>
-        <input
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          oninput="validateFields()"
-          class="w-full border border-gray-300 rounded-md p-2 pr-10"
-        />
-        <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
+    <div class="mb-4 relative">
+      <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">Confirm Password*</label>
+      <input
+        id="confirmPassword"
+        name="confirmPassword"
+        type="password"
+        placeholder="Confirm Password"
+        oninput="validateFields()"
+        class="w-full border border-gray-300 rounded-md p-2 pr-10"
+      />
+      <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
 
-        <button
-          type="button"
-          id="toggleConfirmPassword"
-          class="absolute right-2 top-9 text-sm text-gray-600"
-        >
-          Show
-        </button>
+      <button
+        type="button"
+        id="toggleConfirmPassword"
+        class="absolute right-2 top-9 text-sm text-gray-600"
+      >
+        Show
+      </button>
       </div>
     </div>
 
-     <!-- Step 2 -->
+    <!-- Step 2 Agent Information -->
     <div id="step2" class="space-y-4 hidden">
       <div class="mb-4">
         <label for="company" class="block text-gray-700 font-medium mb-2">My Agent Company Name*</label>
@@ -190,17 +190,6 @@
         <label for="contactPhone" class="block text-gray-700 font-medium mb-2">Company Address</label>
       </div>
 
-      <!--<div class="mb-4">-->
-      <!--  <label for="contactAddress" class="block text-gray-700 font-medium mb-2">Contact Address</label>-->
-      <!--  <input-->
-      <!--    type="text"-->
-      <!--    name="contactAddress"-->
-      <!--    id="contactAddress"-->
-      <!--    placeholder="Contact Address"-->
-      <!--    class="w-full border border-gray-300 rounded-md p-2"-->
-      <!--  />-->
-      <!--</div>-->
-
       <div class="mb-4">
         <label for="state" class="block text-gray-700 font-medium mb-2">State*</label>
         <input
@@ -213,7 +202,6 @@
         />
       </div>
       <p id="stateError" class="text-red-500 text-sm hidden">State is required.</p>
-
 
       <div class="mb-4">
         <label for="city" class="block text-gray-700 font-medium mb-2">City*</label>
@@ -228,20 +216,9 @@
       </div>
       <p id="cityError" class="text-red-500 text-sm hidden">City is required.</p>
 
-      <!-- <div class="mb-4">
-        <label for="zip" class="block text-gray-700 font-medium mb-2">ZIP Code*</label>
-        <input
-          type="text"
-          name="zip"
-          id="zip"
-          placeholder="ZIP Code"
-          class="w-full border border-gray-300 rounded-md p-2"
-          oninput="validateFields()"
-        />
-      </div> -->
       <p id="zipError" class="text-red-500 text-sm hidden">Zip Code is required.</p>
 
-       <div class="mb-4">
+      <div class="mb-4">
         <label for="zip" class="block text-gray-700 font-medium mb-2">Address Line 1*</label>
         <input
           type="text"
@@ -252,6 +229,7 @@
           oninput="validateFields()"
         />
       </div>
+
       <p id="companyAddressLine1Error" class="text-red-500 text-sm hidden">Company Address Line is required </p>
 
       <div class="mb-4">
@@ -277,13 +255,15 @@
       </div>
     </div>
 
-
-     <!-- Step 3 -->
+     <!-- Step 3 Renter Reports -->
     <div id="step3" class="space-y-4 hidden">
       <div class="mb-4">
-        <label for="uploadOption" class="block text-gray-700 font-medium mb-2">Upload Option</label>
+        <!-- <label for="uploadOption" class="block text-gray-700 font-medium mb-2">Select Step</label> -->
         <select name="uploadOption" id="uploadOption" class="w-full border border-gray-300 rounded-md p-2">
-          <option value="">Select Upload Option</option>
+          <option value="">Select 
+
+            Your Reports
+          </option>
           <option value="manual">Manually Upload Property Details</option>
           <option value="report">Upload Property Reports</option>
         </select>
@@ -307,13 +287,13 @@
                 hover:file:bg-blue-100"
             />
 
-          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
+          <label for="propertyFile" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
 
-            <input
+          <input
               type="file"
-              name="propertyImage"
+              name="propertyFile"
               id="propertyImage"
-              accept="image/*"
+              accept="file/*"
               class="block w-full text-sm text-gray-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-md file:border-0
@@ -321,13 +301,14 @@
                 file:bg-blue-50 file:text-blue-700
                 hover:file:bg-blue-100"
             />
+
           </div>
           
-        
         <div class="mb-4">
           <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
           <input type="number" name="propertyName" id="propertyName" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
+
         <div class="mb-4">
           <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
           <input type="number" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
@@ -337,7 +318,6 @@
           <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
           <input type="number" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
-
         <!-- Surround with blue highlight border -->
         <div class="mb-6">
           <label for="roomType" class="block text-gray-700 font-semibold mb-2">Rooms</label>
@@ -404,227 +384,629 @@
                 Appliance Report
             </button>
 
-            <button type="button" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
-                Maintenance Report
+            <button type="button" onclick="openModal('maintenanceModal')" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+              Maintenance Report
             </button>
 
-            <button type="button" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
-                Minimum Standard Reports
+            <button type="button" onclick="openModal('standardModal')" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+              Minimum Standard Reports
             </button>
+
         </div>
-      <!-- This modal pops up after clicking the Condition Report button -->
 
     <!-- Main Condition Report Modal -->
       <div id="conditionModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <div class="bg-white w-full max-w-3xl p-6 rounded-md shadow-lg overflow-y-auto max-h-[90vh]">
-          <h2 class="text-xl font-bold mb-4 text-center">Condition Report</h2>
+        <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
+          <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
 
-          <!-- Room Category Select -->
+          <!-- Extra Info Fields -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+
+            <div>
+                <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>   
+                <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300" />
+
+                <input
+                  type="file"
+                  name="propertyImage"
+                  id="propertyImage"
+                  class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-md file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"
+                />
+
+            </div>
+
+            <script>
+              document.getElementById("propertyImage").addEventListener("change", function (event) {
+                const file = event.target.files[0];
+                const preview = document.getElementById("imagePreview");
+
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = function (e) {
+                    preview.src = e.target.result;
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  preview.src = ""; // Clear if no file selected
+                }
+              });
+            </script>
+
+            <div>
+              <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
+                <input type="number" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div class="mb-4">
+              <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
+              <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div>
+                <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
+                <input type="number" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
+
+            </div>
+            <div>
+              <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
+              <input type="number" name="propertyName" id="propertyName" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div class="mb-4">
+                <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
+                <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div class="mb-4">
+              <label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label>
+              <input type="text" name="address1" id="address1" placeholder="Address Line 1" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div class="mb-4">
+              <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2(Optional)</label>
+              <input type="text" name="address2" id="address2" placeholder="Address Line 2" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div class="mb-4">
+              <label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label>
+              <input type="text" name="postalcode" id="postalcode" placeholder="Postal Code" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Condition Report Date</label>
+              <input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 09:04 Friday 21/01/2022">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Agreement Start Date</label>
+              <input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. Friday 21/01/2022">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Renter Received Date</label>
+              <input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 09:04 Friday 21/01/2022">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Report Return Date</label>
+              <input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 23:13 Monday 24/01/2022">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-gray-700">Address</label>
+              <input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 6/63 Pickett St, Reservoir, VIC 3073" oninput="document.getElementById('companyAddressLine1').value = this.value">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Full Name 1</label>
+              <input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. Jake Semaan" onclick="document.getElementById('name').value = this.value">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Agent Name</label>
+              <input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Agent Company Name</label>
+              <input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Renter 1</label>
+              <input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Renter 2</label>
+              <input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+          </div>
+
+
+            <!-- Room Category Select -->
           <div class="flex items-center mb-4">
-            <label for="modalRoomCategory" class="mr-2 font-semibold">Room Category:</label>
-            <select id="modalRoomCategory" class="border rounded px-2 py-1">
+            <label for="modalRoomCategory" class="mr-2 font-semibold text-gray-700">Room Category:</label>
+            <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
               <!-- Dynamically populated -->
             </select>
-            <button type="button" onclick="addNewCategory()" class="ml-2 text-blue-600 text-sm hover:underline">+ Add</button>
+            <button type="button" onclick="addNewCategory()" class="ml-2 text-blue-600 text-sm hover:underline">+ Add New Rooms</button>
           </div>
 
-          <!-- Room Container -->
-          <div id="roomContainer"></div>
+            <!-- Room Container -->
+            <div id="roomContainer"></div>
 
-          
-          <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-md">
-            Continue
-          </button>
+            <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">
+              Save
+            </button>
 
-
-          <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-4 bg-white-500 text-black py-2 rounded-md">
-            Cancel
-          </button>
-
-
+            <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">
+              Cancel
+            </button>
+            <input name="conditionData" id="conditionDataInput">
+          </div>
         </div>
-      </div>
 
-
-      <!-- Appliance Report Modal -->
+    <!-- Appliance Report Modal -->
     <div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div class="bg-white w-full max-w-3xl p-6 rounded-md shadow-lg overflow-y-auto max-h-[90vh]">
-        <h2 class="text-xl font-bold mb-4 text-center">Appliance Report</h2>
+      <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
+        <h2 class="text-lg sm:text-xl font-bold text-center text-gray-800 mb-4">Appliance Report</h2>
 
-        <!-- Windows Dimensions -->
-        <div class="mb-4">
-          <label class="font-semibold block">Windows dimensions - Height</label>
-          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter height">
-        </div>
-        <div class="mb-4">
-          <label class="font-semibold block">Windows dimensions - Length</label>
-          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter length">
-        </div>
-        <div class="mb-4">
-          <label class="font-semibold block">Windows dimensions - Width</label>
-          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter width">
-        </div>
-
-        <!-- Heating/Cooling Brand -->
-        <div class="mb-4">
-          <label class="font-semibold block">Heating/Cooling Brand</label>
-          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter brand">
-        </div>
-
-        <!-- Heating/Cooling Model -->
-        <div class="mb-4">
-          <label class="font-semibold block">Heating/Cooling Serial/Model Number</label>
-          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter serial/model number">
-        </div>
-
-        <!-- Location in Room -->
-        <div class="mb-4">
-          <label class="font-semibold block">Location in Room</label>
-          <input type="text" class="border rounded w-full px-2 py-1" placeholder="Enter location">
-        </div>
-
-        <!-- Photos of Cooling Area -->
-        <div class="mb-4">
-          <label class="font-semibold block">Photos of Cooling Area</label>
-          <input type="file" class="border rounded w-full px-2 py-1">
-        </div>
-
-        <!-- Comments -->
-        <div class="mb-4">
-          <label class="font-semibold block">Comments</label>
-          <textarea class="border rounded w-full px-2 py-1" rows="4" placeholder="Enter comments"></textarea>
-        </div>
-
-        <!-- Continue Button -->
-        <button type="button" onclick="closeModal('applianceModal')" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-md">
-          Continue
+        <!-- Dynamic report container here -->
+        <div id="applianceReportsContainer" class="space-y-6 mt-6"></div>
+        
+        <button type="button" onclick="handleSaveApplianceReport()" class="w-full mt-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-3 rounded-xl transition">
+          Save Appliance Reports
         </button>
+        <button type="button" onclick="closeModal('applianceModal')" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-3 rounded-xl transition">
+          Close
+        </button>
+
+        
+        <input name="applianceReports" id="applianceReportsInput">
       </div>
     </div>
 
+    <!-- Maintenance Report Modal -->
+    <div id="maintenanceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
+        <h2 class="text-lg font-bold mb-4 text-gray-800 text-center">Maintenance Report</h2>
 
-    <script>
-            // Open Modal
-      document.querySelector('.applianceReportBtn').addEventListener('click', function () {
-          document.getElementById('applianceModal').classList.remove('hidden');
-      });
-
-      // Close Modal Function
-      function closeModal(modalId) {
-          document.getElementById(modalId).classList.add('hidden');
-      }
-    </script>
-
-<!-- All modals and forms related to the Condition Reports -->
-      <!-- Add Category Modal -->
-      <div id="addCategoryModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <div class="bg-white w-full max-w-sm p-6 rounded-md shadow-md">
-          <h2 class="text-lg font-bold mb-4 text-center">Add New Room Category</h2>
-          <input id="newCategoryInput" type="text" placeholder="Enter new category"
-            class="w-full border border-gray-300 rounded px-3 py-2 mb-4" />
-          <div class="flex justify-end gap-2">
-            <button type="button" onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-            <button type="button" onclick="confirmAddCategory()" class="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
+        <!-- Maintenance form contents -->
+        <form id="maintenanceForm" class="space-y-4">
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">Room Name</label>
+            <input type="text" class="w-full border border-gray-300 rounded-md p-2" placeholder="e.g., Kitchen" />
           </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">Issue Description</label>
+            <textarea class="w-full border border-gray-300 rounded-md p-2 resize-none" rows="4" placeholder="Describe the maintenance issue..."></textarea>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">Upload Photo (Optional)</label>
+            <input type="file" class="w-full border border-gray-300 rounded-md p-2" />
+          </div>
+          <button type="button" onclick="submitMaintenanceReport()" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 w-full">Submit</button>
+        <!-- </form> -->
+
+        <button type="button" onclick="closeModal('maintenanceModal')" class="mt-4 w-full text-center text-sm text-gray-600 hover:underline">Close</button>
+      </div>
+    </div>
+
+      <!-- Minimum Standard Reports Modal -->
+    <div id="standardModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
+        <h2 class="text-lg font-bold mb-4 text-gray-800 text-center">Minimum Standard Report</h2>
+
+    
+
+        <!-- New Additional Fields -->
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Property Tenant’s Name</label>
+          <input type="text" name="tenantName" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Audit No. #</label>
+          <input type="text" name="auditNo" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Compliance Auditor</label>
+          <input type="text" name="auditor" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Inspection Address</label>
+          <input type="text" name="inspectionAddress" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Managing Agent</label>
+          <input type="text" name="agent" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Audit Date</label>
+          <input type="date" name="auditDate" class="w-full border border-gray-300 rounded-md p-2" />
+        </div>
+
+        <!-- Original Room-Level Report -->
+        <div class="border-t border-gray-200 pt-4">
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Room</label>
+          <input type="text" name="room" class="w-full border border-gray-300 rounded-md p-2" placeholder="e.g., Bedroom" />
+        </div>
+      
+        <div>
+          <label class="block font-medium text-gray-700 mb-1 text-left block">Comments</label>
+          <textarea name="comments" class="w-full border border-gray-300 rounded-md p-2 resize-none" rows="4" placeholder="Any remarks..."></textarea>
+        </div>
+
+        <div>
+          <label for="propertyFile" class="block text-gray-700 font-medium mb-2 text-left block">Upload Minimum Standard Report</label>
+
+          <input
+            type="file"
+            name="propertyFile"
+            id="propertyImage"
+            accept="file/*"
+            class="block w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-md file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              hover:file:bg-blue-100"
+          />
+        </div>
+
+        <input  name="standardReportData" id="standardReportDataInput">
+
+        <button type="button" onclick="submitStandardReport()" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 w-full">Save</button>
+        <button onclick="closeModal('standardModal')" class="mt-4 w-full text-center text-sm text-gray-600 hover:underline">Close</button>
+
+      </div>
+    </div>
+  
+    <!-- All modals and forms related to the Condition Reports -->
+    <!-- Add Category Modal -->
+    <div id="addCategoryModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <div class="bg-white w-full max-w-sm p-6 rounded-md shadow-md">
+        <h2 class="text-lg font-bold mb-4 text-center">Add New Room Category</h2>
+        <input id="newCategoryInput" type="text" placeholder="Enter new category"
+          class="w-full border border-gray-300 rounded px-3 py-2 mb-4" />
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+          <button type="button" onclick="confirmAddCategory()" class="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
         </div>
       </div>
+    </div>
 
       <!-- Edit Category Name Modal -->
-      <div id="editCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white p-6 rounded shadow-md w-full max-w-md">
-          <h2 class="text-lg font-bold mb-4">Edit Room Details</h2>
+    <div id="editCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white p-6 rounded shadow-md w-full max-w-md">
+        <h2 class="text-lg font-bold mb-4">Edit Room Details</h2>
 
-          <label class="block mb-2 font-semibold">Room Name</label>
-          <input id="editCategoryInput" type="text" class="w-full border p-2 mb-4" />
+        <label class="block mb-2 font-semibold">Room Name</label>
+        <input id="editCategoryInput" type="text" class="w-full border p-2 mb-4" />
+<!-- 
+        <label class="block mb-2 font-semibold">Room Image</label>
+        <input type="file" id="roomImageUpload" class="mb-4" /> -->
 
-          <label class="block mb-2 font-semibold">Room Image</label>
-          <input type="file" id="roomImageUpload" class="mb-4" />
+        <label class="block mb-2 font-semibold">Room Dimensions (ft)</label>
+        <div class="flex gap-2 mb-4">
+          <input id="roomWidth" type="number" placeholder="Width" class="w-1/2 border p-2" />
+          <input id="roomLength" type="number" placeholder="Length" class="w-1/2 border p-2" />
+        </div>
 
-          <label class="block mb-2 font-semibold">Room Dimensions (ft)</label>
-          <div class="flex gap-2 mb-4">
-            <input id="roomWidth" type="number" placeholder="Width" class="w-1/2 border p-2" />
-            <input id="roomLength" type="number" placeholder="Length" class="w-1/2 border p-2" />
-          </div>
-
-          <label class="block mb-2 font-semibold">Room Category</label>
-          <div class="mb-4">
-          <label class="block mb-2 font-semibold">Room Areas</label>
-          <div id="editRoomAreaTableWrapper">
+        <label class="block mb-2 font-semibold">Room Category</label>
+        <select id="modalRoomCategory" class="w-full border p-2 mb-4"></select>
+        <div class="mb-4">
+        <label class="block mb-2 font-semibold">Room Areas</label>
+        <div id="editRoomAreaTableWrapper">
             <!-- Table will be injected dynamically -->
-          </div>
-        </div>
-
-          <div class="flex justify-end gap-2">
-            <button type="button" onclick="closeEditModal()" class="text-gray-500">Cancel</button>
-            <button type="button" onclick="saveEditedCategoryFromModal()" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
-          </div>
-        </div>
-      </div>
-
-    <!-- Script Section for Category Report the modal that opens when the  -->
-    <!-- All the script files will be organized later -->
-
-    <!-- This modal pops up after clicking the Appliance Report button -->
-
-    <!-- This modal pops up after clicking the Maintenance Report button -->
-
-    <!-- This modal pops up after clicking the Minimum Standard Reports button -->
-
-      <!-- Store here all the Condition Data  -->
-       <input type="hidden" name="conditionData" id="conditionDataInput">
       </div>
     </div>
 
-      <!-- Navigation Buttons -->
-      <div class="flex justify-between">
-        <!--<button type="button" id="prevBtn" class="px-4 py-2 bg-gray-300 rounded" disabled>Previous</button>-->
-
-       <!-- Continue is type=button so no submit yet -->
-        <button type="button" id="nextBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Continue</button>
-
-        <!-- Submit button, initially hidden -->
-        <button type="submit" id="submitBtn" class="w-full px-4 py-2 bg-green-600 text-white rounded hidden">Submit</button>
-
+     <div class="flex justify-end gap-2">
+        <button type="button" onclick="closeEditModal()" class="text-gray-500">Cancel</button>
+        <button type="button" onclick="saveEditedCategoryFromModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
       </div>
+      </div>
+    </div>
 
+    </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between">
+      <!--<button type="button" id="prevBtn" class="px-4 py-2 bg-gray-300 rounded" disabled>Previous</button>-->
+
+      <!-- Continue is type=button so no submit yet -->
+      <button type="button" id="nextBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Continue</button>
+
+      <!-- Submit button, initially hidden -->
+      <button type="submit" id="submitBtn" class="w-full px-4 py-2 bg-green-600 text-white rounded hidden">Submit</button>
+    </div>
+      <input type="hidden" name="conditionData" id="conditionDataInput">
       <!-- Login Link -->
-      <p class="text-center text-sm mt-4">
-        Already have an account?
-        <a href="/login_renter/" class="text-blue-600 font-semibold hover:underline">Login Here</a>
-      </p>
-
-    </form>
-  </div>
-
+              <p class="text-center text-sm mt-4">
+                Already have an account?
+                <a href="/login_renter/" class="text-blue-600 font-semibold hover:underline">Login Here</a>
+              </p>
+          </form>
+        </div>
       </div>
     </main>
-<br>
+    <br>
 
-<!-- All script files will be orgnanized later -->
-  <script>
-  // Tracking the current steps
-  const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
-  const stepIndicators = [
-    document.getElementById('step1-indicator'),
-    document.getElementById('step2-indicator'),
-    document.getElementById('step3-indicator'),
-  ];
-  const backBtn = document.getElementById('backBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const submitBtn = document.getElementById('submitBtn'); // New Submit button
-  const uploadOption = document.getElementById('uploadOption');
-  const manualUploadFields = document.getElementById('manualUploadFields');
+    <script>
+    // Script to collect the rooms stated in the Condition Report 
+    function collectRoomData() {
+    const roomData = [];
+    const roomBlocks = document.querySelectorAll("#roomContainer .mb-6");
 
-  let currentStep = 0;
+    roomBlocks.forEach(roomDiv => {
+    const photoInput = roomDiv.querySelector('.room-photo-input');
+    const photoFile = photoInput ? photoInput.files[0] : null;
 
-  function updateStep() {
-    steps.forEach((step, index) => {
-      step.classList.toggle('hidden', index !== currentStep);
-      stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
-      stepIndicators[index].classList.toggle('text-white', index === currentStep);
-      stepIndicators[index].classList.toggle('bg-gray-300', index !== currentStep);
-      stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);
+    const categoryName = roomDiv.querySelector(".category-name").textContent.trim();
+    const width = roomDiv.getAttribute("data-width") || '';
+    const length = roomDiv.getAttribute("data-length") || '';
+
+    const areas = [];
+    roomDiv.querySelectorAll("tbody tr").forEach(row => {
+      const areaName = row.querySelector("td input")?.value || row.querySelector("td")?.textContent.trim();
+      const status = [...row.querySelectorAll('input[type="checkbox"]')]
+        .filter(cb => cb.checked)
+        .map(cb => cb.value)[0] || '';
+
+      const commentInput = row.querySelector("textarea");
+      const renter_comment = commentInput ? commentInput.value.trim() : "";
+
+      areas.push({ areaName, status, renter_comment });
     });
+
+    roomData.push({
+      categoryName,
+      width,
+      length,
+      areas,
+      photo: photoFile
+    });
+    });
+
+      //  Collect additional fields from inputs
+    const extraInfo = {
+      condition_report_date: document.getElementById('conditionReportDate')?.value || '',
+      agreement_start_date: document.getElementById('agreementStartDate')?.value || '',
+      renter_received_date: document.getElementById('renterReceivedDate')?.value || '',
+      report_return_date: document.getElementById('reportReturnDate')?.value || '',
+      address: document.getElementById('conditionAddress')?.value || '',
+      full_name_1: document.getElementById('fullName1')?.value || '',
+      agent_name: document.getElementById('agentName')?.value || '',
+      agent_company_name: document.getElementById('agentCompanyName')?.value || '',
+      renter_1: document.getElementById('renter1')?.value || '',
+      renter_2: document.getElementById('renter2')?.value || ''
+    };
+
+      //  Combine room data and extra info
+    const fullData = {
+      extraInfo: extraInfo,
+      rooms: roomData
+    };
+
+      //  Store the full JSON in hidden input
+    const conditionDataInput = document.getElementById("conditionDataInput");
+    conditionDataInput.value = JSON.stringify(fullData);
+
+    console.log("Full Condition Report Data:", fullData);
+
+    //  Optional: Close modal after saving
+    closeModal("conditionModal");
+
+    return roomData;
+    }
+
+        // Dynamically generate list of cards with the room data based from the listing from the Condition Report 
+
+      function createApplianceReportCard(room, roomIndex) {
+      return `
+        <div class="border border-blue-200 p-4 rounded-xl shadow-sm space-y-4 bg-gray-50">
+          <h3 class="text-md font-semibold text-blue-600">${room.categoryName} - Appliance Report</h3>
+
+          <div class="grid grid-cols-1 gap-3">
+            <div class="flex flex-col">
+             <label class="text-sm font-medium text-gray-600 text-left block">Windows Height</label>
+              <input type="text" placeholder="e.g. 15.68 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600 text-left block">Windows Length</label>
+              <input type="text" value="${room.length}" placeholder="e.g. 4.72 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600 text-left block">Windows Width</label>
+              <input type="text" value="${room.width}" placeholder="e.g. 3.90 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600 text-left block">Appliance Brand</label>
+              <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600 text-left block">Model/Serial Number</label>
+              <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600 text-left block">Location in Room</label>
+              <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600 text-left block">Appliance Photo</label>
+              <input 
+                type="file" 
+                name="appliance_photo_${roomIndex}" 
+                class="appliance-photo-input w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
+                data-preview-id="appliancePreview_${roomIndex}"
+              />
+              <img 
+                id="appliancePreview_${roomIndex}" 
+                class="mt-2 w-full h-auto rounded border border-gray-200 object-contain max-h-48" 
+                style="display: none;" 
+              />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-sm font-medium text-gray-600">Comments</label>
+              <textarea class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm resize-none"></textarea>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+
+      document.querySelector('.applianceReportBtn').addEventListener('click', function () {
+      document.getElementById('applianceModal').classList.remove('hidden');
+          
+      function collectApplianceReports() {
+        applianceReports = [];
+
+        document.querySelectorAll('#applianceReportsContainer > div').forEach(card => {
+        const inputs = card.querySelectorAll('input[type="text"]');
+        const textarea = card.querySelector('textarea');
+
+        applianceReports.push({
+            roomName: card.querySelector('h3')?.textContent.split(' - ')[0].trim() || 'Unknown',
+            window_height: inputs[0]?.value || '',
+            window_length: inputs[1]?.value || '',
+            window_width: inputs[2]?.value || '',
+            brand: inputs[3]?.value || '',
+            model_serial: inputs[4]?.value || '',
+            location: inputs[5]?.value || '',
+            comments: textarea?.value || ''
+          });
+        });
+
+        console.log("Collected Appliance Reports:", applianceReports);
+
+        const hiddenInput = document.getElementById('applianceReportsInput');
+        if (hiddenInput) {
+          hiddenInput.value = JSON.stringify(applianceReports);
+        }
+      }
+
+      function attachApplianceListeners() {
+          document.querySelectorAll('#applianceReportsContainer input, #applianceReportsContainer textarea')
+            .forEach(input => {
+              input.addEventListener('input', collectApplianceReports);
+            });
+      }
+
+
+      document.querySelector('.applianceReportBtn').addEventListener('click', function () {
+      document.getElementById('applianceModal').classList.remove('hidden');
+
+      const rooms = collectRoomData(); // ← assume this function exists and works correctly
+      console.log("Rooms Data:", rooms);
+
+      const container = document.getElementById('applianceReportsContainer');
+      container.innerHTML = '';
+
+      if (!Array.isArray(rooms) || rooms.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-500">No rooms added yet.</div>`;
+        return;
+      }
+
+      rooms.forEach(room => {
+        container.innerHTML += createApplianceReportCard(room);
+      });
+
+      attachApplianceListeners();
+      collectApplianceReports();
+      });
+
+        const rooms = collectRoomData(); // collect room data
+        console.log("Rooms Data:", rooms); //  log for debugging
+
+        const container = document.getElementById('applianceReportsContainer');
+        container.innerHTML = ''; // Clear container
+
+        if (!Array.isArray(rooms) || rooms.length === 0) {
+          container.innerHTML = `<div class="text-center text-gray-500">No rooms added yet.</div>`;
+          return;
+        }
+
+        rooms.forEach(room => {
+          container.innerHTML += createApplianceReportCard(room);
+        });
+      });
+
+    function submitStandardReport() {
+      const form = document.getElementById('standardReportForm');
+
+      const standardReport = {
+        tenant_name: form.tenantName.value.trim(),
+        audit_no: form.auditNo.value.trim(),
+        auditor: form.auditor.value.trim(),
+        inspection_address: form.inspectionAddress.value.trim(),
+        managing_agent: form.agent.value.trim(),
+        audit_date: form.auditDate.value,
+        room: form.room.value.trim(),
+        comments: form.comments.value.trim()
+        // File will be handled in request.FILES
+      };
+
+      // Save JSON string to hidden input
+      document.getElementById('standardReportDataInput').value = JSON.stringify(standardReport);
+      console.log("Standard Report Data:", standardReport);
+
+      }
+
+    // Button to collect all Appliance Data 
+    function handleSaveApplianceReport() {
+      applianceReports = [];
+
+      document.querySelectorAll('#applianceReportsContainer > div').forEach(card => {
+        const inputs = card.querySelectorAll('input[type="text"]');
+        const textarea = card.querySelector('textarea');
+
+        applianceReports.push({
+          roomName: card.querySelector('h3')?.textContent.split(' - ')[0].trim() || 'Unknown',
+          window_height: inputs[0]?.value || '',
+          window_length: inputs[1]?.value || '',
+          window_width: inputs[2]?.value || '',
+          brand: inputs[3]?.value || '',
+          model_serial: inputs[4]?.value || '',
+          location: inputs[5]?.value || '',
+          comments: textarea?.value || ''
+        });
+      });
+
+      console.log("Collected Appliance Reports:", applianceReports);
+
+      const hiddenInput = document.getElementById('applianceReportsInput');
+      if (hiddenInput) {
+        hiddenInput.value = JSON.stringify(applianceReports);
+      }
+       
+      closeModal('applianceModal');
+    }
+    </script>
+
+  <!-- All script files will be orgnanized later -->
+    <script>
+    // Tracking the current steps
+    const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+    const stepIndicators = [
+      document.getElementById('step1-indicator'),
+      document.getElementById('step2-indicator'),
+      document.getElementById('step3-indicator'),
+    ];
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn'); // New Submit button
+    const uploadOption = document.getElementById('uploadOption');
+    const manualUploadFields = document.getElementById('manualUploadFields');
+
+    let currentStep = 0;
+
+    function updateStep() {
+      steps.forEach((step, index) => {
+        step.classList.toggle('hidden', index !== currentStep);
+        stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
+        stepIndicators[index].classList.toggle('text-white', index === currentStep);
+        stepIndicators[index].classList.toggle('bg-gray-300', index !== currentStep);
+        stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);
+      });
 
     backBtn.disabled = currentStep === 0;
 
@@ -640,99 +1022,99 @@
 
     // Show manual upload fields only if on step 3 and option selected
     if (currentStep === 2) {
-      if (uploadOption.value === 'manual') {
-        manualUploadFields.classList.remove('hidden');
+        if (uploadOption.value === 'manual') {
+          manualUploadFields.classList.remove('hidden');
+        } else {
+          manualUploadFields.classList.add('hidden');
+        }
       } else {
         manualUploadFields.classList.add('hidden');
       }
-    } else {
-      manualUploadFields.classList.add('hidden');
     }
-  }
 
-  backBtn.addEventListener('click', () => {
-    if (currentStep > 0) {
-      currentStep--;
-      updateStep();
-    }
-  });
+    backBtn.addEventListener('click', () => {
+      if (currentStep > 0) {
+        currentStep--;
+        updateStep();
+      }
+    });
 
-  nextBtn.addEventListener('click', () => {
-    if (currentStep < steps.length - 1) {
-      currentStep++;
-      updateStep();
-    }
-  });
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        updateStep();
+      }
+    });
 
-  uploadOption.addEventListener('change', () => {
-      if (currentStep === 2) {
-        if (uploadOption.value === 'manual') {
-          manualUploadFields.classList.remove('hidden');
-          reportUploadFields.classList.add('hidden');
-        } else if (uploadOption.value === 'report') {
-          manualUploadFields.classList.add('hidden');
-          reportUploadFields.classList.remove('hidden');
-        } else {
-          manualUploadFields.classList.add('hidden');
-          reportUploadFields.classList.add('hidden');
+    uploadOption.addEventListener('change', () => {
+        if (currentStep === 2) {
+          if (uploadOption.value === 'manual') {
+            manualUploadFields.classList.remove('hidden');
+            reportUploadFields.classList.add('hidden');
+          } else if (uploadOption.value === 'report') {
+            manualUploadFields.classList.add('hidden');
+            reportUploadFields.classList.remove('hidden');
+          } else {
+            manualUploadFields.classList.add('hidden');
+            reportUploadFields.classList.add('hidden');
+          }
         }
-      }
-    });
+      });
 
-    // Password toggle
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('password');
-    togglePassword.addEventListener('click', () => {
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        togglePassword.textContent = 'Hide';
-      } else {
-        passwordInput.type = 'password';
-        togglePassword.textContent = 'Show';
-      }
-    });
+      // Password toggle
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      togglePassword.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          togglePassword.textContent = 'Hide';
+        } else {
+          passwordInput.type = 'password';
+          togglePassword.textContent = 'Show';
+        }
+      });
 
-    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    toggleConfirmPassword.addEventListener('click', () => {
-      if (confirmPasswordInput.type === 'password') {
-        confirmPasswordInput.type = 'text';
-        toggleConfirmPassword.textContent = 'Hide';
-      } else {
-        confirmPasswordInput.type = 'password';
-        toggleConfirmPassword.textContent = 'Show';
-      }
-    });
+      const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+      toggleConfirmPassword.addEventListener('click', () => {
+        if (confirmPasswordInput.type === 'password') {
+          confirmPasswordInput.type = 'text';
+          toggleConfirmPassword.textContent = 'Hide';
+        } else {
+          confirmPasswordInput.type = 'password';
+          toggleConfirmPassword.textContent = 'Show';
+        }
+      });
 
     // Initialize
     updateStep();
-const roomInput = document.getElementById('roomType');
-const addRoomBtn = document.getElementById('addRoomBtn');
-const roomList = document.getElementById('roomList');
+    const roomInput = document.getElementById('roomType');
+    const addRoomBtn = document.getElementById('addRoomBtn');
+    const roomList = document.getElementById('roomList');
 
-function createRoomItem(roomName) {
-    const li = document.createElement('li');
-    li.className = "flex items-center justify-between border p-3 rounded-md";
+    function createRoomItem(roomName) {
+      const li = document.createElement('li');
+      li.className = "flex items-center justify-between border p-3 rounded-md";
 
-    const span = document.createElement('span');
-    span.className = "text-gray-800 font-medium";
-    span.textContent = roomName;
+      const span = document.createElement('span');
+      span.className = "text-gray-800 font-medium";
+      span.textContent = roomName;
 
-    const controls = document.createElement('div');
-    controls.className = "flex gap-3";
+      const controls = document.createElement('div');
+      controls.className = "flex gap-3";
 
-    const editBtn = document.createElement('button');
-    editBtn.innerHTML = `
+      const editBtn = document.createElement('button');
+      editBtn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
         </svg>
-    `;
+      `;
 
     editBtn.onclick = () => {
         roomInput.value = span.textContent;
         li.remove();
-        updateRoomListData(); // ✅ Add this to update the hidden input
+        updateRoomListData();  
     };
 
     const deleteBtn = document.createElement('button');
@@ -745,37 +1127,36 @@ function createRoomItem(roomName) {
     `;
     deleteBtn.onclick = () => {
         li.remove();
-        updateRoomListData(); // ✅ Add this to update the hidden input
+        updateRoomListData(); // 
     };
 
-    controls.appendChild(editBtn);
-    controls.appendChild(deleteBtn);
+      controls.appendChild(editBtn);
+      controls.appendChild(deleteBtn);
 
-    li.appendChild(span);
-    li.appendChild(controls);
+      li.appendChild(span);
+      li.appendChild(controls);
 
-    return li;
-}
-
-function updateRoomListData() {
-    const rooms = [];
-    document.querySelectorAll('#roomList li span').forEach(span => {
-        rooms.push(span.textContent);
-    });
-    document.getElementById('roomListData').value = JSON.stringify(rooms);
-}
-
-addRoomBtn.addEventListener('click', () => {
-    const roomName = roomInput.value.trim();
-    if (roomName) {
-        roomList.appendChild(createRoomItem(roomName));
-        roomInput.value = '';
-        updateRoomListData();
+      return li;
     }
-});
 
+    function updateRoomListData() {
+      const rooms = [];
+      document.querySelectorAll('#roomList li span').forEach(span => {
+          rooms.push(span.textContent);
+      });
+      document.getElementById('roomListData').value = JSON.stringify(rooms);
+    }
 
-// Form validation Here for required  fielda based on proposal
+    addRoomBtn.addEventListener('click', () => {
+        const roomName = roomInput.value.trim();
+        if (roomName) {
+            roomList.appendChild(createRoomItem(roomName));
+            roomInput.value = '';
+            updateRoomListData();
+        }
+    });
+
+  // Form validation Here for required  fielda based on proposal
   const nameInput = document.getElementById("name");
   const nameError = document.getElementById("nameError");
   function validateFields() {
@@ -811,21 +1192,19 @@ addRoomBtn.addEventListener('click', () => {
       }
     });
 
-    // Password match validation
-    const password = document.getElementById("password").value.trim();
-    const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    const matchError = document.getElementById("matchError");
+      // Password match validation
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+      const matchError = document.getElementById("matchError");
 
-    if (password && confirmPassword && password !== confirmPassword) {
-      matchError.classList.remove("hidden");
-      document.getElementById("confirmPassword").classList.add("border-red-500");
-    } else {
-      matchError.classList.add("hidden");
-      document.getElementById("confirmPassword").classList.remove("border-red-500");
+      if (password && confirmPassword && password !== confirmPassword) {
+        matchError.classList.remove("hidden");
+        document.getElementById("confirmPassword").classList.add("border-red-500");
+      } else {
+        matchError.classList.add("hidden");
+        document.getElementById("confirmPassword").classList.remove("border-red-500");
+      }
     }
-  }
-
-
     document.getElementById('propertyImage').addEventListener('change', function(event) {
     const file = event.target.files[0];
     const preview = document.getElementById('imagePreview');
@@ -842,7 +1221,8 @@ addRoomBtn.addEventListener('click', () => {
   });
 
   // This part will be about submitting the Registration Form data
-  document.getElementById("registrationForm").addEventListener("submit", function (e) {
+    document.getElementById("registrationForm").addEventListener("submit", function (e) {
+
     e.preventDefault(); // Prevent default form submission
 
     // normally collect information about the data
@@ -873,86 +1253,120 @@ addRoomBtn.addEventListener('click', () => {
         return;
     }
 
-    const roomData = [];
-    const roomBlocks = document.querySelectorAll("#roomContainer .mb-6");
-    console.log("Found rooms: ", roomBlocks.length);
-
-    roomBlocks.forEach(roomDiv => {
-        const categoryNameElement = roomDiv.querySelector(".category-name");
-        const categoryName = categoryNameElement ? categoryNameElement.textContent.trim() : "Unknown";
-
-        const width = roomDiv.getAttribute("data-width") || '';
-        const length = roomDiv.getAttribute("data-length") || '';
-
-        const areas = [];
-
-        roomDiv.querySelectorAll("tbody tr").forEach(row => {
-            let areaName = "";
-
-            const input = row.querySelector("td input[type='text']");
-            if (input) {
-                areaName = input.value.trim();
-            } else {
-                const cell = row.querySelector("td");
-                if (cell) {
-                    areaName = cell.textContent.trim();
-                }
-            }
-
-            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
-            let status = '';
-            checkboxes.forEach(cb => {
-                if (cb.checked) status = cb.value;
-            });
-
-            areas.push({
-                areaName: areaName,
-                status: status
-            });
-        });
-
-        roomData.push({
-            categoryName: categoryName,
-            width: width,
-            length: length,
-            areas: areas
-        });
-    });
-
-    console.log("Final Room Data:", roomData);
-
-    // Put the serialized roomData into the hidden input
-    document.getElementById('conditionDataInput').value = JSON.stringify(roomData);
-
     Swal.fire({
         icon: 'success',
         title: 'Success!',
         text: 'Registration successful!',
-    }).then(() => {
-        // Now submit the form (with the hidden input included)
-        e.target.submit();
+      }).then(() => {
+          // Now submit the form (with the hidden input included)
+          e.target.submit();
+      });
     });
-});
 
 
- function openModal(modalId) {
+  function openModal(modalId) {
       const modal = document.getElementById(modalId);
       if (modal) {
         modal.classList.remove('hidden');
       }
     }
 
-    function closeModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.classList.add('hidden');
-      }
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('hidden');
     }
+  }
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("propertyImage");
+        const preview = document.getElementById("imagePreview");
 
+        if (input && preview) {
+          input.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+
+            if (file && file.type.startsWith("image/")) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                preview.src = e.target.result;
+              };
+              reader.readAsDataURL(file);
+            } else {
+              preview.src = "";
+            }
+          });
+        }
+      });
+
+
+
+      document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("appliance-photo-input")) {
+          const input = e.target;
+          const previewId = input.dataset.previewId;
+          const preview = document.getElementById(previewId);
+
+          const file = input.files[0];
+          if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              preview.src = event.target.result;
+              preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+          } else {
+            preview.src = "";
+            preview.style.display = "none";
+          }
+        }
+      });
+
+
+    document.addEventListener("change", function (e) {
+      const input = e.target;
+      if (
+        input.classList.contains("room-photo-input") || 
+        input.classList.contains("appliance-photo-input")
+      ) {
+        const previewId = input.getAttribute("data-preview-id");
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+
+        if (file && preview) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            preview.src = event.target.result;
+            preview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else if (preview) {
+          preview.src = "";
+          preview.style.display = "none";
+        }
+      }
+    });
+document.addEventListener("DOMContentLoaded", function () {
+  const addBtn = document.getElementById("addRoomAreaBtn");
+  const tableBody = document.querySelector("#roomAreaTable tbody");
+
+  if (addBtn && tableBody) {
+    addBtn.addEventListener("click", function () {
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `
+        <td><input type="text" placeholder="Area Name" class="border px-2 py-1 rounded" /></td>
+        <td>
+          <label><input type="checkbox" value="Clean" /> Clean</label>
+          <label><input type="checkbox" value="Damaged" /> Damaged</label>
+          <label><input type="checkbox" value="Needs Repair" /> Needs Repair</label>
+        </td>
+        <td><textarea class="border px-2 py-1 rounded w-full" placeholder="Comments"></textarea></td>
+      `;
+      tableBody.appendChild(newRow);
+    });
+  }
+});
 
   </script>
-
-  
   <!-- Footer -->
   {% include 'renter/home/footer.html' %}
 

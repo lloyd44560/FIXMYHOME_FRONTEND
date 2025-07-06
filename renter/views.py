@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Renter, FailedLoginAttempt, ConditionReport,EmailVerification, Property,Room
+
+from renter.models import Renter, Property, ApplianceReport, Room, ConditionReport, RoomCondition, RoomAreaCondition,EmailVerification, FailedLoginAttempt, MinimumStandardReport
 from thirdparty.models import ThirdParty
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -176,125 +177,248 @@ def login_view(request):
 @csrf_exempt
 def register_renter(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirmPassword')
+        try:
+            # Get Personal Information
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            phone = request.POST.get('phone')
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirmPassword')
 
-        company = request.POST.get('company')
-        contact_person = request.POST.get('contactPerson')
-        contact_email = request.POST.get('contactPersonEmail')
-        contact_phone = request.POST.get('contactPhone')
+            company = request.POST.get('company')
+            contact_person = request.POST.get('contactPerson')
+            contact_email = request.POST.get('contactPersonEmail')
+            contact_phone = request.POST.get('contactPhone')
 
-        state = request.POST.get('state')
-        city = request.POST.get('city')
+            state = request.POST.get('state')
+            city = request.POST.get('city')
+            address1 = request.POST.get('companyAddressLine1')
+            address2 = request.POST.get('companyAddressLine2')
+            postal_code = request.POST.get('postalcode')
 
-        property_image = request.FILES.get('propertyImage')
-        condition_image = request.FILES.get('conditionImage')
+            upload_option = request.POST.get('uploadOption')
 
-        floor_count = request.POST.get('floorCount')
-        house_state = request.POST.get('houseState')
-        house_city = request.POST.get('houseCity')
-        address1 = request.POST.get('companyAddressLine1')
-        address2 = request.POST.get('companyAddressLine2')
-        postal_code = request.POST.get('postalcode')
-
-        upload_option = request.POST.get('uploadOption')
-        condition_data = request.POST.get('conditionData')
-
-        room_list_data = request.POST.get('roomListData')
-
-        if password != confirm_password:
-            return redirect('/register?error=password-mismatch')
-
-        # Optional: Save file
-        if property_image:
-            fs = FileSystemStorage()
-            filename = fs.save(property_image.name, property_image)
-            uploaded_file_url = fs.url(filename)
-        else:
+            property_image = None
             uploaded_file_url = None
 
-        # 1. Create the User
-        user = User.objects.create(
-            username=email,
-            email=email,
-            password=make_password(password),
-            first_name=name
-        )
+            if upload_option == 'manual':
+                property_image = request.FILES.get('propertyImage')
+                condition_image = request.FILES.get('conditionImage')
 
-        # 2. Create the linked Renter
-        renter = Renter.objects.create(
-            phone=phone,
-            name=name,
-            email=email,
-            company_name=company,
-            contact_person=contact_person,
-            contact_phone=contact_phone,
-            state=state,
-            city=city,
-            address_line1=address1,
-            address_line2=address2,
-            upload_option=upload_option,
-            property_image=uploaded_file_url,
-        )
+                floor_count = request.POST.get('floorCount')
+                house_state = request.POST.get('houseState')
+                house_city = request.POST.get('houseCity')
+             
 
-        # 3. Create Property
-        property = Property.objects.create(
-            renter=renter,
-            floor_count=floor_count,
-            state=house_state,
-            city=house_city,
-            address_line1=address1,
-            address_line2=address2,
-            postal_code=postal_code,
-            property_photo=property_image,
-            condition_report=condition_image
-        )
+                if property_image:
+                    fs = FileSystemStorage()
+                    filename = fs.save(property_image.name, property_image)
+                    uploaded_file_url = fs.url(filename)
 
-        # 4. Save Rooms
-        if room_list_data:
-            room_names = json.loads(room_list_data)
-            for room_name in room_names:
-                Room.objects.create(property=property, room_name=room_name)
+            else:
+                condition_data = request.POST.get('conditionData')
+                condition_data_raw = request.POST.get('conditionData')
+                room_list_data = request.POST.get('roomListData')
 
-        # 5. Save Condition Report
-        if condition_data:
-            try:
-                condition_json = json.loads(condition_data)
-                ConditionReport.objects.create(
+            if password != confirm_password:
+                return redirect('/register?error=password-mismatch')
+
+            # Create User
+            user = User.objects.create(
+                username=email,
+                email=email,
+                password=make_password(password),
+                first_name=name
+            )
+
+            # Create Renter
+            renter = Renter.objects.create(
+                user=user,
+                phone=phone,
+                name=name,
+                email=email,
+                company_name=company,
+                contact_person=contact_person,
+                contact_phone=contact_phone,
+                state=state,
+                city=city,
+                address_line1=address1,
+                address_line2=address2,
+                upload_option=upload_option,
+                property_image=uploaded_file_url,
+            )
+
+            # Create Property if manual
+            if upload_option == 'manual':
+                property = Property.objects.create(
                     renter=renter,
-                    data=condition_json
+                    floor_count=floor_count,
+                    state=house_state,
+                    city=house_city,
+                    address_line1=address1,
+                    address_line2=address2,
+                    postal_code=postal_code,
+                    property_photo=property_image,
+                    condition_report=condition_image
                 )
-                print("Condition report saved successfully!")
-            except json.JSONDecodeError as e:
-                print("Error decoding JSON:", e)
+            else:
+                property = None
 
-        # 6. Create email verification token
-        ev = EmailVerification.objects.create(user=user)
+            # Save Room list
 
-        verify_url = request.build_absolute_uri(
-            reverse('verify_email', args=[str(ev.token)])
-        )
+            
+            # if room_list_data:
+            #     room_names = json.loads(room_list_data)
+            #     for room_name in room_names:
+            #         Room.objects.create(property=property, room_name=room_name)
+            property_image = request.FILES.get('propertyImage')
+            condition_image = request.FILES.get('conditionImage')
 
-        send_mail(
-            subject="Please verify your email",
-            message=(
-                f"Hi {user.first_name},\n\n"
-                f"Thanks for registering! Please click the link below to verify your email:\n\n"
-                f"{verify_url}\n\n"
-                "If you didn’t sign up, just ignore this email."
-            ),
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-        )
+            floor_count = request.POST.get('floorCount')
+            house_state = request.POST.get('houseState')
+            house_city = request.POST.get('houseCity')
+            
 
-        return render(request, 'renter/verify_sent.html')  # Show the "check your inbox" page
+            if property_image:
+                fs = FileSystemStorage()
+                filename = fs.save(property_image.name, property_image)
+                uploaded_file_url = fs.url(filename)
+
+            property = Property.objects.create(
+                    renter=renter,
+                    floor_count=floor_count,
+                    state=house_state,
+                    city=house_city,
+                    address_line1=address1,
+                    address_line2=address2,
+                    postal_code=postal_code,
+                    property_photo=property_image,
+                    condition_report=condition_image
+            )
+
+            # Save Condition Report
+            if condition_data_raw:
+                try:
+                    condition_data = json.loads(condition_data_raw)
+                    extra = condition_data.get("extraInfo", {})
+                    rooms = condition_data.get("rooms", [])
+
+                    for index, room in enumerate(rooms):
+                        room_name = room.get('categoryName', 'Unknown')
+                        width = room.get('width', '')
+                        length = room.get('length', '')
+                        photo_field_name = f'room_photo_{index}'
+                        photo = request.FILES.get(photo_field_name)
+
+                        property_image = request.FILES.get('propertyImage')
+
+                        room_condition = RoomCondition.objects.create(
+                            property=property,
+                            renter=renter,
+                            room_name=room_name,
+                            width=width,
+                            length=length,
+                            photo=photo,
+                            condition_report_date=extra.get('condition_report_date', ''),
+                            agreement_start_date=extra.get('agreement_start_date', ''),
+                            renter_received_date=extra.get('renter_received_date', ''),
+                            report_return_date=extra.get('report_return_date', ''),
+                            address=extra.get('address', ''),
+                            full_name_1=extra.get('full_name_1', ''),
+                            agent_name=extra.get('agent_name', ''),
+                            agent_company_name=extra.get('agent_company_name', ''),
+                            renter_1=extra.get('renter_1', ''),
+                            renter_2=extra.get('renter_2', '')
+                        )
+
+                        for area in room.get('areas', []):
+                            RoomAreaCondition.objects.create(
+                                room_condition=room_condition,
+                                area_name=area.get('areaName', ''),
+                                status=area.get('status', ''),
+                                renter_comment=area.get('renter_comment', '')
+                            )
+                except json.JSONDecodeError as e:
+                    print("Failed to decode condition data JSON:", e)
+
+                    # Appliance Reports
+            # Appliance Reports
+            appliance_reports_data = request.POST.get('applianceReports')
+            if appliance_reports_data:
+                try:
+                    report_list = json.loads(appliance_reports_data)
+                    for index, report in enumerate(report_list):
+                        room_name = report.get('roomName')
+                        room_obj, created = Room.objects.get_or_create(
+                            property=property,
+                            room_name=room_name,
+                        )
+
+                        # Handle appliance photo
+                        photo_field_name = f'appliance_photo_{index}'
+                        appliance_photo = request.FILES.get(f"appliance_photo_{index}")  # ← get image file
+
+                        ApplianceReport.objects.create(
+                            room=room_obj,
+                            renter=renter,
+                            window_height=report.get('window_height'),
+                            window_length=report.get('window_length'),
+                            window_width=report.get('window_width'),
+                            brand=report.get('brand'),
+                            model_serial=report.get('model_serial'),
+                            location=report.get('location'),
+                            comments=report.get('comments'),
+                            appliance_photo=appliance_photo
+                        )
+                except Exception as e:
+                    print("Appliance report error:", e)
+
+            # Minimum Standard Report
+            standard_report_data = request.POST.get('standardReportData')
+            standard_file = request.FILES.get('propertyFile')
+
+            if standard_report_data:
+                try:
+                    report = json.loads(standard_report_data)
+                    MinimumStandardReport.objects.create(
+                        renter=renter,
+                        tenant_name=report.get('tenant_name'),
+                        audit_no=report.get('audit_no'),
+                        auditor=report.get('auditor'),
+                        inspection_address=report.get('inspection_address'),
+                        managing_agent=report.get('managing_agent'),
+                        audit_date=report.get('audit_date'),
+                        room=report.get('room'),
+                        comments=report.get('comments'),
+                        report_file=standard_file
+                    )
+                except Exception as e:
+                    print("Minimum standard error:", e)
+
+            # Email verification
+            ev = EmailVerification.objects.create(user=user)
+            verify_url = request.build_absolute_uri(
+                reverse('verify_email', args=[str(ev.token)])
+            )
+
+            # Uncomment when ready to send email and user will verify it 
+            # send_mail(
+            #     subject="Please verify your email",
+            #     message=f"Hi {user.first_name},\n\nThanks for registering! Verify your email:\n{verify_url}",
+            #     from_email=settings.EMAIL_HOST_USER,
+            #     recipient_list=[user.email],
+            # )
+
+            return render(request, 'renter/verify_sent.html')
+
+        except Exception as e:
+            print("Registration error:", e)
+            return redirect('/register?error=internal')
 
     else:
-        print("Register Form is not submitted")
+        print("Form not submitted")
         return redirect('/register')
+
 
 
 # def register_renter(request):
@@ -328,6 +452,7 @@ def verify_email(request, token):
     return render(request, 'renter/verified.html', {'user': user})
 
 
+
 @login_required
 def welcome(request):
     user = request.user
@@ -336,22 +461,39 @@ def welcome(request):
         if Renter.objects.filter(user=user).exists():
             renter = Renter.objects.get(user=user)
             properties = Property.objects.filter(renter=renter)
+            room_conditions = RoomCondition.objects.filter(renter=renter).prefetch_related('areas')
+            appliance_reports = ApplianceReport.objects.filter(renter=renter).select_related('room', 'renter')
+            minimum_reports = MinimumStandardReport.objects.filter(renter=renter) 
+            job_list = Jobs.objects.filter(renter=renter)
+            
+
+            # Need tp add Minimum Standard Report 
+
             return render(request, 'renter/welcome.html', {
                 'renter': renter,
-                'properties': properties
+                'room_conditions': room_conditions,
+                'properties' : properties,
+                'appliance_reports': appliance_reports, 
+                # include appliance reports here,
+                'jobs': job_list,  # pass to template
+                'minimum_reports': minimum_reports 
             })
 
         elif ThirdParty.objects.filter(user=user).exists():
-            return redirect('thirdparty_account')  # URL pattern name for their account page
+            return redirect('thirdparty_account')
 
     except Exception as e:
         print("Welcome view error:", e)
 
     return render(request, 'renter/welcome.html', {
-        'renter': None,
-        'properties': []
-    })
+                'renter': renter,
+                'room_conditions': room_conditions,
+                'properties' : properties,
+                'appliance_reports': appliance_reports, 
+                'minimum_reports': minimum_reports,
+                # 'jobs': job_list,  
 
+            })
 def renter_create(request):
     if request.method == 'POST':
         form = RenterForm(request.POST, request.FILES)
@@ -403,7 +545,7 @@ def renter_account(request):
             name_parts = name.strip().split(' ', 1)
             user.first_name = name_parts[0]
             user.last_name = name_parts[1] if len(name_parts) > 1 else ''
-        
+
         user.email = email
         user.save()
 
@@ -412,13 +554,16 @@ def renter_account(request):
             renter.phone = phone
             renter.contact_person = name
             renter.email = email
+            renter.date_of_birth = dob
+            renter.gender = gender
             renter.save()
 
         messages.success(request, "Your account has been updated.")
-        return redirect('renter_account')  # Replace 'account' with your account page's URL name
+        return redirect('renter_account')  # Adjust if you use a different URL name
 
-
-    return render(request, 'renter/home/account.html')
+    return render(request, 'renter/home/account.html', {
+        'renter': renter
+    })
 
 def chat_demo(request, job_id):
     return render(request, 'chat_demo.html', {'job_id': job_id})
@@ -462,3 +607,8 @@ def custom_logout(request):
     else:
         logout(request)  # End Django session
         return redirect('/login_renter/')
+
+
+
+# Create Jobs here 
+
