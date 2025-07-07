@@ -79,15 +79,15 @@
 
 {% block scripts %}
 <!-- Functions -->
-<script src="/static/trader/js/AddLicenseFunc.js"></script>
-<script src="/static/trader/js/AddTeamFunc.js"></script>
-<script src="/static/trader/js/generateCalendar.js"></script>
-<script src="/static/trader/js/processPages.js"></script>
-<script src="/static/trader/js/whatTypeCompany.js"></script>
-<script src="/static/trader/js/togglePassword.js"></script>
+<script src="{% static '/trader/js/AddLicenseFunc.js' %}"></script>
+<script src="{% static '/trader/js/AddTeamFunc.js' %}"></script>
+<script src="{% static '/trader/js/generateCalendar.js' %}"></script>
+<script src="{% static '/trader/js/processPages.js' %}"></script>
+<script src="{% static '/trader/js/whatTypeCompany.js' %}"></script>
+<script src="{% static '/trader/js/togglePassword.js' %}"></script>
 
 <!-- Validations -->
-<script src="/static/trader/js/fieldValidation.js"></script>
+<script src="{% static '/trader/js/fieldValidation.js' %}"></script>
 
 <script>
   const menuBtn = document.getElementById('menu-btn');

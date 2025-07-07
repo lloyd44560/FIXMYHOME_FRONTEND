@@ -73,11 +73,11 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/agent/js/processPage.js"></script>
-<script src="/static/agent/js/togglePass.js"></script>
+<script src="{% static '/agent/js/processPage.js' %}"></script>
+<script src="{% static '/agent/js/togglePass.js' %}"></script>
 
 <!-- Validations -->
-<script src="/static/agent/js/validationFields.js"></script>
+<script src="{% static '/agent/js/validationFields.js' %}"></script>
 
 <script>
   const menuBtn = document.getElementById('menu-btn');
