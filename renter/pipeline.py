@@ -1,5 +1,5 @@
 from social_core.exceptions import AuthForbidden
-from renter.models import User  # Replace with your actual User model
+from django.contrib.auth.models import User  # Replace with your actual User model
 
 def verify_email(strategy, details, backend, user=None, *args, **kwargs):
     email = details.get('email')

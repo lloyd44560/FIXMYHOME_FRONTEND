@@ -1,59 +1,76 @@
-// Set default categories here that will be displayed by default, will change soon based on 
-    let categories = ['Lounge Room', 'Kitchen', 'Bedroom'];
+  // Set default categories here that will be displayed by default. 
+  let categories = ['Lounge Room', 'Kitchen', 'Bedroom'];
 
-    function populateCategoryDropdown() {
-      const select = document.getElementById("modalRoomCategory");
-      select.innerHTML = '';
-      categories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
-      });
-    }
+  function populateCategoryDropdown() {
+    const select = document.getElementById("modalRoomCategory");
+    select.innerHTML = '';
+    categories.forEach(cat => {
+      const option = document.createElement("option");
+      option.value = cat;
+      option.textContent = cat;
+      select.appendChild(option);
+    });
+  }
+  let roomIndex = 0;
 
-    function addRoomBlock(categoryName) {
-      const roomContainer = document.getElementById("roomContainer");
+  function addRoomBlock(categoryName) {
+    const roomContainer = document.getElementById("roomContainer");
 
-      const roomDiv = document.createElement("div");
-      roomDiv.className = "mb-6 border rounded-md p-4";
+    const roomDiv = document.createElement("div");
+    roomDiv.className = "mb-6 border rounded-md p-4";
 
-      roomDiv.innerHTML = `
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="font-semibold text-lg category-name">${categoryName}</h3>
-          <div class="flex gap-2">
-            <button class="text-blue-500" type="button" onclick="openEditModal(this)" data-category="${categoryName}">
+    roomDiv.innerHTML = `
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold text-lg category-name">${categoryName}</h3>
+        <div class="flex gap-2">
+          <button class="text-blue-500" type="button" onclick="openEditModal(this)" data-category="${categoryName}">
             <i class="fas fa-edit"></i>
           </button>
-            <button class="text-red-500" type="button" onclick="deleteRoomBlock(this)"><i class="fas fa-trash"></i></button>
-          </div>
+          <button class="text-red-500" type="button" onclick="deleteRoomBlock(this)"><i class="fas fa-trash"></i></button>
         </div>
+      </div>
 
-        <table class="w-full text-center border border-blue-500">
-          <thead class="bg-blue-500 text-white">
-            <tr>
-              <th class="py-2">Room area</th>
-              <th>Clean</th>
-              <th>Undamaged</th>
-              <th>Working</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-t">
-              <td class="py-2">Walls</td>
-              <td><input type="checkbox" name="Walls" value="Clean" onclick="checkOnlyOne(this)"></td>
-              <td><input type="checkbox" name="Walls" value="Undamaged" onclick="checkOnlyOne(this)"></td>
-              <td><input type="checkbox" name="Walls" value="Working" onclick="checkOnlyOne(this)"></td>
-            </tr>
-          </tbody>
-        </table>
+      <table class="w-full text-center border border-blue-500">
+        <thead class="bg-blue-500 text-white">
+          <tr>
+            <th class="py-2">Room area</th>
+            <th>Clean</th>
+            <th>Undamaged</th>
+            <th>Working</th>
+            <th>Renter Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t">
+            <td class="py-2">Walls</td>
+            <td><input type="checkbox" name="Walls" value="Clean" onclick="checkOnlyOne(this)"></td>
+            <td><input type="checkbox" name="Walls" value="Undamaged" onclick="checkOnlyOne(this)"></td>
+            <td><input type="checkbox" name="Walls" value="Working" onclick="checkOnlyOne(this)"></td>
+            <td><textarea class="renter-comment border rounded px-1 py-1 text-sm w-full" placeholder="Renter comment..."></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+<div class="mt-2">
+  <label class="block text-sm font-medium text-gray-700">Room Photo</label>
+  <input 
+    type="file" 
+    name="room_photo_${roomIndex}" 
+    accept="image/*" 
+    class="room-photo-input mt-1 text-sm"
+    data-preview-id="roomPhotoPreview_${roomIndex}"
+  >
+  <img 
+    id="roomPhotoPreview_${roomIndex}" 
+    class="mt-2 w-full h-auto rounded border border-gray-300 object-contain max-h-48" 
+    style="display: none;" 
+  />
+</div>
+      <button type="button" onclick="addNewRoomArea(this)" class="mt-3 text-sm text-blue-600 hover:underline">Add new room area</button>
+    `;
 
-        <button type="button" onclick="addNewRoomArea(this)" class="mt-3 text-sm text-blue-600 hover:underline">Add new room area</button>
-      `;
-
-      roomContainer.appendChild(roomDiv);
+    roomContainer.appendChild(roomDiv);
+      roomIndex++;
     }
-
 
     function addNewCategory() {
       document.getElementById("newCategoryInput").value = "";
@@ -61,7 +78,15 @@
     }
     
     function addNewRoomArea(button) {
-      const table = button.previousElementSibling.querySelector("tbody");
+      // Try to find the nearest table (sa taas ng button)
+      const roomBlock = button.closest(".mb-6"); // adjust this selector if needed
+      const table = roomBlock?.querySelector("table tbody");
+
+      if (!table) {
+        console.error("Table body not found");
+        return;
+      }
+
       const newRow = document.createElement("tr");
       newRow.className = "border-t";
       newRow.innerHTML = `
@@ -69,6 +94,7 @@
         <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
         <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
         <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
+        <td><textarea class="renter-comment border rounded px-1 py-1 text-sm w-full" placeholder="Renter comment..."></textarea></td>
       `;
       table.appendChild(newRow);
     }
@@ -227,6 +253,8 @@ function saveEditedCategoryFromModal() {
   const width = document.getElementById("roomWidth").value;
   const length = document.getElementById("roomLength").value;
   const selectedCategory = document.getElementById("modalRoomCategory").value;
+  const photoInput = document.getElementById("roomImageUpload");
+  const newPhoto = photoInput.files[0];
 
   if (!newName) {
     alert("Room Name cannot be empty.");
@@ -238,10 +266,24 @@ function saveEditedCategoryFromModal() {
     ?.closest(".mb-6");
 
   if (roomDiv) {
-    // Update name and dimensions
+    // Update category name
     roomDiv.querySelector(".category-name").textContent = newName;
+
+    // Update dimensions
     roomDiv.setAttribute("data-width", width);
     roomDiv.setAttribute("data-length", length);
+
+    // Update image preview (optional)
+    if (newPhoto) {
+      const imagePreview = roomDiv.querySelector(".image-preview");
+      if (imagePreview) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(newPhoto);
+      }
+    }
   }
 
   closeEditModal();
@@ -249,54 +291,20 @@ function saveEditedCategoryFromModal() {
 
 
 
-function collectRoomData() {
-    const roomData = [];
 
-    const roomBlocks = document.querySelectorAll("#roomContainer .mb-6");
 
-    console.log("Found rooms: ", roomBlocks.length);
+// document.querySelector('.applianceReportBtn').addEventListener('click', () => {
+//   const rooms = collectRoomData();
+//   const container = document.getElementById('applianceReportsContainer');
 
-    roomBlocks.forEach(roomDiv => {
-        const categoryNameElement = roomDiv.querySelector(".category-name");
-        const categoryName = categoryNameElement ? categoryNameElement.textContent.trim() : "Unknown";
+//   container.innerHTML = ''; // Clear previous reports
 
-        const width = roomDiv.getAttribute("data-width") || '';
-        const length = roomDiv.getAttribute("data-length") || '';
+//   if (rooms.length === 0) {
+//     container.innerHTML = `<div class="text-center text-gray-500">No rooms added yet.</div>`;
+//     return;
+//   }
 
-        const areas = [];
-
-        roomDiv.querySelectorAll("tbody tr").forEach(row => {
-            let areaName = "";
-
-            const input = row.querySelector("td input[type='text']");
-            if (input) {
-                areaName = input.value.trim();
-            } else {
-                const cell = row.querySelector("td");
-                if (cell) {
-                    areaName = cell.textContent.trim();
-                }
-            }
-
-            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
-            let status = '';
-            checkboxes.forEach(cb => {
-                if (cb.checked) status = cb.value;
-            });
-
-            areas.push({
-                areaName: areaName,
-                status: status
-            });
-        });
-
-        roomData.push({
-            categoryName: categoryName,
-            width: width,
-            length: length,
-            areas: areas
-        });
-    });
-
-    console.log("Final Room Data:", roomData);
-}
+//   rooms.forEach(room => {
+//     container.innerHTML += createApplianceReportCard(room);
+//   });
+// });

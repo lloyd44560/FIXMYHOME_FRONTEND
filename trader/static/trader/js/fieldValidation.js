@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Triggers
     const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Form ID
+    const traderForm = document.getElementById('traderForm');
 
     // ####################################################################################
     // Form Fields- Details
@@ -22,9 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const companyNameInput = document.getElementById('id_company_name');
     const companyAddressInput = document.getElementById('id_company_address');
     const companyEmailInput = document.getElementById('id_company_email');
-    const contractorLicenseInput = document.getElementById('id_contractor_license');
+    const contractorLicenseInput = document.querySelector('input[name$="-contractorLicense"]');
     const abnInput = document.getElementById('id_abn');
     const industryInput = document.getElementById('id_industry');
+    let gst_registered = document.getElementById('id_gst_registered');
 
     // Validation Error Elements - Company
     const companyNameError = document.getElementById('companyNameError');
@@ -33,7 +38,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const contractorLicenseError = document.getElementById('contractorLicenseError');
     const abnError = document.getElementById('abnError');
     const industryError = document.getElementById('industryError');
-    
+
+    // ####################################################################################
+    // Form Fields - Rates
+    const stateInput = document.getElementById('id_state');
+    const municipalityInput = document.getElementById('id_municipality');
+    const cityInput = document.getElementById('id_city');
+    const addressOneInput = document.getElementById('id_address_line_1');
+    const addressTwoInput = document.getElementById('id_address_line_2');
+    const postalCodeInput = document.getElementById('id_postal_code');
+    const gstCheckDpl = document.getElementById('gstCheckDpl');
+
+    // Validation Error Elements - Rates
+    const stateError = document.getElementById('rateState');
+    const municipalityError = document.getElementById('rateMunicipality');
+    const cityError = document.getElementById('rateCity');
+    const addressOneError = document.getElementById('rateAddressOne');
+    const addressTwoError = document.getElementById('rateAddressTwo');
+    const postalError = document.getElementById('ratePostal');
     
     // Validation fields array for easy iteration
     const fields = [
@@ -50,6 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: abnInput, error: abnError, label: 'ABN' },
         { id: industryInput, error: industryError, label: 'Industry Expertise' },
         // ####################################################################################
+        { id: stateInput, error: stateError, label: 'State' },
+        { id: municipalityInput, error: municipalityError, label: 'Municipality' },
+        { id: cityInput, error: cityError, label: 'City' },
+        { id: addressOneInput, error: addressOneError, label: 'Address Line One' },
+        { id: addressTwoInput, error: addressTwoError, label: 'Address Line Two' },
+        { id: postalCodeInput, error: postalError, label: 'Postal Code' },
     ];
 
     fields.forEach(field => {
@@ -68,57 +96,65 @@ document.addEventListener('DOMContentLoaded', function() {
     
     nextBtn.addEventListener('click', function(e) {
         if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
-            console.log('STEPS', currentStep);
             if (currentStep === 0) { // Step 1 validation (personal details)
+                let hasError = false;
+
                 // Validate Name Input
                 if (nameInput.value.trim() === '') {
+                    hasError = true;
                     e.preventDefault();
-                    document.getElementById('nameError').textContent = 'Name is required!';
+                    nameError.textContent = 'Name is required!';
                     nameInput.focus();
+                } else {
+                    nameError.textContent = ''
                 }
 
                 // Validate Email Input
                 if (emailInput.value.trim() === '') {
+                    hasError = true;
                     e.preventDefault();
-                    document.getElementById('emailError').textContent = 'Email is required!';
+                    emailError.textContent = 'Email is required!';
                     emailInput.focus();
+                } else {
+                    emailError.textContent = ''
                 }
 
                 // Validate Phone Input
                 if (phoneInput.value.trim() === '') {
+                    hasError = true;
                     e.preventDefault();
-                    document.getElementById('phoneError').textContent = 'Phone number is required!';
+                    phoneError.textContent = 'Phone number is required!';
                     phoneInput.focus();
+                } else {
+                    phoneError.textContent = ''
                 }
+
                 // Validate Password Input
                 if (passwordInput.value.trim() === '') {
+                    hasError = true;
                     e.preventDefault();
-                    document.getElementById('passwordError').textContent = 'Password is required!';
+                    passwordError.textContent = 'Password is required!';
                     passwordInput.focus();
+                } else {
+                    passwordError.textContent = ''
                 }
 
                 // Validate Confirm Password Input
                 if (passwordInput.value.trim() !== confirmPasswordInput.value.trim()) {
+                    hasError = true;
                     e.preventDefault();
-                    document.getElementById('confirmPasswordError').textContent = 'Passwords do not match!';
+                    confirmPasswordError.textContent = 'Passwords do not match!';
                     confirmPasswordInput.focus();
-                    return;
+                } else {
+                    confirmPasswordError.textContent = ''
                 }
 
                 // Check if all required fields are filled
-                if (
-                    passwordInput.value.trim() !== '' && confirmPasswordInput.value.trim() !== '' && 
-                    nameInput.value.trim() !== '' && emailInput.value.trim() !== '' && phoneInput.value.trim() !== '' &&
-                    passwordInput.value.trim() === confirmPasswordInput.value.trim()
-                ) 
-                {
-                    // Clear any previous error messages
-                    nameError.textContent = '';
-                    emailError.textContent = '';
-                    phoneError.textContent = '';  
-                    passwordError.textContent = '';
-                    confirmPasswordError.textContent = '';
+                if (hasError) {
+                    e.preventDefault();
+                    return;
 
+                } else {
                     // Skip company step if sole_trader, else go to company step
                     if (companyType && companyType.value === 'sole_trader') {
                         currentStep += 2; // Skip company step
@@ -127,68 +163,73 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     updateStep();
                 }
+                
             } else if (currentStep === 1) { // Step 2 validation (company type || solo trader)
+                let hasError = false;
+
                 // Validate company name
                 if (companyNameInput.value.trim() === '') {
-                    e.preventDefault();
-                    companyNameError.textContent = 'Name is required!';
+                    hasError = true;
+                    companyNameError.textContent = 'Company Name is required!';
                     companyNameInput.focus();
+                } else {
+                    companyNameError.textContent = ''
                 }
 
                 // Validate company address
                 if (companyAddressInput.value.trim() === '') {
-                    e.preventDefault();
+                    hasError = true;
                     companyAddressError.textContent = 'Company address is required!';
                     companyAddressInput.focus();
+                } else {
+                    companyAddressError.textContent = ''
                 }
 
                 // Validate company email
                 if (companyEmailInput.value.trim() === '') {
-                    e.preventDefault();
+                    hasError = true;
                     companyEmailError.textContent = 'Company email is required!';
                     companyEmailInput.focus();
+                } else {
+                    companyEmailError.textContent = ''
                 }
 
                 // Validate contractor license
                 if (contractorLicenseInput.value.trim() === '') {
-                    e.preventDefault();
+                    hasError = true;
                     contractorLicenseError.textContent = 'Contractor license number is required!';
                     contractorLicenseInput.focus();
+                } else {
+                    contractorLicenseError.textContent = ''
                 }
 
                 // Validate ABN
                 if (abnInput.value.trim() === '') {
-                    e.preventDefault();
+                    hasError = true;
                     abnError.textContent = 'ABN is required!';
                     abnInput.focus();
+                } else {
+                    abnError.textContent = ''
                 }
 
                 // Validate industry expertise
                 if (industryInput.value.trim() === '') {
-                    e.preventDefault();
+                    hasError = true;
                     industryError.textContent = 'Industry expertise is required!';
                     industryInput.focus();
+                } else {
+                    industryError.textContent = ''
                 }
 
-                // Check if all required fields are filled
-                if (
-                    companyNameInput.value.trim() !== '' && companyAddressInput.value.trim() !== '' && 
-                    companyEmailInput.value.trim() !== '' && contractorLicenseInput.value.trim() !== '' && 
-                    abnInput.value.trim() !== '' && industryInput.value.trim() !== ''
-                ) 
-                {
-                    // Clear any previous error messages
-                    companyNameError.textContent = '';
-                    companyAddressError.textContent = '';
-                    companyEmailError.textContent = '';
-                    contractorLicenseError.textContent = '';
-                    abnError.textContent = '';
-                    industryError.textContent = '';
-
+                if (hasError) {
+                    e.preventDefault();
+                    return;
+                } else {
                     // Only proceed if the current step is visible
                     currentStep++;
                     updateStep();
                 }
+
             } else if (currentStep === 2) { // Step 3 validation (teams)
                 // Get all team member forms by their Django-generated IDs
                 const teamNameInputs = document.querySelectorAll('input[name$="-name"]');
@@ -266,6 +307,80 @@ document.addEventListener('DOMContentLoaded', function() {
                 // For other steps, just proceed
                 currentStep++;
                 updateStep();
+            }
+        }
+    });
+
+    submitBtn.addEventListener('click', function(e) {
+        if (currentStep === steps.length - 1) {
+            if (currentStep === 3) {
+                let hasError = false;
+
+                // Validate State Input
+                if (stateInput.value.trim() === '') {
+                    hasError = true;
+                    stateError.textContent = 'State is required!';
+                    stateInput.focus();
+                } else {
+                    stateError.textContent = ''
+                }
+
+                // Validate Municipality Input
+                if (municipalityInput.value.trim() === '') {
+                    hasError = true;
+                    municipalityError.textContent = 'Municipality is required!';
+                    municipalityInput.focus();
+                } else {
+                    municipalityError.textContent = ''
+                }
+
+                // Validate City Input
+                if (cityInput.value.trim() === '') {
+                    hasError = true;
+                    cityError.textContent = 'City is required!';
+                    cityInput.focus();
+                } else {
+                    cityError.textContent = ''
+                }
+
+                // Validate Address Line 1 Input
+                if (addressOneInput.value.trim() === '') {
+                    hasError = true;
+                    addressOneError.textContent = 'Address Line 1 is required!';
+                    addressOneInput.focus();
+                } else {
+                    addressOneError.textContent = ''
+                }
+
+                // Validate Address Line 2 Input
+                if (addressTwoInput.value.trim() === '') {
+                    hasError = true;
+                    addressTwoError.textContent = 'Address Line 2 is required!';
+                    addressTwoInput.focus();
+                } else {
+                    addressTwoError.textContent = ''
+                }
+
+                // Validate Postal Code Input
+                if (postalCodeInput.value.trim() === '') {
+                    hasError = true;
+                    postalError.textContent = 'Postal Code is required!';
+                    postalCodeInput.focus();
+                } else {
+                    postalError.textContent = ''
+                }
+                
+                if (hasError) {
+                    e.preventDefault();
+                    return;
+                } else {
+                    // Fill GST Field
+                    if (gstCheckDpl) {
+                        gst_registered.checked = true;
+                    }
+                    // Submit form
+                    traderForm.submit()
+                }
             }
         }
     });
