@@ -99,11 +99,11 @@
                                 <label class="block text-gray-700 mb-1">Email</label>
                                 <input type="email" name="email" value="{{ user.email|default:'' }}" class="w-full border rounded px-3 py-2" />
                                 </div>
-
+<!-- 
                                 <div>
-                                <label class="block text-gray-700 mb-1">PIN</label>
-                                <input type="password" name="pin" placeholder="Enter PIN" class="w-full border rounded px-3 py-2" />
-                                </div>
+                                    <label class="block text-gray-700 mb-1">PIN</label>
+                                    <input type="password" name="pin" placeholder="Enter PIN" class="w-full border rounded px-3 py-2" />
+                                </div> -->
 
                                 <div>
                                 <label class="block text-gray-700 mb-1">Gender</label>
@@ -114,9 +114,27 @@
                                 </div>
 
                                 <div>
-                                <label class="block text-gray-700 mb-1">Date of Birth</label>
-                                <input type="date" name="dob" value="{{ renter.date_of_birth|date:'Y-m-d' }}" class="w-full border rounded px-3 py-2" />
+                                    <label class="block text-gray-700 mb-1">Date of Birth</label>
+                                    <input type="date" name="dob" value="{{ renter.date_of_birth|date:'Y-m-d' }}" class="w-full border rounded px-3 py-2" />
                                 </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Address Line 1</label>
+                                    <input type="text" name="address_line1" placeholder="Address Line 1" value="{{ renter.address_line1|default:'' }}" class="w-full border rounded px-3 py-2" />
+                                </div>
+                                 <div>
+                                    <label class="block text-gray-700 mb-1">Address Line 2</label>
+                                    <input type="text" name="address_line2" placeholder="Address Line 1" value="{{ renter.address_line2|default:'' }}" class="w-full border rounded px-3 py-2" />
+                                </div>
+
+                                
+                                <!-- Change Password Link -->
+                                <div class="mt-2 text-left">
+                                <a href="{% url 'change_password' %}" class="text-sm text-blue-600 hover:underline">
+                                    🔒 Change Password?
+                                </a>
+                                </div>
+
 
                                 <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
                             </form>

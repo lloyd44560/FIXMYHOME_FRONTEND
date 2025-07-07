@@ -21,7 +21,13 @@ from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
-User = get_user_model()
+from .forms import JobForm
+from trader.models import Jobs
+
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.contrib.auth import update_session_auth_hash
+
 
 def home(request):
     return render(request, 'renter/home.html')
@@ -198,6 +204,11 @@ def register_renter(request):
 
             upload_option = request.POST.get('uploadOption')
 
+
+            condition_data = request.POST.get('conditionData')
+            condition_data_raw = request.POST.get('conditionData')
+            room_list_data = request.POST.get('roomListData')
+
             property_image = None
             uploaded_file_url = None
 
@@ -259,7 +270,8 @@ def register_renter(request):
                     address_line2=address2,
                     postal_code=postal_code,
                     property_photo=property_image,
-                    condition_report=condition_image
+                   
+                    condition_report  = request.FILES.get('propertyFile')
                 )
             else:
                 property = None
@@ -293,10 +305,16 @@ def register_renter(request):
                     address_line2=address2,
                     postal_code=postal_code,
                     property_photo=property_image,
-                    condition_report=condition_image
+                 
+                    condition_report  = request.FILES.get('propertyFile')
             )
 
             # Save Condition Report
+
+            condition_data = request.POST.get('conditionData')
+            condition_data_raw = request.POST.get('conditionData')
+            room_list_data = request.POST.get('roomListData')
+
             if condition_data_raw:
                 try:
                     condition_data = json.loads(condition_data_raw)
@@ -340,8 +358,9 @@ def register_renter(request):
                             )
                 except json.JSONDecodeError as e:
                     print("Failed to decode condition data JSON:", e)
+            else:
+                print("Wala Condition Report")
 
-                    # Appliance Reports
             # Appliance Reports
             appliance_reports_data = request.POST.get('applianceReports')
             if appliance_reports_data:
@@ -476,7 +495,8 @@ def welcome(request):
                 'appliance_reports': appliance_reports, 
                 # include appliance reports here,
                 'jobs': job_list,  # pass to template
-                'minimum_reports': minimum_reports 
+                'minimum_reports': minimum_reports,
+                'job_form': JobForm()
             })
 
         elif ThirdParty.objects.filter(user=user).exists():
@@ -491,9 +511,10 @@ def welcome(request):
                 'properties' : properties,
                 'appliance_reports': appliance_reports, 
                 'minimum_reports': minimum_reports,
-                # 'jobs': job_list,  
+                'jobs': job_list,  
 
             })
+            
 def renter_create(request):
     if request.method == 'POST':
         form = RenterForm(request.POST, request.FILES)
@@ -530,40 +551,49 @@ def send_reset_link(request):
 @login_required
 def renter_account(request):
     user = request.user
-    renter = Renter.objects.filter(user=user).first()
+    renter = get_object_or_404(Renter, user=user)
 
     if request.method == 'POST':
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        email = request.POST.get('email')
-        pin = request.POST.get('pin')  # For future validation maybe
-        gender = request.POST.get('gender')
-        dob = request.POST.get('dob')
+        name = request.POST.get('name', '').strip()
+        phone = request.POST.get('phone', '')
+        email = request.POST.get('email', '')
+        pin = request.POST.get('pin', '')
+        gender = request.POST.get('gender', '')
+        dob = request.POST.get('dob', '')
+        address_line1 = request.POST.get('address_line1', '')
+        address_line2 = request.POST.get('address_line2', '')
 
-        # Split full name into first and last name
+        # Update user fields
         if name:
-            name_parts = name.strip().split(' ', 1)
-            user.first_name = name_parts[0]
-            user.last_name = name_parts[1] if len(name_parts) > 1 else ''
-
-        user.email = email
+            split_name = name.split()
+            user.first_name = split_name[0]
+            user.last_name = ' '.join(split_name[1:]) if len(split_name) > 1 else ''
+        if email:
+            user.email = email
         user.save()
 
-        # Save Renter details
-        if renter:
-            renter.phone = phone
-            renter.contact_person = name
-            renter.email = email
-            renter.date_of_birth = dob
-            renter.gender = gender
-            renter.save()
+        # Update renter fields
+        renter.phone = phone
+        renter.gender = gender
+        renter.date_of_birth = dob or None
+        renter.address_line1 = address_line1
+        renter.address_line2 = address_line2
+        renter.save()
 
-        messages.success(request, "Your account has been updated.")
-        return redirect('renter_account')  # Adjust if you use a different URL name
+        #  Update related Property records
+        Property.objects.filter(renter=renter).update(
+            address_line1=address_line1,
+            address_line2=address_line2
+        )
+
+        messages.success(request, 'Account updated successfully.')
+        return redirect('renter_account')
 
     return render(request, 'renter/home/account.html', {
+        'user': user,
         'renter': renter
     })
+
 
 def chat_demo(request, job_id):
     return render(request, 'chat_demo.html', {'job_id': job_id})
@@ -608,7 +638,155 @@ def custom_logout(request):
         logout(request)  # End Django session
         return redirect('/login_renter/')
 
+@login_required
+def add_job(request):
+    if request.method == "POST":
+        form = JobForm(request.POST)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.renter = Renter.objects.get(user=request.user)
+            job.save()
+    return redirect('welcome')
+
+@login_required
+def delete_job(request, job_id):
+    job = get_object_or_404(Jobs, id=job_id)
+    if job.renter.user == request.user:
+        job.delete()
+    return redirect('welcome')
 
 
-# Create Jobs here 
+@login_required
+def edit_job(request):
+    if request.method == "POST":
+        job_id = request.POST.get("job_id")
+        job = get_object_or_404(Jobs, id=job_id)
 
+        priority = request.POST.get("priority") == "true"
+        status = request.POST.get("status")
+
+        job.priority = priority
+        job.status = status
+        job.notes = request.POST.get("notes", "")
+        job.save()
+
+        return redirect('welcome')  # update to your actual name
+
+@login_required
+def edit_room_condition_json(request, pk):
+    try:
+        room = RoomCondition.objects.get(pk=pk, renter=request.user.renter)
+        
+        area_data = []
+        for area in room.areas.all():
+            area_data.append({
+                "id": area.id,
+                "area_name": area.area_name,
+                "status": area.status,
+            })
+
+        condition_date = room.condition_report_date
+        if isinstance(condition_date, str):
+            date_str = condition_date
+        else:
+            date_str = condition_date.strftime('%Y-%m-%d') if condition_date else ''
+
+        return JsonResponse({
+            'id': room.id,
+            'room_name': room.room_name,
+            'agent_name': room.agent_name,
+            'condition_report_date': date_str,
+            'areas': area_data,
+        })
+
+    except Exception as e:
+        import traceback
+        print("Error in edit_room_condition_json:", e)
+        traceback.print_exc()
+        return JsonResponse({'error': 'Something went wrong'}, status=500)
+
+
+
+@login_required
+def update_room_condition(request):
+    room_id = request.POST.get('room_condition_id')
+    room = get_object_or_404(RoomCondition, pk=room_id, renter=request.user.renter)
+
+    room.room_name = request.POST.get('room_name')
+    room.agent_name = request.POST.get('agent_name')
+    room.condition_report_date = request.POST.get('condition_report_date')
+    room.save()
+
+    # Update each area's status
+    for area in room.areas.all():
+        status_key = f"area_status_{area.id}"
+        if status_key in request.POST:
+            area.status = request.POST.get(status_key)
+            area.save()
+
+    return JsonResponse({"success": True})
+
+
+@login_required
+def get_appliance_report_json(request, pk):
+    report = get_object_or_404(ApplianceReport, pk=pk, renter=request.user.renter)
+    return JsonResponse({
+        'id': report.id,
+        'brand': report.brand,
+        'model_serial': report.model_serial,
+        'window_height': report.window_height,
+        'window_length': report.window_length,
+        'window_width': report.window_width,
+        'location': report.location,
+        'comments': report.comments or '',
+    })
+
+@require_POST
+@login_required
+def update_appliance_report(request):
+    report_id = request.POST.get("appliance_report_id")
+    report = get_object_or_404(ApplianceReport, pk=report_id, renter=request.user.renter)
+
+    report.brand = request.POST.get("brand")
+    report.model_serial = request.POST.get("model_serial")
+    report.window_height = request.POST.get("window_height")
+    report.window_length = request.POST.get("window_length")
+    report.window_width = request.POST.get("window_width")
+    report.location = request.POST.get("location")
+    report.comments = request.POST.get("comments")
+    report.save()
+
+    return JsonResponse({'success': True})
+
+
+
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = request.user
+
+        if not user.check_password(current_password):
+            messages.error(request, 'Current password is incorrect.')
+            return redirect('change_password')
+
+        if new_password != confirm_password:
+            messages.error(request, 'New passwords do not match.')
+            return redirect('change_password')
+
+        if len(new_password) < 8:
+            messages.error(request, 'New password must be at least 8 characters.')
+            return redirect('change_password')
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)  # Keep user logged in
+        messages.success(request, 'Password changed successfully.')
+        return redirect('change_password')
+
+    return render(request, 'renter/home/change_password.html')

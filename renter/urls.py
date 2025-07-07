@@ -46,8 +46,18 @@ urlpatterns = [
     path('login-error/', views.login_error, name='login_error'),
     
     path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
+
+    path('add-job/', views.add_job, name='add_job'),
+    path('delete-job/<int:job_id>/', views.delete_job, name='delete_job'),
+    path('edit-job/', views.edit_job, name='edit_job'),
     
+    path('edit-room-condition/<int:pk>/json/', views.edit_room_condition_json, name='edit_room_condition_json'),
+    path('edit-room-condition/', views.update_room_condition, name='update_room_condition'),
 
 
+    path('edit-appliance-report/<int:pk>/json/', views.get_appliance_report_json, name='get_appliance_report_json'),
+    path('update-appliance-report/', views.update_appliance_report, name='update_appliance_report'),
+
+    path('change-password/', views.change_password, name='change_password'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

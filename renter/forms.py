@@ -1,5 +1,6 @@
 from django import forms
 from .models import Renter
+from trader.models import Jobs
 
 class RenterForm(forms.ModelForm):
     confirmPassword = forms.CharField(widget=forms.PasswordInput(), label="Confirm Password")
@@ -27,3 +28,10 @@ class RenterForm(forms.ModelForm):
 
         if password != confirm_password:
             self.add_error('confirmPassword', "Passwords do not match")
+
+
+
+class JobForm(forms.ModelForm):
+    class Meta:
+        model = Jobs
+        fields = ['agent', 'trader', 'priority', 'status', 'notes']

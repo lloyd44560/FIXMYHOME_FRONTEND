@@ -11,9 +11,12 @@ class Property(models.Model):
     address_line2 = models.CharField(max_length=255, blank=True, null=True)
     postal_code = models.CharField(max_length=20)
     property_photo = models.ImageField(upload_to='property_photos/', blank=True, null=True)
-    condition_report = models.ImageField(upload_to='condition_reports/', blank=True, null=True)
+    # condition_report = models.ImageField(upload_to='condition_reports/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Need dito ng field na pag uuploadn  ng report 
+    condition_report = models.FileField(upload_to='condition_reports/', blank=True, null=True)
 
     def __str__(self):
         return f'{self.property_name} ({self.city}, {self.state})'

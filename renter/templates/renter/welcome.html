@@ -142,13 +142,10 @@
     <div class="flex space-x-4 border-b mb-6">
       <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 active-tab border-b-2 border-blue-600" data-tab="properties">Properties</button>
       <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="agents">Agents</button>
-      
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="traders">Jobs</button>
+      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="traders">Job Requests</button>
       <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="condition_reports">Condition Reports</button>
       <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="appliance_reports">Appliance Reports</button>
       <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="minimum_standard_reports">Minimum Standard Reports</button>
-      
-      
     </div>
 
     <!-- Tab Pages -->
@@ -168,6 +165,7 @@
                                 <th class="py-3 px-6 text-left">Address Line 1</th>
                                 <th class="py-3 px-6 text-left">Address Line 2</th>
                                 <th class="py-3 px-6 text-left">State</th>
+                                <th class="py-3 px-6 text-left">Condition Report</th>
                                 <th class="py-3 px-6 text-left">Actions</th>
                             </tr>
                         </thead>
@@ -183,6 +181,16 @@
                                     <td class="py-3 px-6">{{ property.address_line1 }}</td>
                                     <td class="py-3 px-6">{{ property.address_line2 }}</td>
                                     <td class="py-3 px-6">{{ property.state }}</td>
+                                    <td class="py-3 px-6">
+                                      {% if property.condition_report %}
+                                        <a href="{{ property.condition_report.url }}" class="text-blue-600 hover:underline" target="_blank">
+                                          View File
+                                        </a>
+                                      {% else %}
+                                        <span class="text-gray-400 italic">No file</span>
+                                      {% endif %}
+                                  </td>
+
                                     <td class="py-3 px-6 flex space-x-4">
                                       <!-- View Icon -->
                                       <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
@@ -206,7 +214,6 @@
                                           </svg>
                                       </a> -->
                                   </td>
-
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -216,7 +223,6 @@
                 <p class="text-gray-600">You don't have any properties listed yet.</p>
             {% endif %}
         </section>
-          
     </div>
 
 
@@ -289,63 +295,156 @@
 
 
     
-    <div id="tab-traders" class="tab-content hidden">
-            
-
-     <section class="mx-8 my-16">
-        <h3 class="text-3xl font-bold mb-6 text-gray-800">My Job Requests</h3>
-
-        {% if jobs %}
-        <table class="w-full border border-gray-300 text-sm text-gray-800">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="border px-4 py-2">Job Code</th>
-              <th class="border px-4 py-2">Agent</th>
-              <th class="border px-4 py-2">Trader</th>
-              <th class="border px-4 py-2">Priority</th>
-              <th class="border px-4 py-2">Status</th>
-              <th class="border px-4 py-2">Quoted</th>
-              <th class="border px-4 py-2">Confirmed</th>
-              <th class="border px-4 py-2">Approved</th>
-              <th class="border px-4 py-2">Scheduled</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for job in jobs %}
-            <tr>
-              <td class="border px-4 py-2 font-semibold">{{ job.job_code }}</td>
-              <td class="border px-4 py-2">{{ job.agent.user.get_full_name }}</td>
-              <td class="border px-4 py-2">{{ job.trader.user.get_full_name }}</td>
-              <td class="border px-4 py-2">
-                {% if job.priority %}<span class="text-red-500 font-bold">High</span>{% else %}Normal{% endif %}
-              </td>
-              <td class="border px-4 py-2">{{ job.get_status_display }}</td>
-              <td class="border px-4 py-2">{{ job.quoted_at|date:"M d, Y H:i" }}</td>
-              <td class="border px-4 py-2">{{ job.confirmed_at|default:"-" }}</td>
-              <td class="border px-4 py-2">{{ job.approved_at|default:"-" }}</td>
-              <td class="border px-4 py-2">{{ job.scheduled_at|default:"-" }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-          <p class="text-gray-500">No job records available.</p>
-        {% endif %}
-      </section>
-          </div>
+    <div id="tab-traders" class="tab-content hidden"> 
+      <div id="scrollToTraders"></div>  <!-- Add this just inside tab-traders -->
+      <section class="mx-8 my-16">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-3xl font-bold text-gray-800">My Job Requests</h3>
+          <button onclick="document.getElementById('addJobModal').classList.remove('hidden')"
+                  class="bg-blue-600 text-white px-4 py-2 rounded">Add Job</button>
         </div>
+
+          {% if jobs %}
+          <table class="w-full border border-gray-300 text-sm text-gray-800">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="border px-4 py-2">Job Code</th>
+                <th class="border px-4 py-2">Agent</th>
+                <th class="border px-4 py-2">Trader</th>
+                <th class="border px-4 py-2">Priority</th>
+                <th class="border px-4 py-2">Status</th>
+                <th class="border px-4 py-2">Notes</th>
+                <th class="border px-4 py-2">Quoted</th>
+                <th class="border px-4 py-2">Confirmed</th>
+                <th class="border px-4 py-2">Approved</th>
+                <th class="border px-4 py-2">Scheduled</th>
+                <th class="border px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for job in jobs %}
+              <tr>
+                <td class="border px-4 py-2 font-semibold">{{ job.job_code }}</td>
+                <td class="border px-4 py-2">{{ job.agent.name }}</td>
+                <td class="border px-4 py-2">
+                  {% if job.trader %}
+                    {{ job.trader.name }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td class="border px-4 py-2">
+                  {% if job.priority %}
+                  <span class="text-red-500 font-bold">High</span>
+                  {% else %}
+                  Normal
+                  {% endif %}
+                </td>
+                <td class="border px-4 py-2">{{ job.get_status_display }}</td>
+                <td class="border px-4 py-2">{{ job.notes }}</td>
+                <td class="border px-4 py-2">{{ job.quoted_at|date:"M d, Y H:i" }}</td>
+                <td class="border px-4 py-2">{{ job.confirmed_at|default:"-" }}</td>
+                <td class="border px-4 py-2">{{ job.approved_at|default:"-" }}</td>
+                <td class="border px-4 py-2">{{ job.scheduled_at|default:"-" }}</td>
+                <td class="border px-4 py-2 text-center">
+                  <form method="POST" action="{% url 'delete_job' job.id %}" onsubmit="return confirm('Delete this job?')">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-500 hover:underline text-xs">Delete</button>
+                  </form>
+                    <!-- Edit Button -->
+                    <button type="button"
+                      onclick="openEditJobModal(
+                          {{ job.id }},
+                          '{{ job.job_code }}',
+                          {{ job.priority|yesno:'true,false' }},
+                          '{{ job.status }}',
+                          `{{ job.notes|escapejs }}`
+                      )"
+                      class="text-blue-600 hover:underline text-xs">Edit</button>
+
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p class="text-gray-500">No job records available.</p>
+          {% endif %}
+        </section>
+      
+
+      <!-- Add Jobs Modal  -->
+      <div id="addJobModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md space-y-4 shadow-lg">
+          <h2 class="text-lg font-bold text-center mb-4">Add New Job</h2>
+          <form method="POST" action="{% url 'add_job' %}">
+            {% csrf_token %}
+            {{ job_form.as_p }}
+            <div class="flex justify-end gap-2 mt-4">
+              <button type="button" onclick="document.getElementById('addJobModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+      <div id="editJobModal" class="fixed inset-0 hidden bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+          <h2 class="text-xl font-bold mb-4">Edit Job</h2>
+          <form id="editJobForm" method="POST" action="{% url 'edit_job' %}" onsubmit="handleEditJobSubmit(event)">
+            {% csrf_token %}
+            <input type="hidden" name="job_id" id="editJobId">
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Job Code (Read Only)</label>
+              <input type="text" id="editJobCode" class="w-full border px-2 py-1 rounded" readonly>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Notes</label>
+              <textarea name="notes" id="editNotes" rows="3" class="w-full border px-2 py-1 rounded resize-none"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Priority</label>
+              <select name="priority" id="editPriority" class="w-full border px-2 py-1 rounded">
+                <option value="false">Normal</option>
+                <option value="true">High</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Status</label>
+              <select name="status" id="editStatus" class="w-full border px-2 py-1 rounded">
+                <option value="quoted">Quoted</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="approved">Approved</option>
+                <option value="scheduled">Scheduled</option>
+              </select>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button type="button" onclick="document.getElementById('editJobModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      </div>
+    </div>
 
         
     
     <div id="tab-condition_reports" class="tab-content hidden">
             
-
           <section class="mx-8 my-16">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">Condition Reports</h3>
 
               <h2 class="text-xl font-bold mb-4">Room Conditions</h2>
 
               <table class="w-full table-auto border border-gray-300 text-sm text-gray-800">
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Condition Report Date</label>
+                <input type="date" id="conditionDateFilter" class="border p-2 mb-4 text-sm">
+
+                
+
                 <thead>
                   <tr>
 
@@ -361,25 +460,24 @@
                     <th class="border px-4 py-2">Length</th> -->
                     <th class="border px-4 py-2">Areas</th>
                     <th class="border px-4 py-2">Renter Comments</th>
+                    <th class="border px-4 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for room in room_conditions %}
                     <tr>
-
-                     
-                    <td>{% if room.photo %}
-                        <img src="{{ room.photo.url }}" alt="Room Image" class="w-24 h-24 object-cover rounded-lg border" />
-                      {% else %}
-                        <span class="text-gray-400 italic">No image</span>
-                      {% endif %}
-                    </td>
+                      <td>{% if room.photo %}
+                          <img src="{{ room.photo.url }}" alt="Room Image" class="w-24 h-24 object-cover rounded-lg border" />
+                        {% else %}
+                          <span class="text-gray-400 italic">No image</span>
+                        {% endif %}
+                      </td>
                       <td class="border px-4 py-2">{{ room.room_name }}</td>
                       <td class="border px-4 py-2">{{ room.address }}</td>
                       <td class="border px-4 py-2">{{ room.agent_company_name }}</td>
                       <td class="border px-4 py-2">{{ room.agent_name }}</td>
                       <td class="border px-4 py-2">{{ room.agreement_start_date }}</td>
-                      <td class="border px-4 py-2">{{ room.condition_report_date }}</td>
+                      <td class="border px-4 py-2 condition-date-cell">{{ room.condition_report_date }}</td>
                       <!-- <td class="border px-4 py-2">{{ room.width }}</td>
                       <td class="border px-4 py-2">{{ room.length }}</td> -->
                       <td class="border px-4 py-2">
@@ -400,29 +498,49 @@
                             <li>No areas added</li>
                           {% endfor %}
                         </ul>
-                      </td>
-                      
+                      </td> 
+                      <td class="border px-4 py-2 text-center">
+                      <button 
+                        onclick="openEditConditionModal({{ room.id }})"
+                        class="text-blue-600 hover:underline text-xs">
+                        Edit
+                      </button>
+                    </td> 
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
 
           </section>
+
+              <div id="editConditionModal" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50">
+                <div class="bg-white p-6 rounded shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <h2 class="text-xl font-bold mb-4">Edit Room Condition</h2>
+
+                  <form method="POST" enctype="multipart/form-data" id="editConditionForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="room_condition_id" id="editRoomConditionId" />
+                    
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                    <input type="text" name="room_name" id="editRoomName" class="w-full border p-2 mb-3" />
+
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Agent Name</label>
+                    <input type="text" name="agent_name" id="editAgentName" class="w-full border p-2 mb-3" />
+
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Condition Report Date</label>
+                    <input type="date" name="condition_report_date" id="editConditionReportDate" class="w-full border p-2 mb-3" />
+
+                    <!-- Add more fields as needed -->
+                    <div id="editAreaFields"></div>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
+                    <button type="button" onclick="closeEditConditionModal()" class="ml-2 text-gray-600">Cancel</button>
+                  </form>
+                </div>
+              </div>
           </div>
         </div>
       </div>
 
-
-
-
-
-
-
-
-
-
-      
-    
     <div id="tab-appliance_reports" class="tab-content hidden">
             
         <section class="mx-8 my-16">
@@ -439,28 +557,29 @@
                 <th class="border px-4 py-2">Location</th>
                 <th class="border px-4 py-2">Photo</th>
                 <th class="border px-4 py-2">Comments</th>
+                <th class="border px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {% for report in appliance_reports %}
-                <tr>
-                  <td class="border px-4 py-2">{{ report.room.room_name }}</td>
-                  <td class="border px-4 py-2">{{ report.brand }}</td>
-                  <td class="border px-4 py-2">{{ report.model_serial }}</td>
-                  <td class="border px-4 py-2">
+                <tr data-id="{{ report.id }}">
+                  <td class="room-name">{{ report.room.room_name }}</td>
+                  <td class="brand">{{ report.brand }}</td>
+                  <td class="model">{{ report.model_serial }}</td>
+                  <td class="dimensions">
                     Height: {{ report.window_height }}<br>
                     Length: {{ report.window_length }}<br>
                     Width: {{ report.window_width }}
                   </td>
-                  <td class="border px-4 py-2">{{ report.location }}</td>
-                  <td class="border px-4 py-2">
+                  <td class="location">{{ report.location }}</td>
+                  <td class="photo">
                     {% if report.photo %}
                       <img src="{{ report.photo.url }}" class="w-16 h-16 object-cover rounded border" />
                     {% else %}
                       No photo
                     {% endif %}
                   </td>
-                  <td class="border px-4 py-2">{{ report.comments|default:"N/A" }}</td>
+                  <td class="comments">{{ report.comments|default:"N/A" }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -468,6 +587,44 @@
           {% else %}
             <p class="text-gray-500">No appliance reports available.</p>
           {% endif %}
+
+
+
+
+          <div id="editApplianceModal" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50">
+            <div class="bg-white p-6 rounded shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <h2 class="text-xl font-bold mb-4">Edit Appliance Report</h2>
+
+              <form method="POST" enctype="multipart/form-data" id="editApplianceForm">
+                {% csrf_token %}
+                <input type="hidden" name="appliance_report_id" id="editApplianceReportId" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                <input type="text" name="brand" id="editBrand" class="w-full border p-2 mb-3" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                <input type="text" name="model_serial" id="editModel" class="w-full border p-2 mb-3" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Height</label>
+                <input type="number" step="0.01" name="window_height" id="editHeight" class="w-full border p-2 mb-3" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Length</label>
+                <input type="number" step="0.01" name="window_length" id="editLength" class="w-full border p-2 mb-3" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Width</label>
+                <input type="number" step="0.01" name="window_width" id="editWidth" class="w-full border p-2 mb-3" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <input type="text" name="location" id="editLocation" class="w-full border p-2 mb-3" />
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+                <textarea name="comments" id="editComments" class="w-full border p-2 mb-3"></textarea>
+
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
+                <button type="button" onclick="closeEditApplianceModal()" class="ml-2 text-gray-600">Cancel</button>
+              </form>
+            </div>
+          </div>
         </section>
           </div>
         </div>
@@ -573,23 +730,255 @@
     });
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('border-blue-600', 'text-blue-600', 'active-tab');
-        b.classList.add('border-transparent');
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('border-blue-600', 'text-blue-600', 'active-tab');
+          b.classList.add('border-transparent');
+        });
+        btn.classList.add('border-blue-600', 'text-blue-600', 'active-tab');
+
+        const tab = btn.getAttribute('data-tab');
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
+        document.getElementById(`tab-${tab}`).classList.remove('hidden');
       });
-      btn.classList.add('border-blue-600', 'text-blue-600', 'active-tab');
-
-      const tab = btn.getAttribute('data-tab');
-      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
-      document.getElementById(`tab-${tab}`).classList.remove('hidden');
     });
-  });
 
-  
+  function openEditJobModal(id, jobCode, isPriority, status, notes) {
+    document.getElementById('editJobModal').classList.remove('hidden');
+    document.getElementById('editJobId').value = id;
+    document.getElementById('editJobCode').value = jobCode;
+    document.getElementById('editPriority').value = isPriority ? 'true' : 'false';
+    document.getElementById('editStatus').value = status;
+    document.getElementById('editNotes').value = notes || '';
+
+    // Save to sessionStorage to reopen after reload
+    sessionStorage.setItem('activeTab', 'traders');
+    sessionStorage.setItem('reopenEditJobModal', 'true');
+    sessionStorage.setItem('editJobData', JSON.stringify({ id, jobCode, isPriority, status, notes }));
+    
+  }
+
+// function handleEditJobSubmit(event) {
+//     event.preventDefault();
+
+//     const form = event.target;
+//     const formData = new FormData(form);
+
+//     const jobData = {
+//       id: formData.get('job_id'),
+//       jobCode: document.getElementById('editJobCode').value,
+//       isPriority: document.getElementById('editPriority').value === 'true',
+//       status: document.getElementById('editStatus').value,
+//       notes: document.getElementById('editNotes').value
+//     };
+
+//     sessionStorage.setItem('reopenEditJobModal', 'false');  
+//     sessionStorage.setItem('activeTab', 'traders');
+
+//     // Optional: scroll flag (if needed again)
+//     sessionStorage.setItem('scrollToTraders', 'true');
+
+//     // Submit the form normally after saving to sessionStorage
+//     form.submit();
+//   }
+
+  function openEditConditionModal(roomId) {
+    fetch(`/edit-room-condition/${roomId}/json/`)
+      .then(response => response.json())
+      .then(data => {
+        // Set basic fields
+        document.getElementById("editRoomConditionId").value = data.id;
+        document.getElementById("editRoomName").value = data.room_name;
+        document.getElementById("editAgentName").value = data.agent_name;
+        document.getElementById("editConditionReportDate").value = data.condition_report_date;
+
+        // Clear previous area fields
+        const areaFieldsContainer = document.getElementById("editAreaFields");
+        areaFieldsContainer.innerHTML = "";
+
+        // Dynamically add area status fields
+        data.areas.forEach(area => {
+          const areaDiv = document.createElement("div");
+          areaDiv.classList.add("mb-3");
+
+          areaDiv.innerHTML = `
+            <input type="hidden" name="area_id_${area.id}" value="${area.id}" />
+            <label class="block text-sm font-medium text-gray-700 mb-1">${area.area_name}</label>
+            <select name="area_status_${area.id}" class="w-full border p-2 mb-1">
+              <option value="Clean" ${area.status === "Clean" ? "selected" : ""}>Clean</option>
+              <option value="Undamaged" ${area.status === "Undamaged" ? "selected" : ""}>Undamaged</option>
+              <option value="Working" ${area.status === "Working" ? "selected" : ""}>Working</option>
+            </select>
+          `;
+
+          areaFieldsContainer.appendChild(areaDiv);
+        });
+
+        // Show the modal
+        document.getElementById("editConditionModal").classList.remove("hidden");
+      });
+  }
+   document.getElementById("editConditionForm").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const formData = new FormData(this);
+
+      fetch("{% url 'update_room_condition' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+        },
+        body: formData,
+      })
+      .then(response => {
+        if (response.ok) {
+          // Optional: Close modal
+          closeEditConditionModal();
+
+          // Optional: Reload or re-fetch table content dynamically
+          location.reload();  // Or you can refresh only the table
+        } else {
+          alert("Update failed.");
+        }
+      })
+      .catch(error => {
+        console.error("Error updating room condition:", error);
+      });
+    });
+
+    function closeEditConditionModal() {
+      document.getElementById("editConditionModal").classList.add("hidden");
+    }
+      document.getElementById('conditionDateFilter').addEventListener('change', function () {
+      const selectedDate = this.value;
+      const rows = document.querySelectorAll('tbody tr');
+
+      rows.forEach(row => {
+        const cell = row.querySelector('.condition-date-cell');
+        const cellDate = cell ? cell.textContent.trim() : '';
+
+        if (!selectedDate || cellDate === selectedDate) {
+          row.style.display = '';  // show
+        } else {
+          row.style.display = 'none';  // hide
+        }
+      });
+    });
+
+
+
+
+    function openEditApplianceModal(reportId) {
+    fetch(`/edit-appliance-report/${reportId}/json/`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('editApplianceReportId').value = data.id;
+        document.getElementById('editBrand').value = data.brand;
+        document.getElementById('editModel').value = data.model_serial;
+        document.getElementById('editHeight').value = data.window_height;
+        document.getElementById('editLength').value = data.window_length;
+        document.getElementById('editWidth').value = data.window_width;
+        document.getElementById('editLocation').value = data.location;
+        document.getElementById('editComments').value = data.comments;
+
+        document.getElementById('editApplianceModal').classList.remove("hidden");
+      });
+  }
+
+  function closeEditApplianceModal() {
+    document.getElementById('editApplianceModal').classList.add("hidden");
+  }
+
+      document.getElementById("editApplianceForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch("/update-appliance-report/", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+          },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Close modal if you want: closeEditApplianceModal();
+
+            const reportId = formData.get("report_id");
+            const row = document.querySelector(`tr[data-id="${reportId}"]`);
+
+            if (row) {
+              row.querySelector(".brand").textContent = formData.get("brand");
+              row.querySelector(".model").textContent = formData.get("model_serial");
+              row.querySelector(".location").textContent = formData.get("location");
+              row.querySelector(".comments").textContent = formData.get("comments");
+
+              const height = formData.get("window_height");
+              const length = formData.get("window_length");
+              const width = formData.get("window_width");
+
+              row.querySelector(".dimensions").innerHTML = `
+                Height: ${height}<br>
+                Length: ${length}<br>
+                Width: ${width}
+              `;
+
+              // OPTIONAL: Show a toast
+              alert("Updated without reloading!");
+            }
+          }
+        });
+      });
+
+     document.addEventListener("DOMContentLoaded", function () {
+        const hash = window.location.hash.replace("#", "");
+        const savedTab = sessionStorage.getItem('activeTab');
+
+        const activeTab = hash || savedTab || 'traders';
+
+        // Hide all tab contents
+        document.querySelectorAll(".tab-content").forEach(tab => tab.classList.add("hidden"));
+
+        // Show active tab
+        const targetTab = document.getElementById(`tab-${activeTab}`);
+        if (targetTab) targetTab.classList.remove("hidden");
+
+        // Update active tab button styles
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+          if (btn.dataset.tab === activeTab) {
+            btn.classList.add("border-blue-600", "text-blue-600");
+          } else {
+            btn.classList.remove("border-blue-600", "text-blue-600");
+          }
+        });
+
+        // Reopen Edit Job Modal if needed
+        if (sessionStorage.getItem('reopenEditJobModal') === 'true') {
+          const job = JSON.parse(sessionStorage.getItem('editJobData'));
+          if (job) {
+            openEditJobModal(job.id, job.jobCode, job.isPriority, job.status, job.notes);
+          }
+
+          // Optional: Scroll into view
+          // Optional: Scroll into view
+          const target = document.getElementById('scrollToTraders');
+          if (target) {
+            setTimeout(() => {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }, 300); // delay to allow rendering
+          }
+
+          //  Close the Appliance Modal if it’s open
+          document.getElementById('editJobModal')?.classList.add('hidden');
+
+          //  Cleanup
+          sessionStorage.removeItem('reopenEditJobModal');
+          sessionStorage.removeItem('editJobData');
+        }
+      });
   </script>
-
-
 
 </body>
 
