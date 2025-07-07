@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome Home - FixMyHome</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 </head>
 
 {% load static %}
@@ -50,7 +52,7 @@
         <span>Account</span>
       </a>
 
-      
+
       <form id="logout-form" method="POST" action="{% url 'logout' %}">
           {% csrf_token %}
           <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
@@ -63,9 +65,9 @@
       </form>
     </div>
   </nav>
- 
+
     <!-- Hero Section with Background -->
- 
+
 <section class="relative flex items-center justify-center px-8 py-12 bg-cover bg-center bg-no-repeat min-h-[60vh]"
     style="background-image: url('{% static 'renter/images/RENTER_BG.jpg' %}');">
 
@@ -150,85 +152,180 @@
 
     <!-- Tab Pages -->
     <div id="tab-properties" class="tab-content">
-        
+
     <!-- Properties Table Section -->
           <section class="mx-8 my-16">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">Properties</h3>
-            {% if properties %}
-                <div class="overflow-x-auto">
-                    <table class="w-full table-auto border-collapse border border-gray-300 text-black">
-                        <thead class="bg-blue-600 text-white">
-                            <tr>
-                                <th class="py-3 px-6 text-left">Image</th> <!-- Add this -->
-                                <th class="py-3 px-6 text-left">Property Name</th>
-                                <th class="py-3 px-6 text-left">Floor Count</th>
-                                <th class="py-3 px-6 text-left">Address Line 1</th>
-                                <th class="py-3 px-6 text-left">Address Line 2</th>
-                                <th class="py-3 px-6 text-left">State</th>
-                                <th class="py-3 px-6 text-left">Condition Report</th>
-                                <th class="py-3 px-6 text-left">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for property in properties %}
-                                <tr class="border-b hover:bg-gray-100">
-                                    <!-- Display image -->
-                                    <td class="py-3 px-6">
-                                        <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
-                                    </td>
-                                    <td class="py-3 px-6">{{ property.property_name }}</td>
-                                    <td class="py-3 px-6">{{ property.floor_count }}</td>
-                                    <td class="py-3 px-6">{{ property.address_line1 }}</td>
-                                    <td class="py-3 px-6">{{ property.address_line2 }}</td>
-                                    <td class="py-3 px-6">{{ property.state }}</td>
-                                    <td class="py-3 px-6">
-                                      {% if property.condition_report %}
-                                        <a href="{{ property.condition_report.url }}" class="text-blue-600 hover:underline" target="_blank">
-                                          View File
-                                        </a>
-                                      {% else %}
-                                        <span class="text-gray-400 italic">No file</span>
-                                      {% endif %}
-                                  </td>
 
-                                    <td class="py-3 px-6 flex space-x-4">
-                                      <!-- View Icon -->
-                                      <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
-                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                          </svg>
-                                      </a>
 
-                                      <!-- Edit Icon -->
-                                      <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
-                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
-                                          </svg>
-                                      </a> -->
+<div class="container mt-5">
+  <h2 class="mb-4">Welcome, {{ request.user.username }}</h2>
 
-                                      <!-- Delete Icon -->
-                                      <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
-                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
-                                          </svg>
-                                      </a> -->
-                                  </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+  <!-- Add Button to open modal -->
+  <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPropertyModal">Add Property</button>
+
+  <!-- Property Table -->
+ <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th><th>Name</th><th>City</th><th>Status</th><th>Photo</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prop in properties %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ prop.name }}</td>
+            <td>{{ prop.city }}</td>
+            <td>{{ prop.status }}</td>
+            <td>
+              {% if prop.property_photo %}
+                <img src="{{ prop.property_photo.url }}" height="60">
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'delete_property' prop.id %}" class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure you want to delete this property?')">Delete</a>
+              <a href="{% url 'unlink_property' prop.id %}" class="btn btn-warning btn-sm"
+                onclick="return confirm('Unlink this property from your account?')">Unlink</a>
+              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                data-target="#editModal{{ prop.id }}">Edit</button>
+            </td>
+          </tr>
+
+          <!-- ✅ EDIT MODAL for this prop -->
+          <div class="modal fade" id="editModal{{ prop.id }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <form method="POST" enctype="multipart/form-data" action="{% url 'edit_property' prop.id %}">
+                {% csrf_token %}
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Edit Property: {{ prop.name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-row">
+                      <div class="form-group col-md-6"><label>Name</label>
+                        <input type="text" name="name" value="{{ prop.name }}" class="form-control" required>
+                      </div>
+                      <div class="form-group col-md-6"><label>Floor Count</label>
+                        <input type="number" name="floor_count" value="{{ prop.floor_count }}" class="form-control">
+                      </div>
+                      <div class="form-group col-md-6"><label>City</label>
+                        <input type="text" name="city" value="{{ prop.city }}" class="form-control">
+                      </div>
+                      <div class="form-group col-md-6"><label>State</label>
+                        <input type="text" name="state" value="{{ prop.state }}" class="form-control">
+                      </div>
+                      <div class="form-group col-md-12"><label>Address</label>
+                        <textarea name="address" class="form-control">{{ prop.address }}</textarea>
+                      </div>
+                      <div class="form-group col-md-6"><label>Lease Start</label>
+                        <input type="date" name="lease_start" value="{{ prop.lease_start|date:'Y-m-d' }}" class="form-control">
+                      </div>
+                      <div class="form-group col-md-6"><label>Lease End</label>
+                        <input type="date" name="lease_end" value="{{ prop.lease_end|date:'Y-m-d' }}" class="form-control">
+                      </div>
+                      <div class="form-group col-md-6"><label>Status</label>
+                        <select name="status" class="form-control">
+                          <option value="vacant" {% if prop.status == 'vacant' %}selected{% endif %}>Vacant</option>
+                          <option value="occupied" {% if prop.status == 'occupied' %}selected{% endif %}>Occupied</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                          <label>Property Photo</label><br>
+                          {% if prop.property_photo %}
+                            <img src="{{ prop.property_photo.url }}" alt="Current Photo" height="80"><br>
+                          {% else %}
+                            <span>No photo uploaded</span><br>
+                          {% endif %}
+                          <input type="file" name="property_photo" class="form-control">
+                        </div>
+
+                      <!--<div class="form-group col-md-6"><label>Condition Report</label>-->
+                      <!--  <input type="file" name="condition_report" class="form-control">-->
+                      <!--</div>-->
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  </div>
                 </div>
-            {% else %}
-                <p class="text-gray-600">You don't have any properties listed yet.</p>
-            {% endif %}
-        </section>
-    </div>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
+<!-- Add Property Modal -->
+<div class="modal fade" id="addPropertyModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <form method="POST" enctype="multipart/form-data" class="modal-content" action="{% url 'add_property' %}">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Property</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Form fields in grid -->
+        <div class="form-row">
+          <div class="form-group col-md-6"><input name="name" class="form-control" placeholder="Property Name" required></div>
+          <div class="form-group col-md-6"><input name="floor_count" type="number" class="form-control" placeholder="Floor Count"></div>
+          <div class="form-group col-md-6"><input name="city" class="form-control" placeholder="City"></div>
+          <div class="form-group col-md-6"><input name="state" class="form-control" placeholder="State"></div>
+          <div class="form-group col-md-12"><textarea name="address" class="form-control" placeholder="Address"></textarea></div>
+          <div class="form-group col-md-6"><input name="renter_name" class="form-control" placeholder="Renter Name"></div>
+          <div class="form-group col-md-6"><input name="renter_contact" class="form-control" placeholder="Renter Contact"></div>
+          <div class="form-group col-md-6"><input name="rent" type="number" step="0.01" class="form-control" placeholder="Rent"></div>
+          <div class="form-group col-md-6"><input name="postal_code" class="form-control" placeholder="Postal Code"></div>
+          <div class="form-group col-md-6"><input name="lease_start" type="date" class="form-control"></div>
+          <div class="form-group col-md-6"><input name="lease_end" type="date" class="form-control"></div>
+
+         <div class="form-group col-md-6">
+          <label for="agentSelect">Select Agent</label>
+          <select name="agent_id" class="form-control" required>
+            <option value="" disabled selected>-- Choose an agent --</option>
+            {% for agent in agents %}
+              <option value="{{ agent.id }}">{{ agent.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+          <div class="form-group col-md-6">
+            <select name="status" class="form-control">
+              <option value="vacant">Vacant</option>
+              <option value="occupied">Occupied</option>
+            </select>
+          </div>
+          Property Image
+          <div class="form-group col-md-6"><input name="property_photo" type="file" class="form-control"></div>
+          <!--<div class="form-group col-md-6"><input name="condition_report" type="file" class="form-control"></div>-->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Add Property</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+
 
 
 
     <div id="tab-agents" class="tab-content hidden">
-      
+
       <section class="mx-8 my-16">
         <h3 class="text-3xl font-bold mb-6 text-gray-800">Agents</h3>
         {% if agents %}
@@ -294,8 +391,8 @@
 
 
 
-    
-    <div id="tab-traders" class="tab-content hidden"> 
+
+    <div id="tab-traders" class="tab-content hidden">
       <div id="scrollToTraders"></div>  <!-- Add this just inside tab-traders -->
       <section class="mx-8 my-16">
         <div class="flex justify-between items-center mb-6">
@@ -371,7 +468,7 @@
           <p class="text-gray-500">No job records available.</p>
           {% endif %}
         </section>
-      
+
 
       <!-- Add Jobs Modal  -->
       <div id="addJobModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center z-50">
@@ -429,10 +526,10 @@
       </div>
     </div>
 
-        
-    
+
+
     <div id="tab-condition_reports" class="tab-content hidden">
-            
+
           <section class="mx-8 my-16">
             <h3 class="text-3xl font-bold mb-6 text-gray-800">Condition Reports</h3>
 
@@ -443,7 +540,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Condition Report Date</label>
                 <input type="date" id="conditionDateFilter" class="border p-2 mb-4 text-sm">
 
-                
+
 
                 <thead>
                   <tr>
@@ -455,7 +552,7 @@
                     <th class="border px-4 py-2">Agent Name</th>
                     <th class="border px-4 py-2">Agreement Start Date</th>
                     <th class="border px-4 py-2">Condition Report Date</th>
-                    
+
                     <!-- <th class="border px-4 py-2">Width</th>
                     <th class="border px-4 py-2">Length</th> -->
                     <th class="border px-4 py-2">Areas</th>
@@ -484,7 +581,7 @@
                         <ul class="list-disc list-inside">
                           {% for area in room.areas.all %}
                             <li>{{ area.area_name }} - <strong>{{ area.status }}</strong> </li>
-                                
+
                           {% empty %}
                             <li>No areas added</li>
                           {% endfor %}
@@ -498,14 +595,14 @@
                             <li>No areas added</li>
                           {% endfor %}
                         </ul>
-                      </td> 
+                      </td>
                       <td class="border px-4 py-2 text-center">
-                      <button 
+                      <button
                         onclick="openEditConditionModal({{ room.id }})"
                         class="text-blue-600 hover:underline text-xs">
                         Edit
                       </button>
-                    </td> 
+                    </td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -520,7 +617,7 @@
                   <form method="POST" enctype="multipart/form-data" id="editConditionForm">
                     {% csrf_token %}
                     <input type="hidden" name="room_condition_id" id="editRoomConditionId" />
-                    
+
                     <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
                     <input type="text" name="room_name" id="editRoomName" class="w-full border p-2 mb-3" />
 
@@ -542,7 +639,7 @@
       </div>
 
     <div id="tab-appliance_reports" class="tab-content hidden">
-            
+
         <section class="mx-8 my-16">
           <h3 class="text-3xl font-bold mb-6 text-gray-800">Appliance Reports</h3>
 
@@ -631,7 +728,7 @@
 
 
     <div id="tab-minimum_standard_reports" class="tab-content hidden">
-            
+
 
          <section class="mx-8 my-16">
     <h3 class="text-3xl font-bold mb-6 text-gray-800">Minimum Standard Reports</h3>
@@ -755,7 +852,7 @@
     sessionStorage.setItem('activeTab', 'traders');
     sessionStorage.setItem('reopenEditJobModal', 'true');
     sessionStorage.setItem('editJobData', JSON.stringify({ id, jobCode, isPriority, status, notes }));
-    
+
   }
 
 // function handleEditJobSubmit(event) {
@@ -772,7 +869,7 @@
 //       notes: document.getElementById('editNotes').value
 //     };
 
-//     sessionStorage.setItem('reopenEditJobModal', 'false');  
+//     sessionStorage.setItem('reopenEditJobModal', 'false');
 //     sessionStorage.setItem('activeTab', 'traders');
 
 //     // Optional: scroll flag (if needed again)
@@ -978,6 +1075,9 @@
           sessionStorage.removeItem('editJobData');
         }
       });
+
+
+
   </script>
 
 </body>

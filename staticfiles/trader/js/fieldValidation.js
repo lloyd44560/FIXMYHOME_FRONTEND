@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addressOneError = document.getElementById('rateAddressOne');
     const addressTwoError = document.getElementById('rateAddressTwo');
     const postalError = document.getElementById('ratePostal');
-    
+
     // Validation fields array for easy iteration
     const fields = [
         { id: nameInput, label: 'Name', error: nameError },
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // ####################################################################################
         { id: companyNameInput, error: companyNameError, label: 'Company Name' },
         { id: companyAddressInput, error: companyAddressError, label: 'Company Address' },
-        { id: companyEmailInput, error: companyEmailError, label: 'Company Email' }, 
+        { id: companyEmailInput, error: companyEmailError, label: 'Company Email' },
         { id: contractorLicenseInput, error: contractorLicenseError, label: 'Contractor License Number' },
         { id: abnInput, error: abnError, label: 'ABN' },
         { id: industryInput, error: industryError, label: 'Industry Expertise' },
@@ -89,11 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
               if (input.value.trim() !== '') {
                   console.log(`Clearing error for ${field.label}`);
                   field.error.textContent = '';
-              } 
+              }
             });
         }
     });
-    
+
     nextBtn.addEventListener('click', function(e) {
         if (!steps[currentStep].classList.contains('hidden') && currentStep < steps.length - 1) {
             if (currentStep === 0) { // Step 1 validation (personal details)
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     updateStep();
                 }
-                
+
             } else if (currentStep === 1) { // Step 2 validation (company type || solo trader)
                 let hasError = false;
 
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     postalError.textContent = ''
                 }
-                
+
                 if (hasError) {
                     e.preventDefault();
                     return;

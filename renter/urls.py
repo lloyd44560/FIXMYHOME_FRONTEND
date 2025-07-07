@@ -4,6 +4,7 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 urlpatterns = [
     # path('', views.home, name='home'),  # this calls views.home
@@ -44,13 +45,14 @@ urlpatterns = [
 
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('login-error/', views.login_error, name='login_error'),
-    
+    path('no-account/', TemplateView.as_view(template_name='no_account.html'), name='no_account'),
+
     path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
 
     path('add-job/', views.add_job, name='add_job'),
     path('delete-job/<int:job_id>/', views.delete_job, name='delete_job'),
     path('edit-job/', views.edit_job, name='edit_job'),
-    
+
     path('edit-room-condition/<int:pk>/json/', views.edit_room_condition_json, name='edit_room_condition_json'),
     path('edit-room-condition/', views.update_room_condition, name='update_room_condition'),
 
@@ -60,4 +62,9 @@ urlpatterns = [
 
     path('change-password/', views.change_password, name='change_password'),
 
+
+    path('add-property/', views.add_property, name='add_property'),
+    path('delete-property/<int:id>/', views.delete_property, name='delete_property'),
+    path('unlink-property/<int:id>/', views.unlink_property, name='unlink_property'),
+    path('edit-property/<int:id>/', views.edit_property, name='edit_property'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

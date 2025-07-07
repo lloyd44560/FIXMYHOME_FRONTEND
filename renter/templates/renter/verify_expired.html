@@ -2,32 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Verification Link Expired</title>
-</head>
-   <!-- Navbar -->
-    {% include 'renter/navbar.html' %}
+  <style>
+    .fade-in {
+      animation: fadeIn 0.6s ease-out both;
+    }
 
-    <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-        <h1 class="text-2xl font-bold text-red-600 mb-4">Link Expired</h1>
-        <p class="text-gray-700 mb-6">
-          Sorry, your verification link has expired.
-        </p>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+  <!-- Navbar -->
+  {% include 'renter/navbar.html' %}
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center p-6">
+    <div class="bg-white p-10 rounded-2xl shadow-lg max-w-xl w-full text-center fade-in">
+      <h1 class="text-3xl font-bold text-red-600 mb-6">Verification Link Expired</h1>
+      <p class="text-lg text-gray-700 mb-8">
+        Sorry, your verification link has expired. Please register again or retry verification.
+      </p>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-4">
         <a href="{% url 'register' %}"
-          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+           class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition text-lg w-full md:w-auto text-center">
           Register Again
         </a>
         <button onclick="location.reload()"
-          class="ml-4 inline-block bg-gray-300 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-400 transition">
+                class="bg-gray-300 text-gray-800 px-6 py-3 rounded-md hover:bg-gray-400 transition text-lg w-full md:w-auto">
           Retry Verification
         </button>
       </div>
+    </div>
+  </main>
 
-      
-        <!-- Footer -->
-        {% include 'renter/home/footer.html' %}
-      
-    </body>
+  <!-- Footer -->
+  {% include 'renter/home/footer.html' %}
+</body>
 </html>

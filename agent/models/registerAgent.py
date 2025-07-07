@@ -27,7 +27,7 @@ class AgentRegister(models.Model):
     contact_person = models.CharField(max_length=50)
     agency_id = models.CharField(max_length=50)
     website = models.CharField(max_length=50)
-    notes = models.CharField(max_length=255)
+    notes = models.CharField(max_length=255, null=True, blank=True)
     password = models.CharField(max_length=255, null=True)
 
     # Company Details

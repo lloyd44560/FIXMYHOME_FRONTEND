@@ -1,4 +1,4 @@
-  // Set default categories here that will be displayed by default. 
+  // Set default categories here that will be displayed by default.
   let categories = ['Lounge Room', 'Kitchen', 'Bedroom'];
 
   function populateCategoryDropdown() {
@@ -52,17 +52,17 @@
       </table>
 <div class="mt-2">
   <label class="block text-sm font-medium text-gray-700">Room Photo</label>
-  <input 
-    type="file" 
-    name="room_photo_${roomIndex}" 
-    accept="image/*" 
+  <input
+    type="file"
+    name="room_photo_${roomIndex}"
+    accept="image/*"
     class="room-photo-input mt-1 text-sm"
     data-preview-id="roomPhotoPreview_${roomIndex}"
   >
-  <img 
-    id="roomPhotoPreview_${roomIndex}" 
-    class="mt-2 w-full h-auto rounded border border-gray-300 object-contain max-h-48" 
-    style="display: none;" 
+  <img
+    id="roomPhotoPreview_${roomIndex}"
+    class="mt-2 w-full h-auto rounded border border-gray-300 object-contain max-h-48"
+    style="display: none;"
   />
 </div>
       <button type="button" onclick="addNewRoomArea(this)" class="mt-3 text-sm text-blue-600 hover:underline">Add new room area</button>
@@ -76,21 +76,16 @@
       document.getElementById("newCategoryInput").value = "";
       document.getElementById("addCategoryModal").classList.remove("hidden");
     }
-    
-    function addNewRoomArea(button) {
-      // Try to find the nearest table (sa taas ng button)
-      const roomBlock = button.closest(".mb-6"); // adjust this selector if needed
-      const table = roomBlock?.querySelector("table tbody");
 
-      if (!table) {
-        console.error("Table body not found");
-        return;
-      }
+    function addNewRoomArea(button) {
+      const roomBlock = button.closest(".mb-6") || button.closest(".room-table-wrapper");
+      const table = roomBlock?.querySelector("table tbody");
+      if (!table) return;
 
       const newRow = document.createElement("tr");
       newRow.className = "border-t";
       newRow.innerHTML = `
-        <td class="py-2"><input type="text" placeholder="New area" class="border px-2 py-1 rounded w-4/5 mx-auto text-center" /></td>
+        <td class="py-2"><input type="text" placeholder="New area" class="border px-2 py-1 rounded w-full text-center" /></td>
         <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
         <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
         <td><input type="checkbox" onclick="checkOnlyOne(this)"></td>
@@ -98,6 +93,8 @@
       `;
       table.appendChild(newRow);
     }
+
+
 
     function confirmAddCategory() {
       const input = document.getElementById("newCategoryInput").value.trim();
@@ -182,7 +179,7 @@
   // Update dropdown
   populateCategoryDropdown();
 }
-    
+
 function openEditModal(button) {
   const roomDiv = button.closest("div.mb-6");
   const categoryName = roomDiv.querySelector(".category-name").textContent;

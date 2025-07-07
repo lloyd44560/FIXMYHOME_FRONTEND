@@ -174,11 +174,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'shunngerold17@gmail.com'  # Your Gmail address
-EMAIL_HOST_PASSWORD = 'wvcrpiwqxexrqihw'  # App password (not your Gmail password)
+# EMAIL_HOST_USER = 'shunngerold17@gmail.com'  # Your Gmail address
+# EMAIL_HOST_PASSWORD = 'wvcrpiwqxexrqihw'  # App password (not your Gmail password)
 
-# EMAIL_HOST_USER = 'wsi.jborlagdan@gmail.com'  # Your Gmail address
-# EMAIL_HOST_PASSWORD = 'klpbiornbuaikiny'  # App password (not your Gmail password)
+EMAIL_HOST_USER = 'wsi.jborlagdan@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'klpbiornbuaikiny'  # App password (not your Gmail password)
 
 
 SOCIAL_AUTH_PIPELINE = (
@@ -187,7 +187,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.user.create_user',
+    # 'social_core.pipeline.user.create_user',
     'renter.pipeline.verify_email',  # for renter module
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
@@ -215,3 +215,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'static/renter/images/uploads'
 
 
+SOCIALACCOUNT_ADAPTER = 'renter.adapter.CustomSocialAccountAdapter'

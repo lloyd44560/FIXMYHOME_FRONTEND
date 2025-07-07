@@ -16,11 +16,11 @@
   {% load static %}
   <form method="POST" action="/login_renter/">
   {% csrf_token %}
-  
-  
+
+
   <main class="flex-grow flex justify-center items-center px-4">
 
-    
+
   </main>
   <div class="flex justify-center items-center min-h-screen bg-gray-100 px-4">
     <div class="max-w-screen-xl w-full bg-white shadow sm:rounded-lg flex flex-col lg:flex-row justify-center flex-1">
@@ -90,7 +90,7 @@
              <div class="text-center mt-6">
 
                 <span class="text-gray-600 text-sm font-medium block mb-2">
-                  Not a member?  
+                  Not a member?
                   <button type="button" onclick="openSignupModal()" class="text-[#086cfc] font-semibold hover:underline hover:text-blue-700 transition">
                    Sign Up Here
                   </button>
@@ -143,7 +143,7 @@
                   </div>
                 </div>
 
-                
+
             </div>
 
 
@@ -169,24 +169,35 @@
         </div>
       </div>
 
-      <!-- Right Side Video / Animation -->
-        <div class="hidden lg:flex flex-1 bg-gray-200 items-center justify-center overflow-hidden rounded-r-lg relative">
+<!-- Right Side with Play Button and Background -->
+<div class="flex flex-1 items-center justify-center overflow-hidden rounded-r-lg relative px-4 py-8 lg:py-0"
+     style="background-image: url('{% static 'renter/images/login_wallpaper.jpg' %}'); background-size: cover; background-position: center;">
 
-        <!-- Video (if available) -->
-        <video autoplay loop muted class="w-full h-full object-cover" id="bg-video">
-          <source src="{% static 'videos/background.mp4' %}" type="video/mp4">
-          <!-- If video fails to load, show play button -->
-        </video>
+  <!-- Optional dark overlay -->
+  <div class="absolute inset-0 bg-black bg-opacity-30 z-0"></div>
 
-        <!-- Fallback Play Button -->
-        <div id="video-fallback" class="absolute inset-0 flex items-center justify-center bg-gray-200">
-          <button type="button" class="bg-[#086cfc] text-white p-4 rounded-full hover:bg-[#4795fd] transition duration-300 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M6.5 5.5v9l7-4.5-7-4.5z" />
-            </svg>
-          </button>
-        </div>
-      </div>
+  <!-- Play Button -->
+  <button type="button" onclick="showVideoModal()"
+    class="relative z-10 bg-blue-600 hover:bg-blue-700 text-white text-3xl rounded-full w-20 h-20 flex items-center justify-center shadow-md transition-colors">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="white" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  </button>
+</div>
+
+<!-- Fullscreen Video Modal -->
+<div id="fullscreen-video" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999]">
+  <button type="button" onclick="hideVideo()" class="absolute top-4 right-4 text-white text-3xl z-[10000]">✖</button>
+
+  <video id="fmhVideo" class="w-full h-full object-contain z-10"
+         controls
+         playsinline
+         muted
+         preload="auto">
+    <source src="{% static 'videos/Fmh Video.mp4' %}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
 
     </div>
   </div>
@@ -240,17 +251,53 @@
     }
   });
 
+  // Preload the video when page loads
   document.addEventListener('DOMContentLoaded', () => {
-  const video = document.getElementById('bg-video');
-  const fallback = document.getElementById('video-fallback');
-
-  video.addEventListener('canplay', () => {
-    fallback.style.display = 'none'; // hide the play button if video is working
+    const video = document.getElementById("fmhVideo");
+    if (video) {
+      video.load();  // preload video
+    }
   });
-});
+
+  // Show modal and autoplay video
+  function showVideoModal() {
+    const container = document.getElementById("fullscreen-video");
+    const video = document.getElementById("fmhVideo");
+
+    container.classList.remove("hidden");
+    container.classList.add("flex");
+
+    video.currentTime = 0;
+    video.muted = false; // unmute since it's user-initiated
+    video.play().catch(err => console.log("Autoplay error:", err));
+  }
+
+  // Close modal and stop video
+  function hideVideo() {
+    const container = document.getElementById("fullscreen-video");
+    const video = document.getElementById("fmhVideo");
+
+    container.classList.remove("flex");
+    container.classList.add("hidden");
+
+    video.pause();
+    video.currentTime = 0;
+  }
+
 </script>
 
-  
+<style>
+  .fade-in {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+
+  .fade-in.show {
+    opacity: 1;
+  }
+</style>
+
+
   <!-- Footer -->
   {% include 'renter/home/footer.html' %}
 

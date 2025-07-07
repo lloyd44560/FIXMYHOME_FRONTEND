@@ -25,7 +25,7 @@ class Renter(models.Model):
     company_address_line1 = models.CharField(max_length=255, blank=True, null=True)
     company_address_line2 = models.CharField(max_length=255, blank=True, null=True)
     company_postal_code = models.CharField(max_length=20, blank=True, null=True)
-
+    gender = models.CharField(max_length=10, null=True, blank=True)
     # Step 3 - Upload Option and Property Details
     upload_option = models.CharField(max_length=50, blank=True, null=True)  # 'manual' or 'report'
 
@@ -50,7 +50,7 @@ class FailedLoginAttempt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     attempts = models.IntegerField(default=0)
     is_locked = models.BooleanField(default=False)
-    locked_until = models.DateTimeField(null=True, blank=True) 
+    locked_until = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.email} - {self.attempts} attempts"
@@ -70,7 +70,7 @@ class EmailVerification(models.Model):
     def __str__(self):
         return f"{self.user.email} — {self.token}"
 
-# create model for Properties 
+# create model for Properties
 class Property(models.Model):
     renter = models.ForeignKey('Renter', on_delete=models.SET_NULL, related_name='properties', null=True, blank=True)
     agent = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='assigned_properties')
@@ -90,7 +90,7 @@ class Property(models.Model):
     def __str__(self):
         return f'{self.property_name} ({self.city}, {self.state})'
 
-# Create a rooms Model 
+# Create a rooms Model
 class Room(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rooms')
     room_name = models.CharField(max_length=100)

@@ -260,7 +260,7 @@
       <div class="mb-4">
         <!-- <label for="uploadOption" class="block text-gray-700 font-medium mb-2">Select Step</label> -->
         <select name="uploadOption" id="uploadOption" class="w-full border border-gray-300 rounded-md p-2">
-          <option value="">Select 
+          <option value="">Select
 
             Your Reports
           </option>
@@ -272,7 +272,7 @@
       <div id="manualUploadFields" class="space-y-4 hidden">
         <div class="mb-4">
 
-          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>   
+          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
            <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300" />
 
             <input
@@ -303,10 +303,10 @@
             />
 
           </div>
-          
+
         <div class="mb-4">
           <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
-          <input type="number" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
+          <input type="text" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
 
         <div class="mb-4">
@@ -395,154 +395,67 @@
         </div>
 
     <!-- Main Condition Report Modal -->
-      <div id="conditionModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
-          <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
+      <div id="conditionModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">
+  <div class="bg-white w-full max-w-4xl p-4 sm:p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">
+    <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
 
-          <!-- Extra Info Fields -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-
-            <div>
-                <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>   
-                <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300" />
-
-                <input
-                  type="file"
-                  name="propertyImage"
-                  id="propertyImage"
-                  class="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-md file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100"
-                />
-
-            </div>
-
-            <script>
-              document.getElementById("propertyImage").addEventListener("change", function (event) {
-                const file = event.target.files[0];
-                const preview = document.getElementById("imagePreview");
-
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = function (e) {
-                    preview.src = e.target.result;
-                  };
-                  reader.readAsDataURL(file);
-                } else {
-                  preview.src = ""; // Clear if no file selected
-                }
-              });
-            </script>
-
-            <div>
-              <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
-                <input type="number" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div class="mb-4">
-              <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
-              <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div>
-                <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
-                <input type="number" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
-
-            </div>
-            <div>
-              <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
-              <input type="number" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div class="mb-4">
-                <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
-                <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div class="mb-4">
-              <label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label>
-              <input type="text" name="address1" id="address1" placeholder="Address Line 1" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div class="mb-4">
-              <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2(Optional)</label>
-              <input type="text" name="address2" id="address2" placeholder="Address Line 2" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div class="mb-4">
-              <label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label>
-              <input type="text" name="postalcode" id="postalcode" placeholder="Postal Code" class="w-full border border-gray-300 rounded-md p-2" />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Condition Report Date</label>
-              <input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 09:04 Friday 21/01/2022">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Agreement Start Date</label>
-              <input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. Friday 21/01/2022">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Renter Received Date</label>
-              <input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 09:04 Friday 21/01/2022">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Report Return Date</label>
-              <input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 23:13 Monday 24/01/2022">
-            </div>
-            <div class="sm:col-span-2">
-              <label class="block text-sm font-medium text-gray-700">Address</label>
-              <input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. 6/63 Pickett St, Reservoir, VIC 3073" oninput="document.getElementById('companyAddressLine1').value = this.value">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Full Name 1</label>
-              <input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" placeholder="e.g. Jake Semaan" onclick="document.getElementById('name').value = this.value">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Agent Name</label>
-              <input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Agent Company Name</label>
-              <input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Renter 1</label>
-              <input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Renter 2</label>
-              <input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm">
-            </div>
-          </div>
+    <!-- Form Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <!-- Upload Image with Preview -->
+       <div>
+        <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
+        <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300 max-h-40 sm:max-h-60" />
+        <input
+          type="file"
+          name="propertyImage"
+          id="propertyImage"
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
+      </div>
 
 
-            <!-- Room Category Select -->
-          <div class="flex items-center mb-4">
-            <label for="modalRoomCategory" class="mr-2 font-semibold text-gray-700">Room Category:</label>
-            <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-              <!-- Dynamically populated -->
-            </select>
-            <button type="button" onclick="addNewCategory()" class="ml-2 text-blue-600 text-sm hover:underline">+ Add New Rooms</button>
-          </div>
+      <!-- Other Fields -->
+      <div><label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label><input type="number" name="floorCount" id="floorCount" placeholder="How many floors?" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="houseState" class="block text-gray-700 font-medium mb-2">State</label><input type="text" name="houseState" id="houseState" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label><input type="number" name="roomCount" id="roomCount" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label><input type="text" name="propertyName" id="propertyName" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label><input type="text" name="houseCity" id="houseCity" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label><input type="text" name="address1" id="address1" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2 (Optional)</label><input type="text" name="address2" id="address2" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label><input type="text" name="postalcode" id="postalcode" class="w-full border border-gray-300 rounded-md p-2" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Condition Report Date</label><input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Agreement Start Date</label><input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Renter Received Date</label><input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Report Return Date</label><input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700">Address</label><input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" oninput="document.getElementById('companyAddressLine1').value = this.value" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Full Name 1</label><input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" onclick="document.getElementById('name').value = this.value" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Agent Name</label><input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Agent Company Name</label><input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Renter 1</label><input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm" /></div>
+      <div><label class="block text-sm font-medium text-gray-700">Renter 2</label><input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm" /></div>
+    </div>
 
-            <!-- Room Container -->
-            <div id="roomContainer"></div>
+    <!-- Room Category Select -->
+    <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">
+      <label for="modalRoomCategory" class="font-semibold text-gray-700">Room Category:</label>
+      <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1"></select>
+      <button type="button" onclick="addNewCategory()" class="text-blue-600 text-sm hover:underline whitespace-nowrap">+ Add New Rooms</button>
+    </div>
 
-            <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">
-              Save
-            </button>
+    <!-- Room Container -->
+    <div id="roomContainer"></div>
 
-            <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">
-              Cancel
-            </button>
-            <input name="conditionData" id="conditionDataInput">
-          </div>
-        </div>
+    <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">
+      Save
+    </button>
 
+    <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">
+      Cancel
+    </button>
+
+    <input type="hidden" name="conditionData" id="conditionDataInput">
+  </div>
+</div>
     <!-- Appliance Report Modal -->
     <div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
@@ -550,7 +463,7 @@
 
         <!-- Dynamic report container here -->
         <div id="applianceReportsContainer" class="space-y-6 mt-6"></div>
-        
+
         <button type="button" onclick="handleSaveApplianceReport()" class="w-full mt-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-3 rounded-xl transition">
           Save Appliance Reports
         </button>
@@ -558,7 +471,7 @@
           Close
         </button>
 
-        
+
         <input name="applianceReports" id="applianceReportsInput">
       </div>
     </div>
@@ -594,7 +507,7 @@
       <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
         <h2 class="text-lg font-bold mb-4 text-gray-800 text-center">Minimum Standard Report</h2>
 
-    
+
 
         <!-- New Additional Fields -->
         <div>
@@ -627,7 +540,7 @@
           <label class="block font-medium text-gray-700 mb-1 text-left block">Room</label>
           <input type="text" name="room" class="w-full border border-gray-300 rounded-md p-2" placeholder="e.g., Bedroom" />
         </div>
-      
+
         <div>
           <label class="block font-medium text-gray-700 mb-1 text-left block">Comments</label>
           <textarea name="comments" class="w-full border border-gray-300 rounded-md p-2 resize-none" rows="4" placeholder="Any remarks..."></textarea>
@@ -656,7 +569,7 @@
 
       </div>
     </div>
-  
+
     <!-- All modals and forms related to the Condition Reports -->
     <!-- Add Category Modal -->
     <div id="addCategoryModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -678,7 +591,7 @@
 
         <label class="block mb-2 font-semibold">Room Name</label>
         <input id="editCategoryInput" type="text" class="w-full border p-2 mb-4" />
-<!-- 
+<!--
         <label class="block mb-2 font-semibold">Room Image</label>
         <input type="file" id="roomImageUpload" class="mb-4" /> -->
 
@@ -730,7 +643,7 @@
     <br>
 
     <script>
-    // Script to collect the rooms stated in the Condition Report 
+    // Script to collect the rooms stated in the Condition Report
     function collectRoomData() {
     const roomData = [];
     const roomBlocks = document.querySelectorAll("#roomContainer .mb-6");
@@ -797,65 +710,64 @@
     return roomData;
     }
 
-        // Dynamically generate list of cards with the room data based from the listing from the Condition Report 
+                // Dynamically generate list of cards with the room data based from the listing from the Condition Report
 
-      function createApplianceReportCard(room, roomIndex) {
-      return `
-        <div class="border border-blue-200 p-4 rounded-xl shadow-sm space-y-4 bg-gray-50">
-          <h3 class="text-md font-semibold text-blue-600">${room.categoryName} - Appliance Report</h3>
-
-          <div class="grid grid-cols-1 gap-3">
-            <div class="flex flex-col">
-             <label class="text-sm font-medium text-gray-600 text-left block">Windows Height</label>
-              <input type="text" placeholder="e.g. 15.68 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600 text-left block">Windows Length</label>
-              <input type="text" value="${room.length}" placeholder="e.g. 4.72 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600 text-left block">Windows Width</label>
-              <input type="text" value="${room.width}" placeholder="e.g. 3.90 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600 text-left block">Appliance Brand</label>
-              <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600 text-left block">Model/Serial Number</label>
-              <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600 text-left block">Location in Room</label>
-              <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600 text-left block">Appliance Photo</label>
-              <input 
-                type="file" 
-                name="appliance_photo_${roomIndex}" 
-                class="appliance-photo-input w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
-                data-preview-id="appliancePreview_${roomIndex}"
-              />
-              <img 
-                id="appliancePreview_${roomIndex}" 
-                class="mt-2 w-full h-auto rounded border border-gray-200 object-contain max-h-48" 
-                style="display: none;" 
-              />
-            </div>
-            <div class="flex flex-col">
-              <label class="text-sm font-medium text-gray-600">Comments</label>
-              <textarea class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm resize-none"></textarea>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-
+          function createApplianceReportCard(room, roomIndex) {
+            return `
+              <div class="appliance-card" data-room-index="${roomIndex}">
+                <div class="border border-blue-200 p-4 rounded-xl shadow-sm space-y-4 bg-gray-50">
+                  <h3 class="text-md font-semibold text-blue-600">${room.categoryName} - Appliance Report</h3>
+                  <div class="grid grid-cols-1 gap-3">
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Windows Height</label>
+                      <input type="text" placeholder="e.g. 15.68 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Windows Length</label>
+                      <input type="text" value="${room.length}" placeholder="e.g. 4.72 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Windows Width</label>
+                      <input type="text" value="${room.width}" placeholder="e.g. 3.90 sq. ft." class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Appliance Brand</label>
+                      <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Model/Serial Number</label>
+                      <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Location in Room</label>
+                      <input type="text" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm" />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600 text-left block">Appliance Photo</label>
+                      <input
+                        type="file"
+                        name="appliance_photo_${roomIndex}"
+                        class="appliance-photo-input w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
+                        data-preview-id="appliancePreview_${roomIndex}"
+                      />
+                      <img
+                        id="appliancePreview_${roomIndex}"
+                        class="mt-2 w-full h-auto rounded border border-gray-200 object-contain max-h-48"
+                        style="display: none;"
+                      />
+                    </div>
+                    <div class="flex flex-col">
+                      <label class="text-sm font-medium text-gray-600">Comments</label>
+                      <textarea class="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm resize-none"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
       document.querySelector('.applianceReportBtn').addEventListener('click', function () {
       document.getElementById('applianceModal').classList.remove('hidden');
-          
+
       function collectApplianceReports() {
         applianceReports = [];
 
@@ -930,7 +842,7 @@
       });
 
     function submitStandardReport() {
-      const form = document.getElementById('standardReportForm');
+      const form = document.getElementById('registrationForm');
 
       const standardReport = {
         tenant_name: form.tenantName.value.trim(),
@@ -950,7 +862,7 @@
 
       }
 
-    // Button to collect all Appliance Data 
+    // Button to collect all Appliance Data
     function handleSaveApplianceReport() {
       applianceReports = [];
 
@@ -976,7 +888,7 @@
       if (hiddenInput) {
         hiddenInput.value = JSON.stringify(applianceReports);
       }
-       
+
       closeModal('applianceModal');
     }
     </script>
@@ -1113,7 +1025,7 @@
     editBtn.onclick = () => {
         roomInput.value = span.textContent;
         li.remove();
-        updateRoomListData();  
+        updateRoomListData();
     };
 
     const deleteBtn = document.createElement('button');
@@ -1126,7 +1038,7 @@
     `;
     deleteBtn.onclick = () => {
         li.remove();
-        updateRoomListData(); // 
+        updateRoomListData(); //
     };
 
       controls.appendChild(editBtn);
@@ -1299,32 +1211,35 @@
 
 
 
-      document.addEventListener("change", function (e) {
-        if (e.target.classList.contains("appliance-photo-input")) {
-          const input = e.target;
-          const previewId = input.dataset.previewId;
-          const preview = document.getElementById(previewId);
+    document.addEventListener("change", function (e) {
+      const input = e.target;
+      if (
+        input.classList.contains("appliance-photo-input") ||
+        input.classList.contains("room-photo-input")
+      ) {
+        const previewId = input.getAttribute("data-preview-id");
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
 
-          const file = input.files[0];
-          if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-              preview.src = event.target.result;
-              preview.style.display = "block";
-            };
-            reader.readAsDataURL(file);
-          } else {
-            preview.src = "";
-            preview.style.display = "none";
-          }
+        if (file && preview) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            preview.src = event.target.result;
+            preview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else if (preview) {
+          preview.src = "";
+          preview.style.display = "none";
         }
-      });
+      }
+    });
 
 
     document.addEventListener("change", function (e) {
       const input = e.target;
       if (
-        input.classList.contains("room-photo-input") || 
+        input.classList.contains("room-photo-input") ||
         input.classList.contains("appliance-photo-input")
       ) {
         const previewId = input.getAttribute("data-preview-id");
