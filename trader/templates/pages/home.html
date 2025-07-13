@@ -14,11 +14,25 @@
 
   <!-- Calendar -->
   {% include 'components/home/calendar_section.html' %}
+
+  {% if messages %}
+    <div
+      x-data="{ show: true }"
+      x-init="setTimeout(() => show = false, 4000)"
+      x-show="show"
+      class="fixed top-6 right-6 z-50 bg-green-500 text-white px-4 py-2 rounded shadow-md transition ease-in-out"
+    >
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
 </main>
 
 {% include 'components/footerTrader.html' %}
 {% endblock %}
 
 {% block scripts %}
-  <!-- JS Scripts Here -->
+  <!-- Alpine.js CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}

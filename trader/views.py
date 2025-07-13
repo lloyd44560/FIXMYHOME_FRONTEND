@@ -167,9 +167,8 @@ class TraderProfileView(UpdateView):
         # Fields to update
         fields = [
             'name', 'email', 'phone', 'company_type', 'company_name', 'company_address',
-            'company_email', 'company_landline', 'contractor_license', 'abn',
-            'industry', 'other_expertise', 'state', 'municipality', 'city',
-            'postal_code', 'address_line_1', 'address_line_2',
+            'company_email', 'company_landline', 'abn', 'industry', 'other_expertise', 
+            'state', 'municipality', 'city', 'postal_code', 'address_line_1', 'address_line_2',
         ]
 
         for field in fields:

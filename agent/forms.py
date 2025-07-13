@@ -24,7 +24,7 @@ class CreateAgentFormClass(forms.ModelForm):
 class AgentEditProfileForm(forms.ModelForm):
     class Meta:
         model = AgentRegister
-        fields = '__all__'
+        exclude = ['password']  # Exclude password only for editing
         widgets = {
             'notes': forms.Textarea(attrs={'rows': 3})
         }
