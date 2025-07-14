@@ -99,6 +99,7 @@
         oninput="validateFields()"
         class="w-full border border-gray-300 rounded-md p-2 pr-10"
       />
+      <p id="passwordError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
       <p id="matchError" class="text-red-500 text-sm hidden">Passwords do not match.</p>
 
       <button
@@ -285,6 +286,10 @@
                 file:text-sm file:font-semibold
                 file:bg-blue-50 file:text-blue-700
                 hover:file:bg-blue-100"
+              accept="image/*"
+              onchange="validateImageFile(this)"
+
+
             />
 
           <label for="propertyFile" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
@@ -300,10 +305,11 @@
                 file:text-sm file:font-semibold
                 file:bg-blue-50 file:text-blue-700
                 hover:file:bg-blue-100"
+              onchange="validateFileType(this)"
             />
 
           </div>
-
+        <span id="fileTypeError" class="text-red-500 text-sm hidden">Invalid file type. Only PDF, DOC, DOCX, XLS, XLSX allowed.</span>
         <div class="mb-4">
           <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
           <input type="text" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
@@ -311,12 +317,19 @@
 
         <div class="mb-4">
           <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
-          <input type="number" name="floorCount" id="floorCount" placeholder="How many floor is the property?" class="w-full border border-gray-300 rounded-md p-2" />
+            <input
+              type="number"
+              name="floorCount"
+              id="floorCount"
+              placeholder="How many floor is the property?"
+              class="w-full border border-gray-300 rounded-md p-2"
+              min="1"
+              onchange="validateFloorCount(this)"
+            />
         </div>
-
         <div class="mb-4">
           <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
-          <input type="number" name="roomCount" id="roomCount" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
+          <input type="number" name="roomCount_manual" id="roomCount_manual" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
         <!-- Surround with blue highlight border -->
         <div class="mb-6">
@@ -396,66 +409,67 @@
 
     <!-- Main Condition Report Modal -->
       <div id="conditionModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">
-  <div class="bg-white w-full max-w-4xl p-4 sm:p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">
-    <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
+          <div class="bg-white w-full max-w-4xl p-4 sm:p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">
+            <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
 
-    <!-- Form Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-      <!-- Upload Image with Preview -->
-       <div>
-        <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
-        <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300 max-h-40 sm:max-h-60" />
-        <input
-          type="file"
-          name="propertyImage"
-          id="propertyImage"
-          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-        />
-      </div>
+            <!-- Form Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <!-- Upload Image with Preview -->
+               <div>
+                <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
+                <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300 max-h-40 sm:max-h-60"   />
+                <input
+                  type="file"
+                  name="propertyImage"
+                  id="propertyImage"
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  onchange="validateImageFile(this)"
+                />
+              </div>
 
 
-      <!-- Other Fields -->
-      <div><label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label><input type="number" name="floorCount" id="floorCount" placeholder="How many floors?" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="houseState" class="block text-gray-700 font-medium mb-2">State</label><input type="text" name="houseState" id="houseState" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label><input type="number" name="roomCount" id="roomCount" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label><input type="text" name="propertyName" id="propertyName" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label><input type="text" name="houseCity" id="houseCity" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label><input type="text" name="address1" id="address1" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2 (Optional)</label><input type="text" name="address2" id="address2" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label><input type="text" name="postalcode" id="postalcode" class="w-full border border-gray-300 rounded-md p-2" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Condition Report Date</label><input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Agreement Start Date</label><input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Renter Received Date</label><input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Report Return Date</label><input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700">Address</label><input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" oninput="document.getElementById('companyAddressLine1').value = this.value" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Full Name 1</label><input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" onclick="document.getElementById('name').value = this.value" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Agent Name</label><input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Agent Company Name</label><input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Renter 1</label><input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm" /></div>
-      <div><label class="block text-sm font-medium text-gray-700">Renter 2</label><input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm" /></div>
-    </div>
+              <!-- Other Fields -->
+              <div><label for="floorCount"  onchange="validateFloorCount(this)" class="block text-gray-700 font-medium mb-2">Floor Count</label><input type="number" name="floorCount" id="floorCount" placeholder="How many floors?" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="houseState" class="block text-gray-700 font-medium mb-2">State</label><input type="text" name="houseState" id="houseState" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label><input type="number" name="roomCount" id="roomCount" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label><input type="text" name="propertyName" id="propertyName" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label><input type="text" name="houseCity" id="houseCity" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label><input type="text" name="address1" id="address1" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2 (Optional)</label><input type="text" name="address2" id="address2" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label><input type="text" name="postalcode" id="postalcode" class="w-full border border-gray-300 rounded-md p-2" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Condition Report Date</label><input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Agreement Start Date</label><input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Renter Received Date</label><input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Report Return Date</label><input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700">Address</label><input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" oninput="document.getElementById('companyAddressLine1').value = this.value" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Full Name 1</label><input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" onclick="document.getElementById('name').value = this.value" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Agent Name</label><input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Agent Company Name</label><input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Renter 1</label><input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm" /></div>
+              <div><label class="block text-sm font-medium text-gray-700">Renter 2</label><input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm" /></div>
+            </div>
 
-    <!-- Room Category Select -->
-    <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">
-      <label for="modalRoomCategory" class="font-semibold text-gray-700">Room Category:</label>
-      <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1"></select>
-      <button type="button" onclick="addNewCategory()" class="text-blue-600 text-sm hover:underline whitespace-nowrap">+ Add New Rooms</button>
-    </div>
+            <!-- Room Category Select -->
+            <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">
+              <label for="modalRoomCategory" class="font-semibold text-gray-700">Room Category:</label>
+              <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1"></select>
+              <button type="button" onclick="addNewCategory()" class="text-blue-600 text-sm hover:underline whitespace-nowrap">+ Add New Rooms</button>
+            </div>
 
-    <!-- Room Container -->
-    <div id="roomContainer"></div>
+            <!-- Room Container -->
+            <div id="roomContainer"></div>
 
-    <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">
-      Save
-    </button>
+            <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">
+              Save
+            </button>
 
-    <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">
-      Cancel
-    </button>
+            <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">
+              Cancel
+            </button>
 
-    <input type="hidden" name="conditionData" id="conditionDataInput">
-  </div>
-</div>
+            <input type="hidden" name="conditionData" id="conditionDataInput">
+          </div>
+        </div>
     <!-- Appliance Report Modal -->
     <div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
@@ -1103,8 +1117,24 @@
       }
     });
 
-      // Password match validation
+
+    // Password strength validation
       const password = document.getElementById("password").value.trim();
+      const passwordError = document.getElementById("passwordError");
+
+      const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+      if (!strongPasswordRegex.test(password)) {
+        passwordError.textContent = "Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.";
+        passwordError.classList.remove("hidden");
+        document.getElementById("password").classList.add("border-red-500");
+      } else {
+        passwordError.classList.add("hidden");
+        document.getElementById("password").classList.remove("border-red-500");
+      }
+
+
+      // Password match validation
       const confirmPassword = document.getElementById("confirmPassword").value.trim();
       const matchError = document.getElementById("matchError");
 
@@ -1279,6 +1309,69 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+//   Validaton for number of floor Count
+  function validateFloorCount(input) {
+    const value = parseInt(input.value);
+    if (isNaN(value) || value < 1) {
+      alert("Floor Count must be at least 1.");
+      input.value = ""; // Clear the invalid input
+      input.focus();    // Bring focus back to the input
+    }
+  }
+
+//
+    function validateImageFile(input) {
+      const file = input.files[0];
+      if (file && !file.type.startsWith('image/')) {
+        alert("Please upload a valid image file only (e.g. JPG, PNG).");
+      input.value = ""; // clear the invalid file
+    }
+}
+
+
+    function validateFileType(input) {
+      const allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+      const errorMsg = document.getElementById('fileTypeError');
+
+      if (!input.files.length) return;
+
+      const fileName = input.files[0].name;
+      const fileExtension = fileName.split('.').pop().toLowerCase();
+
+      if (!allowedExtensions.includes(fileExtension)) {
+        input.value = ''; // Clear the selected file
+        errorMsg.classList.remove('hidden');
+      } else {
+        errorMsg.classList.add('hidden');
+      }
+    }
+
+
+
+
+    // document.getElementById("roomCount").addEventListener("input", handleRoomCountChange);
+
+    // function handleRoomCountChange() {
+    //   const roomCount = parseInt(document.getElementById("roomCount").value);
+    //   const roomContainer = document.getElementById("roomContainer");
+
+    //   // Clear current room blocks
+    //   roomContainer.innerHTML = "";
+
+    //   if (!isNaN(roomCount) && roomCount > 0) {
+    //     // Dynamically create room categories like Room 1, Room 2, etc.
+    //     for (let i = 1; i <= roomCount; i++) {
+    //       const categoryName = `Room ${i}`;
+    //       categories.push(categoryName);
+    //       addRoomBlock(categoryName);
+    //     }
+
+    //     populateCategoryDropdown(); // Refresh dropdown with new rooms
+    //   }
+    // }
+
+
 
   </script>
   <!-- Footer -->

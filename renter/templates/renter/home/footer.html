@@ -1,10 +1,9 @@
 <div class="w-full px-4 pt-16 bg-blue-50">
   <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4 max-w-screen-xl mx-auto">
     <div class="sm:col-span-2">
+     {% load static %}
       <a href="/" aria-label="Go home" title="FixMyHouse" class="inline-flex items-center">
-        <svg class="w-8 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9.75L12 3l9 6.75V20a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-4H10v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.75z"></path>
-        </svg>
+        <img src="{% static 'renter/images/FMH PROPOSED LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
         <span class="ml-2 text-xl font-bold tracking-wide text-blue-900 uppercase">FixMyHouse</span>
       </a>
       <div class="mt-6 lg:max-w-sm">
