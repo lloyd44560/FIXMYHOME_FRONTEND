@@ -8,6 +8,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.utils.timezone import now
 from django.conf import settings
 from django.urls import reverse_lazy
+from django.core.mail import send_mail
 
 from django.http import JsonResponse
 from django.views import View
@@ -273,6 +274,21 @@ class AgentJobCreateView(CreateView):
         try:
             job.save()
             messages.success(self.request, f'Job created successfuly! Reference: {job.job_code}')
+
+            # Send job creation email to agent
+            send_mail(
+                subject="Job Created Successfully",
+                message=(
+                    f"Hi {agent.name},\n\n"
+                    f"Your job has been created successfully!\n"
+                    f"Job Code: {job.job_code}\n\n"
+                    f"Thank you for using FixMyHome."
+                ),
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[agent.email],
+                fail_silently=False,
+            )
+
             return redirect(self.success_url)
             
         except Exception as e:
