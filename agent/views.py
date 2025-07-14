@@ -261,8 +261,29 @@ class AgentJobCreateView(CreateView):
     success_url = reverse_lazy('agent_job_create')
 
     def form_valid(self, form):
-        form.instance.agent = AgentRegister.objects.get(user=self.request.user)
-        return super().form_valid(form)
+        agent = AgentRegister.objects.filter(user=self.request.user).first()
+        
+        if not agent:
+            form.add_error(None, "You must be an agent to create a job.")
+            return self.form_invalid(form)
+            
+        job = form.save(commit=False)
+        job.agent = agent
+
+        try:
+            job.save()
+            messages.success(self.request, f'Job created successfuly! Reference: {job.job_code}')
+            return redirect(self.success_url)
+            
+        except Exception as e:
+            form.add_error(None, f"Error saving job: {e}")
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        print("Form is invalid:", form.errors)
+        context = self.get_context_data(form=form)
+        context['error'] = "There was an error updating your profile."
+        return self.render_to_response(context)
 
 @method_decorator(login_required, name='dispatch')
 class JobListView(ListView):
