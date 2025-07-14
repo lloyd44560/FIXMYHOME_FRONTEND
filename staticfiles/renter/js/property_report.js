@@ -98,15 +98,32 @@
 
     function confirmAddCategory() {
       const input = document.getElementById("newCategoryInput").value.trim();
+      const roomCount = parseInt(document.getElementById("roomCount").value);
+
+      // Safety check
+      if (isNaN(roomCount) || roomCount <= 0) {
+        alert("Please specify a valid Room Count before adding new categories.");
+        return;
+      }
+
       if (input === "") return alert("Category name cannot be empty.");
       if (categories.includes(input)) return alert("Category already exists.");
 
+      // Check if the total categories exceed roomCount
+      if (categories.length >= roomCount) {
+          console.log("Categories length ",categories.length )
+        alert(`You have reached the maximum number of rooms (${roomCount}).`);
+        return;
+      }
+
+      // Proceed if within limit
       categories.push(input);
       populateCategoryDropdown();
       document.getElementById('modalRoomCategory').value = input;
       addRoomBlock(input);
       closeAddCategoryModal();
     }
+
 
     function closeAddCategoryModal() {
       document.getElementById("addCategoryModal").classList.add("hidden");
@@ -124,11 +141,39 @@
     function closeEditModal() {
       document.getElementById("editCategoryModal").classList.add("hidden");
       currentEditingRoomDiv = null;
-    }
     // Init on load
     document.addEventListener("DOMContentLoaded", () => {
       populateCategoryDropdown();
       categories.forEach(cat => addRoomBlock(cat));
+
+
+
+    document.getElementById("roomCount").addEventListener("input", handleRoomCountChange);
+
+    function handleRoomCountChange() {
+      const roomCount = parseInt(document.getElementById("roomCount").value);
+      const roomContainer = document.getElementById("roomContainer");
+
+      // Clear current room blocks
+      roomContainer.innerHTML = "";
+
+      if (!isNaN(roomCount) && roomCount > 0) {
+        // Dynamically create room categories like Room 1, Room 2, etc.
+        for (let i = 1; i <= roomCount; i++) {
+          const categoryName = `Room ${i}`;
+          categories.push(categoryName);
+          addRoomBlock(categoryName);
+        }
+
+        populateCategoryDropdown(); // Refresh dropdown with new rooms
+      }
+    }
+
+
+
+
+
+
     });
 
     // Edit category Name here
