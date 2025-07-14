@@ -261,14 +261,12 @@ class AgentJobCreateView(CreateView):
     success_url = reverse_lazy('agent_job_create')
 
     def form_valid(self, form):
-        print("Form is valid, processing job creation...", self.request.user)
         agent = AgentRegister.objects.filter(user=self.request.user).first()
         
         if not agent:
             form.add_error(None, "You must be an agent to create a job.")
             return self.form_invalid(form)
             
-        print("Agent found:", agent)
         job = form.save(commit=False)
         job.agent = agent
 
@@ -278,7 +276,6 @@ class AgentJobCreateView(CreateView):
             return redirect(self.success_url)
             
         except Exception as e:
-            print("Error saving job:", e)
             form.add_error(None, f"Error saving job: {e}")
             return self.form_invalid(form)
 
