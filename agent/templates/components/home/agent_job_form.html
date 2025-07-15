@@ -13,31 +13,66 @@
       <div class="mb-4">
         <label class="block text-sm font-medium">Renter</label>
         {{ form.renter|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        {% if form.renter.errors %}
+          <div class="text-red-600 text-xs mt-1">
+            {% for error in form.renter.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
 
       <div class="mb-4">
         <label class="block text-sm font-medium">Trader</label>
         {{ form.trader|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+        {% if form.trader.errors %}
+          <div class="text-red-600 text-xs mt-1">
+            {% for error in form.trader.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
 
       <div class="mb-4">
         <label class="block text-sm font-medium">Notes</label>
         {{ form.notes }}
+        {% if form.notes.errors %}
+          <div class="text-red-600 text-xs mt-1">
+            {% for error in form.notes.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
 
       <div class="mb-4">
         <label class="block text-sm font-medium">Schedule</label>
         {{ form.scheduled_at }}
+        {% if form.scheduled_at.errors %}
+          <div class="text-red-600 text-xs mt-1">
+            {% for error in form.scheduled_at.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
 
       <div class="mb-4 flex items-center gap-2">
         {{ form.priority }}
         <label class="text-sm text-gray-700">{{ form.priority.label }}</label>
+        {% if form.priority.errors %}
+          <div class="text-red-600 text-xs mt-1">
+            {% for error in form.priority.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
 
       <button type="submit"
-              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Submit Job
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Submit Job
       </button>
     </form>
 

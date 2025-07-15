@@ -273,7 +273,6 @@ class AgentJobCreateView(CreateView):
 
         try:
             job.save()
-            messages.success(self.request, f'Job created successfuly! Reference: {job.job_code}')
 
             # Send job creation email to agent
             send_mail(
@@ -289,8 +288,9 @@ class AgentJobCreateView(CreateView):
                 fail_silently=False,
             )
 
+            messages.success(self.request, f'Job created successfuly! Reference: {job.job_code}')
             return redirect(self.success_url)
-            
+
         except Exception as e:
             form.add_error(None, f"Error saving job: {e}")
             return self.form_invalid(form)

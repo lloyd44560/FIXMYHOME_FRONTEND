@@ -85,6 +85,18 @@ class AgentCreateJobForm(forms.ModelForm):
             'priority': 'Mark as High Priority',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['renter'].required = True
+        self.fields['trader'].required = True
+        self.fields['scheduled_at'].required = True
+        self.fields['priority'].required = False
+        self.fields['notes'].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
+
 class BiddingApprovalForm(forms.ModelForm):
     class Meta:
         model = Bidding
