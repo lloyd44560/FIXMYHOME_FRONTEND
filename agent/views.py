@@ -180,10 +180,16 @@ class PropertyCreateView(CreateView):
         userAgent = AgentRegister.objects.get(user=self.request.user)
         property = form.save(commit=False)
         property.agent = userAgent
-        form.save()
-
+        # Set the renter FK from the validated renter_name field
+        if hasattr(form, 'cleaned_data') and 'renter_name' in form.cleaned_data:
+            from renter.models import Renter
+            renter_name = form.cleaned_data['renter_name']
+            renter_qs = Renter.objects.filter(name__iexact=renter_name)
+            if renter_qs.exists():
+                property.renter = renter_qs.first()
+        property.save()
         messages.success(self.request, "Property created successfully!")
-        return super().form_valid(form)
+        return redirect(self.success_url)
     
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
@@ -197,16 +203,24 @@ class PropertyUpdateView(UpdateView):
     def get_initial(self):
         initial = super().get_initial()
         property = self.get_object()
-
-        if not property.renter_name:
-            initial['renter_name'] = "Unknown"
-
+        if hasattr(property, 'renter') and property.renter:
+            initial['renter_name'] = property.renter.name
+        else:
+            initial['renter_name'] = ""
         return initial
-    
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        property = form.save(commit=False)
+        # Set the renter FK from the validated renter_name field
+        if hasattr(form, 'cleaned_data') and 'renter_name' in form.cleaned_data:
+            from renter.models import Renter
+            renter_name = form.cleaned_data['renter_name']
+            renter_qs = Renter.objects.filter(name__iexact=renter_name)
+            if renter_qs.exists():
+                property.renter = renter_qs.first()
+        property.save()
         messages.success(self.request, 'Property details updated successfully.')
-        return response
+        return redirect(self.success_url)
 
 @require_POST
 def delete_property(request, pk):

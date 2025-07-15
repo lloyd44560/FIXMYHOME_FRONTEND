@@ -1,4 +1,8 @@
 from django import forms
+from django.core.exceptions import ValidationError
+
+from renter.models import Renter
+
 # from django.forms import inlineformset_factory
 
 from renter.models import Renter
@@ -30,6 +34,13 @@ class AgentEditProfileForm(forms.ModelForm):
         }
 
 class AgentCreatePropertyForm(forms.ModelForm):
+    renter_name = forms.CharField(
+        label="Renter Name",
+        widget=forms.TextInput(attrs={
+            'class': 'w-full border border-gray-300 rounded-md p-2',
+            'placeholder': 'Type renter name...'
+        })
+    )
     class Meta:
         model = Property
         exclude = ['agent']
@@ -41,6 +52,19 @@ class AgentCreatePropertyForm(forms.ModelForm):
                 'type': 'date',
             }),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        renter_name = cleaned_data.get('renter_name')
+        if renter_name:
+            renter_qs = Renter.objects.filter(name__iexact=renter_name)
+            if not renter_qs.exists():
+                raise ValidationError({
+                    'renter_name': "Renter not found. Would you like to send an invitation?"
+                })
+            # Optionally, set the FK if found
+            self.instance.renter = renter_qs.first()
+        return cleaned_data
 
 class InvitationForm(forms.Form):
     name = forms.CharField(max_length=100, label="Renter Name")
@@ -84,18 +108,6 @@ class AgentCreateJobForm(forms.ModelForm):
         labels = {
             'priority': 'Mark as High Priority',
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['renter'].required = True
-        self.fields['trader'].required = True
-        self.fields['scheduled_at'].required = True
-        self.fields['priority'].required = False
-        self.fields['notes'].required = False
-
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
 
 class BiddingApprovalForm(forms.ModelForm):
     class Meta:
