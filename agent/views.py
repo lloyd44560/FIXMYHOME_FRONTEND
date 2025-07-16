@@ -10,6 +10,7 @@ from django.conf import settings
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
 
+from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import TemplateView, CreateView, ListView
@@ -264,8 +265,26 @@ class RenterListView(ListView):
 class RenterUpdateView(UpdateView):
     model = Renter
     form_class = RenterUpdateForm
-    template_name = 'components/home/editRenters.html'  # you’ll create this
-    success_url = reverse_lazy('manage_renters')  # name of the list view URL
+    template_name = 'components/home/editRenters.html'
+    success_url = reverse_lazy('manage_renters')
+
+    def get_object(self, queryset=None):
+        # Get the renter object by pk from the URL
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(Renter, pk=pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['renter'] = self.get_object()
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Renter updated successfully.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the renter.')
+        return self.render_to_response(self.get_context_data(form=form))
 
 # ################## Create Job Order ##################
 @method_decorator(login_required, name='dispatch')
@@ -322,19 +341,8 @@ class JobListView(ListView):
     context_object_name = 'jobs'
 
     def get_queryset(self):
+        # Return all jobs, ordered by priority and quoted_at
         queryset = super().get_queryset()
-
-        status = self.request.GET.get('status')
-        priority = self.request.GET.get('priority')  # 'true' or 'false'
-
-        if status:
-            queryset = queryset.filter(status=status)
-        if priority == 'true':
-            queryset = queryset.filter(priority=True)
-        elif priority == 'false':
-            queryset = queryset.filter(priority=False)
-
-        # Order priority=True first, then by quoted_at descending
         return queryset.order_by('-priority', '-quoted_at')
 
     def get_context_data(self, **kwargs):
@@ -414,3 +422,18 @@ class InviteRenterView(FormView):
         messages.success(self.request, "Invitation sent successfully!")
 
         return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class ActiveJobsListView(ListView):
+    model = Jobs
+    template_name = 'components/home/active_jobs_list.html'
+    context_object_name = 'jobs'
+
+    def get_queryset(self):
+        # Show all jobs, ordered by priority and scheduled/approved/confirmed date
+        return Jobs.objects.all().order_by('-priority', '-scheduled_at', '-approved_at', '-confirmed_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_options'] = dict(Jobs._meta.get_field('status').choices)
+        return context

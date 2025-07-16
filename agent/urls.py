@@ -23,5 +23,6 @@ urlpatterns = [
     path('bids/', views.AgentBidListView.as_view(), name='agent_bid_list'),
     path('bidding/<int:pk>/approve/', views.BiddingApprovalView.as_view(), name='bidding_approval'),
     path('properties/', views.PropertiesListView.as_view(), name='manage_properties'),
+    path('active-jobs/', views.ActiveJobsListView.as_view(), name='active_jobs_list'),
     path('renter-invitation/', views.InviteRenterView.as_view(), name='renter_invitation'),
 ]

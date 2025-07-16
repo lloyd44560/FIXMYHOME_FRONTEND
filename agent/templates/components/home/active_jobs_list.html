@@ -1,0 +1,50 @@
+{% extends "baseAgent.html" %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+<main class="max-w-5xl mx-auto p-4 sm:p-6 mb-[8rem]">
+  <h2 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-6 text-center tracking-tight">Active Jobs</h2>
+  <div class="overflow-x-auto rounded-xl shadow">
+    <table class="min-w-full bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <thead class="bg-blue-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Job Code</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Renter</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Trader</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Status</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Priority</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Scheduled</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+        <tr class="border-t border-gray-100 hover:bg-blue-50 transition">
+          <td class="px-4 py-3 whitespace-nowrap">{{ job.job_code }}</td>
+          <td class="px-4 py-3 whitespace-nowrap">{{ job.renter }}</td>
+          <td class="px-4 py-3 whitespace-nowrap">{{ job.trader }}</td>
+          <td class="px-4 py-3 whitespace-nowrap">{{ job.get_status_display }}</td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            {% if job.priority %}
+              <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">High</span>
+            {% else %}
+              <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">Normal</span>
+            {% endif %}
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">{{ job.scheduled_at|date:"Y-m-d H:i" }}</td>
+          <!-- <td class="px-4 py-3">
+            <a href="{% url 'property_view' job.pk %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 shadow transition">View</a>
+          </td> -->
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center py-4">No active jobs found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
