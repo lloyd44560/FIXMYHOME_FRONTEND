@@ -5,6 +5,10 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from . import renter_actions
+from .renter_actions import (
+    PropertyListView,
+)
 
 urlpatterns = [
     # path('', views.home, name='home'),  # this calls views.home
@@ -63,8 +67,40 @@ urlpatterns = [
     path('change-password/', views.change_password, name='change_password'),
 
 
-    path('add-property/', views.add_property, name='add_property'),
-    path('delete-property/<int:id>/', views.delete_property, name='delete_property'),
-    path('unlink-property/<int:id>/', views.unlink_property, name='unlink_property'),
-    path('edit-property/<int:id>/', views.edit_property, name='edit_property'),
+    path('add-property/', renter_actions.add_property, name='add_property'),
+    path('delete-property/<int:id>/', renter_actions.delete_property, name='delete_property'),
+    path('unlink-property/<int:id>/', renter_actions.unlink_property, name='unlink_property'),
+    path('edit-property/<int:id>/', renter_actions.edit_property, name='edit_property'),
+
+    # for property
+
+    path('report/add/', views.add_standard_report, name='add_standard_report'),
+    path('report/edit/<int:id>/', views.edit_standard_report, name='edit_standard_report'),
+    path('report/delete/<int:id>/', views.delete_standard_report, name='delete_standard_report'),
+
+
+
+    path('properties/', PropertyListView.as_view(), name='property_list'),
+
+
+    path('jobs/', renter_actions.list_jobs, name='job_list'),
+    path('jobs/add/', renter_actions.add_job, name='add_job'),
+    path('jobs/edit/<int:id>/', renter_actions.edit_job, name='edit_job'),
+    path('jobs/delete/<int:id>/', renter_actions.delete_job, name='delete_job'),
+
+
+    path('standard-reports/', renter_actions.standard_report_list, name='standard_report_list'),
+    path('standard-reports/add/', renter_actions.add_standard_report, name='add_standard_report'),
+    path('standard-reports/edit/<int:pk>/', renter_actions.edit_standard_report, name='edit_standard_report'),
+    path('standard-reports/delete/<int:pk>/', renter_actions.delete_standard_report, name='delete_standard_report'),
+
+    path('rooms/', renter_actions.renter_room_list, name='renter_room_list'),
+    path('rooms/add/', renter_actions.add_renter_room, name='add_renter_room'),
+    path('rooms/<int:pk>/edit/', renter_actions.edit_renter_room, name='edit_renter_room'),
+    path('rooms/<int:pk>/delete/', renter_actions.delete_renter_room, name='delete_renter_room'),
+
+    path('rooms/<int:room_id>/area/add/', renter_actions.add_area_condition, name='add_area_condition'),
+    path('areas/<int:pk>/edit/', renter_actions.edit_area_condition, name='edit_area_condition'),
+    path('areas/<int:pk>/delete/', renter_actions.delete_area_condition, name='delete_area_condition'),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

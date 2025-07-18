@@ -319,13 +319,47 @@
           <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
             <input
               type="number"
-              name="floorCount"
-              id="floorCount"
+              name="floorCount_manual"
+              id="floorCount_manual"
               placeholder="How many floor is the property?"
               class="w-full border border-gray-300 rounded-md p-2"
               min="1"
               onchange="validateFloorCount(this)"
             />
+        </div>
+        <div class="mb-4">
+          <label for="leaseStart" class="block text-gray-700 font-medium mb-2">Property Lease Start</label>
+            <input
+              type="date"
+              name="leaseStart_manual"
+              id="leaseStart_manual"
+              placeholder="Date of Property Lease Start?"
+              class="w-full border border-gray-300 rounded-md p-2"
+              min="1"
+              onchange="validateFloorCount(this)"
+            />
+        </div>
+
+        <div class="mb-4">
+          <label for="leaseEnd" class="block text-gray-700 font-medium mb-2">Property Lease End</label>
+            <input
+              type="date"
+              name="leaseEnd_manual"
+              id="leaseEnd_manual"
+              placeholder="Date of Property Lease End?"
+              class="w-full border border-gray-300 rounded-md p-2"
+              min="1"
+              onchange="validateFloorCount(this)"
+            />
+        </div>
+        <div class="mb-4">
+          <label for="agent" class="block text-gray-700 font-medium mb-2">Select Agent</label>
+          <select name="agent_id" id="agent_id" required class="w-full border border-gray-300 rounded-md p-2">
+            <option value="" disabled selected>Select an agent</option>
+            {% for agent in agents %}
+              <option value="{{ agent.id }}">{{ agent.name }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="mb-4">
           <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
@@ -361,12 +395,12 @@
 
         <div class="mb-4">
           <label for="houseState" class="block text-gray-700 font-medium mb-2">State</label>
-          <input type="text" name="houseState" id="houseState" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
+          <input type="text" name="houseState_manual" id="houseState_manual" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
 
         <div class="mb-4">
           <label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label>
-          <input type="text" name="houseCity" id="houseCity" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
+          <input type="text" name="houseCity_manual" id="houseCity_manual" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
         </div>
 
         <div class="mb-4">

@@ -138,9 +138,10 @@
     }
 
     // function to close the Edit Category Modal
-    function closeEditModal() {
-      document.getElementById("editCategoryModal").classList.add("hidden");
-      currentEditingRoomDiv = null;
+function closeEditModal() {
+  document.getElementById("editCategoryModal").classList.add("hidden");
+  currentEditingRoomDiv = null;
+}
     // Init on load
     document.addEventListener("DOMContentLoaded", () => {
       populateCategoryDropdown();

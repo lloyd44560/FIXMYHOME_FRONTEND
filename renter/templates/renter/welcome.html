@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome Home - FixMyHome</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- ✅ USE Bootstrap 5 only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
@@ -65,6 +67,21 @@
       </form>
     </div>
   </nav>
+<!-- Tabs Navigation -->
+
+
+<!-- Tabs Content -->
+<div class="tab-content" id="mainTabsContent">
+  <div class="tab-pane fade show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+    <!-- Property Table Section (injected from template) -->
+
+  </div>
+  <div class="tab-pane fade" id="minimum-standard-reports" role="tabpanel" aria-labelledby="standards-tab">
+    <!-- Minimum Standard Report Section (injected from template) -->
+
+  </div>
+</div>
+
 
     <!-- Hero Section with Background -->
 
@@ -88,25 +105,43 @@
     </div>
 
 </section>
+    <!-- Features Section -->
+    <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Manage Properties</h3>
+        <p class="text-gray-600 mb-4">Easily create and track your maintenance requests. Keep all your property details organized and accessible anytime.</p>
+        <a href="/properties/" class="text-blue-600 hover:underline">Manage your properties →</a>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-blue-600 mb-2">View My Agents</h3>
+        <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Stay connected with your agents and get real-time updates.</p>
+        <a href="#" class="text-blue-600 hover:underline">Manage linked agents →</a>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Job Requests</h3>
+        <p class="text-gray-600 mb-4">Manage your job requests. Assign tasks, track progress, and ensure everything gets done on time.</p>
+        <a href="/jobs/" class="text-blue-600 hover:underline">Manage your job requests →</a>
+      </div>
+    </section>
 
-  <!-- Features Section -->
-  <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
-    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-      <h3 class="text-xl font-bold text-blue-600 mb-2">Report Maintenance</h3>
-      <p class="text-gray-600 mb-4">Easily create and track your maintenance requests.</p>
-      <a href="#" class="text-blue-600 hover:underline">Report Issue →</a>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-      <h3 class="text-xl font-bold text-blue-600 mb-2">View My Requests</h3>
-      <p class="text-gray-600 mb-4">Monitor the status of all your service requests.</p>
-      <a href="#" class="text-blue-600 hover:underline">View Requests →</a>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-      <h3 class="text-xl font-bold text-blue-600 mb-2">Complete Profile</h3>
-      <p class="text-gray-600 mb-4">Complete your profile for a better experience.</p>
-      <a href="#" class="text-blue-600 hover:underline">Update Profile →</a>
-    </div>
-  </section>
+    <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Condition Reports</h3>
+        <p class="text-gray-600 mb-4">Easily create and track your maintenance requests. Document the state of rooms before and after leasing.</p>
+        <a href="/properties/" class="text-blue-600 hover:underline">Manage your condition reports →</a>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Appliance Reports</h3>
+        <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Ensure all appliances are functioning properly and report issues quickly.</p>
+        <a href="#" class="text-blue-600 hover:underline">Manage your appliance reports →</a>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Minimum Standard Reports</h3>
+        <p class="text-gray-600 mb-4">Complete your profile for a better experience. Submit compliance reports to meet property standards and regulations.</p>
+        <a href="/standard-reports/" class="text-blue-600 hover:underline">Manage your minimum standard reports →</a>
+      </div>
+    </section>
+
 
   <!-- Progress Section -->
   <section class="bg-white mx-8 my-16 p-6 rounded-lg shadow">
@@ -133,651 +168,33 @@
         </div>
         <a href="#" class="text-blue-600 hover:underline">→</a>
       </div>
+    <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
+        <div class="flex items-center">
+          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+          <span>Add Job Requests</span>
+        </div>
+        <a href="#" class="text-blue-600 hover:underline">→</a>
+      </div>
+
+      <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
+        <div class="flex items-center">
+          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+          <span>Add Appliance reports</span>
+        </div>
+        <a href="#" class="text-blue-600 hover:underline">→</a>
+      </div>
+
+     <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
+        <div class="flex items-center">
+          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+          <span>Add Minimum Standard Reports</span>
+        </div>
+        <a href="#" class="text-blue-600 hover:underline">→</a>
+      </div>
     </div>
 
       <!-- Properties Section -->
   <br/>
-  <h3 class="text-3xl font-bold mb-6 text-gray-800">Manage Your Records</h3>
-  <!-- Notebook Layout Container -->
-  <div class="max-w-7xl mx-auto px-4">
-    <!-- Tab Buttons (Notebook Pages) -->
-    <div class="flex space-x-4 border-b mb-6">
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 active-tab border-b-2 border-blue-600" data-tab="properties">Properties</button>
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="agents">Agents</button>
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="traders">Job Requests</button>
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="condition_reports">Condition Reports</button>
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="appliance_reports">Appliance Reports</button>
-      <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="minimum_standard_reports">Minimum Standard Reports</button>
-    </div>
-
-    <!-- Tab Pages -->
-    <div id="tab-properties" class="tab-content">
-
-    <!-- Properties Table Section -->
-          <section class="mx-8 my-16">
-            <h3 class="text-3xl font-bold mb-6 text-gray-800">Properties</h3>
-
-
-<div class="container mt-5">
-  <h2 class="mb-4">Welcome, {{ request.user.username }}</h2>
-
-  <!-- Add Button to open modal -->
-  <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPropertyModal">Add Property</button>
-
-  <!-- Property Table -->
- <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>#</th><th>Name</th><th>City</th><th>Status</th><th>Photo</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for prop in properties %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ prop.name }}</td>
-            <td>{{ prop.city }}</td>
-            <td>{{ prop.status }}</td>
-            <td>
-              {% if prop.property_photo %}
-                <img src="{{ prop.property_photo.url }}" height="60">
-              {% else %}
-                N/A
-              {% endif %}
-            </td>
-            <td>
-              <a href="{% url 'delete_property' prop.id %}" class="btn btn-danger btn-sm"
-                onclick="return confirm('Are you sure you want to delete this property?')">Delete</a>
-              <a href="{% url 'unlink_property' prop.id %}" class="btn btn-warning btn-sm"
-                onclick="return confirm('Unlink this property from your account?')">Unlink</a>
-              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                data-target="#editModal{{ prop.id }}">Edit</button>
-            </td>
-          </tr>
-
-          <!-- ✅ EDIT MODAL for this prop -->
-          <div class="modal fade" id="editModal{{ prop.id }}" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-              <form method="POST" enctype="multipart/form-data" action="{% url 'edit_property' prop.id %}">
-                {% csrf_token %}
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Edit Property: {{ prop.name }}</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="form-row">
-                      <div class="form-group col-md-6"><label>Name</label>
-                        <input type="text" name="name" value="{{ prop.name }}" class="form-control" required>
-                      </div>
-                      <div class="form-group col-md-6"><label>Floor Count</label>
-                        <input type="number" name="floor_count" value="{{ prop.floor_count }}" class="form-control">
-                      </div>
-                      <div class="form-group col-md-6"><label>City</label>
-                        <input type="text" name="city" value="{{ prop.city }}" class="form-control">
-                      </div>
-                      <div class="form-group col-md-6"><label>State</label>
-                        <input type="text" name="state" value="{{ prop.state }}" class="form-control">
-                      </div>
-                      <div class="form-group col-md-12"><label>Address</label>
-                        <textarea name="address" class="form-control">{{ prop.address }}</textarea>
-                      </div>
-                      <div class="form-group col-md-6"><label>Lease Start</label>
-                        <input type="date" name="lease_start" value="{{ prop.lease_start|date:'Y-m-d' }}" class="form-control">
-                      </div>
-                      <div class="form-group col-md-6"><label>Lease End</label>
-                        <input type="date" name="lease_end" value="{{ prop.lease_end|date:'Y-m-d' }}" class="form-control">
-                      </div>
-                      <div class="form-group col-md-6"><label>Status</label>
-                        <select name="status" class="form-control">
-                          <option value="vacant" {% if prop.status == 'vacant' %}selected{% endif %}>Vacant</option>
-                          <option value="occupied" {% if prop.status == 'occupied' %}selected{% endif %}>Occupied</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                          <label>Property Photo</label><br>
-                          {% if prop.property_photo %}
-                            <img src="{{ prop.property_photo.url }}" alt="Current Photo" height="80"><br>
-                          {% else %}
-                            <span>No photo uploaded</span><br>
-                          {% endif %}
-                          <input type="file" name="property_photo" class="form-control">
-                        </div>
-
-                      <!--<div class="form-group col-md-6"><label>Condition Report</label>-->
-                      <!--  <input type="file" name="condition_report" class="form-control">-->
-                      <!--</div>-->
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-          {% endfor %}
-        </tbody>
-      </table>
-</div>
-<!-- Add Property Modal -->
-<div class="modal fade" id="addPropertyModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <form method="POST" enctype="multipart/form-data" class="modal-content" action="{% url 'add_property' %}">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="add">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Property</h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <!-- Form fields in grid -->
-        <div class="form-row">
-          <div class="form-group col-md-6"><input name="name" class="form-control" placeholder="Property Name" required></div>
-          <div class="form-group col-md-6"><input name="floor_count" type="number" class="form-control" placeholder="Floor Count"></div>
-          <div class="form-group col-md-6"><input name="city" class="form-control" placeholder="City"></div>
-          <div class="form-group col-md-6"><input name="state" class="form-control" placeholder="State"></div>
-          <div class="form-group col-md-12"><textarea name="address" class="form-control" placeholder="Address"></textarea></div>
-          <div class="form-group col-md-6"><input name="renter_name" class="form-control" placeholder="Renter Name"></div>
-          <div class="form-group col-md-6"><input name="renter_contact" class="form-control" placeholder="Renter Contact"></div>
-          <div class="form-group col-md-6"><input name="rent" type="number" step="0.01" class="form-control" placeholder="Rent"></div>
-          <div class="form-group col-md-6"><input name="postal_code" class="form-control" placeholder="Postal Code"></div>
-          <div class="form-group col-md-6"><input name="lease_start" type="date" class="form-control"></div>
-          <div class="form-group col-md-6"><input name="lease_end" type="date" class="form-control"></div>
-
-         <div class="form-group col-md-6">
-          <label for="agentSelect">Select Agent</label>
-          <select name="agent_id" class="form-control" required>
-            <option value="" disabled selected>-- Choose an agent --</option>
-            {% for agent in agents %}
-              <option value="{{ agent.id }}">{{ agent.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-          <div class="form-group col-md-6">
-            <select name="status" class="form-control">
-              <option value="vacant">Vacant</option>
-              <option value="occupied">Occupied</option>
-            </select>
-          </div>
-          Property Image
-          <div class="form-group col-md-6"><input name="property_photo" type="file" class="form-control"></div>
-          <!--<div class="form-group col-md-6"><input name="condition_report" type="file" class="form-control"></div>-->
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-success">Add Property</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
-
-
-
-
-    <div id="tab-agents" class="tab-content hidden">
-
-      <section class="mx-8 my-16">
-        <h3 class="text-3xl font-bold mb-6 text-gray-800">Agents</h3>
-        {% if agents %}
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-                    <thead class="bg-blue-600 text-white">
-                        <tr>
-                            <!-- <th class="py-3 px-6 text-left">Image</th>  -->
-                            <th class="py-3 px-6 text-left">Agent Name</th>
-                            <th class="py-3 px-6 text-left">Agent Email</th>
-                            <th class="py-3 px-6 text-left">Agent Phone Number</th>
-                            <th class="py-3 px-6 text-left">Agent Company Name</th>
-                            <th class="py-3 px-6 text-left">Agent Company Email</th>
-                            <th class="py-3 px-6 text-left">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for agent in agents %}
-                            <tr class="border-b hover:bg-gray-100">
-                                <!-- Display image -->
-                                <!-- <td class="py-3 px-6">
-                                    <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
-                                </td> -->
-                                <td class="py-3 px-6">{{ agent.name }}</td>
-                                <td class="py-3 px-6">{{ agent.email }}</td>
-                                <td class="py-3 px-6">{{ agent.phone }}</td>
-                                <td class="py-3 px-6">{{ agent.company_name }}</td>
-                                <td class="py-3 px-6">{{  agent.company_email }}</td>
-                                <td class="py-3 px-6 flex space-x-4">
-                                  <!-- View Icon -->
-                                  <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                      </svg>
-                                  </a>
-
-                                  <!-- Edit Icon -->
-                                  <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
-                                      </svg>
-                                  </a> -->
-
-                                  <!-- Delete Icon -->
-                                  <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
-                                      </svg>
-                                  </a> -->
-                              </td>
-
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <p class="text-gray-600">You don't have any assigned agents listed yet.</p>
-        {% endif %}
-      </section>
-    </div>
-
-
-
-
-    <div id="tab-traders" class="tab-content hidden">
-      <div id="scrollToTraders"></div>  <!-- Add this just inside tab-traders -->
-      <section class="mx-8 my-16">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-3xl font-bold text-gray-800">My Job Requests</h3>
-          <button onclick="document.getElementById('addJobModal').classList.remove('hidden')"
-                  class="bg-blue-600 text-white px-4 py-2 rounded">Add Job</button>
-        </div>
-
-          {% if jobs %}
-          <table class="w-full border border-gray-300 text-sm text-gray-800">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="border px-4 py-2">Job Code</th>
-                <th class="border px-4 py-2">Agent</th>
-                <th class="border px-4 py-2">Trader</th>
-                <th class="border px-4 py-2">Priority</th>
-                <th class="border px-4 py-2">Status</th>
-                <th class="border px-4 py-2">Notes</th>
-                <th class="border px-4 py-2">Quoted</th>
-                <th class="border px-4 py-2">Confirmed</th>
-                <th class="border px-4 py-2">Approved</th>
-                <th class="border px-4 py-2">Scheduled</th>
-                <th class="border px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for job in jobs %}
-              <tr>
-                <td class="border px-4 py-2 font-semibold">{{ job.job_code }}</td>
-                <td class="border px-4 py-2">{{ job.agent.name }}</td>
-                <td class="border px-4 py-2">
-                  {% if job.trader %}
-                    {{ job.trader.name }}
-                  {% else %}
-                    -
-                  {% endif %}
-                </td>
-                <td class="border px-4 py-2">
-                  {% if job.priority %}
-                  <span class="text-red-500 font-bold">High</span>
-                  {% else %}
-                  Normal
-                  {% endif %}
-                </td>
-                <td class="border px-4 py-2">{{ job.get_status_display }}</td>
-                <td class="border px-4 py-2">{{ job.notes }}</td>
-                <td class="border px-4 py-2">{{ job.quoted_at|date:"M d, Y H:i" }}</td>
-                <td class="border px-4 py-2">{{ job.confirmed_at|default:"-" }}</td>
-                <td class="border px-4 py-2">{{ job.approved_at|default:"-" }}</td>
-                <td class="border px-4 py-2">{{ job.scheduled_at|default:"-" }}</td>
-                <td class="border px-4 py-2 text-center">
-                  <form method="POST" action="{% url 'delete_job' job.id %}" onsubmit="return confirm('Delete this job?')">
-                    {% csrf_token %}
-                    <button type="submit" class="text-red-500 hover:underline text-xs">Delete</button>
-                  </form>
-                    <!-- Edit Button -->
-                    <button type="button"
-                      onclick="openEditJobModal(
-                          {{ job.id }},
-                          '{{ job.job_code }}',
-                          {{ job.priority|yesno:'true,false' }},
-                          '{{ job.status }}',
-                          `{{ job.notes|escapejs }}`
-                      )"
-                      class="text-blue-600 hover:underline text-xs">Edit</button>
-
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          {% else %}
-          <p class="text-gray-500">No job records available.</p>
-          {% endif %}
-        </section>
-
-
-      <!-- Add Jobs Modal  -->
-      <div id="addJobModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md space-y-4 shadow-lg">
-          <h2 class="text-lg font-bold text-center mb-4">Add New Job</h2>
-          <form method="POST" action="{% url 'add_job' %}">
-            {% csrf_token %}
-            {{ job_form.as_p }}
-            <div class="flex justify-end gap-2 mt-4">
-              <button type="button" onclick="document.getElementById('addJobModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-
-      <div id="editJobModal" class="fixed inset-0 hidden bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-          <h2 class="text-xl font-bold mb-4">Edit Job</h2>
-          <form id="editJobForm" method="POST" action="{% url 'edit_job' %}" onsubmit="handleEditJobSubmit(event)">
-            {% csrf_token %}
-            <input type="hidden" name="job_id" id="editJobId">
-            <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-700">Job Code (Read Only)</label>
-              <input type="text" id="editJobCode" class="w-full border px-2 py-1 rounded" readonly>
-            </div>
-            <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-700">Notes</label>
-              <textarea name="notes" id="editNotes" rows="3" class="w-full border px-2 py-1 rounded resize-none"></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-700">Priority</label>
-              <select name="priority" id="editPriority" class="w-full border px-2 py-1 rounded">
-                <option value="false">Normal</option>
-                <option value="true">High</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-700">Status</label>
-              <select name="status" id="editStatus" class="w-full border px-2 py-1 rounded">
-                <option value="quoted">Quoted</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="approved">Approved</option>
-                <option value="scheduled">Scheduled</option>
-              </select>
-            </div>
-            <div class="flex justify-end gap-2">
-              <button type="button" onclick="document.getElementById('editJobModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
-            </div>
-          </form>
-        </div>
-      </div>
-      </div>
-    </div>
-
-
-
-    <div id="tab-condition_reports" class="tab-content hidden">
-
-          <section class="mx-8 my-16">
-            <h3 class="text-3xl font-bold mb-6 text-gray-800">Condition Reports</h3>
-
-              <h2 class="text-xl font-bold mb-4">Room Conditions</h2>
-
-              <table class="w-full table-auto border border-gray-300 text-sm text-gray-800">
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Condition Report Date</label>
-                <input type="date" id="conditionDateFilter" class="border p-2 mb-4 text-sm">
-
-
-
-                <thead>
-                  <tr>
-
-                     <th class="border px-4 py-2">Room Image</th>
-                    <th class="border px-4 py-2">Room</th>
-                    <th class="border px-4 py-2">Agent Address</th>
-                    <th class="border px-4 py-2">Agent Company Name</th>
-                    <th class="border px-4 py-2">Agent Name</th>
-                    <th class="border px-4 py-2">Agreement Start Date</th>
-                    <th class="border px-4 py-2">Condition Report Date</th>
-
-                    <!-- <th class="border px-4 py-2">Width</th>
-                    <th class="border px-4 py-2">Length</th> -->
-                    <th class="border px-4 py-2">Areas</th>
-                    <th class="border px-4 py-2">Renter Comments</th>
-                    <th class="border px-4 py-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for room in room_conditions %}
-                    <tr>
-                      <td>{% if room.photo %}
-                          <img src="{{ room.photo.url }}" alt="Room Image" class="w-24 h-24 object-cover rounded-lg border" />
-                        {% else %}
-                          <span class="text-gray-400 italic">No image</span>
-                        {% endif %}
-                      </td>
-                      <td class="border px-4 py-2">{{ room.room_name }}</td>
-                      <td class="border px-4 py-2">{{ room.address }}</td>
-                      <td class="border px-4 py-2">{{ room.agent_company_name }}</td>
-                      <td class="border px-4 py-2">{{ room.agent_name }}</td>
-                      <td class="border px-4 py-2">{{ room.agreement_start_date }}</td>
-                      <td class="border px-4 py-2 condition-date-cell">{{ room.condition_report_date }}</td>
-                      <!-- <td class="border px-4 py-2">{{ room.width }}</td>
-                      <td class="border px-4 py-2">{{ room.length }}</td> -->
-                      <td class="border px-4 py-2">
-                        <ul class="list-disc list-inside">
-                          {% for area in room.areas.all %}
-                            <li>{{ area.area_name }} - <strong>{{ area.status }}</strong> </li>
-
-                          {% empty %}
-                            <li>No areas added</li>
-                          {% endfor %}
-                        </ul>
-                      </td>
-                      <td class="border px-4 py-2">
-                        <ul class="list-disc list-inside">
-                          {% for area in room.areas.all %}
-                        <strong>{{ area.renter_comment }}</strong>
-                         {% empty %}
-                            <li>No areas added</li>
-                          {% endfor %}
-                        </ul>
-                      </td>
-                      <td class="border px-4 py-2 text-center">
-                      <button
-                        onclick="openEditConditionModal({{ room.id }})"
-                        class="text-blue-600 hover:underline text-xs">
-                        Edit
-                      </button>
-                    </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-
-          </section>
-
-              <div id="editConditionModal" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50">
-                <div class="bg-white p-6 rounded shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <h2 class="text-xl font-bold mb-4">Edit Room Condition</h2>
-
-                  <form method="POST" enctype="multipart/form-data" id="editConditionForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="room_condition_id" id="editRoomConditionId" />
-
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
-                    <input type="text" name="room_name" id="editRoomName" class="w-full border p-2 mb-3" />
-
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Agent Name</label>
-                    <input type="text" name="agent_name" id="editAgentName" class="w-full border p-2 mb-3" />
-
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Condition Report Date</label>
-                    <input type="date" name="condition_report_date" id="editConditionReportDate" class="w-full border p-2 mb-3" />
-
-                    <!-- Add more fields as needed -->
-                    <div id="editAreaFields"></div>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
-                    <button type="button" onclick="closeEditConditionModal()" class="ml-2 text-gray-600">Cancel</button>
-                  </form>
-                </div>
-              </div>
-          </div>
-        </div>
-      </div>
-
-    <div id="tab-appliance_reports" class="tab-content hidden">
-
-        <section class="mx-8 my-16">
-          <h3 class="text-3xl font-bold mb-6 text-gray-800">Appliance Reports</h3>
-
-          {% if appliance_reports %}
-          <table class="w-full border border-gray-300 text-sm">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="border px-4 py-2">Room</th>
-                <th class="border px-4 py-2">Brand Name</th>
-                <th class="border px-4 py-2">Model Name</th>
-                <th class="border px-4 py-2">Room Dimensions</th>
-                <th class="border px-4 py-2">Location</th>
-                <th class="border px-4 py-2">Photo</th>
-                <th class="border px-4 py-2">Comments</th>
-                <th class="border px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for report in appliance_reports %}
-                <tr data-id="{{ report.id }}">
-                  <td class="room-name">{{ report.room.room_name }}</td>
-                  <td class="brand">{{ report.brand }}</td>
-                  <td class="model">{{ report.model_serial }}</td>
-                  <td class="dimensions">
-                    Height: {{ report.window_height }}<br>
-                    Length: {{ report.window_length }}<br>
-                    Width: {{ report.window_width }}
-                  </td>
-                  <td class="location">{{ report.location }}</td>
-                  <td class="photo">
-                    {% if report.photo %}
-                      <img src="{{ report.photo.url }}" class="w-16 h-16 object-cover rounded border" />
-                    {% else %}
-                      No photo
-                    {% endif %}
-                  </td>
-                  <td class="comments">{{ report.comments|default:"N/A" }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          {% else %}
-            <p class="text-gray-500">No appliance reports available.</p>
-          {% endif %}
-
-
-
-
-          <div id="editApplianceModal" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50">
-            <div class="bg-white p-6 rounded shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h2 class="text-xl font-bold mb-4">Edit Appliance Report</h2>
-
-              <form method="POST" enctype="multipart/form-data" id="editApplianceForm">
-                {% csrf_token %}
-                <input type="hidden" name="appliance_report_id" id="editApplianceReportId" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-                <input type="text" name="brand" id="editBrand" class="w-full border p-2 mb-3" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
-                <input type="text" name="model_serial" id="editModel" class="w-full border p-2 mb-3" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Height</label>
-                <input type="number" step="0.01" name="window_height" id="editHeight" class="w-full border p-2 mb-3" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Length</label>
-                <input type="number" step="0.01" name="window_length" id="editLength" class="w-full border p-2 mb-3" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Width</label>
-                <input type="number" step="0.01" name="window_width" id="editWidth" class="w-full border p-2 mb-3" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <input type="text" name="location" id="editLocation" class="w-full border p-2 mb-3" />
-
-                <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
-                <textarea name="comments" id="editComments" class="w-full border p-2 mb-3"></textarea>
-
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
-                <button type="button" onclick="closeEditApplianceModal()" class="ml-2 text-gray-600">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </section>
-          </div>
-        </div>
-
-
-    <div id="tab-minimum_standard_reports" class="tab-content hidden">
-
-
-         <section class="mx-8 my-16">
-    <h3 class="text-3xl font-bold mb-6 text-gray-800">Minimum Standard Reports</h3>
-
-    {% if minimum_reports %}
-    <table class="w-full border border-gray-300 text-sm">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="border px-4 py-2">Tenant</th>
-          <th class="border px-4 py-2">Audit #</th>
-          <th class="border px-4 py-2">Auditor</th>
-          <th class="border px-4 py-2">Room</th>
-          <th class="border px-4 py-2">Inspection Address</th>
-          <th class="border px-4 py-2">Agent</th>
-          <th class="border px-4 py-2">Audit Date</th>
-          <th class="border px-4 py-2">Comments</th>
-          <th class="border px-4 py-2">Report File</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for report in minimum_reports %}
-        <tr>
-          <td class="border px-4 py-2">{{ report.tenant_name }}</td>
-          <td class="border px-4 py-2">{{ report.audit_no }}</td>
-          <td class="border px-4 py-2">{{ report.auditor }}</td>
-          <td class="border px-4 py-2">{{ report.room }}</td>
-          <td class="border px-4 py-2">{{ report.inspection_address }}</td>
-          <td class="border px-4 py-2">{{ report.managing_agent }}</td>
-          <td class="border px-4 py-2">{{ report.audit_date }}</td>
-          <td class="border px-4 py-2">{{ report.comments|default:"N/A" }}</td>
-          <td class="border px-4 py-2">
-            {% if report.report_file %}
-              <a href="{{ report.report_file.url }}" target="_blank" class="text-blue-600 underline">Download</a>
-            {% else %}
-              No file
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-      <p class="text-gray-500">No minimum standard reports available.</p>
-    {% endif %}
-  </section>
-          </div>
-        </div>
-
-    </div>
 
 
 <!-- Minimum Standard Report  -->
@@ -793,7 +210,7 @@
     <h3 class="text-3xl font-bold text-center mb-12">What Our Users Say</h3>
     <div class="grid md:grid-cols-3 gap-8">
       <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
-        <p class="text-gray-600 italic mb-4">"FixMyHome made it so easy to report maintenance issues. The response time is amazing!"</p>
+        <p class="text-gray-600 italic mb-4">"FixMyHouse made it so easy to report maintenance issues. The response time is amazing!"</p>
         <h4 class="font-bold text-blue-600">- Jane D.</h4>
       </div>
       <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
@@ -1079,7 +496,14 @@
 
 
   </script>
-
+<style>
+  .modal-backdrop {
+    z-index: 1040 !important;
+  }
+  .modal {
+    z-index: 1050 !important;
+  }
+</style>
 </body>
 
 </html>

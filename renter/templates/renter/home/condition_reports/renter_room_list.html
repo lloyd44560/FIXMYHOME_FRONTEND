@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Renter Rooms</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Renter Rooms</h2>
+
+  <!-- Add Room Button -->
+  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addRoomModal">Add Room</button>
+
+  <!-- Table -->
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Room Name</th>
+        <th>Room Type</th>
+        <th>Conditions</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for room in rooms %}
+        <tr>
+          <td>{{ room.name }}</td>
+          <td>{{ room.get_room_type_display }}</td>
+          <td>
+            <ul class="list-unstyled mb-0">
+              {% for cond in room.conditions.all %}
+                <li>
+                  <strong>{{ cond.area_name }}</strong> - {{ cond.condition }}
+                  <div class="btn-group btn-group-sm mt-1">
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editAreaModal{{ cond.id }}">Edit</button>
+                    <form method="POST" action="{% url 'delete_area_condition' cond.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                  </div>
+                </li>
+
+                <!-- Edit Area Modal -->
+                <div class="modal fade" id="editAreaModal{{ cond.id }}" tabindex="-1">
+                  <div class="modal-dialog">
+                    <form method="POST" action="{% url 'edit_area_condition' cond.id %}">
+                      {% csrf_token %}
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Edit Area Condition</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                          <input type="text" name="area_name" value="{{ cond.area_name }}" class="form-control mb-2" placeholder="Area Name">
+                          <input type="text" name="condition" value="{{ cond.condition }}" class="form-control" placeholder="Condition">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              {% empty %}
+                <li><em>No conditions yet</em></li>
+              {% endfor %}
+            </ul>
+
+            <!-- Add Area Button -->
+            <button class="btn btn-sm btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#addAreaModal{{ room.id }}">+ Add Area</button>
+            
+            <!-- Add Area Modal -->
+            <div class="modal fade" id="addAreaModal{{ room.id }}" tabindex="-1">
+              <div class="modal-dialog">
+                <form method="POST" action="{% url 'add_area_condition' room.id %}">
+                  {% csrf_token %}
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Add Area Condition</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="text" name="area_name" class="form-control mb-2" placeholder="Area Name">
+                      <input type="text" name="condition" class="form-control" placeholder="Condition">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </td>
+
+          <!-- Room Actions -->
+          <td>
+            <div class="btn-group">
+              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editRoomModal{{ room.id }}">Edit</button>
+              <form method="POST" action="{% url 'delete_renter_room' room.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Edit Room Modal -->
+        <div class="modal fade" id="editRoomModal{{ room.id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <form method="POST" action="{% url 'edit_renter_room' room.id %}">
+              {% csrf_token %}
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Room</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="text" name="name" value="{{ room.name }}" class="form-control mb-2" placeholder="Room Name">
+                  <select name="room_type" class="form-select">
+                    <option value="bedroom" {% if room.room_type == 'bedroom' %}selected{% endif %}>Bedroom</option>
+                    <option value="kitchen" {% if room.room_type == 'kitchen' %}selected{% endif %}>Kitchen</option>
+                    <option value="bathroom" {% if room.room_type == 'bathroom' %}selected{% endif %}>Bathroom</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-success">Update</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Add Room Modal -->
+<div class="modal fade" id="addRoomModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{% url 'add_renter_room' %}">
+      {% csrf_token %}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Room</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="name" class="form-control mb-2" placeholder="Room Name">
+          <select name="room_type" class="form-select">
+            <option value="bedroom">Bedroom</option>
+            <option value="kitchen">Kitchen</option>
+            <option value="bathroom">Bathroom</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

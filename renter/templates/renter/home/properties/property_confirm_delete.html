@@ -1,0 +1,11 @@
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-lg">
+  <h1 class="text-xl font-bold mb-4">Confirm Delete</h1>
+  <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+  <form method="POST">{% csrf_token %}
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+    <a href="{% url 'property_list' %}" class="ml-2 text-gray-600">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.db import models
 
 class ApplianceReport(models.Model):
-    room = models.ForeignKey('renter.Room', on_delete=models.CASCADE, related_name='appliance_reports')
+    # room = models.ForeignKey('renter.Room', on_delete=models.CASCADE, related_name='appliance_reports')
     renter = models.ForeignKey('renter.Renter', on_delete=models.CASCADE)
 
     window_height = models.CharField(max_length=50, blank=True)
@@ -17,5 +17,5 @@ class ApplianceReport(models.Model):
     appliance_photo = models.ImageField(upload_to='appliances/', null=True, blank=True)
 
 
-    def __str__(self):
-        return f"{self.room.room_name} Report by {self.renter.user.username}"
+    # def __str__(self):
+    #     return f"{self.room.room_name} Report by {self.renter.user.username}"

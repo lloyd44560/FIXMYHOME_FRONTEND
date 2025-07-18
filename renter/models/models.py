@@ -56,14 +56,14 @@ class FailedLoginAttempt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     attempts = models.IntegerField(default=0)
     is_locked = models.BooleanField(default=False)
-    locked_until = models.DateTimeField(null=True, blank=True) 
+    locked_until = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.email} - {self.attempts} attempts"
 
 
-# create model for Properties 
-# Assign a user field 
+# create model for Properties
+# Assign a user field
 
 # models.py
 class ConditionReport(models.Model):
@@ -73,8 +73,8 @@ class ConditionReport(models.Model):
     def __str__(self):
         return f"Condition Report for {self.renter.name}"
 
-# Create a rooms Model 
-# Assign a user field 
+# Create a rooms Model
+# Assign a user field
 
 class EmailVerification(models.Model):
     user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -93,7 +93,7 @@ class Property(models.Model):
     property_name = models.CharField(max_length=255)
 
     floor_count = models.PositiveIntegerField()
-    
+
     state = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     address_line1 = models.CharField(max_length=255)
@@ -124,26 +124,26 @@ class RoomAreaCondition(models.Model):
     room_condition = models.ForeignKey(RoomCondition, related_name='areas', on_delete=models.CASCADE)
     area_name = models.CharField(max_length=255)
     status = models.CharField(max_length=100)
-    
+
 class Room(models.Model):
 
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rooms')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=True, related_name='rooms')
     room_name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     renter = models.ForeignKey('Renter', on_delete=models.CASCADE, related_name='room_items', null=True)
 
-    
+
 
     def __str__(self):
         return self.room_name
-# Rooms Model will have the following 
+# Rooms Model will have the following
 
-# Renter ID 
-# Agent ID 
+# Renter ID
+# Agent ID
 
 
 class ApplianceReport(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='appliance_reports')
+    # room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='appliance_reports')
     renter = models.ForeignKey(Renter, on_delete=models.CASCADE)
     agent = models.ForeignKey(AgentRegister, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -173,3 +173,5 @@ class MinimumStandardReport(models.Model):
     room = models.CharField(max_length=255)
     comments = models.TextField(null=True, blank=True)
     report_file = models.FileField(upload_to='standard_reports/', null=True, blank=True)
+
+
