@@ -18,30 +18,30 @@
   <!-- Dashboard Cards -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
         <h2 class="font-bold text-blue-600 text-lg mb-2">Quote Requests</h2>
         <p class="text-sm">0 urgent</p>
         <p class="text-sm">2 non-urgent</p>
         <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
         <h2 class="font-bold text-blue-600 text-lg mb-2">Properties</h2>
         <p class="text-sm">Manage all listed rental properties and their details.</p>
         <a href="{% url 'manage_properties' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Properties</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
         <h2 class="font-bold text-blue-600 text-lg mb-2">Renters</h2>
         <p class="text-sm">View and manage tenant profiles.<br/><br/></p>
         <a href="{% url 'manage_renters' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Renters</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div>
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
         <h2 class="font-bold text-blue-600 text-lg mb-2">Active Jobs</h2>
         <p class="text-sm">0 urgent</p>
         <p class="text-sm">2 non-urgent</p>
-        <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Active Jobs</a>
+        <a href="{% url 'active_jobs_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Active Jobs</a>
     </div>
   </div>
 
