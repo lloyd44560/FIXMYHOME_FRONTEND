@@ -8,6 +8,12 @@ from .models import Jobs
 from .models import Bidding
 
 class TeamMemberForm(forms.ModelForm):
+    holiday_date = forms.DateField(
+        label="Confirm Password", 
+        widget=forms.DateInput(attrs={'type': 'date'}), 
+        required=False
+    )
+
     class Meta:
         model = TeamMember
         fields = '__all__'
