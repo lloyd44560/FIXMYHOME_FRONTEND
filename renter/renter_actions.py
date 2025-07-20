@@ -532,12 +532,15 @@ def delete_area_condition(request, pk):
         condition.delete()
     return redirect('renter_room_list')
 
+
 @csrf_exempt
 def renter_room_list(request):
     renter = request.user.renter
-    properties = Property.objects.all()
 
-    # 🟡 Get property filter (from GET param)
+    # 🔵 Only get properties owned by this renter
+    properties = Property.objects.filter(renter=renter)
+
+    # 🟡 Get property filter from GET param
     property_id = request.GET.get('property')
 
     # 🟢 Filter rooms accordingly
@@ -555,8 +558,6 @@ def renter_room_list(request):
                 room = form.save(commit=False)
                 room.renter = renter
                 room.save()
-                # return JsonResponse({'status': 'success'})
-
                 return redirect('/renter-rooms/')
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
@@ -566,14 +567,12 @@ def renter_room_list(request):
             form.fields['property'].queryset = properties
             if form.is_valid():
                 form.save()
-                # return JsonResponse({'status': 'success'})
                 return redirect('/renter-rooms/')
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
         elif action == 'delete_room':
             room = get_object_or_404(RenterRoom, id=request.POST.get('room_id'), renter=renter)
             room.delete()
-            # return JsonResponse({'status': 'success'})
             return redirect('/renter-rooms/')
 
         elif action == 'add_area_condition':
@@ -584,15 +583,15 @@ def renter_room_list(request):
                 area_condition = form.save(commit=False)
                 area_condition.room_id = room_id
                 area_condition.save()
-                # return JsonResponse({'status': 'success'})
                 return redirect('/renter-rooms/')
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
     return render(request, 'renter/home/condition_reports/renter_room_list.html', {
         'rooms': rooms,
         'properties': properties,
-        'selected_property': property_id,  # Pass current selection
+        'selected_property': property_id,
     })
+
 
 
 
