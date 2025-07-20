@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.utils import timezone
+import json
 
 from django.views.generic import TemplateView, CreateView, ListView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -73,6 +74,9 @@ class TraderRegistrationCreateView(CreateView):
             team_positions = request.POST.getlist('team_position')
             form_data = formset.cleaned_data[0]
 
+            # ✅ Now get Holiday lists
+            holidays = request.POST.getlist('holiday_date')
+            print(f"Parsed holidays: {holidays}")
             for name, position in zip(team_names, team_positions):
                 TeamMember.objects.create(
                     trader=trader, # <--- FK relation
@@ -82,7 +86,7 @@ class TraderRegistrationCreateView(CreateView):
                     callout_rate = form_data['callout_rate'],
                     contact_number = form_data['contact_number'],
                     active_postal_codes = form_data['active_postal_codes'],
-                    holidays = form_data['holidays'],
+                    holidays = holidays,  # Store as JSON
                     time_in = form_data['time_in'],
                     time_out = form_data['time_out'],
                     IsWorkInHoliday = form_data['IsWorkInHoliday'],
@@ -101,6 +105,7 @@ class TraderRegistrationCreateView(CreateView):
             
             return redirect(self.success_url)
         else:
+            print(f"Form errors: {form.errors}, Formset errors: {formset.errors}, License errors: {form_license.errors}")
             return render(request, self.template_name, {'form': form, 'formset': formset})
 
 # View for the home page
