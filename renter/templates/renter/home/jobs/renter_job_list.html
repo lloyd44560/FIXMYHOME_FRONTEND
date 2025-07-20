@@ -2,72 +2,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Manage Jobs - FixMyHome</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
 
 <body class="bg-gray-100 text-gray-800">
+  {% include 'renter/home/navbar.html' %}
 
-{% include 'renter/home/navbar.html' %}
-<main class="max-w-6xl mx-auto py-10 px-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 fw-bold text-dark">My Jobs</h1>
-    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addJobModal">
-      <i class="bi bi-plus-circle me-1"></i> Add Job
-    </button>
-  </div>
+<main class="w-full mx-auto py-10 px-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 fw-bold text-dark">My Jobs</h1>
+      <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addJobModal">
+        <i class="bi bi-plus-circle me-1"></i> Add Job
+      </button>
+    </div>
 
-  <div id="notification" class="alert alert-success d-none" role="alert"></div>
+    <!-- Notification -->
+    <div id="notification" class="alert alert-success d-none" role="alert"></div>
 
-  <div class="table-responsive shadow rounded bg-white">
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Job Code</th>
-          <th scope="col">Status</th>
-          <th scope="col">Priority</th>
-          <th scope="col">Notes</th>
-          <th scope="col" class="text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for job in jobs %}
-        <tr>
-          <th scope="row">{{ forloop.counter }}</th>
-          <td><span class="fw-semibold text-primary">{{ job.job_code }}</span></td>
-          <td>
-            <span class="badge bg-{{ job.status|lower|slugify }}">{{ job.status }}</span>
-          </td>
-          <td>
-            <span class="badge {% if job.priority %}bg-danger{% else %}bg-secondary{% endif %}">
-              {% if job.priority %}High{% else %}Normal{% endif %}
-            </span>
-          </td>
-          <td>{{ job.notes|truncatechars:50 }}</td>
-          <td class="text-center">
-            <a href="{% url 'delete_job' job.id %}" class="btn btn-outline-danger btn-sm me-1"
-              onclick="return confirm('Delete this job?')">
-              <i class="bi bi-trash"></i>
-            </a>
-            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
-              <i class="bi bi-pencil"></i>
-            </button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</main>
+    <!-- Jobs Table -->
+    <div class="table-responsive shadow-sm rounded bg-white border">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Job Code</th>
+            <th scope="col">Status</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Notes</th>
+            <th scope="col" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td><span class="fw-semibold text-primary">{{ job.job_code }}</span></td>
+            <td><span class="badge bg-{{ job.status|lower|slugify }}">{{ job.status }}</span></td>
+            <td>
+              <span class="badge {% if job.priority %}bg-danger{% else %}bg-secondary{% endif %}">
+                {% if job.priority %}High{% else %}Normal{% endif %}
+              </span>
+            </td>
+            <td>{{ job.notes|truncatechars:50 }}</td>
+            <td class="text-center">
+              <a href="{% url 'delete_job' job.id %}" class="btn btn-outline-danger btn-sm me-1"
+                onclick="return confirm('Delete this job?')">
+                <i class="bi bi-trash"></i>
+              </a>
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
 
   <!-- Edit Modals -->
   {% for job in jobs %}
@@ -190,26 +191,25 @@
     </div>
   </div>
 
+  <!-- Footer -->
   <footer class="bg-white text-center text-sm py-3 border-t mt-5">
     {% include 'renter/home/footer.html' %}
   </footer>
-
 </body>
+
+<style>
+  html, body {
+    height: 100%;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  main {
+    flex: 1 0 auto;
+  }
+  footer {
+    flex-shrink: 0;
+  }
+</style>
 </html>
-
-
-  <style>
-    html, body {
-      height: 100%;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-    }
-    main {
-      flex: 1 0 auto;
-    }
-    footer {
-      flex-shrink: 0;
-    }
-  </style>
