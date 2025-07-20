@@ -266,7 +266,7 @@
             Your Reports
           </option>
           <option value="manual">Manually Upload Property Details</option>
-          <option value="report">Upload Property Reports</option>
+          <!--<option value="report">Upload Property Reports</option>-->
         </select>
       </div>
 
@@ -310,57 +310,57 @@
 
           </div>
         <span id="fileTypeError" class="text-red-500 text-sm hidden">Invalid file type. Only PDF, DOC, DOCX, XLS, XLSX allowed.</span>
-        <div class="mb-4">
-          <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
-          <input type="text" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
-        </div>
+            <div class="mb-4">
+              <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
+              <input type="text" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
+            </div>
 
-        <div class="mb-4">
-          <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
-            <input
-              type="number"
-              name="floorCount_manual"
-              id="floorCount_manual"
-              placeholder="How many floor is the property?"
-              class="w-full border border-gray-300 rounded-md p-2"
-              min="1"
-              onchange="validateFloorCount(this)"
-            />
-        </div>
-        <div class="mb-4">
-          <label for="leaseStart" class="block text-gray-700 font-medium mb-2">Property Lease Start</label>
-            <input
-              type="date"
-              name="leaseStart_manual"
-              id="leaseStart_manual"
-              placeholder="Date of Property Lease Start?"
-              class="w-full border border-gray-300 rounded-md p-2"
-              min="1"
-              onchange="validateFloorCount(this)"
-            />
-        </div>
+            <div class="mb-4">
+              <label for="floorCount" class="block text-gray-700 font-medium mb-2">Floor Count</label>
+                <input
+                  type="number"
+                  name="floorCount_manual"
+                  id="floorCount_manual"
+                  placeholder="How many floor is the property?"
+                  class="w-full border border-gray-300 rounded-md p-2"
+                  min="1"
+                  onchange="validateFloorCount(this)"
+                />
+            </div>
+            <div class="mb-4">
+              <label for="leaseStart" class="block text-gray-700 font-medium mb-2">Property Lease Start</label>
+                <input
+                  type="date"
+                  name="leaseStart_manual"
+                  id="leaseStart_manual"
+                  placeholder="Date of Property Lease Start?"
+                  class="w-full border border-gray-300 rounded-md p-2"
+                  min="1"
+                  onchange="validateFloorCount(this)"
+                />
+            </div>
 
-        <div class="mb-4">
-          <label for="leaseEnd" class="block text-gray-700 font-medium mb-2">Property Lease End</label>
-            <input
-              type="date"
-              name="leaseEnd_manual"
-              id="leaseEnd_manual"
-              placeholder="Date of Property Lease End?"
-              class="w-full border border-gray-300 rounded-md p-2"
-              min="1"
-              onchange="validateFloorCount(this)"
-            />
-        </div>
-        <div class="mb-4">
-          <label for="agent" class="block text-gray-700 font-medium mb-2">Select Agent</label>
-          <select name="agent_id" id="agent_id" required class="w-full border border-gray-300 rounded-md p-2">
-            <option value="" disabled selected>Select an agent</option>
-            {% for agent in agents %}
-              <option value="{{ agent.id }}">{{ agent.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
+            <div class="mb-4">
+              <label for="leaseEnd" class="block text-gray-700 font-medium mb-2">Property Lease End</label>
+                <input
+                  type="date"
+                  name="leaseEnd_manual"
+                  id="leaseEnd_manual"
+                  placeholder="Date of Property Lease End?"
+                  class="w-full border border-gray-300 rounded-md p-2"
+                  min="1"
+                  onchange="validateFloorCount(this)"
+                />
+            </div>
+            <div class="mb-4">
+              <label for="agent" class="block text-gray-700 font-medium mb-2">Select Agent</label>
+              <select name="agent_id" id="agent_id" required class="w-full border border-gray-300 rounded-md p-2">
+                <option value="" disabled selected>Select an agent</option>
+                {% for agent in agents %}
+                  <option value="{{ agent.id }}">{{ agent.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
         <div class="mb-4">
           <label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label>
           <input type="number" name="roomCount_manual" id="roomCount_manual" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
@@ -442,68 +442,177 @@
         </div>
 
     <!-- Main Condition Report Modal -->
-      <div id="conditionModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div class="bg-white w-full max-w-4xl p-4 sm:p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">
-            <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
+      <!--<div id="conditionModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">-->
+      <!--    <div class="bg-white w-full max-w-4xl p-4 sm:p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">-->
+      <!--      <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>-->
+
+            <!--Properties Section -->
+            <!-- Rooms Section -->
+            <!--Rooms Area Section -->
 
             <!-- Form Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <!--      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">-->
               <!-- Upload Image with Preview -->
-               <div>
-                <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
-                <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300 max-h-40 sm:max-h-60"   />
-                <input
-                  type="file"
-                  name="propertyImage"
-                  id="propertyImage"
-                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  onchange="validateImageFile(this)"
-                />
-              </div>
+      <!--         <div>-->
+      <!--          <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>-->
+      <!--          <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300 max-h-40 sm:max-h-60"   />-->
+      <!--          <input-->
+      <!--            type="file"-->
+      <!--            name="propertyImage"-->
+      <!--            id="propertyImage"-->
+      <!--            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"-->
+      <!--            onchange="validateImageFile(this)"-->
+      <!--          />-->
+      <!--        </div>-->
 
 
               <!-- Other Fields -->
-              <div><label for="floorCount"  onchange="validateFloorCount(this)" class="block text-gray-700 font-medium mb-2">Floor Count</label><input type="number" name="floorCount" id="floorCount" placeholder="How many floors?" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="houseState" class="block text-gray-700 font-medium mb-2">State</label><input type="text" name="houseState" id="houseState" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label><input type="number" name="roomCount" id="roomCount" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label><input type="text" name="propertyName" id="propertyName" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label><input type="text" name="houseCity" id="houseCity" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label><input type="text" name="address1" id="address1" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2 (Optional)</label><input type="text" name="address2" id="address2" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label><input type="text" name="postalcode" id="postalcode" class="w-full border border-gray-300 rounded-md p-2" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Condition Report Date</label><input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Agreement Start Date</label><input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Renter Received Date</label><input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Report Return Date</label><input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700">Address</label><input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" oninput="document.getElementById('companyAddressLine1').value = this.value" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Full Name 1</label><input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" onclick="document.getElementById('name').value = this.value" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Agent Name</label><input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Agent Company Name</label><input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Renter 1</label><input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm" /></div>
-              <div><label class="block text-sm font-medium text-gray-700">Renter 2</label><input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm" /></div>
-            </div>
+      <!--        <div><label for="floorCount"  onchange="validateFloorCount(this)" class="block text-gray-700 font-medium mb-2">Floor Count</label><input type="number" name="floorCount" id="floorCount" placeholder="How many floors?" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="houseState" class="block text-gray-700 font-medium mb-2">State</label><input type="text" name="houseState" id="houseState" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="roomCount" class="block text-gray-700 font-medium mb-2">Room Count</label><input type="number" name="roomCount" id="roomCount" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label><input type="text" name="propertyName" id="propertyName" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="houseCity" class="block text-gray-700 font-medium mb-2">City</label><input type="text" name="houseCity" id="houseCity" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label><input type="text" name="address1" id="address1" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2 (Optional)</label><input type="text" name="address2" id="address2" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label><input type="text" name="postalcode" id="postalcode" class="w-full border border-gray-300 rounded-md p-2" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Condition Report Date</label><input type="date" id="conditionReportDate" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Agreement Start Date</label><input type="date" id="agreementStartDate" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Renter Received Date</label><input type="date" id="renterReceivedDate" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Report Return Date</label><input type="date" id="reportReturnDate" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700">Address</label><input type="text" id="conditionAddress" class="w-full border rounded px-3 py-2 text-sm" oninput="document.getElementById('companyAddressLine1').value = this.value" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Full Name 1</label><input type="text" id="fullName1" class="w-full border rounded px-3 py-2 text-sm" onclick="document.getElementById('name').value = this.value" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Agent Name</label><input type="text" id="agentName" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Agent Company Name</label><input type="text" id="agentCompanyName" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Renter 1</label><input type="text" id="renter1" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--        <div><label class="block text-sm font-medium text-gray-700">Renter 2</label><input type="text" id="renter2" class="w-full border rounded px-3 py-2 text-sm" /></div>-->
+      <!--      </div>-->
 
             <!-- Room Category Select -->
-            <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">
-              <label for="modalRoomCategory" class="font-semibold text-gray-700">Room Category:</label>
-              <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1"></select>
-              <button type="button" onclick="addNewCategory()" class="text-blue-600 text-sm hover:underline whitespace-nowrap">+ Add New Rooms</button>
-            </div>
+      <!--      <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">-->
+      <!--        <label for="modalRoomCategory" class="font-semibold text-gray-700">Room Category:</label>-->
+      <!--        <select id="modalRoomCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1"></select>-->
+      <!--        <button type="button" onclick="addNewCategory()" class="text-blue-600 text-sm hover:underline whitespace-nowrap">+ Add New Rooms</button>-->
+      <!--      </div>-->
 
             <!-- Room Container -->
-            <div id="roomContainer"></div>
+      <!--      <div id="roomContainer"></div>-->
 
-            <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">
-              Save
-            </button>
+      <!--      <button type="button" onclick="collectRoomData()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition">-->
+      <!--        Save-->
+      <!--      </button>-->
 
-            <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">
-              Cancel
-            </button>
+      <!--      <button type="button" onclick="closeModal('conditionModal')" class="w-full mt-3 border border-gray-300 text-gray-800 py-3 rounded-xl hover:bg-gray-100 transition">-->
+      <!--        Cancel-->
+      <!--      </button>-->
 
-            <input type="hidden" name="conditionData" id="conditionDataInput">
-          </div>
+      <!--      <input type="hidden" name="conditionData" id="conditionDataInput">-->
+      <!--    </div>-->
+      <!--  </div>-->
+
+
+    <div id="conditionModal" class="modal fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div class="bg-white w-full max-w-4xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">
+        <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
+
+        <!-- Property Section -->
+        <div class="mb-4">
+          <label>Name:</label>
+          <input type="text" id="propertyName" class="w-full border p-2 rounded" />
+          <label>Address:</label>
+          <input type="text" id="propertyAddress" class="w-full border p-2 rounded" />
+          <label>Location:</label>
+          <input type="text" id="propertyLocation" class="w-full border p-2 rounded" />
         </div>
+
+        <!-- Rooms Section -->
+        <div id="roomsContainer" class="mb-4">
+          <h3 class="font-semibold mb-2">Rooms</h3>
+          <!-- Room blocks will be appended here -->
+        </div>
+        <button onclick="addRoom()" class="bg-blue-500 text-white px-3 py-1 rounded mb-4">+ Add Room</button>
+
+        <div class="text-center">
+          <button onclick="submitConditionReport()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Submit All</button>
+        </div>
+      </div>
+    </div>
+
+
+<script>
+  let roomCount = 0;
+
+  function addRoom() {
+    const container = document.createElement('div');
+    container.classList.add('mb-4', 'border', 'p-3', 'rounded');
+    container.innerHTML = `
+      <label>Room Name:</label>
+      <input type="text" class="roomName w-full border p-1 rounded mb-2" />
+      <label>Room Type:</label>
+      <input type="text" class="roomType w-full border p-1 rounded mb-2" />
+      <div class="areasContainer"></div>
+      <button type="button" onclick="addArea(this)" class="text-sm text-blue-600">+ Add Area</button>
+    `;
+    document.getElementById('roomsContainer').appendChild(container);
+    roomCount++;
+  }
+
+  function addArea(btn) {
+    const areasDiv = btn.previousElementSibling;
+    const areaBlock = document.createElement('div');
+    areaBlock.classList.add('border-t', 'pt-2', 'mt-2');
+    areaBlock.innerHTML = `
+      <label>Area Name:</label>
+      <input type="text" class="areaName w-full border p-1 rounded mb-1" />
+      <label>Condition:</label>
+      <input type="text" class="areaCondition w-full border p-1 rounded mb-1" />
+      <label>Remarks:</label>
+      <input type="text" class="areaRemarks w-full border p-1 rounded mb-2" />
+    `;
+    areasDiv.appendChild(areaBlock);
+  }
+
+  function submitConditionReport() {
+    const property = {
+      name: document.getElementById('propertyName').value,
+      address: document.getElementById('propertyAddress').value,
+      location: document.getElementById('propertyLocation').value,
+    };
+
+    const rooms = [];
+    document.querySelectorAll('#roomsContainer > div').forEach(roomDiv => {
+      const name = roomDiv.querySelector('.roomName').value;
+      const type = roomDiv.querySelector('.roomType').value;
+
+      const areas = [];
+      roomDiv.querySelectorAll('.areasContainer > div').forEach(areaDiv => {
+        const area_name = areaDiv.querySelector('.areaName').value;
+        const condition = areaDiv.querySelector('.areaCondition').value;
+        const remarks = areaDiv.querySelector('.areaRemarks').value;
+        areas.push({ area_name, condition, remarks });
+      });
+
+      rooms.push({ name, type, areas });
+    });
+
+    fetch("{% url 'save_condition_report_all' %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ property, rooms })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert('Condition report saved!');
+        location.reload();
+      } else {
+        alert('Error saving report.');
+      }
+    });
+  }
+</script>
     <!-- Appliance Report Modal -->
     <div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">

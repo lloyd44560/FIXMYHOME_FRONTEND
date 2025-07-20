@@ -103,4 +103,22 @@ urlpatterns = [
     path('areas/<int:pk>/edit/', renter_actions.edit_area_condition, name='edit_area_condition'),
     path('areas/<int:pk>/delete/', renter_actions.delete_area_condition, name='delete_area_condition'),
 
+    path('renter-rooms/', renter_actions.renter_room_list, name='renter_room_list'),
+
+
+    # path('appliance-reports/', renter_actions.appliance_report_list, name='appliance_report_list'),
+
+    # path('appliance-reports/edit/<int:pk>/', renter_actions.edit_appliance_report, name='edit_appliance_report'),
+    # path('appliance-reports/delete/<int:pk>/', renter_actions.delete_appliance_report, name='delete_appliance_report'),
+
+
+    path('appliance-reports/', renter_actions.appliance_report_list, name='appliance_report_list'),
+    path('appliance-reports/add/', renter_actions.add_appliance_report, name='add_appliance_report'),
+    path('appliance-reports/edit/<int:report_id>/', renter_actions.edit_appliance_report, name='edit_appliance_report'),
+    path('appliance-reports/delete/<int:report_id>/', renter_actions.delete_appliance_report, name='delete_appliance_report'),
+
+    path('condition-report/', views.condition_report_view, name='condition_report_view'),
+    path('condition-report/save-all/', views.save_condition_report_all, name='save_condition_report_all'),
+
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from datetime import datetime
 
-from renter.models import Renter, Property, ConditionReport, EmailVerification, FailedLoginAttempt, MinimumStandardReport
-from thirdparty.models import ThirdParty
+from renter.models import Renter, ConditionReport, EmailVerification, FailedLoginAttempt, MinimumStandardReport
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
@@ -34,6 +33,9 @@ import json
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponseNotAllowed
+
+from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport
+import traceback
 
 def home(request):
     return render(request, 'renter/home.html')
@@ -82,52 +84,48 @@ def register(request):
 def login_page(request):
     return render(request, 'renter/login.html')
 
-
 def login_view(request):
     locked_until_str = request.session.get('locked_until')
     if locked_until_str:
-        locked_until = timezone.datetime.fromisoformat(locked_until_str)
-        if timezone.now() < locked_until:
-            remaining_seconds = int((locked_until - timezone.now()).total_seconds())
-            return render(request, 'renter/login.html', {
-                'error': 'Account temporarily locked.',
-                'lockout': True,
-                'remaining_seconds': remaining_seconds
-            })
-        else:
+        try:
+            locked_until = timezone.datetime.fromisoformat(locked_until_str)
+            if timezone.now() < locked_until:
+                remaining_seconds = int((locked_until - timezone.now()).total_seconds())
+                return render(request, 'renter/login.html', {
+                    'error': 'Account temporarily locked.',
+                    'lockout': True,
+                    'remaining_seconds': remaining_seconds
+                })
+            else:
+                request.session.pop('locked_until', None)
+        except Exception as e:
+            print("Error parsing lockout time:", e)
+            traceback.print_exc()
             request.session.pop('locked_until', None)
 
     next_url = request.GET.get('next', '/welcome/')
 
     if request.method == 'POST':
-        email = request.POST.get('email').strip().lower()
+        email = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password')
         next_url = request.POST.get('next') or '/welcome/'
 
         try:
             user_obj = User.objects.filter(email=email).first()
-
             if not user_obj:
                 return render(request, 'renter/login.html', {
-                    'error': 'User with this email does not exist.',
+                    'error': 'No user found with this email.',
                     'next': next_url
                 })
-            if not user_obj:
-                return render(request, 'renter/login.html', {
-                        'error': 'User with this email does not exist.',
-                        'next': next_url
-                    })
-
-
-
 
             fail_record, _ = FailedLoginAttempt.objects.get_or_create(user=user_obj)
 
+            # Handle lockout
             if fail_record.is_locked and fail_record.locked_until and timezone.now() < fail_record.locked_until:
                 request.session['locked_until'] = fail_record.locked_until.isoformat()
                 remaining_seconds = int((fail_record.locked_until - timezone.now()).total_seconds())
                 return render(request, 'renter/login.html', {
-                    'error': 'Account temporarily locked.',
+                    'error': 'Your account is temporarily locked.',
                     'lockout': True,
                     'remaining_seconds': remaining_seconds
                 })
@@ -137,18 +135,15 @@ def login_view(request):
                 fail_record.locked_until = None
                 fail_record.save()
 
+            # Try authentication
             user = authenticate(request, username=user_obj.username, password=password)
 
             if user:
-
-                # Uncomment this if you want to disable user login of user that hasnt activated email
-
                 if not user.is_active:
                     return render(request, 'renter/login.html', {
-                        'error': 'Please activate your email before logging in.',
+                        'error': 'Your account is inactive. Please activate your email.',
                         'next': next_url
                     })
-
 
                 renter_record = Renter.objects.filter(email=user_obj.email).first()
 
@@ -157,23 +152,21 @@ def login_view(request):
                 fail_record.save()
                 request.session.pop('locked_until', None)
 
-                # Optional: Pass renter id to session if needed later
+                # Set renter session details
                 if renter_record:
-                    request.session['renter_id'] = renter_record.id
                     request.session['renter_id'] = renter_record.id
                     request.session['renter_phone'] = renter_record.phone
                     request.session['renter_company'] = renter_record.company_name
                     request.session['renter_contact'] = renter_record.contact_person
                     request.session['renter_email'] = renter_record.email
 
-
+                # Redirect based on role
                 if user_obj.is_staff:
                     return redirect('/trader/home')
                 elif user_obj.is_superuser:
                     return redirect('/agent/home')
-                # if found in 3rd party table redirect to ('third_party/home')
-                elif ThirdParty.objects.filter(contact_email=user_obj.email).exists():
-                    return redirect('/third_party/home')
+                # elif ThirdParty.objects.filter(contact_email=user_obj.email).exists():
+                #     return redirect('/third_party/home')
                 else:
                     return redirect('/welcome/')
 
@@ -185,21 +178,23 @@ def login_view(request):
                     request.session['locked_until'] = fail_record.locked_until.isoformat()
                     fail_record.save()
                     return render(request, 'renter/login.html', {
-                        'error': "Your account is now locked due to too many failed login attempts.",
+                        'error': "Your account has been locked after 3 failed attempts. Please try again later.",
                         'lockout': True,
                         'remaining_seconds': 300
                     })
+
                 fail_record.save()
                 remaining = 3 - fail_record.attempts
                 return render(request, 'renter/login.html', {
-                    'error': f"Incorrect password. {remaining} attempt(s) left.",
+                    'error': f"Incorrect password. {remaining} attempt(s) remaining.",
                     'next': next_url
                 })
 
         except Exception as e:
-            print("Login error:", e)
+            print("Login Error:", e)
+            traceback.print_exc()
             return render(request, 'renter/login.html', {
-                'error': 'An unexpected error occurred.',
+                'error': f'Unexpected error occurred: {str(e)}',
                 'next': next_url
             })
 
@@ -809,6 +804,11 @@ def register_renter(request):
                 )
             else:
                 property = None  # For now you’re skipping automatic upload handling
+                # Collect lahat ng laman ng section para sa Property record creation
+                # Collect lahat ng section para sa RenterRoom record creation
+                # Collect lahat ng section para sa RenterRoomAreaCondition
+                # then isave pag valid lahat
+
 
             # 6. Email verification
             ev = EmailVerification.objects.create(user=user)
@@ -990,11 +990,11 @@ def renter_account(request):
         renter.address_line2 = address_line2
         renter.save()
 
-        #  Update related Property records
-        Property.objects.filter(renter=renter).update(
-            address_line1=address_line1,
-            address_line2=address_line2
-        )
+        # #  Update related Property records
+        # Property.objects.filter(renter=renter).update(
+        #     address_line1=address_line1,
+        #     address_line2=address_line2
+        # )
 
         messages.success(request, 'Account updated successfully.')
         return redirect('renter_account')
@@ -1394,4 +1394,47 @@ def delete_standard_report(request, id):
     except Exception as e:
         print("Delete report error:", e)
     return redirect('/welcome/')
+
+
+@login_required
+def condition_report_view(request):
+    return render(request, 'renter/home/condition_reports/condition_report_modal.html')
+
+
+@csrf_exempt
+@login_required
+def save_condition_report_all(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        renter = request.user.renter
+
+        # Save property
+        prop = Property.objects.create(
+            renter=renter,
+            name=data['property']['name'],
+            address=data['property']['address'],
+            location=data['property']['location']
+        )
+
+        # Save rooms
+        for room_data in data['rooms']:
+            room = RenterRoom.objects.create(
+                renter=renter,
+                property=prop,
+                name=room_data['name'],
+                type=room_data['type'],
+            )
+
+            # Save room area conditions
+            for area in room_data['areas']:
+                RoomAreaCondition.objects.create(
+                    room=room,
+                    area_name=area['area_name'],
+                    condition=area['condition'],
+                    remarks=area['remarks']
+                )
+
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'invalid'}, status=400)
 

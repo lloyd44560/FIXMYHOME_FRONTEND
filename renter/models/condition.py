@@ -30,17 +30,57 @@ class RoomCondition(models.Model):
     renter_1 = models.CharField(max_length=100, blank=True)
     renter_2 = models.CharField(max_length=100, blank=True)
 
-
 class RenterRoom(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    room_name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    renter = models.ForeignKey('Renter', on_delete=models.CASCADE, related_name='renter_room_items')  # <-- changed
+    renter = models.ForeignKey(Renter, on_delete=models.CASCADE,null=True)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE,null=True)
+    room_name = models.CharField(max_length=255,null=True)
+    description = models.TextField(blank=True,null=True)
+
     def __str__(self):
         return self.room_name
 
 class RenterRoomAreaCondition(models.Model):
-    room = models.ForeignKey(RenterRoom, on_delete=models.CASCADE, related_name='area_conditions')
+    room = models.ForeignKey('RenterRoom', on_delete=models.CASCADE, related_name='area_conditions')
+    area_name = models.CharField(max_length=255)
+
+    status = models.CharField(
+        max_length=100,
+        choices=[
+            ('Clean', 'Clean'),
+            ('Undamaged', 'Undamaged'),
+            ('Working', 'Working'),
+        ],
+        default='Clean'
+    )
+
+    # ✅ Optional: Photo
+    photo = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
+
+    # ✅ Optional: Remarks field
+    remarks = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.area_name} - {self.status}"
+
+
+
+class Room(models.Model):
+    name = models.CharField(max_length=255)
+
+
+
+class RoomConditionReport(models.Model):
+    renter = models.ForeignKey('renter.Renter', on_delete=models.CASCADE, related_name='room_condition_reports')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    room_name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.room_name} (Report #{self.id})"
+
+
+class RoomConditionAreaReport(models.Model):
+    report = models.ForeignKey(RoomConditionReport, on_delete=models.CASCADE, related_name='area_reports')
     area_name = models.CharField(max_length=255)
 
     status = models.CharField(
@@ -54,9 +94,19 @@ class RenterRoomAreaCondition(models.Model):
     )
 
     def __str__(self):
-        return f"{self.area_name} ({self.status})"
+        return f"{self.area_name} - {self.status}"
 
 
-
-class Room(models.Model):
-    name = models.CharField(max_length=255)
+class RoomApplianceReport(models.Model):
+    renter = models.ForeignKey('renter.Renter', on_delete=models.CASCADE)
+    room = models.ForeignKey('renter.RenterRoom', on_delete=models.CASCADE, related_name='appliances')
+    window_height = models.CharField(max_length=50, blank=True)
+    window_length = models.CharField(max_length=50, blank=True)
+    window_width = models.CharField(max_length=50, blank=True)
+    brand = models.CharField(max_length=100, blank=True)
+    model_serial = models.CharField(max_length=100, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    photo = models.ImageField(upload_to='appliance_photos/', blank=True, null=True)
+    comments = models.TextField(blank=True)
+    appliance_photo = models.ImageField(upload_to='appliances/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

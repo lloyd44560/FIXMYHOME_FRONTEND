@@ -4,6 +4,9 @@ from trader.models import Jobs
 from agent.models.propertyAgent import Property
 from .models import MinimumStandardReport
 from .models import RenterRoom, RenterRoomAreaCondition
+from .models import RoomApplianceReport
+
+
 class RenterForm(forms.ModelForm):
     confirmPassword = forms.CharField(widget=forms.PasswordInput(), label="Confirm Password")
 
@@ -73,8 +76,6 @@ class MinimumStandardReportForm(forms.ModelForm):
             'audit_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
-
-
 class RenterRoomForm(forms.ModelForm):
     class Meta:
         model = RenterRoom
@@ -83,4 +84,15 @@ class RenterRoomForm(forms.ModelForm):
 class RenterRoomAreaConditionForm(forms.ModelForm):
     class Meta:
         model = RenterRoomAreaCondition
-        fields = ['area_name', 'status']
+        fields = ['area_name', 'status', 'photo', 'remarks']
+        widgets = {
+            'area_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+
+class RoomApplianceReportForm(forms.ModelForm):
+    class Meta:
+        model = RoomApplianceReport
+        exclude = ['renter']
