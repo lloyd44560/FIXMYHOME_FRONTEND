@@ -64,6 +64,20 @@ class AgentRegistrationCreateView(CreateView):
             agent.password = None
             agent.save()
 
+            # Send agent registration success email
+            send_mail(
+                subject="Agent Registration Successful",
+                message=(
+                    f"Hi {agent.name},\n\n"
+                    f"Your agent account has been created successfully!\n"
+                    f"You can now log in and start using FixMyHome.\n\n"
+                    f"Thank you for registering with us."
+                ),
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[agent.email],
+                fail_silently=False,
+            )
+
             return redirect(self.success_url)
         else:
             return render(request, self.template_name, {'form': form})
