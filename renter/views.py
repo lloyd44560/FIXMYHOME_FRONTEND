@@ -803,6 +803,57 @@ def register_renter(request):
                     agent=agent,
                 )
             else:
+
+                # Create Property from modal fields
+                floor_count = request.POST.get('floorCount')
+                lease_start = request.POST.get('lease_start')
+                lease_end = request.POST.get('lease_end')
+                house_state = request.POST.get('houseState')
+                house_city = request.POST.get('houseCity')
+                address = request.POST.get('propertyAddress')
+                postal_code = request.POST.get('propertyPostalCode')
+                property_image = request.FILES.get('propertyImage')
+                condition_file = request.FILES.get('propertyFile')
+
+                property = Property.objects.create(
+                    renter=renter,
+                    floor_count=floor_count,
+                    lease_start=lease_start,
+                    lease_end=lease_end,
+                    state=house_state,
+                    city=house_city,
+                    address=address,
+                    postal_code=postal_code,
+                    property_photo=property_image,
+                    condition_report=condition_file,
+                    agent=agent,
+                )
+
+                # Now create Room
+                room_name = request.POST.get('roomName')
+                room_floor = request.POST.get('roomFloor')
+                room = RenterRoom.objects.create(
+                    renter=renter,
+                    property=property,
+                    room_name=room_name,
+                    # floor_level=room_floor
+
+
+                )
+
+                # Now create RoomAreaCondition(s)
+                area_names = request.POST.getlist('area_name[]')
+                conditions = request.POST.getlist('condition[]')
+                remarks = request.POST.getlist('remarks[]')
+
+                for name, cond, remark in zip(area_names, conditions, remarks):
+                    RenterRoomAreaCondition.objects.create(
+                        room=room,
+                        area_name=name,
+                        status=cond,
+                        remarks=remark
+                    )
+
                 property = None  # For now you’re skipping automatic upload handling
                 # Collect lahat ng laman ng section para sa Property record creation
                 # Collect lahat ng section para sa RenterRoom record creation

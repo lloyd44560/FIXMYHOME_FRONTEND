@@ -47,6 +47,7 @@
             <th>Audit No</th>
             <th>Auditor</th>
             <th>Audit Date</th>
+            <th >Files</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
@@ -57,6 +58,15 @@
             <td>{{ report.audit_no }}</td>
             <td>{{ report.auditor }}</td>
             <td>{{ report.audit_date }}</td>
+
+            <td>
+              {% if report.report_file %}
+                <a href="{{ report.report_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+              {% else %}
+                <span class="text-muted">No File</span>
+              {% endif %}
+            </td>
+
             <td class="text-center">
               <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#editReportModal{{ report.id }}">
                 <i class="bi bi-pencil"></i> Edit

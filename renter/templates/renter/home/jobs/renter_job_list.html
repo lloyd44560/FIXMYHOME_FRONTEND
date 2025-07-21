@@ -20,7 +20,7 @@
 <main class="w-full mx-auto py-10 px-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h3 fw-bold text-dark">My Jobs</h1>
+      <h1 class="h3 fw-bold text-dark">My Maintenance Requests</h1>
       <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addJobModal">
         <i class="bi bi-plus-circle me-1"></i> Add Job
       </button>
@@ -32,7 +32,7 @@
     <!-- Jobs Table -->
     <div class="table-responsive shadow-sm rounded bg-white border">
       <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
+        <thead class="table-light text-dark">
           <tr>
             <th scope="col">#</th>
             <th scope="col">Job Code</th>
@@ -42,12 +42,12 @@
             <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="text-dark">
           {% for job in jobs %}
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
-            <td><span class="fw-semibold text-primary">{{ job.job_code }}</span></td>
-            <td><span class="badge bg-{{ job.status|lower|slugify }}">{{ job.status }}</span></td>
+           <td><span class="fw-semibold text-dark">{{ job.job_code }}</span></td>
+           <td><span class="badge bg-{{ job.status|lower|slugify }} text-dark">{{ job.status }}</span></td>
             <td>
               <span class="badge {% if job.priority %}bg-danger{% else %}bg-secondary{% endif %}">
                 {% if job.priority %}High{% else %}Normal{% endif %}
@@ -55,17 +55,19 @@
             </td>
             <td>{{ job.notes|truncatechars:50 }}</td>
             <td class="text-center">
-              <a href="{% url 'delete_job' job.id %}" class="btn btn-outline-danger btn-sm me-1"
-                onclick="return confirm('Delete this job?')">
-                <i class="bi bi-trash"></i>
-              </a>
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}"> Edit
                 <i class="bi bi-pencil"></i>
               </button>
+              <a href="{% url 'delete_job' job.id %}" class="btn btn-outline-danger btn-sm me-1"
+                onclick="return confirm('Delete this job?')"> Delete
+                <i class="bi bi-trash"></i>
+              </a>
+
             </td>
           </tr>
           {% endfor %}
         </tbody>
+
       </table>
     </div>
   </main>
@@ -184,7 +186,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Add Job</button>
+          <button type="submit" class="btn btn-success">Add Request Maintenance</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </form>

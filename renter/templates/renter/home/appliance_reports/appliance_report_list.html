@@ -5,36 +5,67 @@
     <meta charset="UTF-8">
     <title>Appliance Reports</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-  {% include 'renter/home/navbar.html' %}
+
+    {% include 'renter/home/navbar.html' %}
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        .table td, .table th {
-            vertical-align: middle;
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #000 !important;
         }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+            /*color: #000 !important;*/
+        }
+
+        .modal-content,
+        .card,
+        .form-control,
+        .form-select,
+        textarea {
+            color: #000 !important;
+            background-color: #fff !important;
+        }
+
         textarea {
             resize: none;
         }
+
+        footer {
+            flex-shrink: 0;
+        }
     </style>
 </head>
-<body class="bg-light text-dark">
+<body>
 
-<div class="container py-4">
+<main class="container py-4">
     <h2 class="mb-4">Appliance Reports</h2>
 
-    <!-- Messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+    <!--{% if messages %}-->
+    <!--    {% for message in messages %}-->
+    <!--        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">-->
+    <!--            {{ message }}-->
+    <!--            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+    <!--        </div>-->
+    <!--    {% endfor %}-->
+    <!--{% endif %}-->
 
-    <!-- Loop through rooms -->
     {% for room in rooms %}
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -45,10 +76,10 @@
             </div>
             <div class="card-body p-0">
                 {% if room.appliances.all %}
-                    <table class="table table-bordered table-striped table-hover m-0 bg-white text-dark">
-                        <thead>
-                            <tr class="table-secondary">
-                                <th>Appliance Name</th>
+                    <table class="table table-bordered table-striped table-hover m-0">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Appliance Brand</th>
                                 <th>Remarks</th>
                                 <th>Image</th>
                                 <th>Actions</th>
@@ -57,7 +88,7 @@
                         <tbody>
                             {% for appliance in room.appliances.all %}
                                 <tr>
-                                    <td>{{ appliance.appliance_name }}</td>
+                                    <td>{{ appliance.brand }}</td>
                                     <td>{{ appliance.remarks }}</td>
                                     <td>
                                         {% if appliance.image %}
@@ -73,43 +104,36 @@
                                 </tr>
 
                                 <!-- Edit Modal -->
-                                <!-- Example Edit Modal -->
-                                <!-- Appliance Report Edit Modal -->
-
                                 <div class="modal fade" id="editApplianceModal{{ appliance.id }}" tabindex="-1" aria-hidden="true">
-                                  <div class="modal-dialog">
-                                    <div class="modal-content">
-                                      <form method="POST" action="{% url 'edit_appliance_report' appliance.id %}">
-                                        {% csrf_token %}
-                                        <div class="modal-header">
-                                          <h5 class="modal-title">Edit Appliance Report</h5>
-                                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" action="{% url 'edit_appliance_report' appliance.id %}">
+                                                {% csrf_token %}
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Appliance Report</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Appliance Name</label>
+                                                        <input type="text" name="appliance_name" class="form-control" value="{{ appliance.appliance_name }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Status</label>
+                                                        <select name="status" class="form-select" required>
+                                                            <option value="Working" {% if appliance.status == "Working" %}selected{% endif %}>Working</option>
+                                                            <option value="Not Working" {% if appliance.status == "Not Working" %}selected{% endif %}>Not Working</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Save</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div class="modal-body">
-                                          <div class="mb-3">
-                                            <label class="form-label">Appliance Name</label>
-                                            <input type="text" name="appliance_name" class="form-control" value="{{ appliance.appliance_name }}" required>
-                                          </div>
-                                          <div class="mb-3">
-                                            <label class="form-label">Status</label>
-                                            <select name="status" class="form-select" required>
-                                              <option value="Working" {% if appliance.status == "Working" %}selected{% endif %}>Working</option>
-                                              <option value="Not Working" {% if appliance.status == "Not Working" %}selected{% endif %}>Not Working</option>
-                                            </select>
-                                          </div>
-                                          <!-- Add other fields here -->
-                                        </div>
-                                        <div class="modal-footer">
-                                          <button type="submit" class="btn btn-success">Save</button>
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        </div>
-                                      </form>
                                     </div>
-                                  </div>
                                 </div>
-
-
-
 
                                 <!-- Delete Modal -->
                                 <div class="modal fade" id="deleteApplianceModal{{ appliance.id }}" tabindex="-1" aria-hidden="true">
@@ -121,7 +145,7 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Are you sure you want to delete the appliance <strong>{{ appliance.appliance_name }}</strong>?
+                                                Are you sure you want to delete <strong>{{ appliance.appliance_name }}</strong>?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -129,7 +153,6 @@
                                         </form>
                                     </div>
                                 </div>
-
                             {% endfor %}
                         </tbody>
                     </table>
@@ -169,16 +192,14 @@
                 </form>
             </div>
         </div>
-
     {% endfor %}
-</div>
+</main>
+
+<footer class="bg-light text-center text-muted py-3 border-top">
+    {% include 'renter/home/footer.html' %}
+</footer>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Sticky Footer -->
-  {% include 'renter/home/footer.html' %}
-
-
 </body>
 </html>

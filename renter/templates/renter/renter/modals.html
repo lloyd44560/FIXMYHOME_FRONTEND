@@ -1,0 +1,230 @@
+```html
+<!-- Condition Report Modal -->
+<div id="conditionModal" class="modal fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-4 hidden">
+  <div class="bg-white w-full max-w-4xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[95vh]">
+    <h2 class="text-xl font-bold mb-4 text-center text-gray-800">Condition Report</h2>
+    <div class="mb-4">
+      <label for="conditionPropertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
+      <img id="conditionImagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300" />
+      <input
+        type="file"
+        name="conditionPropertyImage"
+        id="conditionPropertyImage"
+        class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
+        accept="image/*"
+        onchange="validateImageFile(this)"
+      />
+      <label for="conditionPropertyFile" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
+      <input
+        type="file"
+        name="conditionPropertyFile"
+        id="conditionPropertyFile"
+        accept="file/*"
+        class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
+        onchange="validateFileType(this)"
+      />
+    </div>
+    <span id="conditionFileTypeError" class="text-red-500 text-sm hidden">Invalid file type. Only PDF, DOC, DOCX, XLS, XLSX allowed.</span>
+    <!-- Rest of the modal remains unchanged -->
+    <div class="mb-4">
+      <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
+      <input type="text" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-4">
+      <label for="floorCount_manual" class="block text-gray-700 font-medium mb-2">Floor Count</label>
+      <input
+        type="number"
+        name="floorCount_manual"
+        id="floorCount_manual"
+        placeholder="How many floors is the property?"
+        class="w-full border border-gray-300 rounded-md p-2"
+        min="1"
+        onchange="validateFloorCount(this)"
+      />
+    </div>
+    <div class="mb-4">
+      <label for="leaseStart_manual" class="block text-gray-700 font-medium mb-2">Property Lease Start</label>
+      <input
+        type="date"
+        name="leaseStart_manual"
+        id="leaseStart_manual"
+        placeholder="Date of Property Lease Start?"
+        class="w-full border border-gray-300 rounded-md p-2"
+        min="1"
+        onchange="validateFloorCount(this)"
+      />
+    </div>
+    <div class="mb-4">
+      <label for="leaseEnd_manual" class="block text-gray-700 font-medium mb-2">Property Lease End</label>
+      <input
+        type="date"
+        name="leaseEnd_manual"
+        id="leaseEnd_manual"
+        placeholder="Date of Property Lease End?"
+        class="w-full border border-gray-300 rounded-md p-2"
+        min="1"
+        onchange="validateFloorCount(this)"
+      />
+    </div>
+    <div class="mb-4">
+      <label for="agent_id" class="block text-gray-700 font-medium mb-2">Select Agent</label>
+      <select name="agent_id" id="agent_id" required class="w-full border border-gray-300 rounded-md p-2">
+        <option value="" disabled selected>Select an agent</option>
+        {% for agent in agents %}
+          <option value="{{ agent.id }}">{{ agent.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="roomCount_manual" class="block text-gray-700 font-medium mb-2">Room Count</label>
+      <input type="number" name="roomCount_manual" id="roomCount_manual" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div id="roomsContainer" class="mb-4">
+      <h3 class="font-semibold mb-2">Rooms</h3>
+    </div>
+    <button onclick="addRoom()" class="bg-blue-500 text-white px-3 py-1 rounded mb-4">+ Add Room</button>
+    <div class="text-center">
+      <button onclick="submitConditionReport()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Submit All</button>
+    </div>
+  </div>
+</div>
+
+<!-- Appliance Report Modal -->
+<div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
+    <h2 class="text-lg sm:text-xl font-bold text-center text-gray-800 mb-4">Appliance Report</h2>
+    <div id="applianceReportsContainer" class="space-y-6 mt-6"></div>
+    <button type="button" onclick="handleSaveApplianceReport()" class="w-full mt-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-3 rounded-xl transition">
+      Save Appliance Reports
+    </button>
+    <button type="button" onclick="closeModal('applianceModal')" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-3 rounded-xl transition">
+      Close
+    </button>
+    <input name="applianceReports" id="applianceReportsInput">
+  </div>
+</div>
+
+<!-- Maintenance Report Modal -->
+<div id="maintenanceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
+    <h2 class="text-lg font-bold mb-4 text-gray-800 text-center">Maintenance Report</h2>
+    <form id="maintenanceForm" class="space-y-4">
+      <div>
+        <label class="block font-medium text-gray-700 mb-1">Room Name</label>
+        <input type="text" class="w-full border border-gray-300 rounded-md p-2" placeholder="e.g., Kitchen" />
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700 mb-1">Issue Description</label>
+        <textarea class="w-full border border-gray-300 rounded-md p-2 resize-none" rows="4" placeholder="Describe the maintenance issue..."></textarea>
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700 mb-1">Upload Photo (Optional)</label>
+        <input type="file" class="w-full border border-gray-300 rounded-md p-2" />
+      </div>
+      <button type="button" onclick="submitMaintenanceReport()" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 w-full">Submit</button>
+      <button type="button" onclick="closeModal('maintenanceModal')" class="mt-4 w-full text-center text-sm text-gray-600 hover:underline">Close</button>
+    </form>
+  </div>
+</div>
+
+<!-- Minimum Standard Reports Modal -->
+<div id="standardModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
+    <h2 class="text-lg font-bold mb-4 text-gray-800 text-center">Minimum Standard Report</h2>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Property Tenant’s Name</label>
+      <input type="text" name="tenantName" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Audit No. #</label>
+      <input type="text" name="auditNo" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Compliance Auditor</label>
+      <input type="text" name="auditor" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Inspection Address</label>
+      <input type="text" name="inspectionAddress" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Managing Agent</label>
+      <input type="text" name="agent" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Audit Date</label>
+      <input type="date" name="auditDate" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="border-t border-gray-200 pt-4">
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Room</label>
+      <input type="text" name="room" class="w-full border border-gray-300 rounded-md p-2" placeholder="e.g., Bedroom" />
+    </div>
+    <div>
+      <label class="block font-medium text-gray-700 mb-1 text-left block">Comments</label>
+      <textarea name="comments" class="w-full border border-gray-300 rounded-md p-2 resize-none" rows="4" placeholder="Any remarks..."></textarea>
+    </div>
+    <div>
+      <label for="standardPropertyFile" class="block text-gray-700 font-medium mb-2 text-left block">Upload Minimum Standard Report</label>
+      <input
+        type="file"
+        name="standardPropertyFile"
+        id="standardPropertyFile"
+        accept="file/*"
+        class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
+      />
+    </div>
+    <input name="standardReportData" id="standardReportDataInput">
+    <button type="button" onclick="submitStandardReport()" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 w-full">Save</button>
+    <button onclick="closeModal('standardModal')" class="mt-4 w-full text-center text-sm text-gray-600 hover:underline">Close</button>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-sm p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4 text-center">Add New Room Category</h2>
+    <input id="newCategoryInput" type="text" placeholder="Enter new category" class="w-full border border-gray-300 rounded px-3 py-2 mb-4" />
+    <div class="flex justify-end gap-2">
+      <button type="button" onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+      <button type="button" onclick="confirmAddCategory()" class="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Category Name Modal -->
+<div id="editCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white p-6 rounded shadow-md w-full max-w-md">
+    <h2 class="text-lg font-bold mb-4">Edit Room Details</h2>
+    <label class="block mb-2 font-semibold">Room Name</label>
+    <input id="editCategoryInput" type="text" class="w-full border p-2 mb-4" />
+    <label class="block mb-2 font-semibold">Room Dimensions (ft)</label>
+    <div class="flex gap-2 mb-4">
+      <input id="roomWidth" type="number" placeholder="Width" class="w-1/2 border p-2" />
+      <input id="roomLength" type="number" placeholder="Length" class="w-1/2 border p-2" />
+    </div>
+    <label class="block mb-2 font-semibold">Room Category</label>
+    <select id="modalRoomCategory" class="w-full border p-2 mb-4"></select>
+    <label class="block mb-2 font-semibold">Room Areas</label>
+    <div id="editRoomAreaTableWrapper"></div>
+    <div class="flex justify-end gap-2">
+      <button type="button" onclick="closeEditModal()" class="text-gray-500">Cancel</button>
+      <button type="button" onclick="saveEditedCategoryFromModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+    </div>
+  </div>
+</div>
+```

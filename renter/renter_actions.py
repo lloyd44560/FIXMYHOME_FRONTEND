@@ -282,7 +282,7 @@ def delete_property(request, id):
         prop.delete()
     except Exception as e:
         print("Error deleting property:", e)
-    return redirect('/welcome/')
+    return redirect('/properties/')
 
 
 
@@ -294,7 +294,7 @@ def unlink_property(request, id):
         prop = get_object_or_404(Property, id=id, renter=renter)
         prop.renter = None  #  unlink
         prop.save()
-        return redirect('renter_welcome')
+        return redirect('/properties/')
     except Exception as e:
         print("Unlink error:", e)
         return redirect
@@ -544,7 +544,8 @@ def renter_room_list(request):
     property_id = request.GET.get('property')
 
     # 🟢 Filter rooms accordingly
-    rooms = RenterRoom.objects.filter(renter=renter).select_related('property')
+    rooms = RenterRoom.objects.filter(renter=renter).select_related('property').prefetch_related('area_conditions')
+
     if property_id:
         rooms = rooms.filter(property_id=property_id)
 

@@ -46,8 +46,6 @@ urlpatterns = [
     path('chat/', views.demo_chat, name='demo_chat'),
     path('chat/<str:job_number>/', views.chat_thread, name='chat_thread'),
 
-
-    path('social-auth/', include('social_django.urls', namespace='social')),
     path('login-error/', views.login_error, name='login_error'),
     path('no-account/', TemplateView.as_view(template_name='no_account.html'), name='no_account'),
 

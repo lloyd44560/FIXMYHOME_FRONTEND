@@ -18,9 +18,7 @@
   <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
     <!-- Logo -->
     <h1 class="text-3xl font-bold text-blue-600 flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
-      </svg>
+      <img src="{% static 'renter/images/FMH PROPOSED LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
       <span>FixMyHome</span>
     </h1>
 
@@ -112,24 +110,25 @@
         <p class="text-gray-600 mb-4">Easily create and track your maintenance requests. Keep all your property details organized and accessible anytime.</p>
         <a href="/properties/" class="text-blue-600 hover:underline">Manage your properties →</a>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h3 class="text-xl font-bold text-blue-600 mb-2">View My Agents</h3>
-        <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Stay connected with your agents and get real-time updates.</p>
-        <a href="#" class="text-blue-600 hover:underline">Manage linked agents →</a>
-      </div>
+      <!--<div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">-->
+      <!--  <h3 class="text-xl font-bold text-blue-600 mb-2">View My Agents</h3>-->
+      <!--  <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Stay connected with your agents and get real-time updates.</p>-->
+      <!--  <a href="#" class="text-blue-600 hover:underline">Manage linked agents →</a>-->
+      <!--</div>-->
       <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
         <h3 class="text-xl font-bold text-blue-600 mb-2">Job Requests</h3>
         <p class="text-gray-600 mb-4">Manage your job requests. Assign tasks, track progress, and ensure everything gets done on time.</p>
         <a href="/jobs/" class="text-blue-600 hover:underline">Manage your job requests →</a>
       </div>
-    </section>
-
-    <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
       <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
         <h3 class="text-xl font-bold text-blue-600 mb-2">Condition Reports</h3>
         <p class="text-gray-600 mb-4">Easily create and track your maintenance requests. Document the state of rooms before and after leasing.</p>
         <a href="/renter-rooms/" class="text-blue-600 hover:underline">Manage your condition reports →</a>
       </div>
+    </section>
+
+    <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
+
       <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
         <h3 class="text-xl font-bold text-blue-600 mb-2">Appliance Reports</h3>
         <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Ensure all appliances are functioning properly and report issues quickly.</p>

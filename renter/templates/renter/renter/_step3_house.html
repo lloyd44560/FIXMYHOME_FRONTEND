@@ -1,0 +1,156 @@
+<div id="step3" class="space-y-4 hidden">
+  <div class="mb-4">
+    <select name="uploadOption" id="uploadOption" class="w-full border border-gray-300 rounded-md p-2">
+      <option value="">Select Your Reports</option>
+      <option value="manual">Manually Upload Property Details</option>
+      <option value="report">Upload Property Reports</option>
+    </select>
+  </div>
+
+  <div id="manualUploadFields" class="space-y-4 hidden">
+    <div class="mb-4">
+      <label for="propertyImage" class="block text-gray-700 font-medium mb-2">Upload Property Photo</label>
+      <img id="imagePreview" src="" alt="Property Image" class="w-full h-auto object-contain rounded mb-4 border border-gray-300" />
+      <input
+        type="file"
+        name="propertyImage"
+        id="propertyImage"
+        class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
+        accept="image/*"
+        onchange="validateImageFile(this)"
+      />
+      <label for="propertyFile" class="block text-gray-700 font-medium mb-2">Upload Condition Report</label>
+      <input
+        type="file"
+        name="propertyFile"
+        id="propertyFile"
+        accept="file/*"
+        class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
+        onchange="validateFileType(this)"
+      />
+      <span id="fileTypeError" class="text-red-500 text-sm hidden">Invalid file type. Only PDF, DOC, DOCX, XLS, XLSX allowed.</span>
+    </div>
+    <div class="mb-4">
+      <label for="propertyName" class="block text-gray-700 font-medium mb-2">Property Name</label>
+      <input type="text" name="propertyName" id="propertyName" placeholder="What is the name of the property?" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-4">
+      <label for="floorCount_manual" class="block text-gray-700 font-medium mb-2">Floor Count</label>
+      <input
+        type="number"
+        name="floorCount_manual"
+        id="floorCount_manual"
+        placeholder="How many floors is the property?"
+        class="w-full border border-gray-300 rounded-md p-2"
+        min="1"
+        onchange="validateFloorCount(this)"
+      />
+    </div>
+    <div class="mb-4">
+      <label for="leaseStart_manual" class="block text-gray-700 font-medium mb-2">Property Lease Start</label>
+      <input
+        type="date"
+        name="leaseStart_manual"
+        id="leaseStart_manual"
+        placeholder="Date of Property Lease Start?"
+        class="w-full border border-gray-300 rounded-md p-2"
+        min="1"
+        onchange="validateFloorCount(this)"
+      />
+    </div>
+    <div class="mb-4">
+      <label for="leaseEnd_manual" class="block text-gray-700 font-medium mb-2">Property Lease End</label>
+      <input
+        type="date"
+        name="leaseEnd_manual"
+        id="leaseEnd_manual"
+        placeholder="Date of Property Lease End?"
+        class="w-full border border-gray-300 rounded-md p-2"
+        min="1"
+        onchange="validateFloorCount(this)"
+      />
+    </div>
+    <div class="mb-4">
+      <label for="agent_id" class="block text-gray-700 font-medium mb-2">Select Agent</label>
+      <select name="agent_id" id="agent_id" required class="w-full border border-gray-300 rounded-md p-2">
+        <option value="" disabled selected>Select an agent</option>
+        {% for agent in agents %}
+          <option value="{{ agent.id }}">{{ agent.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="roomCount_manual" class="block text-gray-700 font-medium mb-2">Room Count</label>
+      <input type="number" name="roomCount_manual" id="roomCount_manual" placeholder="How many rooms are in the property?" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-6">
+      <label for="roomType" class="block text-gray-700 font-semibold mb-2">Rooms</label>
+      <div class="flex gap-2 mb-4">
+        <input
+          type="text"
+          id="roomType"
+          placeholder="Enter Room Type (e.g., Bedroom)"
+          class="flex-1 border border-gray-300 rounded-md p-2"
+        />
+        <button
+          type="button"
+          id="addRoomBtn"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
+          Add Room
+        </button>
+      </div>
+      <ul id="roomList" class="space-y-3">
+        <input type="hidden" name="roomListData" id="roomListData">
+      </ul>
+    </div>
+    <div class="mb-4">
+      <label for="houseState_manual" class="block text-gray-700 font-medium mb-2">State</label>
+      <input type="text" name="houseState_manual" id="houseState_manual" placeholder="State" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-4">
+      <label for="houseCity_manual" class="block text-gray-700 font-medium mb-2">City</label>
+      <input type="text" name="houseCity_manual" id="houseCity_manual" placeholder="City" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-4">
+      <label for="address1" class="block text-gray-700 font-medium mb-2">Address Line 1</label>
+      <input type="text" name="address1" id="address1" placeholder="Address Line 1" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-4">
+      <label for="address2" class="block text-gray-700 font-medium mb-2">Address Line 2 (Optional)</label>
+      <input type="text" name="address2" id="address2" placeholder="Address Line 2" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+    <div class="mb-4">
+      <label for="postalcode" class="block text-gray-700 font-medium mb-2">Postal Code</label>
+      <input type="text" name="postalcode" id="postalcode" placeholder="Postal Code" class="w-full border border-gray-300 rounded-md p-2" />
+    </div>
+  </div>
+
+  <div id="reportUploadFields" class="space-y-4 hidden flex flex-col items-start" style="text-align: center;">
+    <p class="font-semibold mb-2">Select Your Reports</p>
+    <div class="space-y-4">
+      <button type="button" onclick="openModal('conditionModal')" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+        Condition Report
+      </button>
+      <button type="button" class="applianceReportBtn w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+        Appliance Report
+      </button>
+      <button type="button" onclick="openModal('maintenanceModal')" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+        Maintenance Report
+      </button>
+      <button type="button" onclick="openModal('standardModal')" class="w-full border border-blue-500 text-blue-500 bg-blue-100 py-3 px-4 rounded-md text-center">
+        Minimum Standard Reports
+      </button>
+    </div>
+  </div>
+</div>
