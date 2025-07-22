@@ -149,7 +149,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'renter/static'),
     os.path.join(BASE_DIR, 'trader/static'),
     os.path.join(BASE_DIR, 'agent/static'),
-    os.path.join(BASE_DIR, 'thirdparty/static'),
 ]
 
 # Default primary key field type

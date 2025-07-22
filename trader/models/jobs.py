@@ -1,21 +1,23 @@
 from django.db import models
 from django.utils import timezone
 
-from renter.models import Renter
-from agent.models import AgentRegister
+from agent.models import AgentRegister, Property
 from .registerTrader import TraderRegistration
+from .servicesTrader import Services
 
 class Jobs(models.Model):
     agent = models.ForeignKey(AgentRegister, on_delete=models.CASCADE, related_name='jobs_agent')
-    renter = models.ForeignKey(Renter, on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs_renter')
     trader = models.ForeignKey(TraderRegistration, on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs_trader')
-
+    property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs_property')
+    
     STATUS_CHOICES = [
         ('quoted', 'Quoted'),
         ('confirmed', 'Confirmed'),
         ('approved', 'Approved'),
         ('scheduled', 'Scheduled'),
     ]
+    category = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True, blank=True, related_name='category_services')
+    renter = models.CharField(max_length=100, null=True, blank=True)
     priority = models.BooleanField(default=False)  # True = High Priority
     job_code = models.CharField(max_length=20, unique=True)
     notes = models.TextField()
