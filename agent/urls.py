@@ -16,13 +16,18 @@ urlpatterns = [
     path('property/<int:pk>/edit/', views.PropertyUpdateView.as_view(), name='property_edit'),
     path('property/<int:pk>/delete/', views.delete_property, name='property_delete'),
     path('property/<int:pk>/view/', views.PropertyDetailView.as_view(), name='property_view'),
+    path('properties/', views.PropertiesListView.as_view(), name='manage_properties'),
+
+    path('renter-invitation/', views.InviteRenterView.as_view(), name='renter_invitation'),
     path('renters/', views.RenterListView.as_view(), name='manage_renters'),
     path('renters/<int:pk>/edit/', views.RenterUpdateView.as_view(), name='edit_renter'),
-    path('agent/jobs/create/', views.AgentJobCreateView.as_view(), name='agent_job_create'),
+    
+    path('agent/jobs/create/<int:pk>/', views.AgentJobCreateView.as_view(), name='agent_job_create'),
     path('agent/job-list/', views.JobListView.as_view(), name='job_list_agent'),
+    path('active-jobs/', views.ActiveJobsListView.as_view(), name='active_jobs_list'),
+
     path('bids/', views.AgentBidListView.as_view(), name='agent_bid_list'),
     path('bidding/<int:pk>/approve/', views.BiddingApprovalView.as_view(), name='bidding_approval'),
-    path('properties/', views.PropertiesListView.as_view(), name='manage_properties'),
-    path('active-jobs/', views.ActiveJobsListView.as_view(), name='active_jobs_list'),
-    path('renter-invitation/', views.InviteRenterView.as_view(), name='renter_invitation'),
+    
+    
 ]
