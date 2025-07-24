@@ -73,7 +73,7 @@ class InvitationForm(forms.Form):
 class AgentCreateRoomForm(forms.ModelForm):
     class Meta:
         model = Rooms
-        exclude = ['property']
+        exclude = ['property', 'renter']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3})
         }

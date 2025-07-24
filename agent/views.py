@@ -253,6 +253,7 @@ class PropertyDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['room_form'] = AgentCreateRoomForm()
+        context['jobs'] = Jobs.objects.filter(property=self.object)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -260,10 +261,12 @@ class PropertyDetailView(DetailView):
         form = AgentCreateRoomForm(request.POST)
         if form.is_valid():
             room = form.save(commit=False)
+            room.renter = self.object.renter if self.object.renter else None
             room.property = self.object
             room.save()
 
             messages.success(request, f"Room created successfully!")
+            return redirect('property_view', pk=self.object.pk)
         else:
             messages.error(request, f"{form.errors}")
 
