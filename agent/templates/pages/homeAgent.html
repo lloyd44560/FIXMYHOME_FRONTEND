@@ -37,6 +37,77 @@
     </div>
   </div>
 
+  <!-- Properties Table Section -->
+  <div class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+      <h2 class="text-2xl font-bold mb-4 text-blue-700">Properties</h2>
+
+      <div class="flex justify-start mb-4 gap-4">
+          <a href="{% url 'property_create' %}"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+              + Create Property
+          </a>
+      </div>
+
+      <div class="bg-white shadow-md rounded-lg">
+        <table class="min-w-full table-auto">
+          <thead class="bg-blue-700 text-white">
+              <tr>
+                  <th class="px-4 py-2 text-left">Property</th>
+                  <th class="px-4 py-2 text-left">Renter</th>
+                  <th class="px-4 py-2 text-left">Lease Dates</th>
+                  <th class="px-4 py-2 text-left">Rent</th>
+                  <th class="px-4 py-2 text-left">Status</th>
+                  <th class="px-4 py-2 text-left">Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for property in properties %}
+              <tr class="border-t">
+                  <td class="px-4 py-2">
+                      <div class="font-semibold">{{ property.name }}</div>
+                      <div class="text-sm text-gray-500">{{ property.address }}</div>
+                  </td>
+                  <td class="px-4 py-2">
+                      <div>{{ property.renter }}</div>
+                      <div class="text-sm text-gray-500">{{ property.renter_contact }}</div>
+                  </td>
+                  <td class="px-4 py-2">{{ property.lease_start }} - {{ property.lease_end }}</td>
+                  <td class="px-4 py-2">${{ property.rent }}/week</td>
+                  <td class="px-4 py-2">
+                      <span class="{% if property.status == 'occupied' %}text-green-600{% else %}text-red-600{% endif %}">
+                      {{ property.status|title }}
+                      </span>
+                  </td>
+                  <td class="px-4 py-2 text-sm">
+                    <div x-data="{ open: false }" class="relative inline-block text-left">
+                      <button @click="open = !open" @click.away="open = false" type="button" class="p-2 rounded-full hover:bg-gray-200 focus:outline-none" aria-label="Actions">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <circle cx="5" cy="12" r="2"/>
+                          <circle cx="12" cy="12" r="2"/>
+                          <circle cx="19" cy="12" r="2"/>
+                        </svg>
+                      </button>
+                      <div x-show="open" x-transition class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-10">
+                        <a href="{% url 'property_view' property.pk %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">🔍 View</a>
+                        <a href="{% url 'property_edit' property.pk %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">✏ Edit</a>
+                        <form method="post" action="{% url 'property_delete' property.pk %}" class="block">
+                          {% csrf_token %}
+                          <button type="submit" onclick="return confirm('Are you sure you want to delete this property?')" class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">🗑 Delete</button>
+                        </form>
+                      </div>
+                    </div>
+                  </td>
+              </tr>
+              {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500">No properties available.</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div>
+
   <!-- New Messages -->
   <section>
     <h2 class="text-blue-600 font-bold text-xl mb-3">New Messages</h2>
@@ -82,5 +153,6 @@
 {% endblock %}
 
 {% block scripts %}
-  <!-- JS Scripts Here! -->
+  <!-- Alpine.js CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}
