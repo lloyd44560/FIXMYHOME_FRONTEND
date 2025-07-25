@@ -178,56 +178,31 @@
     <!-- New Condition Report Modal -->
 <!-- Room Condition Modal -->
 <!-- Modal -->
-<div class="modal fade" id="mainConditionModal" tabindex="-1" aria-labelledby="mainConditionModalLabel" aria-hidden="true">
+<!-- Add Main Condition Report Modal -->
+<div class="modal fade" id="addConditionReportModal" tabindex="-1" aria-labelledby="addConditionReportModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="mainConditionForm" method="POST" enctype="multipart/form-data">
+      <form id="mainConditionReportForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="mainConditionModalLabel">Add Main Condition Report</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header">
+          <h5 class="modal-title" id="addConditionReportModalLabel">Add Condition Report</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
         <div class="modal-body">
-          <!-- Main Report Fields -->
           <div class="mb-3">
-            <label>Report Number</label>
+            <label>Condition Report Number:</label>
             <input type="text" name="report_number" class="form-control" required>
           </div>
 
-          <!-- Rooms Repeater -->
-          <div id="roomsContainer">
-            <!-- One Room -->
-            <div class="room-block border rounded p-3 mb-3">
-              <label>Room Name</label>
-              <input type="text" name="room_name[]" class="form-control mb-2" required>
+          <hr>
+          <div id="roomsContainer"></div>
 
-              <label>Description</label>
-              <textarea name="room_description[]" class="form-control mb-2"></textarea>
-
-              <!-- Area Conditions for This Room -->
-              <div class="area-conditions-container">
-                <!-- One Area Condition -->
-                <div class="area-condition-block border p-2 mb-2">
-                  <input type="text" name="area_name_0[]" class="form-control mb-1" placeholder="Area Name">
-                  <select name="status_0[]" class="form-control mb-1">
-                    <option value="Clean">Clean</option>
-                    <option value="Undamaged">Undamaged</option>
-                    <option value="Working">Working</option>
-                  </select>
-                  <input type="file" name="photo_0[]" class="form-control mb-1">
-                  <textarea name="remarks_0[]" class="form-control" placeholder="Remarks"></textarea>
-                </div>
-              </div>
-              <button type="button" class="btn btn-sm btn-outline-secondary add-area-condition" data-room-index="0">+ Add Area</button>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn-outline-primary mt-2" id="addRoomBtn">+ Add Room</button>
+          <button type="button" class="btn btn-success mt-3" onclick="addRoomBlock()">+ Add Room</button>
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save Condition Report</button>
+          <button type="submit" class="btn btn-primary">Save Report</button>
         </div>
       </form>
     </div>
@@ -295,41 +270,70 @@
     }
 </script>
 <script>
-let roomIndex = 1;
+let roomIndex = 0;
 
-document.getElementById('addRoomBtn').addEventListener('click', function () {
-  const roomBlock = `
-    <div class="room-block border rounded p-3 mb-3">
-      <label>Room Name</label>
-      <input type="text" name="room_name[]" class="form-control mb-2" required>
-      <label>Description</label>
-      <textarea name="room_description[]" class="form-control mb-2"></textarea>
+function addRoomBlock() {
+  const container = document.getElementById('roomsContainer');
 
-      <div class="area-conditions-container"></div>
-      <button type="button" class="btn btn-sm btn-outline-secondary add-area-condition" data-room-index="${roomIndex}">+ Add Area</button>
-    </div>`;
-  document.getElementById('roomsContainer').insertAdjacentHTML('beforeend', roomBlock);
+  const roomHTML = `
+    <div class="card p-3 mb-3 room-block" data-room-index="${roomIndex}">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5>Room</h5>
+        <button type="button" class="btn btn-sm btn-danger" onclick="removeRoom(this)">Remove Room</button>
+      </div>
+      <input type="text" name="room_name_${roomIndex}" placeholder="Room Name" class="form-control mb-2" required>
+      <textarea name="room_description_${roomIndex}" class="form-control mb-2" placeholder="Room Description"></textarea>
+
+      <div class="condition-container" data-room-index="${roomIndex}">
+        <!-- Initial condition -->
+      </div>
+
+      <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addCondition(${roomIndex})">+ Add Condition</button>
+    </div>
+  `;
+  container.insertAdjacentHTML('beforeend', roomHTML);
+  addCondition(roomIndex);  // Add 1 default condition
   roomIndex++;
-});
+}
 
-document.addEventListener('click', function (e) {
-  if (e.target.classList.contains('add-area-condition')) {
-    const roomBlock = e.target.closest('.room-block');
-    const roomIdx = e.target.dataset.roomIndex;
-    const areaBlock = `
-      <div class="area-condition-block border p-2 mb-2">
-        <input type="text" name="area_name_${roomIdx}[]" class="form-control mb-1" placeholder="Area Name">
-        <select name="status_${roomIdx}[]" class="form-control mb-1">
+function addCondition(roomIndex) {
+  const conditionContainer = document.querySelector(`.condition-container[data-room-index="${roomIndex}"]`);
+  const conditionCount = conditionContainer.querySelectorAll('.condition-row').length;
+  const conditionHTML = `
+    <div class="row condition-row align-items-end mb-2">
+      <div class="col-md-3">
+        <input type="text" name="area_name_${roomIndex}_${conditionCount}" placeholder="Area Name" class="form-control" required>
+      </div>
+      <div class="col-md-2">
+        <select name="status_${roomIndex}_${conditionCount}" class="form-control">
           <option value="Clean">Clean</option>
           <option value="Undamaged">Undamaged</option>
           <option value="Working">Working</option>
         </select>
-        <input type="file" name="photo_${roomIdx}[]" class="form-control mb-1">
-        <textarea name="remarks_${roomIdx}[]" class="form-control" placeholder="Remarks"></textarea>
-      </div>`;
-    roomBlock.querySelector('.area-conditions-container').insertAdjacentHTML('beforeend', areaBlock);
-  }
-});
+      </div>
+      <div class="col-md-3">
+        <input type="file" name="photo_${roomIndex}_${conditionCount}" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="remarks_${roomIndex}_${conditionCount}" placeholder="Remarks" class="form-control">
+      </div>
+      <div class="col-md-1">
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCondition(this)">✕</button>
+      </div>
+    </div>
+  `;
+  conditionContainer.insertAdjacentHTML('beforeend', conditionHTML);
+}
+
+function removeRoom(button) {
+  const card = button.closest('.room-block');
+  card.remove();
+}
+
+function removeCondition(button) {
+  const row = button.closest('.condition-row');
+  row.remove();
+}
 </script>
 
 <style>

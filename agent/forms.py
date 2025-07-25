@@ -73,7 +73,7 @@ class InvitationForm(forms.Form):
 class AgentCreateRoomForm(forms.ModelForm):
     class Meta:
         model = Rooms
-        exclude = ['property']
+        exclude = ['property', 'renter']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3})
         }
@@ -89,7 +89,7 @@ class RenterUpdateForm(forms.ModelForm):
 class AgentCreateJobForm(forms.ModelForm):
     class Meta:
         model = Jobs
-        fields = ['renter', 'trader', 'notes', 'scheduled_at', 'priority']  # agent will be set in view
+        fields = ['renter', 'category', 'trader', 'notes', 'scheduled_at', 'priority']  # agent will be set in view
 
         widgets = {
             'notes': forms.Textarea(attrs={
