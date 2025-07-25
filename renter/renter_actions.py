@@ -46,7 +46,7 @@ from .forms import PropertyForm
 from .forms import MinimumStandardReportForm
 from .forms import RenterRoomForm, RenterRoomAreaConditionForm, RoomApplianceReportForm
 from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport
-
+from django.db import transaction
 # 1. Index view for Properties
 @login_required
 def property_index(request):
@@ -377,17 +377,17 @@ def add_job(request):
             renter = Renter.objects.get(user=request.user)
 
             agent = AgentRegister.objects.get(id=request.POST.get('agent_id'))
-            trader = TraderRegistration.objects.get(id=request.POST.get('trader_id'))
+            # trader = TraderRegistration.objects.get(id=request.POST.get('trader_id'))
 
             job = Jobs.objects.create(
                 agent=agent,
-                trader=trader,
+                # trader=trader,
                 renter=renter,
                 notes=request.POST.get('notes'),
                 priority=request.POST.get('priority') == 'true',
-                status=request.POST.get('status')
+                # status=request.POST.get('status')
             )
-            return redirect('/welcome/')
+            return redirect('/jobs/')
         except Exception as e:
             print("Add job error:", e)
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
@@ -402,13 +402,13 @@ def edit_job(request, id):
             job = get_object_or_404(Jobs, id=id, renter__user=request.user)
 
             job.agent_id = request.POST.get('agent_id')
-            job.trader_id = request.POST.get('trader_id')
+            # job.trader_id = request.POST.get('trader_id')
             job.notes = request.POST.get('notes')
-            job.status = request.POST.get('status')
+            # job.status = request.POST.get('status')
             job.priority = request.POST.get('priority') == 'true'
             job.save()
 
-            return redirect('/properties/')  # Or redirect to job list
+            return redirect('/jobs/')  # Or redirect to job list
         except Exception as e:
             print("Edit job error:", e)
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
@@ -421,10 +421,10 @@ def delete_job(request, id):
     try:
         job = get_object_or_404(Jobs, id=id, renter__user=request.user)
         job.delete()
-        return redirect('/welcome/')
+        return redirect('/jobs/')
     except Exception as e:
         print("Delete job error:", e)
-        return redirect('/welcome/')
+        return redirect('/jobs/')
 
 
 

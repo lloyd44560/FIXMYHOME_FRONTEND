@@ -30,11 +30,33 @@ class RoomCondition(models.Model):
     renter_1 = models.CharField(max_length=100, blank=True)
     renter_2 = models.CharField(max_length=100, blank=True)
 
+
+
+class MainConditionReport(models.Model):
+    report_number = models.CharField(max_length=100, unique=True)  # e.g. CR-0001
+    date_created = models.DateField(auto_now_add=True)
+    renter = models.ForeignKey(Renter, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.report_number
+
+
+
+class ConditionReportRoom(models.Model):
+    report = models.ForeignKey(MainConditionReport, on_delete=models.CASCADE, related_name='report_rooms')
+    room = models.ForeignKey('renter.RenterRoom', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.report.report_number} - {self.room.room_name}"
+
+
+
 class RenterRoom(models.Model):
     renter = models.ForeignKey(Renter, on_delete=models.CASCADE,null=True)
     property = models.ForeignKey(Property, on_delete=models.CASCADE,null=True)
     room_name = models.CharField(max_length=255,null=True)
     description = models.TextField(blank=True,null=True)
+    photo = models.ImageField(upload_to='room_photos/', blank=True, null=True)
 
     def __str__(self):
         return self.room_name

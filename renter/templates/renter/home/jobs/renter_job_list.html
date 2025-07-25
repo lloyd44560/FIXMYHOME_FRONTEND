@@ -22,7 +22,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="h3 fw-bold text-dark">My Maintenance Requests</h1>
       <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addJobModal">
-        <i class="bi bi-plus-circle me-1"></i> Add Job
+        <i class="bi bi-plus-circle me-1"></i> Add Maintenance Requests
       </button>
     </div>
 
@@ -38,7 +38,7 @@
             <th scope="col">Job Code</th>
             <th scope="col">Status</th>
             <th scope="col">Priority</th>
-            <th scope="col">Notes</th>
+            <th scope="col">Issues</th>
             <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
@@ -84,18 +84,18 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label>Notes</label>
-            <textarea name="notes" class="form-control">{{ job.notes }}</textarea>
+            <label>Issues</label>
+            <textarea required name="notes" class="form-control">{{ job.notes }}</textarea>
           </div>
 
-          <div class="mb-3">
-            <label>Status</label>
-            <select name="status" class="form-select">
-              {% for code, label in job.STATUS_CHOICES %}
-                <option value="{{ code }}" {% if job.status == code %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
+          <!--<div class="mb-3">-->
+          <!--  <label>Status</label>-->
+          <!--  <select name="status" class="form-select">-->
+          <!--    {% for code, label in job.STATUS_CHOICES %}-->
+          <!--      <option value="{{ code }}" {% if job.status == code %}selected{% endif %}>{{ label }}</option>-->
+          <!--    {% endfor %}-->
+          <!--  </select>-->
+          <!--</div>-->
 
           <div class="mb-3">
             <label>Agent</label>
@@ -106,14 +106,14 @@
             </select>
           </div>
 
-          <div class="mb-3">
-            <label>Trader</label>
-            <select name="trader_id" class="form-select">
-              {% for trader in traders %}
-                <option value="{{ trader.id }}" {% if trader.id == job.trader_id %}selected{% endif %}>{{ trader.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+          <!--<div class="mb-3">-->
+          <!--  <label>Trader</label>-->
+          <!--  <select name="trader_id" class="form-select">-->
+          <!--    {% for trader in traders %}-->
+          <!--      <option value="{{ trader.id }}" {% if trader.id == job.trader_id %}selected{% endif %}>{{ trader.name }}</option>-->
+          <!--    {% endfor %}-->
+          <!--  </select>-->
+          <!--</div>-->
 
           <div class="mb-3">
             <label>Priority</label>
@@ -143,19 +143,19 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label>Notes</label>
-            <textarea name="notes" class="form-control" placeholder="Enter job notes"></textarea>
+            <label>Issues</label>
+            <textarea required name="notes" class="form-control" placeholder="Enter Issues"></textarea>
           </div>
 
-          <div class="mb-3">
-            <label>Status</label>
-            <select name="status" class="form-select">
-              <option value="quoted">Quoted</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="approved">Approved</option>
-              <option value="scheduled">Scheduled</option>
-            </select>
-          </div>
+          <!--<div class="mb-3">-->
+          <!--  <label>Status</label>-->
+          <!--  <select name="status" class="form-select">-->
+          <!--    <option value="quoted">Quoted</option>-->
+          <!--    <option value="confirmed">Confirmed</option>-->
+          <!--    <option value="approved">Approved</option>-->
+          <!--    <option value="scheduled">Scheduled</option>-->
+          <!--  </select>-->
+          <!--</div>-->
 
           <div class="mb-3">
             <label>Agent</label>
@@ -167,15 +167,15 @@
             </select>
           </div>
 
-          <div class="mb-3">
-            <label>Trader</label>
-            <select name="trader_id" class="form-select" required>
-              <option value="" disabled selected>-- Select Trader --</option>
-              {% for trader in traders %}
-              <option value="{{ trader.id }}">{{ trader.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+          <!--<div class="mb-3">-->
+          <!--  <label>Trader</label>-->
+          <!--  <select name="trader_id" class="form-select" required>-->
+          <!--    <option value="" disabled selected>-- Select Trader --</option>-->
+          <!--    {% for trader in traders %}-->
+          <!--    <option value="{{ trader.id }}">{{ trader.name }}</option>-->
+          <!--    {% endfor %}-->
+          <!--  </select>-->
+          <!--</div>-->
 
           <div class="mb-3">
             <label>Priority</label>
@@ -186,7 +186,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Add Request Maintenance</button>
+          <button type="submit" class="btn btn-success">Save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </form>

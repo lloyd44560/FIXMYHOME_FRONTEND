@@ -73,7 +73,18 @@ class MinimumStandardReportForm(forms.ModelForm):
         model = MinimumStandardReport
         exclude = ['renter']
         widgets = {
-            'audit_date': forms.DateInput(attrs={'type': 'date'}),
+            'tenant_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'audit_no': forms.TextInput(attrs={'class': 'form-control'}),
+            'auditor': forms.TextInput(attrs={'class': 'form-control'}),
+            'inspection_address': forms.TextInput(attrs={'class': 'form-control'}),
+            'managing_agent': forms.TextInput(attrs={'class': 'form-control'}),
+            'audit_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'audit_expiry': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'room': forms.TextInput(attrs={'class': 'form-control'}),
+            'comments': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'company': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'report_file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
 class RenterRoomForm(forms.ModelForm):

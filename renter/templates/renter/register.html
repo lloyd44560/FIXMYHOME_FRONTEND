@@ -218,9 +218,10 @@
           oninput="validateFields()"
         />
       </div>
-      <p id="cityError" class="text-red-500 text-sm hidden">City is required.</p>
 
-      <p id="zipError" class="text-red-500 text-sm hidden">Zip Code is required.</p>
+      <p id="cityError" class="text-red-500 text-sm hidden"> City is required. </p>
+
+      <p id="zipError" class="text-red-500 text-sm hidden"> Zip Code is required. </p>
 
       <div class="mb-4">
         <label for="zip" class="block text-gray-700 font-medium mb-2">Address Line 1*</label>
@@ -453,6 +454,108 @@
             </div>
 
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const roomsContainer = document.getElementById("roomsContainer");
+      let nextRoomId = 1;
+
+      function getNextRoomNumber() {
+        const used = Array.from(roomsContainer.querySelectorAll(".room-block")).map(block => {
+          return parseInt(block.dataset.roomIndex);
+        });
+        let i = 1;
+        while (used.includes(i)) i++;
+        return i;
+      }
+
+      window.addRoom = function () {
+        const roomIndex = getNextRoomNumber();
+
+        const roomHtml = `
+          <div class="card mb-4 room-block" data-room-index="${roomIndex}" id="room_block_${roomIndex}">
+            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+              <strong>Room ${roomIndex}</strong>
+              <button type="button" class="btn btn-sm btn-danger" onclick="removeRoom(${roomIndex})">Remove Room</button>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label>Room Name</label>
+                <input type="text" class="form-control" name="room_name_${roomIndex}" required>
+              </div>
+
+              <div class="mb-3">
+                <label>Room Photo</label>
+                <input type="file" class="form-control" name="room_photo_${roomIndex}" accept="image/*">
+              </div>
+
+              <div id="areaConditions_${roomIndex}"></div>
+
+              <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addAreaCondition(${roomIndex})">+ Add Area Condition</button>
+            </div>
+          </div>
+        `;
+
+        roomsContainer.insertAdjacentHTML('beforeend', roomHtml);
+      };
+
+      window.addAreaCondition = function (roomIdx) {
+        const container = document.getElementById(`areaConditions_${roomIdx}`);
+        const condCount = container.querySelectorAll('.condition-block').length;
+
+        const conditionHtml = `
+          <div class="border rounded p-3 mb-3 condition-block" id="condition_${roomIdx}_${condCount}">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6>Condition ${condCount + 1}</h6>
+              <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeAreaCondition(${roomIdx}, ${condCount})">Remove</button>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <label>Area Name</label>
+                <input type="text" class="form-control" name="area_name_${roomIdx}[]" required>
+              </div>
+              <div class="col-md-4">
+                <label>Condition</label>
+                <select class="form-control" name="condition_${roomIdx}[]" required>
+                  <option value="Clean">Clean</option>
+                  <option value="Undamaged">Undamaged</option>
+                  <option value="Working">Working</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label>Remarks</label>
+                <input type="text" class="form-control" name="remarks_${roomIdx}[]">
+              </div>
+              <div class="col-12 mt-2">
+                <label>Upload Photo (Optional)</label>
+                <input type="file" class="form-control" name="area_photo_${roomIdx}[]" accept="image/*">
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', conditionHtml);
+      };
+
+      window.removeRoom = function (roomIdx) {
+        const roomBlock = document.getElementById(`room_block_${roomIdx}`);
+        if (roomBlock) roomBlock.remove();
+      };
+
+      window.removeAreaCondition = function (roomIdx, condIdx) {
+        const conditionBlock = document.getElementById(`condition_${roomIdx}_${condIdx}`);
+        if (conditionBlock) conditionBlock.remove();
+      };
+
+      // Prevent modal form from submitting (for now)
+      const conditionModal = document.getElementById("conditionModal");
+      conditionModal.querySelector("form")?.addEventListener("submit", function (e) {
+        e.preventDefault();
+        console.log("Form submission prevented. You can handle saving manually here.");
+      });
+    });
+</script>
+
+
    <!-- Room Condition Modal -->
 
     <div class="modal fade" id="conditionModal" tabindex="-1" aria-labelledby="conditionModalLabel" aria-hidden="true">
@@ -469,55 +572,41 @@
               <label>Property Name</label>
               <input type="text" class="form-control" name="property_name" required>
             </div>
+
+            <!-- add the agent id pala dito sir -->
             <div class="mb-3">
               <label>Property Address</label>
               <input type="text" class="form-control" name="property_address" required>
             </div>
-            <div class="col-md-6">
-              <label>Lease Start</label>
-              <input type="date" name="lease_start" class="form-control" required>
-            </div>
-            <div class="col-md-6">
-              <label>Lease End</label>
-              <input type="date" name="lease_end" class="form-control" required>
-            </div>
-            <!-- Room Info -->
-            <div class="mb-3">
-              <label>Room Name</label>
-              <input type="text" class="form-control" name="room_name" required>
-            </div>
-
-            <!-- Area Conditions -->
-            <div id="areaConditions">
-              <div class="border p-3 mb-3 area-condition">
-                <h6>Area Condition 1</h6>
-                <div class="row">
-                  <div class="col-md-4">
-                    <label>Area Name</label>
-                    <input type="text" class="form-control" name="area_name[]" required>
-                  </div>
-                  <div class="col-md-4">
-                    <label>Condition</label>
-                    <select class="form-control" name="condition[]" required>
-                      <option value="Clean">Clean</option>
-                      <option value="Undamaged">Undamaged</option>
-                      <option value="Working">Working</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <label>Remarks</label>
-                    <input type="text" class="form-control" name="remarks[]">
-                  </div>
-                </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label>Lease Start</label>
+                <input type="date" name="lease_start" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label>Lease End</label>
+                <input type="date" name="lease_end" class="form-control" required>
               </div>
             </div>
 
-            <!-- Add More Areas -->
-            <button type="button" class="btn btn-outline-secondary" onclick="addAreaCondition()">+ Add Another Area</button>
+            <div class="mb-4">
+                  <label for="agent" class="block text-gray-700 font-medium mb-2">Select Agent</label>
+                  <select name="agent_id_condition" id="agent_id_condition" class="w-full border border-gray-300 rounded-md p-2">
+                    <option value="" disabled selected>Select an agent</option>
+                    {% for agent in agents %}
+                      <option value="{{ agent.id }}">{{ agent.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+            <!-- Room & Area Conditions -->
+            <div id="roomsContainer"></div>
+
+            <button type="button" class="btn btn-outline-primary mt-3" onclick="addRoom()">+ Add Room</button>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Done</button>
+            <button type="submit" class="btn btn-primary">Save All</button>
           </div>
         </div>
       </div>
@@ -526,82 +615,11 @@
 
 
 
-    <script>
-      let roomCount = 0;
 
-      function addRoom() {
-        const container = document.createElement('div');
-        container.classList.add('mb-4', 'border', 'p-3', 'rounded');
-        container.innerHTML = `
-          <label>Room Name:</label>
-          <input type="text" class="roomName w-full border p-1 rounded mb-2" />
-          <label>Room Type:</label>
-          <input type="text" class="roomType w-full border p-1 rounded mb-2" />
-          <div class="areasContainer"></div>
-          <button type="button" onclick="addArea(this)" class="text-sm text-blue-600">+ Add Area</button>
-        `;
-        document.getElementById('roomsContainer').appendChild(container);
-        roomCount++;
-      }
 
-      function addArea(btn) {
-        const areasDiv = btn.previousElementSibling;
-        const areaBlock = document.createElement('div');
-        areaBlock.classList.add('border-t', 'pt-2', 'mt-2');
-        areaBlock.innerHTML = `
-          <label>Area Name:</label>
-          <input type="text" class="areaName w-full border p-1 rounded mb-1" />
-          <label>Condition:</label>
-          <input type="text" class="areaCondition w-full border p-1 rounded mb-1" />
-          <label>Remarks:</label>
-          <input type="text" class="areaRemarks w-full border p-1 rounded mb-2" />
-        `;
-        areasDiv.appendChild(areaBlock);
-      }
 
-      function submitConditionReport() {
-        const property = {
-          name: document.getElementById('propertyName').value,
-          address: document.getElementById('propertyAddress').value,
-          location: document.getElementById('propertyLocation').value,
-        };
-
-        const rooms = [];
-        document.querySelectorAll('#roomsContainer > div').forEach(roomDiv => {
-          const name = roomDiv.querySelector('.roomName').value;
-          const type = roomDiv.querySelector('.roomType').value;
-
-          const areas = [];
-          roomDiv.querySelectorAll('.areasContainer > div').forEach(areaDiv => {
-            const area_name = areaDiv.querySelector('.areaName').value;
-            const condition = areaDiv.querySelector('.areaCondition').value;
-            const remarks = areaDiv.querySelector('.areaRemarks').value;
-            areas.push({ area_name, condition, remarks });
-          });
-
-          rooms.push({ name, type, areas });
-        });
-
-        fetch("{% url 'save_condition_report_all' %}", {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ property, rooms })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            alert('Condition report saved!');
-            location.reload();
-          } else {
-            alert('Error saving report.');
-          }
-        });
-      }
-    </script>
     <!-- Appliance Report Modal -->
+
     <div id="applianceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div class="bg-white w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
         <h2 class="text-lg sm:text-xl font-bold text-center text-gray-800 mb-4">Appliance Report</h2>
@@ -910,6 +928,7 @@
               </div>
             `;
           }
+
       document.querySelector('.applianceReportBtn').addEventListener('click', function () {
       document.getElementById('applianceModal').classList.remove('hidden');
 
@@ -1142,75 +1161,7 @@
         }
       });
 
-    // Initialize
-    updateStep();
-    const roomInput = document.getElementById('roomType');
-    const addRoomBtn = document.getElementById('addRoomBtn');
-    const roomList = document.getElementById('roomList');
 
-    function createRoomItem(roomName) {
-      const li = document.createElement('li');
-      li.className = "flex items-center justify-between border p-3 rounded-md";
-
-      const span = document.createElement('span');
-      span.className = "text-gray-800 font-medium";
-      span.textContent = roomName;
-
-      const controls = document.createElement('div');
-      controls.className = "flex gap-3";
-
-      const editBtn = document.createElement('button');
-      editBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
-        </svg>
-      `;
-
-    editBtn.onclick = () => {
-        roomInput.value = span.textContent;
-        li.remove();
-        updateRoomListData();
-    };
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 hover:text-red-700" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-    `;
-    deleteBtn.onclick = () => {
-        li.remove();
-        updateRoomListData(); //
-    };
-
-      controls.appendChild(editBtn);
-      controls.appendChild(deleteBtn);
-
-      li.appendChild(span);
-      li.appendChild(controls);
-
-      return li;
-    }
-
-    function updateRoomListData() {
-      const rooms = [];
-      document.querySelectorAll('#roomList li span').forEach(span => {
-          rooms.push(span.textContent);
-      });
-      document.getElementById('roomListData').value = JSON.stringify(rooms);
-    }
-
-    addRoomBtn.addEventListener('click', () => {
-        const roomName = roomInput.value.trim();
-        if (roomName) {
-            roomList.appendChild(createRoomItem(roomName));
-            roomInput.value = '';
-            updateRoomListData();
-        }
-    });
 
   // Form validation Here for required  fielda based on proposal
   const nameInput = document.getElementById("name");
@@ -1506,38 +1457,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   </script>
 
-
-
-
-  <script>
-let areaIndex = 2;
-function addAreaCondition() {
-  const container = document.getElementById("areaConditions");
-  const newBlock = document.createElement("div");
-  newBlock.className = "border p-3 mb-3 area-condition";
-  newBlock.innerHTML = `
-    <h6>Area Condition ${areaIndex++}</h6>
-    <div class="row">
-      <div class="col-md-4">
-        <label>Area Name</label>
-        <input type="text" class="form-control" name="area_name[]" required>
-      </div>
-      <div class="col-md-4">
-        <label>Condition</label>
-        <select class="form-control" name="condition[]" required>
-          <option value="Clean">Clean</option>
-          <option value="Undamaged">Undamaged</option>
-          <option value="Working">Working</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label>Remarks</label>
-        <input type="text" class="form-control" name="remarks[]">
-      </div>
-    </div>`;
-  container.appendChild(newBlock);
-}
-</script>
 
   <!-- Footer -->
   {% include 'renter/home/footer.html' %}

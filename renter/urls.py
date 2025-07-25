@@ -118,5 +118,8 @@ urlpatterns = [
     path('condition-report/', views.condition_report_view, name='condition_report_view'),
     path('condition-report/save-all/', views.save_condition_report_all, name='save_condition_report_all'),
 
+    # path('accounts/', include('allauth.urls')),  # django-allauth routes
+    # path('', TemplateView.as_view(template_name="renter/home.html"), name='home'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

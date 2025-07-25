@@ -16,3 +16,19 @@ def verify_email(strategy, details, backend, user=None, *args, **kwargs):
         raise AuthForbidden(backend)
 
     return
+
+
+
+def link_renter_to_user(strategy, details, user=None, *args, **kwargs):
+    """
+    After Google login, if there's a Renter with the same email, link it to the user.
+    """
+    if user and details.get('email'):
+        email = details['email']
+        try:
+            renter = Renter.objects.filter(email=email).first()
+            if renter and renter.user_id != user.id:
+                renter.user = user
+                renter.save()
+        except Renter.DoesNotExist:
+            pass

@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'social_django',
      'agent',
      'thirdparty'
+
+
+
 ]
 
 MIDDLEWARE = [
@@ -57,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+
 ]
 
 ROOT_URLCONF = 'FMH.urls'
@@ -196,6 +200,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'renter.pipeline.link_renter_to_user',
 )
 
 LOGIN_URL = '/login_renter/'

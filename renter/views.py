@@ -83,7 +83,6 @@ def register(request):
 
 def login_page(request):
     return render(request, 'renter/login.html')
-
 def login_view(request):
     locked_until_str = request.session.get('locked_until')
     if locked_until_str:
@@ -118,9 +117,8 @@ def login_view(request):
                     'next': next_url
                 })
 
+            # Check lockout record
             fail_record, _ = FailedLoginAttempt.objects.get_or_create(user=user_obj)
-
-            # Handle lockout
             if fail_record.is_locked and fail_record.locked_until and timezone.now() < fail_record.locked_until:
                 request.session['locked_until'] = fail_record.locked_until.isoformat()
                 remaining_seconds = int((fail_record.locked_until - timezone.now()).total_seconds())
@@ -130,29 +128,29 @@ def login_view(request):
                     'remaining_seconds': remaining_seconds
                 })
             elif fail_record.is_locked:
+                # Auto unlock after expiration
                 fail_record.is_locked = False
                 fail_record.attempts = 0
                 fail_record.locked_until = None
                 fail_record.save()
 
-            # Try authentication
+            # 🔐 Check if inactive BEFORE authentication
+            if not user_obj.is_active:
+                return render(request, 'renter/login.html', {
+                    'error': 'Your account is inactive. Please activate your email.',
+                    'next': next_url
+                })
+
+            # Authenticate
             user = authenticate(request, username=user_obj.username, password=password)
-
             if user:
-                if not user.is_active:
-                    return render(request, 'renter/login.html', {
-                        'error': 'Your account is inactive. Please activate your email.',
-                        'next': next_url
-                    })
-
-                renter_record = Renter.objects.filter(email=user_obj.email).first()
-
                 login(request, user)
                 fail_record.attempts = 0
                 fail_record.save()
                 request.session.pop('locked_until', None)
 
-                # Set renter session details
+                # Session setup
+                renter_record = Renter.objects.filter(email=user_obj.email).first()
                 if renter_record:
                     request.session['renter_id'] = renter_record.id
                     request.session['renter_phone'] = renter_record.phone
@@ -160,35 +158,33 @@ def login_view(request):
                     request.session['renter_contact'] = renter_record.contact_person
                     request.session['renter_email'] = renter_record.email
 
-                # Redirect based on role
+                # Redirect by role
                 if user_obj.is_staff:
                     return redirect('/trader/home')
                 elif user_obj.is_superuser:
                     return redirect('/agent/home')
-                # elif ThirdParty.objects.filter(contact_email=user_obj.email).exists():
-                #     return redirect('/third_party/home')
                 else:
                     return redirect('/welcome/')
 
-            else:
-                fail_record.attempts += 1
-                if fail_record.attempts >= 3:
-                    fail_record.is_locked = True
-                    fail_record.locked_until = timezone.now() + timedelta(minutes=5)
-                    request.session['locked_until'] = fail_record.locked_until.isoformat()
-                    fail_record.save()
-                    return render(request, 'renter/login.html', {
-                        'error': "Your account has been locked after 3 failed attempts. Please try again later.",
-                        'lockout': True,
-                        'remaining_seconds': 300
-                    })
-
+            # ❌ Incorrect password
+            fail_record.attempts += 1
+            if fail_record.attempts >= 3:
+                fail_record.is_locked = True
+                fail_record.locked_until = timezone.now() + timedelta(minutes=5)
+                request.session['locked_until'] = fail_record.locked_until.isoformat()
                 fail_record.save()
-                remaining = 3 - fail_record.attempts
                 return render(request, 'renter/login.html', {
-                    'error': f"Incorrect password. {remaining} attempt(s) remaining.",
-                    'next': next_url
+                    'error': "Your account has been locked after 3 failed attempts. Please try again later.",
+                    'lockout': True,
+                    'remaining_seconds': 300
                 })
+
+            fail_record.save()
+            remaining = 3 - fail_record.attempts
+            return render(request, 'renter/login.html', {
+                'error': f"Incorrect password. {remaining} attempt(s) remaining.",
+                'next': next_url
+            })
 
         except Exception as e:
             print("Login Error:", e)
@@ -802,58 +798,65 @@ def register_renter(request):
                     lease_end=lease_end,
                     agent=agent,
                 )
-            else:
 
-                # Create Property from modal fields
-                floor_count = request.POST.get('floorCount')
+            else:
+                property_name = request.POST.get('property_name')
+                property_address = request.POST.get('property_address')
                 lease_start = request.POST.get('lease_start')
                 lease_end = request.POST.get('lease_end')
-                house_state = request.POST.get('houseState')
-                house_city = request.POST.get('houseCity')
-                address = request.POST.get('propertyAddress')
-                postal_code = request.POST.get('propertyPostalCode')
-                property_image = request.FILES.get('propertyImage')
-                condition_file = request.FILES.get('propertyFile')
+                agent_id = request.POST.get('agent_id_condition')
 
-                property = Property.objects.create(
-                    renter=renter,
-                    floor_count=floor_count,
+                try:
+                    agent_instance = AgentRegister.objects.get(id=agent_id)
+                except AgentRegister.DoesNotExist:
+                    return JsonResponse({'error': 'Selected agent does not exist.'})
+
+                property_instance = Property.objects.create(
+                    name=property_name,
+                    address=property_address,
                     lease_start=lease_start,
                     lease_end=lease_end,
-                    state=house_state,
-                    city=house_city,
-                    address=address,
-                    postal_code=postal_code,
-                    property_photo=property_image,
-                    condition_report=condition_file,
-                    agent=agent,
+                    renter=renter,  # ✅ use the renter instance from registration
+                    agent=agent_instance,
                 )
 
-                # Now create Room
-                room_name = request.POST.get('roomName')
-                room_floor = request.POST.get('roomFloor')
-                room = RenterRoom.objects.create(
-                    renter=renter,
-                    property=property,
-                    room_name=room_name,
-                    # floor_level=room_floor
+                room_index = 0
+                while True:
+                    room_key = f'room_name_{room_index}'
+                    if room_key not in request.POST:
+                        break
 
-
-                )
-
-                # Now create RoomAreaCondition(s)
-                area_names = request.POST.getlist('area_name[]')
-                conditions = request.POST.getlist('condition[]')
-                remarks = request.POST.getlist('remarks[]')
-
-                for name, cond, remark in zip(area_names, conditions, remarks):
-                    RenterRoomAreaCondition.objects.create(
-                        room=room,
-                        area_name=name,
-                        status=cond,
-                        remarks=remark
+                    room_name = request.POST.get(room_key)
+                    room_photo = request.FILES.get(f'room_photo_{room_index}')
+                    room = RenterRoom.objects.create(
+                        renter=renter,  # <-- FIXED here
+                        property=property_instance,
+                        room_name=room_name,
+                        photo=room_photo,
                     )
+                    area_names = request.POST.getlist(f'area_name_{room_index}[]')
+                    conditions = request.POST.getlist(f'condition_{room_index}[]')
+                    remarks = request.POST.getlist(f'remarks_{room_index}[]')
+                    area_photos = request.FILES.getlist(f'area_photo_{room_index}[]')
 
+                    for i, (a, c, r) in enumerate(zip(area_names, conditions, remarks)):
+                        photo = area_photos[i] if i < len(area_photos) else None  # Ensure index safety
+                        RenterRoomAreaCondition.objects.create(
+                            room=room,
+                            area_name=a,
+                            status=c,
+                            remarks=r,
+                            photo=area_photos   # ✅ single file
+                        )
+
+                        room_index += 1
+
+
+
+
+
+
+                # return redirect('success_page_name')
                 property = None  # For now you’re skipping automatic upload handling
                 # Collect lahat ng laman ng section para sa Property record creation
                 # Collect lahat ng section para sa RenterRoom record creation
@@ -921,10 +924,18 @@ def verify_email(request, token):
 @login_required
 def welcome(request):
     user = request.user
-
     try:
-        if Renter.objects.filter(user=user).exists():
-            renter = Renter.objects.get(user=user)
+        # Try linking via user first
+        renter = Renter.objects.filter(user=user).first()
+
+        # If not linked, try by email and link it
+        if not renter:
+            renter = Renter.objects.filter(email=user.email).first()
+            if renter:
+                renter.user = user
+                renter.save()
+
+        if renter:
             properties = Property.objects.filter(renter=renter)
             room_conditions = RoomCondition.objects.filter(renter=renter).prefetch_related('areas')
             appliance_reports = ApplianceReport.objects.filter(renter=renter).select_related('room', 'renter')
@@ -938,7 +949,7 @@ def welcome(request):
                 'room_conditions': room_conditions,
                 'properties': properties,
                 'appliance_reports': appliance_reports,
-                'minimum_reports': minimum_reports,  # ✅ fixed name
+                'minimum_reports': minimum_reports,
                 'jobs': job_list,
                 'job_form': JobForm(),
                 'agents': agents,
@@ -954,7 +965,7 @@ def welcome(request):
                 'room_conditions': [],
                 'properties': [],
                 'appliance_reports': [],
-                'minimum_reports': [],  # ✅ fix name here too
+                'minimum_reports': [],
                 'jobs': [],
                 'job_form': JobForm(),
                 'agents': [],
@@ -968,12 +979,11 @@ def welcome(request):
             'room_conditions': [],
             'properties': [],
             'appliance_reports': [],
-            'minimum_reports': [],  # ✅ fix in error fallback too
+            'minimum_reports': [],
             'jobs': [],
             'job_form': JobForm(),
             'agents': [],
         })
-
 
 
 def renter_create(request):

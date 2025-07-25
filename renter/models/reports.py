@@ -21,3 +21,7 @@ class MinimumStandardReport(models.Model):
     room = models.CharField(max_length=255)
     comments = models.TextField(null=True, blank=True)
     report_file = models.FileField(upload_to='standard_reports/', null=True, blank=True)
+
+    company = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    audit_expiry = models.DateField(null=True, blank=True)
