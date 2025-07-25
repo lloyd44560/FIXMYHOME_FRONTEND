@@ -42,7 +42,9 @@
 
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addRoomModal">Add Room</button>
     <!-- Button to open the modal -->
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mainConditionModal">Add Condition Report</button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
+  Add Condition Report
+</button>
 
     {% for room in rooms %}
     <div class="card mb-3">
@@ -182,7 +184,7 @@
 <div class="modal fade" id="addConditionReportModal" tabindex="-1" aria-labelledby="addConditionReportModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
-      <form id="mainConditionReportForm" method="post" enctype="multipart/form-data">
+      <form id="mainConditionReportForm" method="post" action="{% url 'save_condition_report' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title" id="addConditionReportModalLabel">Add Condition Report</h5>

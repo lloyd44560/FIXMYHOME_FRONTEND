@@ -45,7 +45,7 @@ from django.utils.decorators import method_decorator
 from .forms import PropertyForm
 from .forms import MinimumStandardReportForm
 from .forms import RenterRoomForm, RenterRoomAreaConditionForm, RoomApplianceReportForm
-from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport
+from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport, MainConditionReport, ConditionReportRoom
 from django.db import transaction
 # 1. Index view for Properties
 @login_required
@@ -702,3 +702,64 @@ def delete_appliance_report(request, report_id):
     appliance.delete()
     messages.success(request, "Appliance report deleted.")
     return redirect(f'/appliance-reports/?room={room_id}')
+
+@csrf_exempt
+@login_required
+def save_condition_report(request):
+    if request.method == 'POST':
+        renter = request.user.renter
+        report_number = request.POST.get('report_number')
+
+        # Create the main report
+        report = MainConditionReport.objects.create(
+            report_number=report_number,
+            renter=renter
+        )
+
+        room_index = 0
+        while True:
+            room_name = request.POST.get(f'room_name_{room_index}')
+            if not room_name:
+                break  # Done with rooms
+
+            room_desc = request.POST.get(f'room_description_{room_index}')
+            # You can also assign a property here if needed
+
+            # Create the room
+            room = RenterRoom.objects.create(
+                renter=renter,
+                room_name=room_name,
+                description=room_desc
+            )
+
+            # Link it to the report
+            ConditionReportRoom.objects.create(
+                report=report,
+                room=room
+            )
+
+            # Handle conditions inside this room
+            condition_index = 0
+            while True:
+                area = request.POST.get(f'area_name_{room_index}_{condition_index}')
+                if not area:
+                    break  # Done with conditions for this room
+
+                status = request.POST.get(f'status_{room_index}_{condition_index}')
+                remarks = request.POST.get(f'remarks_{room_index}_{condition_index}')
+                photo = request.FILES.get(f'photo_{room_index}_{condition_index}')
+
+                RenterRoomAreaCondition.objects.create(
+                    room=room,
+                    area_name=area,
+                    status=status,
+                    remarks=remarks,
+                    photo=photo
+                )
+                condition_index += 1
+
+            room_index += 1
+
+        return redirect('your-success-url-or-page')
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
