@@ -45,7 +45,7 @@ from django.utils.decorators import method_decorator
 from .forms import PropertyForm
 from .forms import MinimumStandardReportForm
 from .forms import RenterRoomForm, RenterRoomAreaConditionForm, RoomApplianceReportForm
-from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport, MainConditionReport, ConditionReportRoom
+from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport,MainConditionReport, ConditionReportRoom
 from django.db import transaction
 # 1. Index view for Properties
 @login_required

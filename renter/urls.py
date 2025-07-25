@@ -122,4 +122,7 @@ urlpatterns = [
     # path('', TemplateView.as_view(template_name="renter/home.html"), name='home'),
 
 
+    path('save-condition-report/',  renter_actions.save_condition_report, name='save_condition_report'),
+
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
