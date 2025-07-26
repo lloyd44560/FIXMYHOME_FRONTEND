@@ -36,6 +36,7 @@ class MainConditionReport(models.Model):
     report_number = models.CharField(max_length=100, unique=True)  # e.g. CR-0001
     date_created = models.DateField(auto_now_add=True)
     renter = models.ForeignKey(Renter, on_delete=models.CASCADE)
+    uploaded_file = models.FileField(upload_to='condition_reports/', null=True, blank=True)
 
     def __str__(self):
         return self.report_number

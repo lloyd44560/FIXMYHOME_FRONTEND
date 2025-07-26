@@ -1,0 +1,365 @@
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage your property assign rooms and its conditions </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- In base.html inside <head> -->
+    <!-- ✅ External CSS like Bootstrap -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- ✅ Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% include 'renter/home/navbar.html' %}
+</head>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">Condition Reports</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
+          Add Condition Report
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+
+            <div class="p-3">
+              <input type="text" id="searchInput" class="form-control" placeholder="Search condition reports...">
+            </div>
+              <div class="container mt-3">
+                {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              </div>
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-secondary">#</th>
+                        <th class="text-secondary">Report Number</th>
+                        <th class="text-secondary">Date Created</th>
+                        <th class="text-secondary">Renter Name</th>
+                        <th class="text-secondary">File</th>
+                        <th class="text-secondary text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="fw-semibold text-dark">{{ report.report_number }}</td>
+                        <td>{{ report.date_created|date:"M d, Y" }}</td>
+                        <td>{{ report.renter.user.get_full_name }}</td>
+                        <td>
+                          {% if report.uploaded_file %}
+                            <a href="{{ report.uploaded_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                              <i class="bi bi-file-earmark-arrow-down"></i> Download
+                            </a>
+                          {% else %}
+                            <span class="text-muted">No file</span>
+                          {% endif %}
+                        </td>
+
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                               <a href="#" class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
+                                   data-bs-target="#viewReportModal_{{ report.id }}">
+                                  <i class="bi bi-eye"></i> View
+                                </a>
+                               <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editReportModal{{ report.id }}">
+                                  <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <!--<a href="#" class="btn btn-sm btn-outline-danger">-->
+                                <!--    <i class="bi bi-trash"></i> Delete-->
+                                <!--</a>-->
+                            </div>
+                        </td>
+
+                        <!-- View Report Modal -->
+                        <div class="modal fade" id="viewReportModal_{{ report.id }}" tabindex="-1" aria-labelledby="viewModalLabel_{{ report.id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                              <div class="modal-header bg-light">
+                                <h5 class="modal-title" id="viewModalLabel_{{ report.id }}">View Condition Report - {{ report.report_number }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                              </div>
+
+                              <div class="modal-body">
+                                <div class="mb-3"><strong>Date Created:</strong> {{ report.date_created|date:"M d, Y" }}</div>
+                                <div class="mb-3"><strong>Renter Name:</strong> {{ report.renter.user.get_full_name }}</div>
+
+                                {% for room in report.report_rooms.all %}
+                                <div class="card mb-3">
+                                  <div class="card-header bg-primary text-white">
+                                    Room: {{ room.room.room_name }}
+                                  </div>
+                                  <div class="card-body">
+                                    {% for condition in room.room.area_conditions.all %}
+                                    <div class="row mb-3">
+                                      <div class="col-md-3"><strong>Area Name:</strong> {{ condition.area_name }}</div>
+                                      <div class="col-md-2"><strong>Status:</strong> {{ condition.status }}</div>
+                                      <div class="col-md-3"><strong>Remarks:</strong> {{ condition.remarks }}</div>
+                                      <div class="col-md-4">
+                                        {% if condition.photo %}
+                                          <img src="{{ condition.photo.url }}" class="img-thumbnail" style="max-height:100px;">
+                                        {% else %}
+                                          <span class="text-muted">No photo</span>
+                                        {% endif %}
+                                      </div>
+                                    </div>
+                                    {% empty %}
+                                      <p class="text-muted">No conditions.</p>
+                                    {% endfor %}
+                                  </div>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted">No rooms for this report.</p>
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+                        <!-- Edit Report Modal -->
+                        <div class="modal fade" id="editReportModal{{ report.id }}" tabindex="-1" aria-labelledby="editReportModalLabel{{ report.id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                              <form method="post" enctype="multipart/form-data" action="{% url 'edit_condition_report' report.id %}">
+                                {% csrf_token %}
+                                <div class="modal-header bg-primary text-white">
+                                  <h5 class="modal-title">Edit Condition Report - {{ report.report_number }}</h5>
+                                  <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+
+                                  <!-- Report Info -->
+                                  <div class="row mb-3">
+                                    <div class="col-md-6">
+                                      <label for="report_number">Report Number</label>
+                                      <input type="text" class="form-control" name="report_number" value="{{ report.report_number }}">
+                                    </div>
+                                   <input  name="renter" value="{{ report.renter.id }}">
+                                    <p><strong>Renter:</strong> {{ report.renter.first_name }} {{ report.renter.last_name }}</p>
+                                  </div>
+
+                                  <hr>
+
+                                  <!-- Rooms & Area Conditions -->
+                                  {% for room in report.report_rooms.all %}
+                                    <div class="border p-3 mb-4 rounded">
+                                      <h5>Room: <input class="form-control" name="room_name_{{ room.id }}" value="{{ room.room.room_name }}"></h5>
+
+                                      {% for area in room.room.area_conditions.all %}
+                                        <div class="row mt-2">
+                                          <div class="col-md-3">
+                                            <label>Area Name</label>
+                                            <input type="text" name="area_name_{{ area.id }}" class="form-control" value="{{ area.area_name }}">
+                                          </div>
+                                          <div class="col-md-3">
+                                            <label>Status</label>
+                                            <select name="status_{{ area.id }}" class="form-control">
+                                              <option value="Clean" {% if area.status == 'Clean' %}selected{% endif %}>Clean</option>
+                                              <option value="Undamaged" {% if area.status == 'Undamaged' %}selected{% endif %}>Undamaged</option>
+                                              <option value="Working" {% if area.status == 'Working' %}selected{% endif %}>Working</option>
+                                            </select>
+                                          </div>
+                                          <div class="col-md-3">
+                                            <label>Remarks</label>
+                                            <input type="text" name="remarks_{{ area.id }}" class="form-control" value="{{ area.remarks }}">
+                                          </div>
+                                          <div class="row mb-3">
+                                              <div class="col-md-6">
+                                                <label class="form-label">Current Photo:</label><br>
+                                                {% if area.photo %}
+                                                  <img src="{{ area.photo.url }}" alt="Current Photo" class="img-thumbnail" style="max-height: 150px;">
+                                                {% else %}
+                                                  <p class="text-muted">No photo uploaded</p>
+                                                {% endif %}
+                                              </div>
+                                              <div class="col-md-6">
+                                                <label for="photo_{{ area.id }}" class="form-label">Replace Photo (optional):</label>
+                                                <input type="file" name="photo_{{ area.id }}" id="photo_{{ area.id }}" class="form-control">
+                                              </div>
+                                            </div>
+                                        </div>
+                                      {% endfor %}
+                                    </div>
+                                  {% endfor %}
+
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="submit" class="btn btn-success">Save Changes</button>
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+
+
+
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="bi bi-info-circle me-1"></i> No condition reports found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <!-- Add Main Condition Report Modal -->
+        <div class="modal fade" id="addConditionReportModal" tabindex="-1" aria-labelledby="addConditionReportModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <form id="mainConditionReportForm" method="post" action="{% url 'save_condition_report' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addConditionReportModalLabel">Add Condition Report</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label>Condition Report Number:</label>
+                    <input type="text" name="report_number" class="form-control" required>
+                  </div>
+
+
+                    <div class="mb-3">
+                      <label for="uploaded_file">Attach File (PDF, DOC, etc):</label>
+                      <input type="file" name="uploaded_file" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx">
+                    </div>
+
+                  <hr>
+                  <div id="roomsContainer"></div>
+
+                  <button type="button" class="btn btn-success mt-3" onclick="addRoomBlock()">+ Add Room</button>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save Report</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+
+<script>
+let roomIndex = 0;
+
+function addRoomBlock() {
+  const container = document.getElementById('roomsContainer');
+
+  const roomHTML = `
+    <div class="card p-3 mb-3 room-block" data-room-index="${roomIndex}">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5>Room</h5>
+        <button type="button" class="btn btn-sm btn-danger" onclick="removeRoom(this)">Remove Room</button>
+      </div>
+      <input type="text" name="room_name_${roomIndex}" placeholder="Room Name" class="form-control mb-2" required>
+      <textarea name="room_description_${roomIndex}" class="form-control mb-2" placeholder="Room Description"></textarea>
+
+      <div class="condition-container" data-room-index="${roomIndex}">
+        <!-- Initial condition -->
+      </div>
+
+      <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addCondition(${roomIndex})">+ Add Condition</button>
+    </div>
+  `;
+  container.insertAdjacentHTML('beforeend', roomHTML);
+  addCondition(roomIndex);  // Add 1 default condition
+  roomIndex++;
+}
+
+function addCondition(roomIndex) {
+  const conditionContainer = document.querySelector(`.condition-container[data-room-index="${roomIndex}"]`);
+  const conditionCount = conditionContainer.querySelectorAll('.condition-row').length;
+  const conditionHTML = `
+    <div class="row condition-row align-items-end mb-2">
+      <div class="col-md-3">
+        <input type="text" name="area_name_${roomIndex}_${conditionCount}" placeholder="Area Name" class="form-control" required>
+      </div>
+      <div class="col-md-2">
+        <select name="status_${roomIndex}_${conditionCount}" class="form-control">
+          <option value="Clean">Clean</option>
+          <option value="Undamaged">Undamaged</option>
+          <option value="Working">Working</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="file" name="photo_${roomIndex}_${conditionCount}" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="remarks_${roomIndex}_${conditionCount}" placeholder="Remarks" class="form-control">
+      </div>
+      <div class="col-md-1">
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCondition(this)">✕</button>
+      </div>
+    </div>
+  `;
+  conditionContainer.insertAdjacentHTML('beforeend', conditionHTML);
+}
+
+function removeRoom(button) {
+  const card = button.closest('.room-block');
+  card.remove();
+}
+
+function removeCondition(button) {
+  const row = button.closest('.condition-row');
+  row.remove();
+}
+</script>
+<!-- 🔽 ADD THIS BELOW -->
+<script>
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('table tbody tr');
+
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(filter) ? '' : 'none';
+    });
+  });
+</script>
+
+
+<style>
+    html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    .mt-auto {
+        margin-top: auto;
+    }
+</style>
+<div class="mt-auto">
+        {% include 'renter/home/footer.html' %}
+    </div>
+<script src="{% static
+
+{% endblock %}

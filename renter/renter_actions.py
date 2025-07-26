@@ -47,6 +47,8 @@ from .forms import MinimumStandardReportForm
 from .forms import RenterRoomForm, RenterRoomAreaConditionForm, RoomApplianceReportForm
 from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport,MainConditionReport, ConditionReportRoom
 from django.db import transaction
+
+from django.db.models import Prefetch
 # 1. Index view for Properties
 @login_required
 def property_index(request):
@@ -600,28 +602,28 @@ def renter_room_list(request):
 # Appliance Report
 
 
-@login_required
-def appliance_report_list(request):
-    renter = request.user.renter
-    rooms = RenterRoom.objects.filter(renter=renter)
+# @login_required
+# def appliance_report_list(request):
+#     renter = request.user.renter
+#     rooms = RenterRoom.objects.filter(renter=renter)
 
-    selected_room_id = request.GET.get('room')
-    reports = None
-    selected_room = None
+#     selected_room_id = request.GET.get('room')
+#     reports = None
+#     selected_room = None
 
-    if selected_room_id:
-        selected_room = RenterRoom.objects.filter(id=selected_room_id, renter=renter).first()
-        if selected_room:
-            reports = RoomApplianceReport.objects.filter(room=selected_room)
+#     if selected_room_id:
+#         selected_room = RenterRoom.objects.filter(id=selected_room_id, renter=renter).first()
+#         if selected_room:
+#             reports = RoomApplianceReport.objects.filter(room=selected_room)
 
-    form = RoomApplianceReportForm()
+#     form = RoomApplianceReportForm()
 
-    return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {
-        'rooms': rooms,
-        'reports': reports,
-        'selected_room': selected_room,
-        'form': form,
-    })
+#     return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {
+#         'rooms': rooms,
+#         'reports': reports,
+#         'selected_room': selected_room,
+#         'form': form,
+#     })
 
 @login_required
 def add_appliance_report(request):
@@ -655,35 +657,35 @@ def delete_appliance_report(request, pk):
 
 
 
-def appliance_report_list(request):
-    renter = request.user.renter
-    rooms = RenterRoom.objects.filter(renter=renter)
+# def appliance_report_list(request):
+#     renter = request.user.renter
+#     rooms = RenterRoom.objects.filter(renter=renter)
 
-    selected_room_id = request.GET.get('room')
-    selected_room = None
-    reports = RoomApplianceReport.objects.none()
+#     selected_room_id = request.GET.get('room')
+#     selected_room = None
+#     reports = RoomApplianceReport.objects.none()
 
-    if selected_room_id:
-        selected_room = get_object_or_404(RenterRoom, id=selected_room_id, renter=renter)
-        reports = RoomApplianceReport.objects.filter(room=selected_room)
+#     if selected_room_id:
+#         selected_room = get_object_or_404(RenterRoom, id=selected_room_id, renter=renter)
+#         reports = RoomApplianceReport.objects.filter(room=selected_room)
 
-    if request.method == 'POST':
-        form = RoomApplianceReportForm(request.POST)
-        if form.is_valid():
-            appliance = form.save(commit=False)
-            appliance.renter = renter
-            appliance.save()
-            messages.success(request, "Appliance report added successfully.")
-            return redirect(f'{request.path}?room={appliance.room.id}')
-    else:
-        form = RoomApplianceReportForm()
+#     if request.method == 'POST':
+#         form = RoomApplianceReportForm(request.POST)
+#         if form.is_valid():
+#             appliance = form.save(commit=False)
+#             appliance.renter = renter
+#             appliance.save()
+#             messages.success(request, "Appliance report added successfully.")
+#             return redirect(f'{request.path}?room={appliance.room.id}')
+#     else:
+#         form = RoomApplianceReportForm()
 
-    return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {
-        'rooms': rooms,
-        'reports': reports,
-        'selected_room': selected_room,
-        'form': form,
-    })
+#     return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {
+#         'rooms': rooms,
+#         'reports': reports,
+#         'selected_room': selected_room,
+#         'form': form,
+#     })
 
 
 def edit_appliance_report(request, report_id):
@@ -709,11 +711,12 @@ def save_condition_report(request):
     if request.method == 'POST':
         renter = request.user.renter
         report_number = request.POST.get('report_number')
-
+        uploaded_file = request.FILES.get('uploaded_file')
         # Create the main report
         report = MainConditionReport.objects.create(
             report_number=report_number,
-            renter=renter
+            renter=renter,
+            uploaded_file=uploaded_file
         )
 
         room_index = 0
@@ -760,6 +763,147 @@ def save_condition_report(request):
 
             room_index += 1
 
-        return redirect('your-success-url-or-page')
+        messages.success(request, "Condition Report created successfully.")
+        return redirect('condition_report_list')
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+
+
+
+
+
+
+
+def condition_report_list(request):
+    reports = MainConditionReport.objects.filter(renter=request.user.renter)
+    return render(request, 'renter/home/condition_reports/list.html', {'reports': reports})
+
+def get_condition_report_data(request, report_id):
+    report = get_object_or_404(MainConditionReport, pk=report_id)
+    data = {
+        "id": report.id,
+        "report_number": report.report_number,
+        "rooms": [],
+    }
+
+    for cr_room in report.report_rooms.all():
+        room_data = {
+            "id": cr_room.room.id,
+            "room_name": cr_room.room.room_name,
+            "conditions": [],
+        }
+
+        for condition in cr_room.room.area_conditions.all():
+            room_data["conditions"].append({
+                "area_name": condition.area_name,
+                "status": condition.status,
+                "remarks": condition.remarks,
+                "photo": condition.photo.url if condition.photo else ""
+            })
+
+        data["rooms"].append(room_data)
+
+    return JsonResponse(data)
+
+
+@login_required
+def condition_report_list(request):
+    reports = MainConditionReport.objects.select_related('renter__user').prefetch_related(
+        'report_rooms__room__area_conditions'
+    )
+    return render(request, 'renter/home/condition_reports/condition_report_list.html', {
+        'reports': reports
+    })
+@login_required
+def edit_condition_report(request, report_id):
+    report = get_object_or_404(MainConditionReport, id=report_id)
+
+    if request.method == 'POST':
+        report.report_number = request.POST.get('report_number')
+
+        # 🟢 No need to update renter if it's not changeable
+        # renter_id = request.POST.get('renter')
+        # report.renter = get_object_or_404(Renter, id=renter_id)
+
+        report.save()
+
+        # Update rooms and area conditions
+        for report_room in report.report_rooms.all():
+            room = report_room.room
+            room_name_key = f'room_name_{report_room.id}'
+            room_name = request.POST.get(room_name_key)
+            if room_name:
+                room.room_name = room_name
+                room.save()
+
+            for area in room.area_conditions.all():
+                area.area_name = request.POST.get(f'area_name_{area.id}', area.area_name)
+                area.status = request.POST.get(f'status_{area.id}', area.status)
+                area.remarks = request.POST.get(f'remarks_{area.id}', area.remarks)
+
+                # Photo update (optional)
+                if f'photo_{area.id}' in request.FILES:
+                    area.photo = request.FILES[f'photo_{area.id}']
+
+                area.save()
+
+        messages.success(request, "Condition Report updated successfully.")
+        return redirect('condition_report_list')
+
+    return render(request, 'edit_condition_report.html', {
+        'report': report,
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@login_required
+def delete_renter_room(request, pk):
+    room = get_object_or_404(RenterRoom, pk=pk)
+    if room.renter == request.user.renter:
+        room.delete()
+    return redirect('condition_report_list')
+
+@login_required
+def edit_renter_room(request, pk):
+    room = get_object_or_404(RenterRoom, pk=pk, renter=request.user.renter)
+    if request.method == 'POST':
+        form = RenterRoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect('condition_report_list')
+    else:
+        form = RenterRoomForm(instance=room)
+    return render(request, 'renter/home/condition_reports/edit_room_modal.html', {
+        'form': form,
+        'room': room
+    })
+
+
+
+
+
+# Appliance Reports Functionalities
+@login_required
+def appliance_report_list(request):
+    renter = request.user.renter  # assuming Renter is linked to User via OneToOne
+    rooms = RenterRoom.objects.filter(renter=renter)
+    return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {'rooms': rooms})

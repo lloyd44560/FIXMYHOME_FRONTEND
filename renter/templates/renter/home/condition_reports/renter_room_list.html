@@ -42,9 +42,9 @@
 
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addRoomModal">Add Room</button>
     <!-- Button to open the modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
-  Add Condition Report
-</button>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
+      Add Condition Report
+    </button>
 
     {% for room in rooms %}
     <div class="card mb-3">
@@ -71,6 +71,41 @@
             <button class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addAreaModal{{ room.id }}">Add Area Condition</button>
         </div>
     </div>
+
+    <div class="container mt-4">
+  <h2>Condition Reports</h2>
+
+  {% for room in rooms %}
+  <div class="card mb-3">
+    <div class="card-header d-flex justify-content-between">
+      <strong>{{ room.room_name }}</strong>
+      <div>
+        <a href="{% url 'edit_renter_room' room.pk %}" class="btn btn-sm btn-primary">Edit</a>
+        <a href="{% url 'delete_renter_room' room.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>{{ room.room_description }}</p>
+      <h6>Area Conditions</h6>
+      <ul class="list-group">
+        {% for condition in room.conditions.all %}
+        <li class="list-group-item">
+          <strong>{{ condition.area_name }}</strong> - {{ condition.status }} - {{ condition.remarks }}
+          {% if condition.photo %}
+            <img src="{{ condition.photo.url }}" alt="Photo" style="max-height: 50px;" class="ms-2">
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% empty %}
+  <p>No reports found.</p>
+  {% endfor %}
+</div>
+
+
+
 
     <!-- Edit Room Modal -->
     <div class="modal fade" id="editRoomModal{{ room.id }}" tabindex="-1">

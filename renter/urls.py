@@ -121,8 +121,24 @@ urlpatterns = [
     # path('accounts/', include('allauth.urls')),  # django-allauth routes
     # path('', TemplateView.as_view(template_name="renter/home.html"), name='home'),
 
-
+# Condition Reports
     path('save-condition-report/',  renter_actions.save_condition_report, name='save_condition_report'),
+
+    path('reports/', renter_actions.condition_report_list, name='condition_report_list'),
+    path('reports/<int:report_id>/json/', renter_actions.get_condition_report_data, name='get_condition_report_data'),
+    path('reports/edit/<int:report_id>/', renter_actions.edit_condition_report, name='edit_condition_report'),
+
+    path('condition-reports/', renter_actions.condition_report_list, name='condition_report_list'),
+    path('condition-report/delete/<int:pk>/', renter_actions.delete_renter_room, name='delete_renter_room'),
+    path('condition-report/edit/<int:pk>/', renter_actions.edit_renter_room, name='edit_renter_room'),
+
+
+
+#   Appliance Reports
+
+    path('appliance-reports/', renter_actions.appliance_report_list, name='appliance_report_list'),
+
+
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

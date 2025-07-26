@@ -1499,3 +1499,26 @@ def save_condition_report_all(request):
 
     return JsonResponse({'status': 'invalid'}, status=400)
 
+
+
+
+
+
+
+
+
+
+
+
+
+# Appliance Report Functions
+
+
+def appliance_report_list(request):
+    reports = RoomApplianceReport.objects.select_related('room', 'renter')
+    return render(request, 'appliance_report_list.html', {'reports': reports})
+
+
+
+
+
