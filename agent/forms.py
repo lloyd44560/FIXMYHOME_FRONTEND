@@ -89,9 +89,13 @@ class RenterUpdateForm(forms.ModelForm):
 class AgentCreateJobForm(forms.ModelForm):
     class Meta:
         model = Jobs
-        fields = ['renter', 'category', 'trader', 'notes', 'scheduled_at', 'priority']  # agent will be set in view
+        fields = ['renter', 'category', 'trader', 'notes', 'address', 'scheduled_at', 'priority']  # agent will be set in view
 
         widgets = {
+            'address': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'w-full border border-gray-300 rounded-md p-2'
+            }),
             'notes': forms.Textarea(attrs={
                 'rows': 3,
                 'class': 'w-full border border-gray-300 rounded-md p-2'
