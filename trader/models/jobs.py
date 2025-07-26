@@ -16,6 +16,7 @@ class Jobs(models.Model):
         ('approved', 'Approved'),
         ('scheduled', 'Scheduled'),
     ]
+    address = models.TextField(blank=True, null=True)
     category = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True, blank=True, related_name='category_services')
     renter = models.CharField(max_length=100, null=True, blank=True)
     priority = models.BooleanField(default=False)  # True = High Priority

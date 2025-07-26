@@ -5,10 +5,10 @@
 <!-- Top Navigation -->
 {% include 'components/home/navigatorBaseAgent.html' %}
 
-<div x-data="{ open: false }" class="max-w-4xl mx-auto p-6 mt-6 bg-white shadow-md rounded-lg">
+<div x-data="{ room: false, job: false }" class="max-w-4xl mx-auto p-6 mt-6 bg-white shadow-md rounded-lg">
   <h2 class="text-2xl font-bold mb-4 text-blue-700">Property Details</h2>
 
-  <div class="grid grid-cols-2 gap-4 text-sm">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
     <div><strong>Name:</strong> {{ property.name }}</div>
     <div><strong>Status:</strong> {{ property.get_status_display }}</div>
     <div><strong>Address:</strong> {{ property.address }}</div>
@@ -18,21 +18,21 @@
     <div><strong>Floor Count:</strong> {{ property.floor_count }}</div>
     <div><strong>Rent:</strong> {{ property.rent }}</div>
     <div><strong>Lease Period:</strong> {{ property.lease_start }} to {{ property.lease_end }}</div>
-    <div><strong>Renter:</strong> {{ property.renter }} </div>
+    <div><strong>Renter:</strong> {{ property.renter }}</div>
     <div><strong>Agent:</strong> {{ property.agent.user.username }}</div>
   </div>
 
   {% if property.property_photo %}
     <div class="mt-4">
       <strong>Photo:</strong><br>
-      <img src="{{ property.property_photo.url }}" alt="Property Photo" class="w-64 h-auto rounded">
+      <img src="{{ property.property_photo.url }}" alt="Photo of {{ property.name }} at {{ property.address }}" class="w-64 h-auto rounded">
     </div>
   {% endif %}
 
   {% if property.condition_report %}
     <div class="mt-4">
       <strong>Condition Report:</strong><br>
-      <img src="{{ property.condition_report.url }}" alt="Condition Report" class="w-64 h-auto rounded">
+      <img src="{{ property.condition_report.url }}" alt="Condition report for {{ property.name }} at {{ property.address }}" class="w-64 h-auto rounded">
     </div>
   {% endif %}
 
@@ -41,18 +41,20 @@
   <h3 class="text-xl font-semibold text-gray-700 mb-2">Rooms</h3>
 
   <!-- Add Room Button -->
-  <button @click="open = true" class="mb-4 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-    ➕ Add Room
-  </button>
+  <div class="flex justify-start mb-4 mt-4 gap-4">
+    <button @click="room = true" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+        + Create Room
+    </button>
+  </div>
 
-  <!-- Modal -->
-  <div x-show="open" x-cloak
+  <!-- Room Creation Modal -->
+  <div x-show="room" x-cloak
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div @click.away="open = false"
+    <div @click.away="room = false"
         class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg transition-all">
       <h2 class="text-lg font-semibold mb-4">Create Room</h2>
 
-      <form method="POST" action="">
+      <form method="POST" action="{% url 'create_room' property.id %}">
         {% csrf_token %}
         <div class="mb-4">
           <label class="block text-sm font-medium">Room Name</label>
@@ -64,13 +66,12 @@
         </div>
         <div class="mb-4">
           <label class="block text-sm font-medium">Renter</label>
-          <span class="w-full border-gray-300 rounded-md shadow-sm">
-            {{ property.renter }}
-          </span>
+          <input type="text" value="{{ property.renter }}" readonly class="w-full border-gray-300 rounded-md shadow-sm">
+          <input type="hidden" name="renter" value="{{ property.renter.id }}">
         </div>
 
         <div class="flex justify-end space-x-2">
-          <button type="button" @click="open = false"
+          <button type="button" @click="room = false"
                   class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
           <button type="submit"
                   class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
@@ -88,9 +89,9 @@
           <th class="px-4 py-2 border">Renter</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="divide-y divide-gray-200">
         {% for room in property.property_rooms.all %}
-        <tr>
+        <tr class="hover:bg-gray-50">
           <td class="px-4 py-2 border">{{ room.room_name }}</td>
           <td class="px-4 py-2 border">{{ room.description }}</td>
           <td class="px-4 py-2 border">
@@ -110,12 +111,120 @@
 
   <hr class="my-6">
   <div class="flex justify-start mb-4 mt-4 gap-4">
-      <a href="{% url 'agent_job_create' property.pk %}"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
-          + Create Job Order
-      </a>
+      <button @click="job = true" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+          + Create Compliance Report
+      </button>
   </div>
-  <h3 class="text-xl font-semibold text-gray-700 mb-2">Jobs for this Property</h3>
+
+  <!-- Compliance Report Modal -->
+  <div x-show="job" x-cloak
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    
+    <!-- Scrollable and Responsive Modal -->
+    <div @click.away="job = false"
+        class="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto p-6 shadow-lg transition-all">
+      <h2 class="text-lg font-semibold mb-4">Create Compliance Report</h2>
+
+      <form method="POST" action="{% url 'agent_job_create' property.id %}">
+        {% csrf_token %}
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Category</label>
+          {{ job_form.category|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+          {% if job_form.category.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.category.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Renter</label>
+          <p class="w-full bg-gray-100 border border-gray-300 rounded-md p-2">
+            {{ property.renter }}
+          </p>
+          {% if job_form.renter.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.renter.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Trader</label>
+          {{ job_form.trader|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+          {% if job_form.trader.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.trader.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Property Address</label>
+          {{ job_form.address|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+          {% if job_form.address.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.address.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Notes</label>
+          {{ job_form.notes|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+          {% if job_form.notes.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.notes.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Schedule</label>
+          {{ job_form.scheduled_at|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+          {% if job_form.scheduled_at.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.scheduled_at.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4 flex items-center gap-2">
+          <label class="flex items-center gap-2 text-sm text-gray-700">
+            {{ job_form.priority|add_class:"h-4 w-4" }}
+            {{ job_form.priority.label }}
+          </label>
+          {% if job_form.priority.errors %}
+            <div class="text-red-600 text-xs mt-1">
+              {% for error in job_form.priority.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <button type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full mt-2">
+            Submit Job
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-semibold text-gray-700 mb-2">Compliance Report for this Property</h3>
   {% if jobs %}
     <table class="w-full text-sm border border-gray-300 rounded-md mb-6">
       <thead class="bg-gray-100">
@@ -128,9 +237,9 @@
           <th class="px-4 py-2 border">Notes</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="divide-y divide-gray-200">
         {% for job in jobs %}
-        <tr>
+        <tr class="hover:bg-gray-50">
           <td class="px-4 py-2 border">{{ job.job_code }}</td>
           <td class="px-4 py-2 border">{{ job.get_status_display }}</td>
           <td class="px-4 py-2 border">{{ job.trader }}</td>
@@ -148,17 +257,17 @@
       </tbody>
     </table>
   {% else %}
-    <p class="text-gray-500">No jobs found for this property.</p>
+    <p class="text-gray-500">No compliance report found for this property.</p>
   {% endif %}
 
   <div class="mt-6">
-    <a href="javascript:history.back()" class="text-blue-600 hover:underline">← Back to Homepage</a>
+    <a href="{% url 'home_agent' %}" class="text-blue-600 hover:underline">← Back to Homepage</a>
   </div>
 
   {% if messages %}
     <div
       x-data="{ show: true }"
-      x-init="setTimeout(() => show = false, 4000)"
+      x-init="setTimeout(() => show = false, 6000)"
       x-show="show"
       class="fixed top-6 right-6 z-50 transition ease-in-out"
     >
@@ -187,5 +296,5 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
 {% endblock %}

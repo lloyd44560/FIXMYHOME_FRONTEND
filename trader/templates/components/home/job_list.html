@@ -22,9 +22,9 @@
             <label for="priority" class="text-sm font-medium">Priority:</label>
             <select name="priority" id="priority" onchange="this.form.submit()"
                     class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-            <option value="">All</option>
-            <option value="true" {% if selected_priority == 'true' %}selected{% endif %}>High</option>
-            <option value="false" {% if selected_priority == 'false' %}selected{% endif %}>Normal</option>
+                <option value="">All</option>
+                <option value="true" {% if selected_priority == 'true' %}selected{% endif %}>High</option>
+                <option value="false" {% if selected_priority == 'false' %}selected{% endif %}>Normal</option>
             </select>
         </div>
     </form>
