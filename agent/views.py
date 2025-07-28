@@ -91,14 +91,14 @@ class AgentHomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Get all properties
-        properties_list = Property.objects.all()
-        
+        # Get only active properties
+        properties_list = Property.objects.filter(is_active__in=[True])
+
         # Set up pagination
         paginator = Paginator(properties_list, 10)  # Show 10 properties per page
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        
+
         context['properties'] = page_obj
         context['page_obj'] = page_obj  # For pagination controls
 
@@ -253,6 +253,14 @@ def delete_property(request, pk):
     property = get_object_or_404(Property, pk=pk)
     property.delete()
     messages.success(request, f"Property '{property.name}' deleted.")
+    return redirect('home_agent')
+
+@require_POST
+def archive_property(request, pk):
+    property = get_object_or_404(Property, pk=pk)
+    property.is_active = False
+    property.save()
+    messages.success(request, f"Property '{property.name}' has been archived.")
     return redirect('home_agent')
 
 @method_decorator(login_required, name='dispatch')
