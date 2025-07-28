@@ -15,6 +15,7 @@ urlpatterns = [
     path('property/create/', views.PropertyCreateView.as_view(), name='property_create'),
     path('property/<int:pk>/edit/', views.PropertyUpdateView.as_view(), name='property_edit'),
     path('property/<int:pk>/delete/', views.delete_property, name='property_delete'),
+    path('property/<int:pk>/archive/', views.archive_property, name='property_archive'),
     path('property/<int:pk>/view/', views.PropertyDetailView.as_view(), name='property_view'),
     path('properties/', views.PropertiesListView.as_view(), name='manage_properties'),
     path('property/<int:property_id>/room/create/', views.RoomCreateView.as_view(), name='create_room'),

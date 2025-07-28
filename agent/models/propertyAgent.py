@@ -24,6 +24,7 @@ class Property(models.Model):
     condition_report = models.ImageField(upload_to='condition_reports/', blank=True, null=True)
     lease_start = models.DateField()
     lease_end = models.DateField()
+    is_active = models.BooleanField(null=True, blank=True, default=True)
     
     STATUS_CHOICES = [
         ('occupied', 'Occupied'),
