@@ -49,6 +49,8 @@ from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceRepo
 from django.db import transaction
 
 from django.db.models import Prefetch
+from django.core.paginator import Paginator
+from django.db.models import Q
 # 1. Index view for Properties
 @login_required
 def property_index(request):
@@ -625,25 +627,25 @@ def renter_room_list(request):
 #         'form': form,
 #     })
 
-@login_required
-def add_appliance_report(request):
-    if request.method == 'POST':
-        form = RoomApplianceReportForm(request.POST, request.FILES)
-        if form.is_valid():
-            appliance = form.save(commit=False)
-            appliance.renter = request.user.renter
-            appliance.save()
-    return redirect('appliance_report_list')
+# @login_required
+# def add_appliance_report(request):
+#     if request.method == 'POST':
+#         form = RoomApplianceReportForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             appliance = form.save(commit=False)
+#             appliance.renter = request.user.renter
+#             appliance.save()
+#     return redirect('appliance_report_list')
 
-@login_required
-def edit_appliance_report(request, pk):
-    report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
-    if request.method == 'POST':
-        form = RoomApplianceReportForm(request.POST, request.FILES, instance=report)
-        if form.is_valid():
-            form.save()
-            return redirect('appliance_report_list')
-    return redirect('appliance_report_list')
+# @login_required
+# def edit_appliance_report(request, pk):
+#     report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
+#     if request.method == 'POST':
+#         form = RoomApplianceReportForm(request.POST, request.FILES, instance=report)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('appliance_report_list')
+#     return redirect('appliance_report_list')
 
 @login_required
 def delete_appliance_report(request, pk):
@@ -688,15 +690,15 @@ def delete_appliance_report(request, pk):
 #     })
 
 
-def edit_appliance_report(request, report_id):
-    appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
+# def edit_appliance_report(request, report_id):
+#     appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
 
-    if request.method == 'POST':
-        form = RoomApplianceReportForm(request.POST, instance=appliance)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Appliance report updated successfully.")
-        return redirect('welcome')  # or use `reverse()` if needed
+#     if request.method == 'POST':
+#         form = RoomApplianceReportForm(request.POST, instance=appliance)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "Appliance report updated successfully.")
+#         return redirect('welcome')  # or use `reverse()` if needed
 
 def delete_appliance_report(request, report_id):
     appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
@@ -777,9 +779,9 @@ def save_condition_report(request):
 
 
 
-def condition_report_list(request):
-    reports = MainConditionReport.objects.filter(renter=request.user.renter)
-    return render(request, 'renter/home/condition_reports/list.html', {'reports': reports})
+# def condition_report_list(request):
+#     reports = MainConditionReport.objects.filter(renter=request.user.renter)
+#     return render(request, 'renter/home/condition_reports/list.html', {'reports': reports})
 
 def get_condition_report_data(request, report_id):
     report = get_object_or_404(MainConditionReport, pk=report_id)
@@ -808,15 +810,34 @@ def get_condition_report_data(request, report_id):
 
     return JsonResponse(data)
 
-
 @login_required
 def condition_report_list(request):
-    reports = MainConditionReport.objects.select_related('renter__user').prefetch_related(
+    renter = get_object_or_404(Renter, user=request.user)
+    room_filter = request.GET.get('room_name', '')
+
+    reports = MainConditionReport.objects.filter(renter=renter).select_related(
+        'renter__user'
+    ).prefetch_related(
         'report_rooms__room__area_conditions'
     )
+
+    #  Fix this filter
+    if room_filter:
+        reports = reports.filter(
+            report_rooms__room__room_name__iexact=room_filter
+        ).distinct()
+
+    room_names = RenterRoom.objects.filter(renter=renter).values_list(
+        'room_name', flat=True
+    ).distinct().order_by('room_name')
+
     return render(request, 'renter/home/condition_reports/condition_report_list.html', {
-        'reports': reports
+        'reports': reports,
+        'room_names': room_names,
     })
+
+
+
 @login_required
 def edit_condition_report(request, report_id):
     report = get_object_or_404(MainConditionReport, id=report_id)
@@ -904,6 +925,117 @@ def edit_renter_room(request, pk):
 # Appliance Reports Functionalities
 @login_required
 def appliance_report_list(request):
-    renter = request.user.renter  # assuming Renter is linked to User via OneToOne
+    renter = request.user.renter
+    reports = RoomApplianceReport.objects.filter(renter=renter)
     rooms = RenterRoom.objects.filter(renter=renter)
-    return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {'rooms': rooms})
+
+    # Filters
+    room_id = request.GET.get('room')
+    brand = request.GET.get('brand')
+    model_serial = request.GET.get('model_serial')
+
+    if room_id:
+        reports = reports.filter(room_id=room_id)
+
+    if brand:
+        reports = reports.filter(brand__icontains=brand)
+
+    if model_serial:
+        reports = reports.filter(model_serial__icontains=model_serial)
+
+    # ✅ Pagination
+    paginator = Paginator(reports.order_by('-id'), 10)  # 10 per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'rooms': rooms,
+        'reports': page_obj.object_list,
+        'room_filter': room_id,
+        'brand_filter': brand,
+        'model_serial_filter': model_serial,
+    }
+
+    return render(request, 'renter/home/appliance_reports/appliance_report_list.html', context)
+
+
+@login_required
+def appliance_report_create(request):
+
+    try:
+        renter = request.user.renter
+    except Exception:
+        messages.error(request, "No renter profile found for the logged-in user.")
+        return redirect('appliance_report_list')
+
+    if request.method == 'POST':
+        room_id = request.POST.get('room')
+        window_height = request.POST.get('window_height')
+        window_length = request.POST.get('window_length')
+        window_width = request.POST.get('window_width')
+        brand = request.POST.get('brand')
+        model_serial = request.POST.get('model_serial')
+        location = request.POST.get('location')
+        comments = request.POST.get('comments')
+        appliance_photo = request.FILES.get('appliance_photo')
+
+        room = RenterRoom.objects.get(id=room_id)
+
+        RoomApplianceReport.objects.create(
+            room=room,
+            window_height=window_height,
+            window_length=window_length,
+            window_width=window_width,
+            brand=brand,
+            model_serial=model_serial,
+            location=location,
+            comments=comments,
+            appliance_photo=appliance_photo,
+            renter=renter,
+        )
+
+        return redirect('appliance_report_list')
+
+    rooms = RenterRoom.objects.all()
+    return render(request, 'appliance_report_create.html', {
+        'rooms': rooms
+    })
+
+
+@login_required
+@require_POST
+def edit_appliance_report(request, report_id):
+    renter = request.user.renter
+
+    try:
+        report = RoomApplianceReport.objects.get(id=report_id, renter=renter)
+    except RoomApplianceReport.DoesNotExist:
+        messages.error(request, "Appliance report not found.")
+        return redirect('appliance_report_list')
+
+    room_id = request.POST.get('room')
+    report.room_id = room_id
+    report.window_height = request.POST.get('window_height')
+    report.window_length = request.POST.get('window_length')
+    report.window_width = request.POST.get('window_width')
+    report.brand = request.POST.get('brand')
+    report.model_serial = request.POST.get('model_serial')
+    report.location = request.POST.get('location')
+    report.comments = request.POST.get('comments')
+
+    if 'appliance_photo' in request.FILES:
+        report.appliance_photo = request.FILES['appliance_photo']
+
+    report.save()
+    messages.success(request, "Appliance report updated.")
+    return redirect('appliance_report_list')
+
+
+
+def delete_appliance_report(request, pk):
+    report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
+    report.delete()
+    messages.success(request, 'Appliance Report deleted successfully.')
+    return redirect('appliance_report_list')
+

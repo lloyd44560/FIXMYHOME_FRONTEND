@@ -34,7 +34,7 @@ from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponseNotAllowed
 
-from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport
+from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport,MainConditionReport,ConditionReportRoom
 import traceback
 
 def home(request):
@@ -800,64 +800,124 @@ def register_renter(request):
                 )
 
             else:
+                # Extract base property info
+                # Extract base property info
                 property_name = request.POST.get('property_name')
                 property_address = request.POST.get('property_address')
                 lease_start = request.POST.get('lease_start')
                 lease_end = request.POST.get('lease_end')
                 agent_id = request.POST.get('agent_id_condition')
 
-                try:
-                    agent_instance = AgentRegister.objects.get(id=agent_id)
-                except AgentRegister.DoesNotExist:
-                    return JsonResponse({'error': 'Selected agent does not exist.'})
-
-                property_instance = Property.objects.create(
+                # Save property
+                property = Property.objects.create(
                     name=property_name,
                     address=property_address,
                     lease_start=lease_start,
                     lease_end=lease_end,
-                    renter=renter,  # ✅ use the renter instance from registration
-                    agent=agent_instance,
+                    agent_id=agent_id
                 )
 
-                room_index = 0
-                while True:
-                    room_key = f'room_name_{room_index}'
-                    if room_key not in request.POST:
-                        break
+                ### ✅ SAVE ROOMS & AREA CONDITIONS ###
+                room_names = [v for k, v in request.POST.items() if k.startswith('room_name_')]
+                saved_rooms = []  # ← Store newly created rooms
 
-                    room_name = request.POST.get(room_key)
-                    room_photo = request.FILES.get(f'room_photo_{room_index}')
+                for i, room_name in enumerate(room_names):
+                    if not room_name.strip():
+                        continue
+
+                    room_photo = request.FILES.get(f'room_photo_{i+1}')
                     room = RenterRoom.objects.create(
-                        renter=renter,  # <-- FIXED here
-                        property=property_instance,
+                        renter=renter,
+                        property=property,
                         room_name=room_name,
-                        photo=room_photo,
+                        photo=room_photo
                     )
-                    area_names = request.POST.getlist(f'area_name_{room_index}[]')
-                    conditions = request.POST.getlist(f'condition_{room_index}[]')
-                    remarks = request.POST.getlist(f'remarks_{room_index}[]')
-                    area_photos = request.FILES.getlist(f'area_photo_{room_index}[]')
+                    saved_rooms.append(room)  # ← Save for linking to ConditionReport
 
-                    for i, (a, c, r) in enumerate(zip(area_names, conditions, remarks)):
-                        photo = area_photos[i] if i < len(area_photos) else None  # Ensure index safety
+                    # Area Conditions
+                    area_names = request.POST.getlist(f'area_name_{i+1}[]')
+                    area_conditions = request.POST.getlist(f'condition_{i+1}[]')
+                    area_remarks = request.POST.getlist(f'remarks_{i+1}[]')
+                    area_photos = request.FILES.getlist(f'area_photo_{i+1}[]')
+
+                    for idx, area_name in enumerate(area_names):
                         RenterRoomAreaCondition.objects.create(
                             room=room,
-                            area_name=a,
-                            status=c,
-                            remarks=r,
-                            photo=area_photos   # ✅ single file
+                            area_name=area_name,
+                            status=area_conditions[idx],
+                            remarks=area_remarks[idx],
+                            photo=area_photos[idx] if idx < len(area_photos) else None
                         )
 
-                        room_index += 1
+                ### ✅ CREATE MAIN CONDITION REPORT ###
+                from django.db.models import Max
+                latest_id = MainConditionReport.objects.aggregate(Max('id'))['id__max'] or 0
+                report_number = f"CR-{latest_id + 1:04d}"  # e.g., CR-0001
 
+                main_report = MainConditionReport.objects.create(
+                    report_number=report_number,
+                    renter=renter,
+                    uploaded_file=None  # or use request.FILES.get('some_file') if applicable
+                )
 
+                # ✅ Link each room to the condition report
+                for room in saved_rooms:
+                    ConditionReportRoom.objects.create(
+                        report=main_report,
+                        room=room
+                    )
 
+                ### ✅ SAVE APPLIANCE REPORT ###
+                appliance_room_names = request.POST.getlist('appliance_room_name[]')
+                appliance_names = request.POST.getlist('appliance_name[]')
+                appliance_conditions = request.POST.getlist('appliance_condition[]')
+                window_heights = request.POST.getlist('window_height[]')
+                window_lengths = request.POST.getlist('window_length[]')
+                window_widths = request.POST.getlist('window_width[]')
+                appliance_photos = request.FILES.getlist('appliance_photo[]')
+                comments = request.POST.getlist('comments[]')
 
+                for i in range(len(appliance_room_names)):
+                    room_name = appliance_room_names[i]
+                    try:
+                        room = RenterRoom.objects.get(room_name=room_name, renter=renter, property=property)
+                    except RenterRoom.DoesNotExist:
+                        continue
+
+                    RoomApplianceReport.objects.create(
+                        renter=renter,
+                        room=room,
+                        brand=appliance_names[i],
+                        window_height=window_heights[i],
+                        window_length=window_lengths[i],
+                        window_width=window_widths[i],
+                        model_serial='',
+                        location='',
+                        appliance_photo=appliance_photos[i] if i < len(appliance_photos) else None,
+                        comments=comments[i] if i < len(comments) else ''
+                    )
+
+                ### ✅ SAVE MINIMUM STANDARD REPORT ###
+                if request.POST.get('tenant_name'):
+                    MinimumStandardReport.objects.create(
+                        renter=renter,
+                        tenant_name=request.POST.get('tenant_name', ''),
+                        audit_no=request.POST.get('audit_no', ''),
+                        auditor=request.POST.get('auditor', ''),
+                        inspection_address=request.POST.get('inspection_address', ''),
+                        managing_agent=request.POST.get('managing_agent', ''),
+                        audit_date=request.POST.get('audit_date') or None,
+                        room=request.POST.get('room', ''),
+                        comments=request.POST.get('comments', ''),
+                        report_file=request.FILES.get('report_file'),
+                        company=request.POST.get('company', ''),
+                        name=request.POST.get('name', ''),
+                        audit_expiry=request.POST.get('audit_expiry') or None,
+                    )
 
 
                 # return redirect('success_page_name')
-                property = None  # For now you’re skipping automatic upload handling
+                # property = None  # For now you’re skipping automatic upload handling
                 # Collect lahat ng laman ng section para sa Property record creation
                 # Collect lahat ng section para sa RenterRoom record creation
                 # Collect lahat ng section para sa RenterRoomAreaCondition

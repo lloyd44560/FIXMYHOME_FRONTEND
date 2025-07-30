@@ -107,3 +107,4 @@ class RoomApplianceReportForm(forms.ModelForm):
     class Meta:
         model = RoomApplianceReport
         exclude = ['renter']
+
