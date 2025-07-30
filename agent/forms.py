@@ -45,6 +45,10 @@ class AgentCreatePropertyForm(forms.ModelForm):
         model = Property
         exclude = ['agent']
         widgets = {
+            'address': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'w-full border border-gray-300 rounded-md p-2'
+            }),
             'lease_start': forms.DateInput(attrs={
                 'type': 'date',
             }),
