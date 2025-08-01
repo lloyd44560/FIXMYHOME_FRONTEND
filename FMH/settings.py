@@ -220,7 +220,7 @@ SOCIAL_AUTH_AUTHENTICATION_ERROR_URL = '/login-error/?message=Authentication%20w
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'static/renter/images/uploads'
+MEDIA_ROOT = BASE_DIR / '/static/'
 
 
 SOCIALACCOUNT_ADAPTER = 'renter.adapter.CustomSocialAccountAdapter'

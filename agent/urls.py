@@ -28,7 +28,5 @@ urlpatterns = [
     path('active-jobs/', views.ActiveJobsListView.as_view(), name='active_jobs_list'),
 
     path('bids/', views.AgentBidListView.as_view(), name='agent_bid_list'),
-    path('bidding/<int:pk>/approve/', views.BiddingApprovalView.as_view(), name='bidding_approval'),
-    
-    
+    path('bidding/<int:pk>/approve/', views.BiddingApprovalView.as_view(), name='bidding_approval')
 ]

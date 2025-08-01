@@ -25,6 +25,7 @@ from django.utils import timezone
 
 from renter.models import Renter
 from trader.models import Jobs, Bidding
+from trader.models.servicesTrader import Services
 from .models import AgentRegister, Property, Rooms
 from .forms import CreateAgentFormClass, AgentEditProfileForm
 from .forms import InvitationForm, AgentCreatePropertyForm, AgentCreateRoomForm
@@ -497,9 +498,49 @@ class ActiveJobsListView(ListView):
 
     def get_queryset(self):
         # Show all jobs, ordered by priority and scheduled/approved/confirmed date
-        return Jobs.objects.all().order_by('-priority', '-scheduled_at', '-approved_at', '-confirmed_at')
+        queryset = super().get_queryset()
+
+        # Filter only active properties
+        queryset = queryset.filter(is_active=True)
+
+        # Get filter parameters from request
+        status = self.request.GET.get('status')
+        category = self.request.GET.get('category')
+        priority = self.request.GET.get('priority')
+        trader = self.request.GET.get('trader')
+        scheduled_at = self.request.GET.get('scheduled_at')
+
+        # Apply filters if provided
+        if status:
+            queryset = queryset.filter(status=status)
+        if category:
+            queryset = queryset.filter(category=category)
+        if trader:
+            queryset = queryset.filter(trader__name__icontains=trader)
+        if scheduled_at:
+            queryset = queryset.filter(scheduled_at=scheduled_at)
+        if priority == 'true':
+            queryset = queryset.filter(priority=True)
+        elif priority == 'false':
+            queryset = queryset.filter(priority=False)
+
+        return queryset.order_by('-priority', '-scheduled_at', '-approved_at', '-confirmed_at')
 
     def get_context_data(self, **kwargs):
+        category = self.request.GET.get('category')
+
         context = super().get_context_data(**kwargs)
         context['status_options'] = dict(Jobs._meta.get_field('status').choices)
+        context['category_options'] = {
+            service.id: service.description
+            for service in Services.objects.all()
+        }
+
+        # Preserve filter values in template for form repopulation
+        context['filter_status'] = self.request.GET.get('status', '')
+        context['filter_category'] = int(category) if category and category.isdigit() else ''
+        context['filter_priority'] = self.request.GET.get('priority', '')
+        context['filter_trader'] = self.request.GET.get('trader', '')
+        context['filter_scheduled_at'] = self.request.GET.get('scheduled_at', '')
+
         return context

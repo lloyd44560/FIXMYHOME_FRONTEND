@@ -27,6 +27,7 @@ class Jobs(models.Model):
     confirmed_at = models.DateTimeField(null=True, blank=True)
     approved_at = models.DateTimeField(null=True, blank=True)
     scheduled_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(null=True, blank=True, default=True)
 
     def save(self, *args, **kwargs):
         # Always regenerate job_code based on current status
