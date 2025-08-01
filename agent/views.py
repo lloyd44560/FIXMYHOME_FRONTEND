@@ -53,7 +53,7 @@ class AgentRegistrationCreateView(CreateView):
             if form.errors:
                 # Return with form errors due to duplicates
                 return render(request, self.template_name, {'form': form})
-            
+
             agent = form.save(commit=False)
             user = User.objects.create_user(
                 username=form.cleaned_data['name'],
@@ -118,7 +118,7 @@ class AgentHomeView(TemplateView):
         today = now().date()
         context['today_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=True).count()
         context['today_non_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=False).count()
-        
+
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -142,7 +142,7 @@ class AgentEditProfileView(UpdateView):
         user = self.request.user
         agent = self.get_object()
 
-        if agent: 
+        if agent:
             context['full_name'] = user.get_full_name() or agent.name
             context['email'] = agent.email
             context['phone'] = agent.phone
@@ -159,7 +159,7 @@ class AgentEditProfileView(UpdateView):
 
         # Fields to update
         fields = [
-            'name', 'email', 'phone', 'agency_id', 'website', 'company_name', 
+            'name', 'email', 'phone', 'agency_id', 'website', 'company_name',
             'company_address', 'company_email', 'company_landline',
             'contractor_license', 'service', 'state', 'municipality', 'city',
             'postal_code', 'address_line_1', 'address_line_2'
@@ -200,7 +200,7 @@ class PropertyCreateView(CreateView):
     template_name = "components/home/property_form.html"
     model = Property
     form_class = AgentCreatePropertyForm
-    success_url = reverse_lazy("home_agent") 
+    success_url = reverse_lazy("home_agent")
 
     def form_valid(self, form):
         userAgent = AgentRegister.objects.get(user=self.request.user)
@@ -216,7 +216,7 @@ class PropertyCreateView(CreateView):
         property.save()
         messages.success(self.request, "Property created successfully!")
         return redirect(self.success_url)
-    
+
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -348,7 +348,7 @@ class AgentJobCreateView(CreateView):
 
     def form_valid(self, form):
         agent = AgentRegister.objects.filter(user=self.request.user).first()
-        
+
         if not agent:
             messages.error(self.request, "You must be an agent to create a job.")
             return self.form_invalid(form)
@@ -437,7 +437,10 @@ class PropertiesListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-    
+
+        # Filter only active properties
+        queryset = queryset.filter(is_active=True)
+
         # Get filter parameters from request
         status = self.request.GET.get('status')
         address = self.request.GET.get('address')

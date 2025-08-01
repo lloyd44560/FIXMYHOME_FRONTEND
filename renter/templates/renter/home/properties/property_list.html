@@ -17,7 +17,7 @@
 
   {% include 'renter/home/navbar.html' %}
 
-  <main class="flex-grow max-w-6xl mx-auto py-10 px-4">
+  <!--<main class="flex-grow max-w-6xl mx-auto py-10 px-4">-->
     <!--<div class="flex justify-between items-center mb-6">-->
     <!--  <h1 class="text-3xl font-bold">My Properties</h1>-->
     <!--  <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" data-bs-toggle="modal" data-bs-target="#addPropertyModal">+ Add Property</button>-->
@@ -25,123 +25,137 @@
 
     <div id="notification" class="hidden mb-4 p-3 rounded text-white"></div>
 
-    <div class="overflow-x-auto bg-white shadow rounded-lg">
-     <table class="table table-hover table-bordered align-middle shadow-sm rounded">
-  <thead class="table-light text-center">
-    <tr>
-      <th>#</th>
-      <th>Property Name</th>
-      <th>City</th>
-      <th>Status</th>
-      <th>Photo</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for prop in properties %}
-    <tr>
-      <td class="text-center">{{ forloop.counter }}</td>
-      <td>{{ prop.name }}</td>
-      <td>{{ prop.city }}</td>
-      <td class="text-center">
-        {% if prop.status == 'vacant' %}
-          <span class="badge bg-success">Vacant</span>
-        {% else %}
-          <span class="badge bg-danger">Occupied</span>
-        {% endif %}
-      </td>
-      <td class="text-center">
-        {% if prop.property_photo %}
-          <img src="{{ prop.property_photo.url }}" height="50" class="rounded shadow-sm">
-        {% else %}
-          <span class="text-muted">No Photo</span>
-        {% endif %}
-      </td>
-      <td class="text-center">
-        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ prop.id }}">
-          <i class="bi bi-pencil-square"></i> Edit
-        </button>
-        <a href="{% url 'unlink_property' prop.id %}" class="btn btn-sm btn-warning" onclick="return confirm('Unlink this property from your account?')">
-          <i class="bi bi-link-45deg"></i> Unlink
-        </a>
-        <!--<a href="{% url 'delete_property' prop.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this property?')">-->
-        <!--  <i class="bi bi-trash"></i> Delete-->
-        <!--</a>-->
-      </td>
-    </tr>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+        <div class="p-4 border-b bg-gray-50">
+          <h2 class="text-xl font-semibold text-gray-700">My Properties</h2>
+        </div>
 
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal{{ prop.id }}" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <form method="POST" enctype="multipart/form-data" action="{% url 'edit_property' prop.id %}">
-          {% csrf_token %}
-          <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-              <h5 class="modal-title">Edit Property: {{ prop.name }}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Name</label>
-                <input type="text" name="name" value="{{ prop.name }}" class="form-control" required>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle mb-0 w-100">
+        <thead class="table-light text-center">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Property Name</th>
+            <th scope="col">City</th>
+            <th scope="col">Status</th>
+            <th scope="col">Photo</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prop in properties %}
+          <tr>
+            <td class="text-center">{{ forloop.counter }}</td>
+            <td class="fw-semibold">{{ prop.name }}</td>
+            <td>{{ prop.city }}</td>
+            <td class="text-center">
+              {% if prop.status == 'vacant' %}
+              <span class="badge bg-success">Vacant</span>
+              {% else %}
+              <span class="badge bg-danger">Occupied</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {% if prop.property_photo %}
+              <img src="{{ prop.property_photo.url }}" height="50" class="rounded shadow-sm">
+              {% else %}
+              <span class="text-muted">No Photo</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                  data-bs-target="#editModal{{ prop.id }}">
+                  <i class="bi bi-pencil-square me-1"></i> Edit
+                </button>
+                <a href="{% url 'unlink_property' prop.id %}" class="btn btn-sm btn-outline-warning"
+                  onclick="return confirm('Unlink this property from your account?')">
+                  <i class="bi bi-link-45deg me-1"></i> Unlink
+                </a>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Floor Count</label>
-                <input type="number" name="floor_count" value="{{ prop.floor_count }}" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">City</label>
-                <input type="text" name="city" value="{{ prop.city }}" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">State</label>
-                <input type="text" name="state" value="{{ prop.state }}" class="form-control">
-              </div>
-              <div class="col-md-12">
-                <label class="form-label">Address</label>
-                <textarea name="address" class="form-control">{{ prop.address }}</textarea>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Lease Start *</label>
-                <input type="date" name="lease_start" value="{{ prop.lease_start|date:'Y-m-d' }}" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Lease End *</label>
-                <input type="date" name="lease_end" value="{{ prop.lease_end|date:'Y-m-d' }}" class="form-control">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Status</label>
-                <select name="status" class="form-select">
-                  <option value="vacant" {% if prop.status == 'vacant' %}selected{% endif %}>Vacant</option>
-                  <option value="occupied" {% if prop.status == 'occupied' %}selected{% endif %}>Occupied</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Property Photo</label><br>
-                {% if prop.property_photo %}
-                  <img src="{{ prop.property_photo.url }}" height="60" class="mb-2 rounded shadow-sm"><br>
-                {% endif %}
-                <input type="file" name="property_photo" class="form-control">
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-success">Save Changes</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+            </td>
+          </tr>
 
-    {% empty %}
-    <tr>
-      <td colspan="6" class="text-center text-muted">No properties available.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+
+
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal{{ prop.id }}" tabindex="-1">
+              <div class="modal-dialog modal-lg">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'edit_property' prop.id %}">
+                  {% csrf_token %}
+                  <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                      <h5 class="modal-title">Edit Property: {{ prop.name }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" value="{{ prop.name }}" class="form-control" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Floor Count</label>
+                        <input type="number" name="floor_count" value="{{ prop.floor_count }}" class="form-control">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" value="{{ prop.city }}" class="form-control">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">State</label>
+                        <input type="text" name="state" value="{{ prop.state }}" class="form-control">
+                      </div>
+                      <div class="col-md-12">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control">{{ prop.address }}</textarea>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Lease Start *</label>
+                        <input type="date" name="lease_start" value="{{ prop.lease_start|date:'Y-m-d' }}" class="form-control">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Lease End *</label>
+                        <input type="date" name="lease_end" value="{{ prop.lease_end|date:'Y-m-d' }}" class="form-control">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                          <option value="vacant" {% if prop.status == 'vacant' %}selected{% endif %}>Vacant</option>
+                          <option value="occupied" {% if prop.status == 'occupied' %}selected{% endif %}>Occupied</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Property Photo</label><br>
+                        {% if prop.property_photo %}
+                          <img src="{{ prop.property_photo.url }}" height="60" class="mb-2 rounded shadow-sm"><br>
+                        {% endif %}
+                        <input type="file" name="property_photo" class="form-control">
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-success">Save Changes</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+
+
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">No properties available.</td>
+          </tr>
+
+
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-  </main>
+  </div>
+<!--</main>-->
+
 
   <!-- Add Property Modal -->
   <div class="modal fade" id="addPropertyModal" tabindex="-1">

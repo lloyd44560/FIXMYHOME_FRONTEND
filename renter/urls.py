@@ -77,15 +77,18 @@ urlpatterns = [
     path('report/delete/<int:id>/', views.delete_standard_report, name='delete_standard_report'),
 
 
+# For Renter Property Listing
 
     path('properties/', PropertyListView.as_view(), name='property_list'),
 
+# For Maintainance Request Listings
 
-    path('jobs/', renter_actions.list_jobs, name='job_list'),
+    path('maintenance/', renter_actions.list_jobs, name='job_list'),
     path('jobs/add/', renter_actions.add_job, name='add_job'),
-    path('jobs/edit/<int:id>/', renter_actions.edit_job, name='edit_job'),
+    path('jobs/edit/<int:job_id>/', renter_actions.edit_job, name='edit_job'),
     path('jobs/delete/<int:id>/', renter_actions.delete_job, name='delete_job'),
 
+# For Minimum Standard Reports Listings
 
     path('standard-reports/', renter_actions.standard_report_list, name='standard_report_list'),
     path('standard-reports/add/', renter_actions.add_standard_report, name='add_standard_report'),

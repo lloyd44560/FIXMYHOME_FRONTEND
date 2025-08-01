@@ -24,6 +24,7 @@ from django.shortcuts import get_object_or_404
 
 from .forms import JobForm
 from trader.models import Jobs
+from trader.models.servicesTrader import Services
 from trader.models import TraderRegistration
 from agent.models.propertyAgent import Property
 from agent.models.registerAgent import AgentRegister
@@ -217,9 +218,6 @@ class PropertyDeleteView(DeleteView):
     success_url = reverse_lazy('property_list')
 
 
-
-
-
 @login_required
 @csrf_exempt
 def add_property(request):
@@ -353,7 +351,7 @@ def edit_property(request, id):
 
     return JsonResponse({"success": False, "message": "Invalid request method"})
 
-
+############################################################################################### Renter Maintenance Requests #########################################################################################################
 
 @login_required
 def list_jobs(request):
@@ -366,12 +364,13 @@ def list_jobs(request):
 
     agents = AgentRegister.objects.all()
     traders = TraderRegistration.objects.all()
+    services = Services.objects.filter(is_active=True)  # Only active categories
     return render(request, 'renter/home/jobs/renter_job_list.html', {
         'jobs': jobs,
         'agents': agents,
         'traders': traders,
+        'services': services,  # <-- Add this
     })
-
 
 @csrf_exempt
 @login_required
@@ -379,60 +378,105 @@ def add_job(request):
     if request.method == 'POST':
         try:
             renter = Renter.objects.get(user=request.user)
-
             agent = AgentRegister.objects.get(id=request.POST.get('agent_id'))
-            # trader = TraderRegistration.objects.get(id=request.POST.get('trader_id'))
+
+            # Get selected service (category) from the dropdown
+            service_id = request.POST.get('category')
+            service = Services.objects.get(id=service_id)
+
+            # Set priority depending on whether the selected service is urgent
+            priority = service.isurgent  # This will be True or False
 
             job = Jobs.objects.create(
                 agent=agent,
-                # trader=trader,
                 renter=renter,
                 notes=request.POST.get('notes'),
-                priority=request.POST.get('priority') == 'true',
-                # status=request.POST.get('status')
+                category=service,        # save the selected category/service
+                priority=priority        # save the computed priority (True/False)
             )
-            return redirect('/jobs/')
+
+            return redirect('/maintenance/')
         except Exception as e:
             print("Add job error:", e)
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
 
+# @csrf_exempt
+# @login_required
+# def edit_job(request, job_id):
+#     if request.method == 'POST':
+#         try:
+#             job = get_object_or_404(Jobs, id=job_id, renter__user=request.user)
 
+#             # Update foreign keys
+#             agent_id = request.POST.get('agent_id')
+#             category_id = request.POST.get('category')
+
+#             job.agent = AgentRegister.objects.get(id=agent_id) if agent_id else job.agent
+#             job.category = ServiceCategory.objects.get(id=category_id) if category_id else job.category
+#             job.notes = request.POST.get('notes', '')
+
+#             # Update priority based on category's is_urgent
+#             if job.category.is_urgent:
+#                 job.priority = True
+#             else:
+#                 job.priority = False
+
+#             job.save()
+
+#             return redirect('/maintenance/')  # or return JsonResponse if using AJAX
+#         except Exception as e:
+#             print("Edit job error:", e)
+#             return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+#     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+
+@csrf_exempt
 @login_required
-def edit_job(request, id):
+def edit_job(request, job_id):
     if request.method == 'POST':
         try:
-            job = get_object_or_404(Jobs, id=id, renter__user=request.user)
+            # ✅ Just update by job_id
+            job = get_object_or_404(Jobs, id=job_id)
 
-            job.agent_id = request.POST.get('agent_id')
-            # job.trader_id = request.POST.get('trader_id')
-            job.notes = request.POST.get('notes')
-            # job.status = request.POST.get('status')
-            job.priority = request.POST.get('priority') == 'true'
+            # 🛠️ Update fields
+            agent_id = request.POST.get('agent_id')
+            category_id = request.POST.get('category')
+            notes = request.POST.get('notes', '')
+
+            if agent_id:
+                job.agent = AgentRegister.objects.get(id=agent_id)
+
+            if category_id:
+                job.category = Services.objects.get(id=category_id)
+
+                # Update priority based on is_urgent field
+                job.priority = job.category.isurgent
+
+            job.notes = notes
             job.save()
 
-            return redirect('/jobs/')  # Or redirect to job list
+            return redirect('/maintenance/')
         except Exception as e:
             print("Edit job error:", e)
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
-    return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
 
 
 @login_required
 def delete_job(request, id):
     try:
-        job = get_object_or_404(Jobs, id=id, renter__user=request.user)
+        job = get_object_or_404(Jobs, id=id)
         job.delete()
-        return redirect('/jobs/')
+        return redirect('/maintenance/')
     except Exception as e:
         print("Delete job error:", e)
-        return redirect('/jobs/')
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 
-
-
+########################################################################################## Renter Min. Standard Report ########################################################################################################
 @login_required
 def standard_report_list(request):
     reports = MinimumStandardReport.objects.filter(renter=request.user.renter)
@@ -647,11 +691,11 @@ def renter_room_list(request):
 #             return redirect('appliance_report_list')
 #     return redirect('appliance_report_list')
 
-@login_required
-def delete_appliance_report(request, pk):
-    report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
-    report.delete()
-    return redirect('appliance_report_list')
+# @login_required
+# def delete_appliance_report(request, pk):
+#     report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
+#     report.delete()
+#     return redirect('appliance_report_list')
 
 
 
@@ -700,13 +744,15 @@ def delete_appliance_report(request, pk):
 #             messages.success(request, "Appliance report updated successfully.")
 #         return redirect('welcome')  # or use `reverse()` if needed
 
-def delete_appliance_report(request, report_id):
-    appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
-    room_id = appliance.room.id
-    appliance.delete()
-    messages.success(request, "Appliance report deleted.")
-    return redirect(f'/appliance-reports/?room={room_id}')
+# def delete_appliance_report(request, report_id):
+#     appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
+#     room_id = appliance.room.id
+#     appliance.delete()
+#     messages.success(request, "Appliance report deleted.")
+#     return redirect(f'/appliance-reports/?room={room_id}')
 
+
+###################################################################################################### All Condition Report Functions ####################################################################################################
 @csrf_exempt
 @login_required
 def save_condition_report(request):
@@ -769,14 +815,6 @@ def save_condition_report(request):
         return redirect('condition_report_list')
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-
-
-
-
-
-
-
 
 
 # def condition_report_list(request):
@@ -845,7 +883,7 @@ def edit_condition_report(request, report_id):
     if request.method == 'POST':
         report.report_number = request.POST.get('report_number')
 
-        # 🟢 No need to update renter if it's not changeable
+        # No need to update renter if it's not changeable
         # renter_id = request.POST.get('renter')
         # report.renter = get_object_or_404(Renter, id=renter_id)
 
@@ -879,23 +917,6 @@ def edit_condition_report(request, report_id):
     })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required
 def delete_renter_room(request, pk):
     room = get_object_or_404(RenterRoom, pk=pk)
@@ -921,8 +942,7 @@ def edit_renter_room(request, pk):
 
 
 
-
-# Appliance Reports Functionalities
+######################################################################################################X## Appliance Reports Functionalities ######################################################################################################
 @login_required
 def appliance_report_list(request):
     renter = request.user.renter
@@ -943,7 +963,7 @@ def appliance_report_list(request):
     if model_serial:
         reports = reports.filter(model_serial__icontains=model_serial)
 
-    # ✅ Pagination
+    # Pagination
     paginator = Paginator(reports.order_by('-id'), 10)  # 10 per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
