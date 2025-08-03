@@ -5,7 +5,56 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 <main class="max-w-5xl mx-auto p-4 sm:p-6 mb-[8rem]">
-  <h2 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-6 text-center tracking-tight">Active Compliance Report</h2>
+  <h2 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-6 text-center tracking-tight">Active Maintenance Report</h2>
+
+  <!-- Filter Form -->
+  <form method="GET" class="mb-6">
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Status Filter -->
+      <div>
+        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+        <select name="status" id="status" class="mt-1 p-2 border rounded-md w-full md:w-40" onchange="this.form.submit()">
+          <option value="">All Statuses</option>
+          {% for key, label in status_options.items %}
+            <option value="{{ key }}" {% if key == filter_status %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- Category Filter -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+        <select name="category" id="category" class="mt-1 p-2 border rounded-md w-full md:w-40" onchange="this.form.submit()">
+          <option value="">All Category</option>
+          {% for key, label in category_options.items %}
+            <option value="{{ key }}" {% if key == filter_category %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- Priority Filter -->
+      <div>
+        <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
+        <select name="priority" id="priority" class="mt-1 p-2 border rounded-md w-full md:w-40" onchange="this.form.submit()">
+          <option value="">All Priority</option>
+          <option value="true" {% if filter_priority == 'true' %}selected{% endif %}>Urgent</option>
+          <option value="false" {% if filter_priority == 'false' %}selected{% endif %}>Non-urgent</option>
+        </select>
+      </div>
+      <!-- Scheduled At Filter -->
+      <div>
+        <label for="priority" class="block text-sm font-medium text-gray-700">Scheduled At</label>
+        <input type="date" name="scheduled_at" id="scheduled_at" class="mt-1 p-2 border rounded-md w-full md:w-40" value="{{ filter_scheduled_at }}" onchange="this.form.submit()">
+      </div>
+      <!-- Address Filter -->
+      <div>
+        <label for="trader" class="block text-sm font-medium text-gray-700">Trader</label>
+        <input type="text" name="trader" id="trader" value="{{ filter_trader }}"
+          class="mt-1 p-2 border rounded-md w-full md:w-40"
+          placeholder="Enter Trader"
+          onchange="this.form.submit()">
+      </div>
+    </div>
+  </form>
+
   <div class="overflow-x-auto rounded-xl shadow">
     <table class="min-w-full bg-white border border-gray-200 rounded-xl overflow-hidden">
       <thead class="bg-blue-50">
@@ -16,7 +65,7 @@
           <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Status</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Priority</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Scheduled</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Action</th>
+          <!-- <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Action</th> -->
         </tr>
       </thead>
       <tbody>

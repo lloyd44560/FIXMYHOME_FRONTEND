@@ -29,7 +29,8 @@ class Bidding(models.Model):
 
     # Approval fields
     is_approved = models.BooleanField(null=True, blank=True, default=None, help_text="None=pending, True=approved, False=rejected")
-    approved_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(null=True, blank=True, default=True)
+    approved_at = models.DateField(auto_now_add=True, null=True, blank=True)
     approved_by = models.ForeignKey(AgentRegister, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_bids')
     approval_notes = models.TextField(blank=True, null=True)
 
