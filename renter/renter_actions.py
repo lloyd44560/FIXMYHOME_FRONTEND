@@ -177,17 +177,29 @@ class PropertyListView(ListView):
     model = Property
     template_name = 'renter/home/properties/property_list.html'
     context_object_name = 'properties'
+    paginate_by = 5  # Number of items per page
 
     def get_queryset(self):
         try:
             renter = Renter.objects.get(user=self.request.user)
-            return Property.objects.filter(renter=renter)
+            queryset = Property.objects.filter(renter=renter)
+
+            # Search filter
+            query = self.request.GET.get('q')
+            if query:
+                queryset = queryset.filter(
+                    Q(name__icontains=query) |
+                    Q(city__icontains=query) |
+                    Q(state__icontains=query)
+                )
+            return queryset
         except Renter.DoesNotExist:
             return Property.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['agents'] = AgentRegister.objects.all()
+        context['search_query'] = self.request.GET.get('q', '')
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -356,21 +368,40 @@ def edit_property(request, id):
 @login_required
 def list_jobs(request):
     user = request.user
+    search_query = request.GET.get('q', '')
+
     try:
         renter = Renter.objects.get(user=user)
         jobs = Jobs.objects.filter(renter=renter)
+
+        if search_query:
+            jobs = jobs.filter(
+                Q(job_code__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(notes__icontains=search_query) |
+                Q(category__description__icontains=search_query)
+            )
+
     except Renter.DoesNotExist:
-        jobs = []
+        jobs = Jobs.objects.none()
+
+    # Apply pagination
+    paginator = Paginator(jobs.order_by('-approved_at'), 5)
+    page_number = request.GET.get('page')
+    page_jobs = paginator.get_page(page_number)
 
     agents = AgentRegister.objects.all()
     traders = TraderRegistration.objects.all()
-    services = Services.objects.filter(is_active=True)  # Only active categories
+    services = Services.objects.filter(is_active=True)
+
     return render(request, 'renter/home/jobs/renter_job_list.html', {
-        'jobs': jobs,
+        'jobs': page_jobs,
         'agents': agents,
         'traders': traders,
-        'services': services,  # <-- Add this
+        'services': services,
+        'search_query': search_query,
     })
+
 
 @csrf_exempt
 @login_required
@@ -437,10 +468,10 @@ def add_job(request):
 def edit_job(request, job_id):
     if request.method == 'POST':
         try:
-            # ✅ Just update by job_id
+            # Just update by job_id
             job = get_object_or_404(Jobs, id=job_id)
 
-            # 🛠️ Update fields
+            # ️ Update fields
             agent_id = request.POST.get('agent_id')
             category_id = request.POST.get('category')
             notes = request.POST.get('notes', '')
@@ -479,12 +510,31 @@ def delete_job(request, id):
 ########################################################################################## Renter Min. Standard Report ########################################################################################################
 @login_required
 def standard_report_list(request):
-    reports = MinimumStandardReport.objects.filter(renter=request.user.renter)
-    form = MinimumStandardReportForm()
+    renter = request.user.renter
+    search_query = request.GET.get('q', '')
 
+    reports = MinimumStandardReport.objects.filter(renter=renter)
+
+    # Apply search
+    if search_query:
+        reports = reports.filter(
+            Q(tenant_name__icontains=search_query) |
+            Q(audit_no__icontains=search_query) |
+            Q(auditor__icontains=search_query) |
+            Q(company__icontains=search_query) |
+            Q(name__icontains=search_query)
+        )
+
+    # Paginate (5 per page)
+    paginator = Paginator(reports.order_by('-id'),4)
+    page_number = request.GET.get('page')
+    page_reports = paginator.get_page(page_number)
+
+    form = MinimumStandardReportForm()
     context = {
-        'reports': reports,
+        'reports': page_reports,
         'form': form,
+        'search_query': search_query,
     }
     return render(request, 'renter/home/minimum_standard_reports/list.html', context)
 
@@ -526,7 +576,7 @@ def renter_room_list(request):
     return render(request, 'renter/home/condition_reports/renter_room_list.html', {
         'rooms': rooms,
         'properties': properties,
-        'renter': renter,  # ✅ useful if you pass renter to modals/forms
+        'renter': renter,  # useful if you pass renter to modals/forms
     })
 
 def add_renter_room(request):
@@ -585,13 +635,13 @@ def delete_area_condition(request, pk):
 def renter_room_list(request):
     renter = request.user.renter
 
-    # 🔵 Only get properties owned by this renter
+    #  Only get properties owned by this renter
     properties = Property.objects.filter(renter=renter)
 
-    # 🟡 Get property filter from GET param
+    #  Get property filter from GET param
     property_id = request.GET.get('property')
 
-    # 🟢 Filter rooms accordingly
+    #  Filter rooms accordingly
     rooms = RenterRoom.objects.filter(renter=renter).select_related('property').prefetch_related('area_conditions')
 
     if property_id:
@@ -642,114 +692,6 @@ def renter_room_list(request):
     })
 
 
-
-
-
-# Appliance Report
-
-
-# @login_required
-# def appliance_report_list(request):
-#     renter = request.user.renter
-#     rooms = RenterRoom.objects.filter(renter=renter)
-
-#     selected_room_id = request.GET.get('room')
-#     reports = None
-#     selected_room = None
-
-#     if selected_room_id:
-#         selected_room = RenterRoom.objects.filter(id=selected_room_id, renter=renter).first()
-#         if selected_room:
-#             reports = RoomApplianceReport.objects.filter(room=selected_room)
-
-#     form = RoomApplianceReportForm()
-
-#     return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {
-#         'rooms': rooms,
-#         'reports': reports,
-#         'selected_room': selected_room,
-#         'form': form,
-#     })
-
-# @login_required
-# def add_appliance_report(request):
-#     if request.method == 'POST':
-#         form = RoomApplianceReportForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             appliance = form.save(commit=False)
-#             appliance.renter = request.user.renter
-#             appliance.save()
-#     return redirect('appliance_report_list')
-
-# @login_required
-# def edit_appliance_report(request, pk):
-#     report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
-#     if request.method == 'POST':
-#         form = RoomApplianceReportForm(request.POST, request.FILES, instance=report)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('appliance_report_list')
-#     return redirect('appliance_report_list')
-
-# @login_required
-# def delete_appliance_report(request, pk):
-#     report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)
-#     report.delete()
-#     return redirect('appliance_report_list')
-
-
-
-# Appliance Report Actions
-
-
-
-# def appliance_report_list(request):
-#     renter = request.user.renter
-#     rooms = RenterRoom.objects.filter(renter=renter)
-
-#     selected_room_id = request.GET.get('room')
-#     selected_room = None
-#     reports = RoomApplianceReport.objects.none()
-
-#     if selected_room_id:
-#         selected_room = get_object_or_404(RenterRoom, id=selected_room_id, renter=renter)
-#         reports = RoomApplianceReport.objects.filter(room=selected_room)
-
-#     if request.method == 'POST':
-#         form = RoomApplianceReportForm(request.POST)
-#         if form.is_valid():
-#             appliance = form.save(commit=False)
-#             appliance.renter = renter
-#             appliance.save()
-#             messages.success(request, "Appliance report added successfully.")
-#             return redirect(f'{request.path}?room={appliance.room.id}')
-#     else:
-#         form = RoomApplianceReportForm()
-
-#     return render(request, 'renter/home/appliance_reports/appliance_report_list.html', {
-#         'rooms': rooms,
-#         'reports': reports,
-#         'selected_room': selected_room,
-#         'form': form,
-#     })
-
-
-# def edit_appliance_report(request, report_id):
-#     appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
-
-#     if request.method == 'POST':
-#         form = RoomApplianceReportForm(request.POST, instance=appliance)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "Appliance report updated successfully.")
-#         return redirect('welcome')  # or use `reverse()` if needed
-
-# def delete_appliance_report(request, report_id):
-#     appliance = get_object_or_404(RoomApplianceReport, id=report_id, renter=request.user.renter)
-#     room_id = appliance.room.id
-#     appliance.delete()
-#     messages.success(request, "Appliance report deleted.")
-#     return redirect(f'/appliance-reports/?room={room_id}')
 
 
 ###################################################################################################### All Condition Report Functions ####################################################################################################

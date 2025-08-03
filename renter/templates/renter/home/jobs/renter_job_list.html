@@ -36,6 +36,12 @@
 
     <!-- Jobs Table -->
     <div class="table-responsive shadow-sm rounded bg-white border">
+
+
+      <form method="GET" class="d-flex mb-3" action="">
+        <input type="text" name="q" class="form-control me-2" placeholder="Search jobs..." value="{{ search_query }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light text-dark">
           <tr>
@@ -56,7 +62,7 @@
            <td><span class="badge bg-{{ job.status|lower|slugify }} text-dark">{{ job.status }}</span></td>
             <td>
               <span class="badge {% if job.priority %}bg-danger{% else %}bg-secondary{% endif %}">
-                {% if job.priority %}High{% else %}Normal{% endif %}
+                {% if job.priority %}Urgent{% else %}Non-urgent{% endif %}
               </span>
             </td>
             <td>{{ job.category }}</td>
@@ -76,6 +82,35 @@
         </tbody>
 
       </table>
+
+
+      <nav aria-label="Job Pagination">
+        <ul class="pagination justify-content-center">
+          {% if jobs.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ jobs.previous_page_number }}&q={{ search_query }}">Previous</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+
+          {% for num in jobs.paginator.page_range %}
+            {% if jobs.number == num %}
+              <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ search_query }}">{{ num }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if jobs.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ jobs.next_page_number }}&q={{ search_query }}">Next</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
   </main>
 
