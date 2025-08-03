@@ -308,6 +308,27 @@ class RenterListView(ListView):
     template_name = 'components/home/manageRenters.html'  # you’ll create this
     context_object_name = 'renters'
 
+    def get_queryset(self):
+        # Show all jobs, ordered by priority and scheduled/approved/confirmed date
+        queryset = super().get_queryset()
+
+        # Get filter parameters from request
+        renter_name = self.request.GET.get('renter_name')
+
+        # Apply filters if provided
+        if renter_name:
+            queryset = queryset.filter(name__icontains=renter_name)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Preserve filter values in template for form repopulation
+        context['filter_renter'] = self.request.GET.get('renter_name', '')
+
+        return context
+
 class RenterUpdateView(UpdateView):
     model = Renter
     form_class = RenterUpdateForm
@@ -385,7 +406,6 @@ class AgentJobCreateView(CreateView):
             return self.form_invalid(form)
 
     def form_invalid(self, form):
-        print("Form is invalid:", form.errors)  # For debugging
         messages.error(self.request, "There was an error creating the job. Please check the form.")
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -400,15 +420,45 @@ class AgentBidListView(ListView):
     context_object_name = 'bids'
 
     def get_queryset(self):
-        return Bidding.objects.order_by('-created_at')
+        # Show all jobs, ordered by priority and scheduled/approved/confirmed date
+        queryset = super().get_queryset()
+
+        # Filter only active properties
+        queryset = queryset.filter(is_active=True)
+
+        # Get filter parameters from request
+        trader = self.request.GET.get('trader')
+        is_approved = self.request.GET.get('status')
+        approved_at = self.request.GET.get('approved_at')
+
+        # Apply filters if provided
+        if trader:
+            queryset = queryset.filter(trader__name__icontains=trader)
+        if approved_at:
+            queryset = queryset.filter(approved_at=approved_at)
+
+        if is_approved == 'true':
+            queryset = queryset.filter(is_approved=True)
+        elif is_approved == 'false':
+            queryset = queryset.filter(is_approved=False)
+        elif is_approved == '':
+            queryset = queryset.filter(is_approved__isnull=True)
+
+        return queryset.order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['status_options'] = {
-            None: 'Pending',
-            True: 'Approved',
-            False: 'Rejected',
+            '': 'Pending',
+            'true': 'Approved',
+            'false': 'Rejected',
         }
+
+        # Preserve filter values in template for form repopulation
+        context['filter_trader'] = self.request.GET.get('trader', '')
+        context['filter_is_approved'] = self.request.GET.get('status', '')
+        context['filter_approved_at'] = self.request.GET.get('approved_at', '')
+
         return context
 
 @method_decorator(login_required, name='dispatch')
