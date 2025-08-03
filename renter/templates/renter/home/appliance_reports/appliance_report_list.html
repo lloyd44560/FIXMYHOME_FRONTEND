@@ -7,20 +7,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   
+
           {% include 'renter/home/navbar.html' %}
 </head>
 <body class="bg-light">
 
 <div class="container my-5">
 
-   
+
     <h2 style="margin-top:100px;" class="mb-4">Room Appliance Reports</h2>
-    
+
     <div class="col-md-4">
       <label>Search</label>
       <input type="text" id="searchInput" class="form-control" placeholder="Search anything...">
     </div>
+    <br/>
+    <br/>
     <form method="GET" class="row g-2 mb-4">
         <div class="col-md-3">
             <label>Room</label>
@@ -42,11 +44,19 @@
         <div class="col-md-3 d-flex align-items-end">
             <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
         </div>
+        <br/>
+        <br/>
+        <a style="margin-top: 200px; "  href="{% url 'appliance_report_list' %}" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
     </form>
-    <a href="{% url 'appliance_report_list' %}" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
-   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applianceReportModal">
+
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applianceReportModal">
       Add Appliance Report
     </button>
+
+    <br/>
+    <br/>
+
     <div class="table-responsive">
         <table class="table table-bordered table-striped shadow-sm bg-white">
             <thead class="table-dark">
@@ -64,7 +74,7 @@
             </thead>
             <tbody>
                 {% for report in reports %}
-                
+
                     <tr>
                         <td>{{ report.room.room_name }}</td>
                         <td>{{ report.window_height }} x {{ report.window_length }} x {{ report.window_width }}</td>
@@ -98,10 +108,10 @@
                 {% endfor %}
             </tbody>
         </table>
-        
-        
-        
-        
+
+
+
+
         <nav>
           <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
@@ -109,11 +119,11 @@
                 <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
               </li>
             {% endif %}
-        
+
             <li class="page-item active">
               <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
             </li>
-        
+
             {% if page_obj.has_next %}
               <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
@@ -122,8 +132,8 @@
           </ul>
         </nav>
     </div>
-    
-    
+
+
     <div class="modal fade" id="applianceReportModal" tabindex="-1" aria-labelledby="applianceReportModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -135,11 +145,11 @@
           <!-- Modal Body -->
           <div class="modal-body">
             <!-- Your form or fields go here -->
-            
+
               <div class="modal-content">
            <form method="POST" enctype="multipart/form-data"  action="{% url 'add_appliance_report' %}" >
                 {% csrf_token %}
-        
+
                 <div class="mb-3">
                     <label class="form-label">Room</label>
                     <select name="room" class="form-select" required>
@@ -149,7 +159,7 @@
                         {% endfor %}
                     </select>
                 </div>
-        
+
                 <div class="row g-2">
                     <div class="col">
                         <label>Window Height</label>
@@ -164,32 +174,32 @@
                         <input type="number" step="0.01" name="window_width" class="form-control" required>
                     </div>
                 </div>
-        
+
                 <div class="mb-3 mt-3">
                     <label>Brand</label>
                     <input type="text" name="brand" class="form-control" required>
                 </div>
-        
+
                 <div class="mb-3">
                     <label>Model / Serial</label>
                     <input type="text" name="model_serial" class="form-control" required>
                 </div>
-        
+
                 <div class="mb-3">
                     <label>Location</label>
                     <input type="text" name="location" class="form-control" required>
                 </div>
-        
+
                 <div class="mb-3">
                     <label>Comments</label>
                     <textarea name="comments" class="form-control"></textarea>
                 </div>
-        
+
                 <div class="mb-3">
                     <label>Appliance Photo</label>
                     <input type="file" name="appliance_photo" class="form-control">
                 </div>
-        
+
                 <button type="submit" class="btn btn-success">Save Report</button>
                 <a href="{% url 'appliance_report_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
@@ -198,9 +208,9 @@
         </div>
       </div>
     </div>
-    
-    
-    
+
+
+
     {% for report in reports %}
     <div class="modal fade" id="editModal{{ report.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ report.id }}" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -212,7 +222,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-    
+
               <div class="mb-3">
                 <label class="form-label">Room</label>
                 <select name="room" class="form-select" required>
@@ -221,7 +231,7 @@
                   {% endfor %}
                 </select>
               </div>
-    
+
               <div class="row g-2">
                 <div class="col">
                   <label>Window Height</label>
@@ -236,27 +246,27 @@
                   <input type="number" step="0.01" name="window_width" class="form-control" value="{{ report.window_width }}" required>
                 </div>
               </div>
-    
+
               <div class="mb-3 mt-3">
                 <label>Brand</label>
                 <input type="text" name="brand" class="form-control" value="{{ report.brand }}" required>
               </div>
-    
+
               <div class="mb-3">
                 <label>Model / Serial</label>
                 <input type="text" name="model_serial" class="form-control" value="{{ report.model_serial }}" required>
               </div>
-    
+
               <div class="mb-3">
                 <label>Location</label>
                 <input type="text" name="location" class="form-control" value="{{ report.location }}" required>
               </div>
-    
+
               <div class="mb-3">
                 <label>Comments</label>
                 <textarea name="comments" class="form-control">{{ report.comments }}</textarea>
               </div>
-    
+
               <div class="mb-3">
                 <label>Replace Appliance Photo</label>
                 <input type="file" name="appliance_photo" class="form-control">
@@ -264,7 +274,7 @@
                   <img src="{{ report.appliance_photo.url }}" class="mt-2" style="width: 100px;">
                 {% endif %}
               </div>
-    
+
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-warning">Update</button>
@@ -274,9 +284,9 @@
         </div>
       </div>
     </div>
-    
-    
-    
+
+
+
      <div class="modal fade" id="deleteModal{{ report.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ report.id }}" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -298,11 +308,11 @@
       </div>
     </div>
     {% endfor %}
-    
-    
-    
-    
-   
+
+
+
+
+
 
 
 </div>

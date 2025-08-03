@@ -33,7 +33,7 @@ import json
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponseNotAllowed
-
+from django.utils.crypto import get_random_string
 from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport,MainConditionReport,ConditionReportRoom
 import traceback
 
@@ -701,8 +701,8 @@ def register_renter(request):
             password = request.POST.get('password')
             confirm_password = request.POST.get('confirmPassword')
 
-            if not all([name, email, phone, password, confirm_password]):
-                return json_error("All personal fields are required.")
+            # if not all([name, email, phone, password, confirm_password]):
+            #     return json_error("All personal fields are required.")
 
             if password != confirm_password:
                 return json_error("Passwords do not match.")
@@ -722,8 +722,8 @@ def register_renter(request):
             address2 = request.POST.get('companyAddressLine2')
             postal_code = request.POST.get('postalcode')
 
-            if not all([company, contact_person, contact_email, contact_phone]):
-                return json_error("All company fields are required.")
+            # if not all([company, contact_person, contact_email, contact_phone]):
+            #     return json_error("All company fields are required.")
 
             # 3. Create user
             user = User.objects.create_user(
@@ -746,7 +746,7 @@ def register_renter(request):
                 state=state,
                 city=city,
                 address_line1=address1,
-                address_line2=address2,
+                # address_line2=address2,
                 company_postal_code=postal_code,
             )
 
@@ -759,6 +759,7 @@ def register_renter(request):
                 return json_error("Agent not found.")
 
             if upload_option == 'manual':
+
                 floor_count = request.POST.get('floorCount_manual')
                 lease_start = request.POST.get('leaseStart_manual')
                 lease_end = request.POST.get('leaseEnd_manual')
@@ -766,6 +767,10 @@ def register_renter(request):
                 house_city = request.POST.get('houseCity_manual')
                 property_image = request.FILES.get('propertyImage')
                 condition_file = request.FILES.get('propertyFile')
+                room_list_raw = request.POST.get('roomListData')
+                address1 = request.POST.get('address1')
+                address2 = request.POST.get('address2')
+                postal_code = request.POST.get('postalcode')
 
                 missing_fields = []
                 if not floor_count:
@@ -778,19 +783,17 @@ def register_renter(request):
                     missing_fields.append("houseState_manual")
                 if not house_city:
                     missing_fields.append("houseCity_manual")
-
                 if missing_fields:
-                    return json_error(f"The following fields are missing or empty: {', '.join(missing_fields)}")
+                    return json_error(f"The following fields are missing: {', '.join(missing_fields)}")
 
-                # if not all([floor_count, lease_start, lease_end, house_state, house_city]):
-                #     return json_error("All manual property fields are required.")
-
+                # Create Property
                 property = Property.objects.create(
                     renter=renter,
                     floor_count=floor_count,
                     state=house_state,
                     city=house_city,
                     address=address1,
+                    # address_line2=address2,
                     postal_code=postal_code,
                     property_photo=property_image,
                     condition_report=condition_file,
@@ -798,6 +801,48 @@ def register_renter(request):
                     lease_end=lease_end,
                     agent=agent,
                 )
+
+                # Create MainConditionReport
+                def generate_report_number():
+                    prefix = 'CR-'
+                    while True:
+                        rand_str = get_random_string(length=5, allowed_chars='0123456789')
+                        report_number = f"{prefix}{rand_str}"
+                        if not MainConditionReport.objects.filter(report_number=report_number).exists():
+                            return report_number
+
+                main_report = MainConditionReport.objects.create(
+                    report_number=generate_report_number(),
+                    renter=renter,
+                    uploaded_file=condition_file
+                )
+
+                # Parse room list JSON and save rooms
+                if room_list_raw:
+                    try:
+                        room_list = json.loads(room_list_raw)  # should be a list of strings
+                        for room_name in room_list:
+                            if room_name.strip():
+                                room = RenterRoom.objects.create(
+                                    renter=renter,
+                                    property=property,
+                                    room_name=room_name.strip()
+                                )
+                                ConditionReportRoom.objects.create(
+                                    report=main_report,
+                                    room=room
+                                )
+                    except json.JSONDecodeError:
+                        return json_error("Invalid room list format.")
+
+                # Create a Maincondition Report din dito
+                # Create a ConditionReportRoom link record
+
+                # Then for the Room Creation , create how many rooms yung inadd po doon sa form, then okay na we can proceed na sa sending ng verification link
+
+                # Bale sir yung name lang talaga makukuha mo dito from user input, make sure lang na nasavean mo lahat ng models sa taas thanks
+
+                #
 
             else:
                 # Extract base property info
@@ -817,7 +862,7 @@ def register_renter(request):
                     agent_id=agent_id
                 )
 
-                ### ✅ SAVE ROOMS & AREA CONDITIONS ###
+                ### SAVE ROOMS & AREA CONDITIONS ###
                 room_names = [v for k, v in request.POST.items() if k.startswith('room_name_')]
                 saved_rooms = []  # ← Store newly created rooms
 
