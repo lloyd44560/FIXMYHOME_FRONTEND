@@ -374,22 +374,22 @@
                                         <!-- Property Info -->
                                         <div class="mb-3">
                                             <label class="form-label">Property Name</label>
-                                            <input type="text" class="form-control" name="property_name" required>
+                                            <input type="text" class="form-control" name="property_name" >
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label">Property Address</label>
-                                            <input type="text" class="form-control" name="property_address" required>
+                                            <input type="text" class="form-control" name="property_address" >
                                         </div>
 
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label class="form-label">Lease Start</label>
-                                                <input type="date" name="lease_start" class="form-control" required>
+                                                <input type="date" name="lease_start" class="form-control" >
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Lease End</label>
-                                                <input type="date" name="lease_end" class="form-control" required>
+                                                <input type="date" name="lease_end" class="form-control" >
                                             </div>
                                         </div>
 
@@ -1198,6 +1198,49 @@
                 input.value = 1;
             }
         };
+    </script>
+    
+    
+    <script>
+        let roomList = [];
+    
+        document.getElementById('addRoomBtn').addEventListener('click', function () {
+            const input = document.getElementById('roomType');
+            const roomName = input.value.trim();
+    
+            if (roomName !== '') {
+                roomList.push(roomName);
+                updateRoomListDisplay();
+                input.value = '';
+            }
+        });
+    
+        function updateRoomListDisplay() {
+            const listElement = document.getElementById('roomList');
+            const hiddenInput = document.getElementById('roomListData');
+    
+            listElement.innerHTML = '';
+    
+            roomList.forEach((room, index) => {
+                const li = document.createElement('li');
+                li.className = "flex items-center justify-between border px-4 py-2 rounded-md bg-gray-100";
+    
+                li.innerHTML = `
+                    <span>${room}</span>
+                    <button type="button" class="text-red-500" onclick="removeRoom(${index})">Remove</button>
+                `;
+    
+                listElement.appendChild(li);
+            });
+    
+            // Update hidden field for backend
+            hiddenInput.value = JSON.stringify(roomList);
+        }
+    
+        function removeRoom(index) {
+            roomList.splice(index, 1);
+            updateRoomListDisplay();
+        }
     </script>
 
 </body>
