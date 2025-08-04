@@ -1622,8 +1622,3 @@ def save_condition_report_all(request):
 def appliance_report_list(request):
     reports = RoomApplianceReport.objects.select_related('room', 'renter')
     return render(request, 'appliance_report_list.html', {'reports': reports})
-
-
-
-
-
