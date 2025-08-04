@@ -380,7 +380,6 @@ class AgentJobCreateView(CreateView):
             form.instance.property = property_instance
             form.instance.renter = property_instance.renter or None
             form.instance.agent = agent
-            form.instance.property_photo = form.cleaned_data['property_photo'] if 'property_photo' in form.cleaned_data else None
 
             # Save the form first to get job_code
             response = super().form_valid(form)
