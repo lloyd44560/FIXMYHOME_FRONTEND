@@ -496,12 +496,15 @@ class PropertiesListView(ListView):
         # Get filter parameters from request
         status = self.request.GET.get('status')
         address = self.request.GET.get('address')
+        renter = self.request.GET.get('renter')
 
         # Apply filters if provided
         if status:
             queryset = queryset.filter(status=status)  # Fixed: assumed 'status' instead of 'state'
         if address:
             queryset = queryset.filter(address__icontains=address)  # Case-insensitive partial match
+        if renter:
+            queryset = queryset.filter(renter__name__icontains=renter)
 
         return queryset.order_by('-created_at')
 
@@ -511,6 +514,7 @@ class PropertiesListView(ListView):
         # Preserve filter values in template for form repopulation
         context['filter_status'] = self.request.GET.get('status', '')
         context['filter_address'] = self.request.GET.get('address', '')
+        context['filter_renter'] = self.request.GET.get('renter', '')
 
         return context
 
