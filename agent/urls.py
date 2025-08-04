@@ -1,5 +1,7 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth.views import LogoutView
+from django.conf.urls.static import static
+from django.conf import settings
 from . import views  # Import your views module
 
 urlpatterns = [
@@ -29,4 +31,4 @@ urlpatterns = [
 
     path('bids/', views.AgentBidListView.as_view(), name='agent_bid_list'),
     path('bidding/<int:pk>/approve/', views.BiddingApprovalView.as_view(), name='bidding_approval')
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

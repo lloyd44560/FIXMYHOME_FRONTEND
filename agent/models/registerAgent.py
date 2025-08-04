@@ -13,7 +13,7 @@ class AgentRegister(models.Model):
         ('cleaning', 'Cleaning'),
         ('electrical', 'Electrical'),
         ('gardening', 'Gardening'),
-        ('general_merchandise', 'General Merchandise'),
+        ('general_maintenance', 'General Maintenance'),
         ('glazing', 'Glazing'),
         ('pest_control', 'Pest Control'),
         ('plumbing-gas', 'Plumbing / Gas'),
