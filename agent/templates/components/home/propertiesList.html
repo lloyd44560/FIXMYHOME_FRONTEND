@@ -34,7 +34,15 @@
                 <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
                 <input type="text" name="address" id="address" value="{{ filter_address }}"
                     class="mt-1 p-2 border rounded-md w-full md:w-40"
-                    placeholder="Enter address"
+                    placeholder="Search address"
+                    onchange="this.form.submit()">
+            </div>
+            <!-- Renter Filter -->
+            <div>
+                <label for="renter" class="block text-sm font-medium text-gray-700">Renter</label>
+                <input type="text" name="renter" id="renter" value="{{ filter_renter }}"
+                    class="mt-1 p-2 border rounded-md w-full md:w-40"
+                    placeholder="Search renter name"
                     onchange="this.form.submit()">
             </div>
         </div>
