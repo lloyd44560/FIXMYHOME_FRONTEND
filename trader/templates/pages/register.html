@@ -80,272 +80,348 @@
 
 {% block scripts %}
 <!-- Functions -->
+<!-- ############### License Section ############### -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Add Another License Functionality ---
-    const licenseInput = document.querySelector('input[name$="-contractorLicense"]');
-    const addLicenseBtn = document.getElementById('addLicense');
-    const licenseList = document.getElementById('licenseList');
-
-    function updateLicenseHeader() {
-        const header = document.getElementById('addedLicensesHeader');
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Add Another License Functionality ---
+        const licenseInput = document.querySelector('input[name$="-contractorLicense"]');
+        const addLicenseBtn = document.getElementById('addLicense');
         const licenseList = document.getElementById('licenseList');
-        // Show header only if there is at least one <li>
-        header.classList.toggle('hidden', licenseList.querySelectorAll('li').length === 0);
-    }
 
-    function createLicenseItem(licenseNumber) {
-        const li = document.createElement('li');
-        li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
+        function updateLicenseHeader() {
+            const header = document.getElementById('addedLicensesHeader');
+            const licenseList = document.getElementById('licenseList');
+            // Show header only if there is at least one <li>
+            header.classList.toggle('hidden', licenseList.querySelectorAll('li').length === 0);
+        }
 
-        const span = document.createElement('span');
-        span.className = "text-gray-800 font-medium";
-        span.textContent = licenseNumber;
+        function createLicenseItem(licenseNumber) {
+            const li = document.createElement('li');
+            li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
 
-        const license = document.createElement('input');
-        license.type = 'hidden';
-        license.name = 'license_number';
-        license.value = licenseNumber;
+            const span = document.createElement('span');
+            span.className = "text-gray-800 font-medium";
+            span.textContent = licenseNumber;
 
-        const controls = document.createElement('div');
-        controls.className = "flex gap-2";
+            const license = document.createElement('input');
+            license.type = 'hidden';
+            license.name = 'license_number';
+            license.value = licenseNumber;
 
-        const editBtnLicense = document.createElement('button');
-        editBtnLicense.type = "button";
-        editBtnLicense.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            const controls = document.createElement('div');
+            controls.className = "flex gap-2";
+
+            const editBtnLicense = document.createElement('button');
+            editBtnLicense.type = "button";
+            editBtnLicense.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
+                </svg>
+            `;
+            editBtnLicense.onclick = () => {
+                licenseInput.value = span.textContent;
+                li.remove();
+                updateLicenseHeader()
+            };
+
+            const deleteBtnLicense = document.createElement('button');
+            deleteBtnLicense.type = "button";
+            deleteBtnLicense.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            `;
+            deleteBtnLicense.onclick = () => {
+                li.remove();
+                updateLicenseHeader();
+            };
+
+            controls.appendChild(editBtnLicense);
+            controls.appendChild(deleteBtnLicense);
+
+            li.appendChild(span);
+            li.appendChild(controls);
+            li.appendChild(license);
+
+            return li;
+        }
+
+        addLicenseBtn.addEventListener('click', function () {
+            const licenseNumber = licenseInput.value.trim() || '';
+
+            if (licenseNumber) {
+                licenseList.appendChild(createLicenseItem(licenseNumber));
+                licenseInput.value = '';
+                licenseInput.focus();
+                updateLicenseHeader();
+            }
+        });
+    });
+</script>
+
+<!-- ############### Expertise Section ############### -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const industryInput = document.getElementById("{{ form.industry.id_for_label }}");
+        const addExpertiseBtn = document.getElementById('addExpertise');
+        const expertiseList = document.getElementById('expertiseList');
+        const header = document.getElementById('addedExpertisesHeader');
+
+        function updateExpertiseHeader() {
+            header.classList.toggle('hidden', expertiseList.querySelectorAll('li').length === 0);
+        }
+
+        function createExpertiseItem(expertiseValue) {
+            const li = document.createElement('li');
+            li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
+
+            const span = document.createElement('span');
+            span.className = "text-gray-800 font-medium";
+            span.textContent = expertiseValue;
+
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'industry_expertise';
+            hiddenInput.value = expertiseValue;
+
+            const controls = document.createElement('div');
+            controls.className = "flex gap-2";
+
+            const editBtn = document.createElement('button');
+            editBtn.type = "button";
+            editBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
-            </svg>
-        `;
-        editBtnLicense.onclick = () => {
-            licenseInput.value = span.textContent;
-            li.remove();
-            updateLicenseHeader()
-        };
+            </svg>`;
+            editBtn.onclick = () => {
+                industryInput.value = expertiseValue;
+                li.remove();
+                updateExpertiseHeader();
+            };
 
-        const deleteBtnLicense = document.createElement('button');
-        deleteBtnLicense.type = "button";
-        deleteBtnLicense.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = "button";
+            deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-        `;
-        deleteBtnLicense.onclick = () => {
-            li.remove();
-            updateLicenseHeader();
-        };
+            </svg>`;
+            deleteBtn.onclick = () => {
+                li.remove();
+                updateExpertiseHeader();
+            };
 
-        controls.appendChild(editBtnLicense);
-        controls.appendChild(deleteBtnLicense);
+            controls.appendChild(editBtn);
+            controls.appendChild(deleteBtn);
 
-        li.appendChild(span);
-        li.appendChild(controls);
-        li.appendChild(license);
+            li.appendChild(span);
+            li.appendChild(controls);
+            li.appendChild(hiddenInput);
 
-        return li;
-    }
-
-    addLicenseBtn.addEventListener('click', function () {
-        const licenseNumber = licenseInput.value.trim() || '';
-
-        if (licenseNumber) {
-            licenseList.appendChild(createLicenseItem(licenseNumber));
-            licenseInput.value = '';
-            licenseInput.focus();
-            updateLicenseHeader();
+            return li;
         }
+
+        addExpertiseBtn.addEventListener('click', function () {
+            const expertiseValue = industryInput.value.trim();
+            if (expertiseValue) {
+                expertiseList.appendChild(createExpertiseItem(expertiseValue));
+                industryInput.value = '';
+                industryInput.focus();
+                updateExpertiseHeader();
+            }
+        });
     });
-});
 </script>
 
+<!-- ############### Team Member Section ############### -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Add Another TeamMember Functionality ---
-    const teamNameInput = document.querySelector('input[name$="-teamName"]');
-    const positionInput = document.querySelector('input[name$="-position"]');
-    const addTeamMemberBtn = document.getElementById('addTeamMember');
-    const teamMemberList = document.getElementById('teamMemberList');
-
-    function updateTeamMemberHeader() {
-        const header = document.getElementById('addedMembersHeader');
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Add Another TeamMember Functionality ---
+        const teamNameInput = document.querySelector('input[name$="-teamName"]');
+        const positionInput = document.querySelector('input[name$="-position"]');
+        const addTeamMemberBtn = document.getElementById('addTeamMember');
         const teamMemberList = document.getElementById('teamMemberList');
-        // Show header only if there is at least one <li>
-        header.classList.toggle('hidden', teamMemberList.querySelectorAll('li').length === 0);
-    }
 
-    // --- Create <li> for a team member ---
-    function createTeamMemberItem(name, position) {
-        const li = document.createElement('li');
-        li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
+        function updateTeamMemberHeader() {
+            const header = document.getElementById('addedMembersHeader');
+            const teamMemberList = document.getElementById('teamMemberList');
+            // Show header only if there is at least one <li>
+            header.classList.toggle('hidden', teamMemberList.querySelectorAll('li').length === 0);
+        }
 
-        const span = document.createElement('span');
-        span.className = "text-gray-800 font-medium";
-        span.textContent = `${name} (${position})`;
+        // --- Create <li> for a team member ---
+        function createTeamMemberItem(name, position) {
+            const li = document.createElement('li');
+            li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
 
-        // ========================================================
-        const teamNameInput = document.createElement('input');
-        teamNameInput.type = 'hidden';
-        teamNameInput.name = 'team_name';
-        teamNameInput.value = name;
+            const span = document.createElement('span');
+            span.className = "text-gray-800 font-medium";
+            span.textContent = `${name} (${position})`;
 
-        const positionInput = document.createElement('input');
-        positionInput.type = 'hidden';
-        positionInput.name = 'team_position';
-        positionInput.value = position;
-        // ========================================================
-
-        const controls = document.createElement('div');
-        controls.className = "flex gap-2";
-
-        const editBtnTeamMember = document.createElement('button');
-        editBtnTeamMember.type = "button";
-        editBtnTeamMember.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
-            </svg>
-        `;
-
-        editBtnTeamMember.addEventListener('click', () => {
+            // ========================================================
+            const teamNameInput = document.createElement('input');
+            teamNameInput.type = 'hidden';
+            teamNameInput.name = 'team_name';
             teamNameInput.value = name;
+
+            const positionInput = document.createElement('input');
+            positionInput.type = 'hidden';
+            positionInput.name = 'team_position';
             positionInput.value = position;
-            li.remove();
+            // ========================================================
 
-            updateTeamMemberHeader();
-            teamNameInput.focus();
-        });
+            const controls = document.createElement('div');
+            controls.className = "flex gap-2";
 
-        const deleteBtnTeamMember = document.createElement('button');
-        deleteBtnTeamMember.type = "button";
-        deleteBtnTeamMember.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-        `;
-        deleteBtnTeamMember.addEventListener('click', () => {
-            li.remove();
-            updateTeamMemberHeader();
-        });
+            const editBtnTeamMember = document.createElement('button');
+            editBtnTeamMember.type = "button";
+            editBtnTeamMember.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
+                </svg>
+            `;
 
-        controls.appendChild(editBtnTeamMember);
-        controls.appendChild(deleteBtnTeamMember);
+            editBtnTeamMember.addEventListener('click', () => {
+                teamNameInput.value = name;
+                positionInput.value = position;
+                li.remove();
 
-        li.appendChild(span);
-        li.appendChild(controls);
-        li.appendChild(teamNameInput);
-        li.appendChild(positionInput);
+                updateTeamMemberHeader();
+                teamNameInput.focus();
+            });
 
-        return li;
-    }
-
-    // --- Add member on click ---
-    addTeamMemberBtn.addEventListener('click', () => {
-        if (!teamNameInput || !positionInput) {
-            alert('Inputs not found!');
-            return;
-        }
-
-        const name = teamNameInput.value.trim();
-        const position = positionInput.value.trim();
-
-        if (name && position) {
-            teamMemberList.appendChild(createTeamMemberItem(name, position));
-            teamNameInput.value = '';
-            positionInput.value = '';
-            updateTeamMemberHeader();
-        } else {
-            alert('Please enter name and position');
-        }
-    });
-
-    updateTeamMemberHeader();
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Add Another Holiday Functionality ---
-    const holidayInput = document.querySelector('input[name$="-holiday_date"]');
-    const addHolidayBtn = document.getElementById('addHoliday');
-    const holidayList = document.getElementById('holidayList');
-
-    function updateHolidayHeader() {
-        const header = document.getElementById('addedHolidayHeader');
-        header.classList.toggle('hidden', holidayList.querySelectorAll('li').length === 0);
-    }
-
-    function createHolidayItem(holidayDate) {
-        const li = document.createElement('li');
-        li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
-
-        const span = document.createElement('span');
-        span.className = "text-gray-800 font-medium";
-        span.textContent = holidayDate;
-
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'holiday_date';
-        hiddenInput.value = holidayDate;
-
-        const controls = document.createElement('div');
-        controls.className = "flex gap-2";
-
-        const editBtnHoliday = document.createElement('button');
-        editBtnHoliday.type = "button";
-        editBtnHoliday.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
-            </svg>
-        `;
-        editBtnHoliday.onclick = () => {
-            holidayInput.value = span.textContent;
-            li.remove();
-            updateHolidayHeader();
-            holidayInput.focus();
-        };
-
-        const deleteBtnHoliday = document.createElement('button');
-        deleteBtnHoliday.type = "button";
-        deleteBtnHoliday.innerHTML = `
+            const deleteBtnTeamMember = document.createElement('button');
+            deleteBtnTeamMember.type = "button";
+            deleteBtnTeamMember.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M6 18L18 6M6 6l12 12"/>
             </svg>
-        `;
-        deleteBtnHoliday.onclick = () => {
-            li.remove();
-            updateHolidayHeader();
-        };
+            `;
+            deleteBtnTeamMember.addEventListener('click', () => {
+                li.remove();
+                updateTeamMemberHeader();
+            });
 
-        controls.appendChild(editBtnHoliday);
-        controls.appendChild(deleteBtnHoliday);
+            controls.appendChild(editBtnTeamMember);
+            controls.appendChild(deleteBtnTeamMember);
 
-        li.appendChild(span);
-        li.appendChild(controls);
-        li.appendChild(hiddenInput);
+            li.appendChild(span);
+            li.appendChild(controls);
+            li.appendChild(teamNameInput);
+            li.appendChild(positionInput);
 
-        return li;
-    }
-
-    addHolidayBtn.addEventListener('click', function () {
-        const holidayDate = holidayInput.value.trim();
-        if (holidayDate) {
-            holidayList.appendChild(createHolidayItem(holidayDate));
-            holidayInput.value = '';
-            holidayInput.focus();
-            updateHolidayHeader();
+            return li;
         }
-    });
 
-    updateHolidayHeader();
-});
+        // --- Add member on click ---
+        addTeamMemberBtn.addEventListener('click', () => {
+            if (!teamNameInput || !positionInput) {
+                alert('Inputs not found!');
+                return;
+            }
+
+            const name = teamNameInput.value.trim();
+            const position = positionInput.value.trim();
+
+            if (name && position) {
+                teamMemberList.appendChild(createTeamMemberItem(name, position));
+                teamNameInput.value = '';
+                positionInput.value = '';
+                updateTeamMemberHeader();
+            } else {
+                alert('Please enter name and position');
+            }
+        });
+
+        updateTeamMemberHeader();
+    });
+</script>
+<!-- ############### Holiday Section ############### -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Add Another Holiday Functionality ---
+        const holidayInput = document.querySelector('input[name$="-holiday_date"]');
+        const addHolidayBtn = document.getElementById('addHoliday');
+        const holidayList = document.getElementById('holidayList');
+
+        function updateHolidayHeader() {
+            const header = document.getElementById('addedHolidayHeader');
+            header.classList.toggle('hidden', holidayList.querySelectorAll('li').length === 0);
+        }
+
+        function createHolidayItem(holidayDate) {
+            const li = document.createElement('li');
+            li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
+
+            const span = document.createElement('span');
+            span.className = "text-gray-800 font-medium";
+            span.textContent = holidayDate;
+
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'holiday_date';
+            hiddenInput.value = holidayDate;
+
+            const controls = document.createElement('div');
+            controls.className = "flex gap-2";
+
+            const editBtnHoliday = document.createElement('button');
+            editBtnHoliday.type = "button";
+            editBtnHoliday.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11.5A1.5 1.5 0 005.5 20H17a2 2 0 002-2v-5m-5.586-4.586a2 2 0 112.828 2.828L11 17H8v-3l5.414-5.414z"/>
+                </svg>
+            `;
+            editBtnHoliday.onclick = () => {
+                holidayInput.value = span.textContent;
+                li.remove();
+                updateHolidayHeader();
+                holidayInput.focus();
+            };
+
+            const deleteBtnHoliday = document.createElement('button');
+            deleteBtnHoliday.type = "button";
+            deleteBtnHoliday.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-700" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            `;
+            deleteBtnHoliday.onclick = () => {
+                li.remove();
+                updateHolidayHeader();
+            };
+
+            controls.appendChild(editBtnHoliday);
+            controls.appendChild(deleteBtnHoliday);
+
+            li.appendChild(span);
+            li.appendChild(controls);
+            li.appendChild(hiddenInput);
+
+            return li;
+        }
+
+        addHolidayBtn.addEventListener('click', function () {
+            const holidayDate = holidayInput.value.trim();
+            if (holidayDate) {
+                holidayList.appendChild(createHolidayItem(holidayDate));
+                holidayInput.value = '';
+                holidayInput.focus();
+                updateHolidayHeader();
+            }
+        });
+
+        updateHolidayHeader();
+    });
 </script>
 
 <!-- <script src="{% static 'trader/js/generateCalendar.js' %}"></script> -->

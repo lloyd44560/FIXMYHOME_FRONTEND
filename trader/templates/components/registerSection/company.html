@@ -37,11 +37,11 @@
     <!-- Contractor License Number -->
     <div>
         {% for license in formLicense %}
-        <label for="{{ form.contractor_license.id_for_label }}" class="block text-sm font-medium text-gray-700">
-            Contractor license number <span class="text-red-500">*</span>
-        </label>
-        {{ license.contractorLicense|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
-        <span id="contractorLicenseError" class="text-red-500 text-xs"></span>
+            <label for="{{ form.contractor_license.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                Contractor license number <span class="text-red-500">*</span>
+            </label>
+            {{ license.contractorLicense|add_class:"mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" }}
+            <span id="contractorLicenseError" class="text-red-500 text-xs"></span>
         {% endfor %}
     </div>
 
@@ -80,9 +80,14 @@
         <span id="industryError" class="text-red-500 text-xs"></span>
     </div>
 
-    <!-- Other Expertise -->
+    <!-- Add Another Expertise -->
     <div>
-        <label for="{{ form.other_expertise.id_for_label }}" class="block text-sm font-medium text-gray-700">Other areas of expertise (optional)</label>
-        {{ form.other_expertise|add_class:"mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500" }}
+        <button id="addExpertise" type="button" class="w-full text-blue-600 border border-blue-500 rounded-md py-2 hover:bg-blue-50 font-medium text-sm">
+            + ADD ANOTHER EXPERTISE
+        </button>
+        <ul id="expertiseList" class="mt-4 space-y-3">
+            <h1 id="addedExpertisesHeader" class="font-bold hidden">Added Expertises</h1>
+            <!-- Dynamic items will be added here -->
+        </ul>
     </div>
 </div>
