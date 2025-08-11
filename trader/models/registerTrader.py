@@ -39,7 +39,6 @@ class TraderRegistration(models.Model):
     gst_registered = models.BooleanField(default=False)
     abn = models.CharField(max_length=20, blank=True, null=True)
     industry = models.CharField(max_length=100, choices=INDUSTRIES_CHOICES, blank=True, null=True)
-    other_expertise = models.CharField(max_length=100, choices=INDUSTRIES_CHOICES, blank=True, null=True)
 
     # Rates
     state = models.CharField(max_length=100, blank=True)
