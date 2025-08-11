@@ -48,7 +48,7 @@ from .forms import MinimumStandardReportForm
 from .forms import RenterRoomForm, RenterRoomAreaConditionForm, RoomApplianceReportForm
 from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport,MainConditionReport, ConditionReportRoom
 from django.db import transaction
-
+import re
 from django.db.models import Prefetch
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -278,8 +278,6 @@ def add_property(request):
                 'success': False,
                 'message': str(e)
             }, status=500)
-
-
 
     return JsonResponse({
         'success': False,
@@ -815,48 +813,51 @@ def condition_report_list(request):
         'reports': reports,
         'room_names': room_names,
     })
-
-
-
 @login_required
 def edit_condition_report(request, report_id):
-    report = get_object_or_404(MainConditionReport, id=report_id)
+    report = get_object_or_404(MainConditionReport, id=report_id, renter=request.user.renter)
 
     if request.method == 'POST':
-        report.report_number = request.POST.get('report_number')
-
-        # No need to update renter if it's not changeable
-        # renter_id = request.POST.get('renter')
-        # report.renter = get_object_or_404(Renter, id=renter_id)
-
+        # Update uploaded file if given
+        if request.FILES.get('uploaded_file'):
+            report.uploaded_file = request.FILES['uploaded_file']
         report.save()
 
-        # Update rooms and area conditions
-        for report_room in report.report_rooms.all():
-            room = report_room.room
-            room_name_key = f'room_name_{report_room.id}'
-            room_name = request.POST.get(room_name_key)
-            if room_name:
-                room.room_name = room_name
-                room.save()
+        # Loop over posted rooms
+        for key in request.POST:
+            if key.startswith("room_name_"):
+                idx = key.split("_")[-1]
+                room_name = request.POST.get(f"room_name_{idx}")
+                description = request.POST.get(f"room_description_{idx}")
+                room_id = request.POST.get(f"room_id_{idx}")
+                photo = request.FILES.get(f"room_photo_{idx}")
 
-            for area in room.area_conditions.all():
-                area.area_name = request.POST.get(f'area_name_{area.id}', area.area_name)
-                area.status = request.POST.get(f'status_{area.id}', area.status)
-                area.remarks = request.POST.get(f'remarks_{area.id}', area.remarks)
+                if room_id:
+                    # Update existing
+                    room = get_object_or_404(RenterRoom, id=room_id, renter=request.user.renter)
+                    room.room_name = room_name
+                    room.description = description
+                    if photo:
+                        room.photo = photo
+                    room.save()
+                else:
+                    # Create new
+                    RenterRoom.objects.create(
+                        renter=request.user.renter,
+                        property=report.renter.property,  # adjust if different relation
+                        room_name=room_name,
+                        description=description,
+                        photo=photo if photo else None
+                    )
 
-                # Photo update (optional)
-                if f'photo_{area.id}' in request.FILES:
-                    area.photo = request.FILES[f'photo_{area.id}']
-
-                area.save()
-
-        messages.success(request, "Condition Report updated successfully.")
         return redirect('condition_report_list')
 
+    renter_rooms = RenterRoom.objects.filter(renter=request.user.renter)
     return render(request, 'edit_condition_report.html', {
         'report': report,
+        'renter_rooms': renter_rooms
     })
+
 
 
 @login_required
@@ -942,6 +943,13 @@ def appliance_report_create(request):
         comments = request.POST.get('comments')
         appliance_photo = request.FILES.get('appliance_photo')
 
+        photo1 = request.FILES.get('photo1')
+        photo2 = request.FILES.get('photo2')
+        photo3 = request.FILES.get('photo3')
+        photo4 = request.FILES.get('photo4')
+        photo5 = request.FILES.get('photo5')
+
+
         room = RenterRoom.objects.get(id=room_id)
 
         RoomApplianceReport.objects.create(
@@ -955,6 +963,11 @@ def appliance_report_create(request):
             comments=comments,
             appliance_photo=appliance_photo,
             renter=renter,
+            photo1=photo1,
+            photo2=photo2,
+            photo3=photo3,
+            photo4=photo4,
+            photo5=photo5,
         )
 
         return redirect('appliance_report_list')
@@ -976,8 +989,7 @@ def edit_appliance_report(request, report_id):
         messages.error(request, "Appliance report not found.")
         return redirect('appliance_report_list')
 
-    room_id = request.POST.get('room')
-    report.room_id = room_id
+    report.room_id = request.POST.get('room')
     report.window_height = request.POST.get('window_height')
     report.window_length = request.POST.get('window_length')
     report.window_width = request.POST.get('window_width')
@@ -986,14 +998,19 @@ def edit_appliance_report(request, report_id):
     report.location = request.POST.get('location')
     report.comments = request.POST.get('comments')
 
+    # Main appliance photo
     if 'appliance_photo' in request.FILES:
         report.appliance_photo = request.FILES['appliance_photo']
+
+    # Additional photos (photo1–photo5)
+    for i in range(1, 6):
+        file_key = f'photo{i}'
+        if file_key in request.FILES:
+            setattr(report, file_key, request.FILES[file_key])
 
     report.save()
     messages.success(request, "Appliance report updated.")
     return redirect('appliance_report_list')
-
-
 
 def delete_appliance_report(request, pk):
     report = get_object_or_404(RoomApplianceReport, pk=pk, renter=request.user.renter)

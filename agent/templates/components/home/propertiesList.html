@@ -48,73 +48,106 @@
         </div>
     </form>
 
-    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
-        <table class="min-w-full table-auto">
-            <thead class="bg-blue-700 text-white">
-                <tr>
-                    <th class="px-4 py-2 text-left">Property</th>
-                    <th class="px-4 py-2 text-left">Image</th>
-                    <th class="px-4 py-2 text-left">Renter</th>
-                    <th class="px-4 py-2 text-left">Lease Dates</th>
-                    <th class="px-4 py-2 text-left">Rent</th>
-                    <th class="px-4 py-2 text-left">Status</th>
-                    <th class="px-4 py-2 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for property in properties %}
-                    <tr class="border-t">
-                        <td class="px-4 py-2">
-                            <div class="font-semibold">{{ property.name }}</div>
-                            <div class="text-sm text-gray-500">{{ property.address }}</div>
-                        </td>
-                        <td class="px-4 py-2">
-                            {% if property.property_photo %}
-                                <img src="{{ property.property_photo.url }}" alt="{{ property.name }}"
-                                    class="w-12 h-12 rounded object-cover border border-gray-300" />
-                            {% else %}
-                                <div class="w-12 h-12 rounded bg-gray-200 flex items-center justify-center text-gray-500 text-sm">N/A</div>
-                            {% endif %}
-                        </td>
-                        <td class="px-4 py-2">
-                            <div>{{ property.renter }}</div>
-                            <div class="text-sm text-gray-500">{{ property.renter_contact }}</div>
-                        </td>
-                        <td class="px-4 py-2">{{ property.lease_start }} - {{ property.lease_end }}</td>
-                        <td class="px-4 py-2">${{ property.rent }}/week</td>
-                        <td class="px-4 py-2">
-                            <span class="{% if property.status == 'occupied' %}text-green-600{% else %}text-red-600{% endif %}">
-                            {{ property.status|title }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 text-sm">
-                            <div x-data="{ open: false }" class="relative inline-block text-left">
-                                <button @click="open = !open" @click.away="open = false" type="button" class="p-2 rounded-full hover:bg-gray-200 focus:outline-none" aria-label="Actions">
-                                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <circle cx="5" cy="12" r="2"/>
-                                    <circle cx="12" cy="12" r="2"/>
-                                    <circle cx="19" cy="12" r="2"/>
-                                    </svg>
-                                </button>
-                                <div x-show="open" x-transition class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-10">
-                                    <a href="{% url 'property_view' property.pk %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">🔍 View</a>
-                                    <a href="{% url 'property_edit' property.pk %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">✏ Edit</a>
-                                    <form method="post" action="{% url 'property_archive' property.pk %}" class="block">
-                                      {% csrf_token %}
-                                      <button type="submit" onclick="return confirm('Are you sure you want to archive this property?')"
-                                              class="w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100">📦 Archive</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center py-4 text-gray-500">No properties available.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible">
+      <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
+        <thead class="bg-blue-700 text-white hidden sm:table-header-group">
+          <tr>
+            <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
+            <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
+            <th class="px-4 py-3 text-left text-sm font-medium">Renter</th>
+            <th class="px-4 py-3 text-left text-sm font-medium">Lease Dates</th>
+            <th class="px-4 py-3 text-left text-sm font-medium">Rent</th>
+            <th class="px-4 py-3 text-left text-sm font-medium">Status</th>
+            <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="sm:divide-y sm:divide-gray-200">
+          {% for property in properties %}
+          <!-- Kanban-style row for mobile -->
+          <tr
+            class="block sm:table-row bg-white border border-gray-200 sm:border-0 rounded-xl sm:rounded-none shadow-sm sm:shadow-none my-4 sm:my-0 px-4 py-4 sm:px-0 sm:py-0">
+            <!-- Property -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Property</p>
+              <div class="font-semibold text-blue-900">{{ property.name }}</div>
+              <div class="text-sm text-blue-800">{{ property.address }}</div>
+            </td>
+
+            <!-- Image -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Image</p>
+              {% if property.property_photo %}
+              <img src="{{ property.property_photo.url }}" alt="{{ property.name }}"
+                class="w-16 h-16 rounded object-cover border border-gray-300" />
+              {% else %}
+              <div class="w-16 h-16 rounded bg-gray-200 flex items-center justify-center text-gray-500 text-sm">N/A</div>
+              {% endif %}
+            </td>
+
+            <!-- Renter -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Renter</p>
+              <div class="text-gray-800">{{ property.renter }}</div>
+              <div class="text-sm text-gray-500">{{ property.renter_contact }}</div>
+            </td>
+
+            <!-- Lease Dates -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Lease Dates</p>
+              <div class="text-gray-700">{{ property.lease_start }} – {{ property.lease_end }}</div>
+            </td>
+
+            <!-- Rent -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Rent</p>
+              <div class="text-gray-800 font-medium">${{ property.rent }}/week</div>
+            </td>
+
+            <!-- Status -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Status</p>
+              <span
+                class="{% if property.status == 'occupied' %}text-green-600{% else %}text-red-600{% endif %} font-medium">
+                {{ property.status|title }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="block sm:table-cell sm:px-4 sm:py-3">
+              <p class="sm:hidden text-xs text-gray-500 mb-1">Actions</p>
+              <div x-data="{ open: false }" class="relative inline-block text-left">
+                <button @click="open = !open" @click.away="open = false"
+                  class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring" aria-label="Actions">
+                  <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="5" cy="12" r="2" />
+                    <circle cx="12" cy="12" r="2" />
+                    <circle cx="19" cy="12" r="2" />
+                  </svg>
+                </button>
+                <div x-show="open" x-transition
+                  class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-10">
+                  <a href="{% url 'property_view' property.pk %}"
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100">🔍 View</a>
+                  <a href="{% url 'property_edit' property.pk %}"
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100">✏ Edit</a>
+                  <form method="post" action="{% url 'property_archive' property.pk %}" class="block">
+                    {% csrf_token %}
+                    <button type="submit"
+                      onclick="return confirm('Are you sure you want to archive this property?')"
+                      class="w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100">📦 Archive</button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-6 text-gray-500">No properties available.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
     <!-- Pagination Controls -->
     {% if page_obj.has_other_pages %}

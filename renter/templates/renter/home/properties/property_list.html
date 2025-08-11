@@ -25,170 +25,114 @@
 
     <div id="notification" class="hidden mb-4 p-3 rounded text-white"></div>
 
-    <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
-        <div class="p-4 border-b bg-gray-50">
-          <h2 class="text-xl font-semibold text-gray-700">My Properties</h2>
-        </div>
-    <form method="get" class="d-flex mb-3">
-      <input type="text" name="q" value="{{ search_query }}" class="form-control me-2" placeholder="Search properties...">
-      <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered align-middle mb-0 w-100">
-        <thead class="table-light text-center">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Property Name</th>
-            <th scope="col">City</th>
-            <th scope="col">Status</th>
-            <th scope="col">Photo</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for prop in properties %}
-          <tr>
-            <td class="text-center">{{ forloop.counter }}</td>
-            <td class="fw-semibold">{{ prop.name }}</td>
-            <td>{{ prop.city }}</td>
-            <td class="text-center">
-              {% if prop.status == 'vacant' %}
+<div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+  <div class="p-4 border-b bg-gray-50">
+    <h2 class="text-xl font-semibold text-gray-700">My Properties</h2>
+  </div>
+
+  <form method="get" class="d-flex mb-3 p-3">
+    <input type="text" name="q" value="{{ search_query }}" class="form-control me-2" placeholder="Search properties...">
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+
+  <!-- Fixed height container -->
+  <div class="table-container" style="max-height: 500px; min-height: 500px; overflow-y: auto;">
+    <table class="table table-hover table-bordered align-middle mb-0 w-100">
+      <thead class="table-light text-center">
+        <tr>
+          <th>#</th>
+          <th>Property Name</th>
+          <th>City</th>
+          <th>Status</th>
+          <th>Photo</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prop in properties %}
+        <tr>
+          <td class="text-center">{{ forloop.counter }}</td>
+          <td class="fw-semibold">{{ prop.name }}</td>
+          <td>{{ prop.city }}</td>
+          <td class="text-center">
+            {% if prop.status == 'vacant' %}
               <span class="badge bg-success">Vacant</span>
-              {% else %}
+            {% else %}
               <span class="badge bg-danger">Occupied</span>
-              {% endif %}
-            </td>
-            <td class="text-center">
-              {% if prop.property_photo %}
-              <img src="{{ prop.property_photo.url }}" height="50" class="rounded shadow-sm">
-              {% else %}
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if prop.property_photo %}
+              <img src="{{ prop.property_photo.url }}" class="property-img rounded shadow-sm">
+            {% else %}
               <span class="text-muted">No Photo</span>
-              {% endif %}
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2 flex-wrap">
-                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                  data-bs-target="#editModal{{ prop.id }}">
-                  <i class="bi bi-pencil-square me-1"></i> Edit
-                </button>
-                <a href="{% url 'unlink_property' prop.id %}" class="btn btn-sm btn-outline-warning"
-                  onclick="return confirm('Unlink this property from your account?')">
-                  <i class="bi bi-link-45deg me-1"></i> Unlink
-                </a>
-              </div>
-            </td>
-          </tr>
-
-
-
-            <!-- Edit Modal -->
-            <div class="modal fade" id="editModal{{ prop.id }}" tabindex="-1">
-              <div class="modal-dialog modal-lg">
-                <form method="POST" enctype="multipart/form-data" action="{% url 'edit_property' prop.id %}">
-                  {% csrf_token %}
-                  <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                      <h5 class="modal-title">Edit Property: {{ prop.name }}</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body row g-3">
-                      <div class="col-md-6">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="name" value="{{ prop.name }}" class="form-control" required>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">Floor Count</label>
-                        <input type="number" name="floor_count" value="{{ prop.floor_count }}" class="form-control">
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">City</label>
-                        <input type="text" name="city" value="{{ prop.city }}" class="form-control">
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">State</label>
-                        <input type="text" name="state" value="{{ prop.state }}" class="form-control">
-                      </div>
-                      <div class="col-md-12">
-                        <label class="form-label">Address</label>
-                        <textarea name="address" class="form-control">{{ prop.address }}</textarea>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">Lease Start *</label>
-                        <input type="date" name="lease_start" value="{{ prop.lease_start|date:'Y-m-d' }}" class="form-control">
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">Lease End *</label>
-                        <input type="date" name="lease_end" value="{{ prop.lease_end|date:'Y-m-d' }}" class="form-control">
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
-                          <option value="vacant" {% if prop.status == 'vacant' %}selected{% endif %}>Vacant</option>
-                          <option value="occupied" {% if prop.status == 'occupied' %}selected{% endif %}>Occupied</option>
-                        </select>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">Property Photo</label><br>
-                        {% if prop.property_photo %}
-                          <img src="{{ prop.property_photo.url }}" height="60" class="mb-2 rounded shadow-sm"><br>
-                        {% endif %}
-                        <input type="file" name="property_photo" class="form-control">
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="submit" class="btn btn-success">Save Changes</button>
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                data-bs-target="#editModal{{ prop.id }}">
+                <i class="bi bi-pencil-square me-1"></i> Edit
+              </button>
+              <a href="{% url 'unlink_property' prop.id %}" class="btn btn-sm btn-outline-warning"
+                onclick="return confirm('Unlink this property from your account?')">
+                <i class="bi bi-link-45deg me-1"></i> Unlink
+              </a>
             </div>
+          </td>
+        </tr>
+        {% empty %}
+        <!-- Empty state -->
+        <tr>
+          <td colspan="6" class="text-center py-5">
+            <div class="empty-state">
+              <i class="bi bi-house-door-fill text-secondary" style="font-size: 3rem;"></i>
+              <p class="mt-2 text-muted">No properties available</p>
+              <!--<button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addPropertyModal">-->
+              <!--  + Add Property-->
+              <!--</button>-->
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
+  <!-- Pagination -->
+  <div class="mt-4 text-center">
+    <nav aria-label="Property page navigation">
+      <ul class="pagination justify-content-center">
+        {% if properties.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?q={{ search_query }}&page={{ properties.previous_page_number }}">Previous</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        {% endif %}
 
+        {% for page_num in properties.paginator.page_range %}
+          {% if properties.number == page_num %}
+            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ search_query }}&page={{ page_num }}">{{ page_num }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
 
-          {% empty %}
-          <tr>
-            <td colspan="6" class="text-center text-muted">No properties available.</td>
-          </tr>
+        {% if properties.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?q={{ search_query }}&page={{ properties.next_page_number }}">Next</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
 
-
-          {% endfor %}
-        </tbody>
-      </table>
-
-
-      <div class="mt-4 text-center">
-          <nav aria-label="Property page navigation">
-            <ul class="pagination justify-content-center">
-              {% if properties.has_previous %}
-                <li class="page-item">
-                  <a class="page-link" href="?q={{ search_query }}&page={{ properties.previous_page_number }}">Previous</a>
-                </li>
-              {% else %}
-                <li class="page-item disabled"><span class="page-link">Previous</span></li>
-              {% endif %}
-
-              {% for page_num in properties.paginator.page_range %}
-                {% if properties.number == page_num %}
-                  <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                {% else %}
-                  <li class="page-item">
-                    <a class="page-link" href="?q={{ search_query }}&page={{ page_num }}">{{ page_num }}</a>
-                  </li>
-                {% endif %}
-              {% endfor %}
-
-              {% if properties.has_next %}
-                <li class="page-item">
-                  <a class="page-link" href="?q={{ search_query }}&page={{ properties.next_page_number }}">Next</a>
-                </li>
-              {% else %}
-                <li class="page-item disabled"><span class="page-link">Next</span></li>
-              {% endif %}
-            </ul>
-          </nav>
-        </div>
-    </div>
   </div>
 <!--</main>-->
 
@@ -265,6 +209,20 @@
     });
   </script>
 
+
+<style>
+  .property-img {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
   {% include 'renter/home/footer.html' %}
 
 </body>

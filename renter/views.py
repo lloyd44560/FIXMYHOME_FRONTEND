@@ -708,7 +708,16 @@ def register_renter(request):
                 return json_error("Passwords do not match.")
 
             if User.objects.filter(username=email).exists():
-                return json_error("Email is already registered.")
+
+                # return to register.html with still the data  filled by the user with this message Email is already registered.
+                context = {
+                    'agents': agents,
+                    'error': "Email is already registered.",
+                    'form_data': request.POST,  # Pass all form data
+                }
+                return render(request, 'renter/register.html', context)
+
+                # return json_error("Email is already registered.")
 
             # 2. Company Info
             company = request.POST.get('company')
@@ -788,18 +797,20 @@ def register_renter(request):
 
                 # Create Property
                 property = Property.objects.create(
+                    
                     renter=renter,
                     floor_count=floor_count,
                     state=house_state,
                     city=house_city,
                     address=address1,
                     # address_line2=address2,
+                    agent = AgentRegister.objects.get(id=agent_id) if agent_id else None,
                     postal_code=postal_code,
                     property_photo=property_image,
                     condition_report=condition_file,
                     lease_start=lease_start,
                     lease_end=lease_end,
-                    agent=agent,
+                    # agent=agent,
                 )
 
                 # Create MainConditionReport
@@ -819,8 +830,11 @@ def register_renter(request):
 
                 # Parse room list JSON and save rooms
                 if room_list_raw:
+                    
                     try:
-                        room_list = json.loads(room_list_raw)  # should be a list of strings
+                        room_list = json.loads(room_list_raw)
+                        if not isinstance(room_list, list):
+                            return json_error("Room list is not a valid list.")
                         for room_name in room_list:
                             if room_name.strip():
                                 room = RenterRoom.objects.create(
@@ -832,16 +846,11 @@ def register_renter(request):
                                     report=main_report,
                                     room=room
                                 )
-                    except json.JSONDecodeError:
-                        return json_error("Invalid room list format.")
-
-                # Create a Maincondition Report din dito
-                # Create a ConditionReportRoom link record
-
-                # Then for the Room Creation , create how many rooms yung inadd po doon sa form, then okay na we can proceed na sa sending ng verification link
-
-                # Bale sir yung name lang talaga makukuha mo dito from user input, make sure lang na nasavean mo lahat ng models sa taas thanks
-
+                    except json.JSONDecodeError as e:
+                        return json_error(f"Invalid room list format: {str(e)}")
+                else:
+                    print("No room list received.")
+                
                 #
 
             else:
@@ -849,6 +858,7 @@ def register_renter(request):
                 # Extract base property info
                 property_name = request.POST.get('property_name')
                 property_address = request.POST.get('property_address')
+                property_image = request.FILES.get('property_photo_condition')
                 lease_start = request.POST.get('lease_start')
                 lease_end = request.POST.get('lease_end')
                 agent_id = request.POST.get('agent_id_condition')
@@ -859,7 +869,8 @@ def register_renter(request):
                     address=property_address,
                     lease_start=lease_start,
                     lease_end=lease_end,
-                    agent_id=agent_id
+                    agent_id=agent_id,
+                    property_photo=property_image,
                 )
 
                 ### SAVE ROOMS & AREA CONDITIONS ###

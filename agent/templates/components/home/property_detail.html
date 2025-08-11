@@ -119,7 +119,7 @@
   <!-- Maintenance Report Modal -->
   <div x-show="job" x-cloak
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    
+
     <!-- Scrollable and Responsive Modal -->
     <div @click.away="job = false"
         class="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto p-6 shadow-lg transition-all">
@@ -165,7 +165,7 @@
             </div>
           {% endif %}
         </div>
-        
+
         <div class="mb-4">
           <label class="block text-sm font-medium">Property Address</label>
           {{ job_form.address|add_class:"w-full border border-gray-300 rounded-md p-2" }}
@@ -202,19 +202,19 @@
           {% endif %}
         </div>
 
-        <div class="mb-4 flex items-center gap-2">
-          <label class="flex items-center gap-2 text-sm text-gray-700">
-            {{ job_form.priority|add_class:"h-4 w-4" }}
-            {{ job_form.priority.label }}
-          </label>
-          {% if job_form.priority.errors %}
-            <div class="text-red-600 text-xs mt-1">
-              {% for error in job_form.priority.errors %}
-                {{ error }}
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
+        <!--<div class="mb-4 flex items-center gap-2">-->
+        <!--  <label class="flex items-center gap-2 text-sm text-gray-700">-->
+        <!--    {{ job_form.priority|add_class:"h-4 w-4" }}-->
+        <!--    {{ job_form.priority.label }}-->
+        <!--  </label>-->
+        <!--  {% if job_form.priority.errors %}-->
+        <!--    <div class="text-red-600 text-xs mt-1">-->
+        <!--      {% for error in job_form.priority.errors %}-->
+        <!--        {{ error }}-->
+        <!--      {% endfor %}-->
+        <!--    </div>-->
+        <!--  {% endif %}-->
+        <!--</div>-->
 
         <button type="submit"
             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full mt-2">

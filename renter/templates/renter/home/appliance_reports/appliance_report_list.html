@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +67,7 @@
                     <th>Brand</th>
                     <th>Model / Serial</th>
                     <th>Location</th>
-                    <th>Photo</th>
+                    <th>Photo123</th>
                     <th>Comments</th>
                     <th>Date Created</th>
                     <th>Action</th>
@@ -83,13 +83,29 @@
                         <td>{{ report.model_serial }}</td>
                         <td>{{ report.location }}</td>
                         <!--<td>{{ report.appliance_photo }}</td>-->
-                        <td>
-                          {% if report.appliance_photo %}
-                              <img src="{{ report.appliance_photo.url }}" alt="Photo" class="img-thumbnail" style="width: 100px;">
-                          {% else %}
-                              <span class="badge bg-secondary">No Image</span>
-                          {% endif %}
-                        </td>
+                    <td>
+                        {% if report.photo1 or report.photo2 or report.photo3 or report.photo4 or report.photo5 %}
+                            <div class="d-flex flex-wrap gap-1">
+                                {% if report.photo1 %}
+                                    <img src="{{ report.photo1.url }}" alt="Photo 1" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% endif %}
+                                {% if report.photo2 %}
+                                    <img src="{{ report.photo2.url }}" alt="Photo 2" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% endif %}
+                                {% if report.photo3 %}
+                                    <img src="{{ report.photo3.url }}" alt="Photo 3" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% endif %}
+                                {% if report.photo4 %}
+                                    <img src="{{ report.photo4.url }}" alt="Photo 4" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% endif %}
+                                {% if report.photo5 %}
+                                    <img src="{{ report.photo5.url }}" alt="Photo 5" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <span class="badge bg-secondary"> <img src="{% static '../renter/images/no_image.png' %}" alt="No Image Icon" class="h-8 w-8 object-contain" /> </span>
+                        {% endif %}
+                    </td>
                         <td>{{ report.comments }}</td>
                         <td>{{ report.created_at|date:"M d, Y" }}</td>
                         <td>
@@ -133,82 +149,81 @@
           </ul>
         </nav>
     </div>
+<div class="modal fade" id="applianceReportModal" tabindex="-1" aria-labelledby="applianceReportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="applianceReportModalLabel">Add Appliance Report</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'add_appliance_report' %}">
+          {% csrf_token %}
 
-
-    <div class="modal fade" id="applianceReportModal" tabindex="-1" aria-labelledby="applianceReportModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="applianceReportModalLabel">Add Appliance Report</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="mb-3">
+            <label class="form-label">Room</label>
+            <select name="room" class="form-select" required>
+              <option value="">Select Room</option>
+              {% for room in rooms %}
+                <option value="{{ room.id }}">{{ room.room_name }}</option>
+              {% endfor %}
+            </select>
           </div>
-          <!-- Modal Body -->
-          <div class="modal-body">
-            <!-- Your form or fields go here -->
 
-              <div class="modal-content">
-           <form method="POST" enctype="multipart/form-data"  action="{% url 'add_appliance_report' %}" >
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label class="form-label">Room</label>
-                    <select name="room" class="form-select" required>
-                        <option value="">Select Room</option>
-                        {% for room in rooms %}
-                            <option value="{{ room.id }}">{{ room.room_name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="row g-2">
-                    <div class="col">
-                        <label>Window Height</label>
-                        <input type="number" step="0.01" name="window_height" class="form-control" required>
-                    </div>
-                    <div class="col">
-                        <label>Window Length</label>
-                        <input type="number" step="0.01" name="window_length" class="form-control" required>
-                    </div>
-                    <div class="col">
-                        <label>Window Width</label>
-                        <input type="number" step="0.01" name="window_width" class="form-control" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 mt-3">
-                    <label>Brand</label>
-                    <input type="text" name="brand" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label>Model / Serial</label>
-                    <input type="text" name="model_serial" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label>Location</label>
-                    <input type="text" name="location" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label>Comments</label>
-                    <textarea name="comments" class="form-control"></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label>Appliance Photo</label>
-                    <input type="file" name="appliance_photo" class="form-control">
-                </div>
-
-                <button type="submit" class="btn btn-success">Save Report</button>
-                <a href="{% url 'appliance_report_list' %}" class="btn btn-secondary">Cancel</a>
-            </form>
-        </div>
+          <div class="row g-2">
+            <div class="col">
+              <label>Window Height</label>
+              <input type="number" step="0.01" name="window_height" class="form-control" required>
+            </div>
+            <div class="col">
+              <label>Window Length</label>
+              <input type="number" step="0.01" name="window_length" class="form-control" required>
+            </div>
+            <div class="col">
+              <label>Window Width</label>
+              <input type="number" step="0.01" name="window_width" class="form-control" required>
+            </div>
           </div>
-        </div>
+
+          <div class="mb-3 mt-3">
+            <label>Brand</label>
+            <input type="text" name="brand" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label>Model / Serial</label>
+            <input type="text" name="model_serial" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label>Location</label>
+            <input type="text" name="location" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label>Comments</label>
+            <textarea name="comments" class="form-control"></textarea>
+          </div>
+
+          <!-- Multiple Appliance Photos -->
+          <div class="mb-3">
+            <label>Appliance Photos</label>
+            <input type="file" name="photo1" class="form-control mb-2">
+            <input type="file" name="photo2" class="form-control mb-2">
+            <input type="file" name="photo3" class="form-control mb-2">
+            <input type="file" name="photo4" class="form-control mb-2">
+            <input type="file" name="photo5" class="form-control">
+          </div>
+
+          <button type="submit" class="btn btn-success">Save Report</button>
+          <a href="{% url 'appliance_report_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
       </div>
     </div>
+  </div>
+</div>
 
 
 
@@ -268,13 +283,45 @@
                 <textarea name="comments" class="form-control">{{ report.comments }}</textarea>
               </div>
 
-              <div class="mb-3">
-                <label>Replace Appliance Photo</label>
-                <input type="file" name="appliance_photo" class="form-control">
-                {% if report.appliance_photo %}
-                  <img src="{{ report.appliance_photo.url }}" class="mt-2" style="width: 100px;">
-                {% endif %}
-              </div>
+             <div class="mb-3">
+              <label>Replace Appliance Photo 1</label>
+              <input type="file" name="photo1" class="form-control">
+              {% if report.photo1 %}
+                <img src="{{ report.photo1.url }}" class="mt-2 img-thumbnail" style="width: 100px;">
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label>Replace Appliance Photo 2</label>
+              <input type="file" name="photo2" class="form-control">
+              {% if report.photo2 %}
+                <img src="{{ report.photo2.url }}" class="mt-2 img-thumbnail" style="width: 100px;">
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label>Replace Appliance Photo 3</label>
+              <input type="file" name="photo3" class="form-control">
+              {% if report.photo3 %}
+                <img src="{{ report.photo3.url }}" class="mt-2 img-thumbnail" style="width: 100px;">
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label>Replace Appliance Photo 4</label>
+              <input type="file" name="photo4" class="form-control">
+              {% if report.photo4 %}
+                <img src="{{ report.photo4.url }}" class="mt-2 img-thumbnail" style="width: 100px;">
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label>Replace Appliance Photo 5</label>
+              <input type="file" name="photo5" class="form-control">
+              {% if report.photo5 %}
+                <img src="{{ report.photo5.url }}" class="mt-2 img-thumbnail" style="width: 100px;">
+              {% endif %}
+            </div>
 
             </div>
             <div class="modal-footer">
@@ -435,13 +482,29 @@
                         <td>{{ report.location }}</td>
                         <!--<td>{{ report.appliance_photo }}</td>-->
                         <td>
-                          {% if report.appliance_photo %}
-                              <img src="{{ report.appliance_photo.url }}" alt="Photo" class="img-thumbnail" style="width: 100px;">
-                          {% else %}
-                              <span class="badge bg-secondary">No Image</span>
-                          {% endif %}
+                            {% if report.photo1 or report.photo2 or report.photo3 or report.photo4 or report.photo5 %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% if report.photo1 %}
+                                        <img src="{{ report.photo1.url }}" alt="Photo 1" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% endif %}
+                                    {% if report.photo2 %}
+                                        <img src="{{ report.photo2.url }}" alt="Photo 2" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% endif %}
+                                    {% if report.photo3 %}
+                                        <img src="{{ report.photo3.url }}" alt="Photo 3" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% endif %}
+                                    {% if report.photo4 %}
+                                        <img src="{{ report.photo4.url }}" alt="Photo 4" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% endif %}
+                                    {% if report.photo5 %}
+                                        <img src="{{ report.photo5.url }}" alt="Photo 5" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <img src="{% static 'renter/images/no_image.png' %}" alt="No Image Icon" class="h-8 w-8 object-contain" />
+                            {% endif %}
                         </td>
-                        <td>{{ report.comments }}</td>
+                                                <td>{{ report.comments }}</td>
                         <td>{{ report.created_at|date:"M d, Y" }}</td>
                         <td>
                           <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ report.id }}">
@@ -700,4 +763,3 @@
 
 
 </html>
->>>>>>> 6870909f52210b546c0483c609aca94628ce7f24

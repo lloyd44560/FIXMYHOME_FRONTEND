@@ -133,3 +133,10 @@ class RoomApplianceReport(models.Model):
     comments = models.TextField(blank=True)
     appliance_photo = models.ImageField(upload_to='appliances/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # 5 appliance photo fields
+    photo1 = models.ImageField(upload_to='appliance_photos/', blank=True, null=True)
+    photo2 = models.ImageField(upload_to='appliance_photos/', blank=True, null=True)
+    photo3 = models.ImageField(upload_to='appliance_photos/', blank=True, null=True)
+    photo4 = models.ImageField(upload_to='appliance_photos/', blank=True, null=True)
+    photo5 = models.ImageField(upload_to='appliance_photos/', blank=True, null=True)

@@ -81,10 +81,10 @@
 
                         <td class="text-center">
                             <div class="btn-group" role="group">
-                               <a href="#" class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
-                                   data-bs-target="#viewReportModal_{{ report.id }}">
-                                  <i class="bi bi-eye"></i> View
-                                </a>
+                               <!--<a href="#" class="btn btn-sm btn-outline-info" data-bs-toggle="modal"-->
+                               <!--    data-bs-target="#viewReportModal_{{ report.id }}">-->
+                               <!--   <i class="bi bi-eye"></i> View-->
+                               <!-- </a>-->
                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editReportModal{{ report.id }}">
                                   <i class="fas fa-edit"></i> Edit
                                 </button>
@@ -141,84 +141,225 @@
 
 
 
-                        <!-- Edit Report Modal -->
-                        <div class="modal fade" id="editReportModal{{ report.id }}" tabindex="-1" aria-labelledby="editReportModalLabel{{ report.id }}" aria-hidden="true">
-                          <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                              <form method="post" enctype="multipart/form-data" action="{% url 'edit_condition_report' report.id %}">
-                                {% csrf_token %}
-                                <div class="modal-header bg-primary text-white">
-                                  <h5 class="modal-title">Edit Condition Report - {{ report.report_number }}</h5>
-                                  <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-
-                                  <!-- Report Info -->
-                                  <div class="row mb-3">
-                                    <div class="col-md-6">
-                                      <label for="report_number">Report Number</label>
-                                      <input type="text" class="form-control" name="report_number" value="{{ report.report_number }}">
-                                    </div>
-                                   <input  name="renter" value="{{ report.renter.id }}">
-                                    <p><strong>Renter:</strong> {{ report.renter.first_name }} {{ report.renter.last_name }}</p>
-                                  </div>
-
-                                  <hr>
-
-                                  <!-- Rooms & Area Conditions -->
-                                  {% for room in report.report_rooms.all %}
-                                    <div class="border p-3 mb-4 rounded">
-                                      <h5>Room: <input class="form-control" name="room_name_{{ room.id }}" value="{{ room.room.room_name }}"></h5>
-
-                                      {% for area in room.room.area_conditions.all %}
-                                        <div class="row mt-2">
-                                          <div class="col-md-3">
-                                            <label>Area Name</label>
-                                            <input type="text" name="area_name_{{ area.id }}" class="form-control" value="{{ area.area_name }}">
-                                          </div>
-                                          <div class="col-md-3">
-                                            <label>Status</label>
-                                            <select name="status_{{ area.id }}" class="form-control">
-                                              <option value="Clean" {% if area.status == 'Clean' %}selected{% endif %}>Clean</option>
-                                              <option value="Undamaged" {% if area.status == 'Undamaged' %}selected{% endif %}>Undamaged</option>
-                                              <option value="Working" {% if area.status == 'Working' %}selected{% endif %}>Working</option>
-                                            </select>
-                                          </div>
-                                          <div class="col-md-3">
-                                            <label>Remarks</label>
-                                            <input type="text" name="remarks_{{ area.id }}" class="form-control" value="{{ area.remarks }}">
-                                          </div>
-                                          <div class="row mb-3">
-                                              <div class="col-md-6">
-                                                <label class="form-label">Current Photo:</label><br>
-                                                {% if area.photo %}
-                                                  <img src="{{ area.photo.url }}" alt="Current Photo" class="img-thumbnail" style="max-height: 150px;">
-                                                {% else %}
-                                                  <p class="text-muted">No photo uploaded</p>
-                                                {% endif %}
-                                              </div>
-                                              <div class="col-md-6">
-                                                <label for="photo_{{ area.id }}" class="form-label">Replace Photo (optional):</label>
-                                                <input type="file" name="photo_{{ area.id }}" id="photo_{{ area.id }}" class="form-control">
-                                              </div>
-                                            </div>
-                                        </div>
-                                      {% endfor %}
-                                    </div>
-                                  {% endfor %}
-
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="submit" class="btn btn-success">Save Changes</button>
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                              </form>
+                    <!-- Edit Report Modal -->
+                    <div class="modal fade" id="editReportModal{{ report.id }}" tabindex="-1" aria-labelledby="editReportModalLabel{{ report.id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                          <form method="post" enctype="multipart/form-data" action="{% url 'edit_condition_report' report.id %}" id="reportForm">
+                            {% csrf_token %}
+                            <div class="modal-header bg-primary text-white">
+                              <h5 class="modal-title">Edit Condition Report - {{ report.report_number }}</h5>
+                              <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                          </div>
+
+                            <div class="modal-body p-0">
+                              <!-- Report Info -->
+                              <div class="p-3 border-bottom">
+                                <div class="row mb-3">
+                                  <div class="col-md-6">
+                                    <label>Report Number</label>
+                                    <input type="text" class="form-control" name="report_number" value="{{ report.report_number }}" required>
+                                  </div>
+                                  <input type="hidden" name="renter" value="{{ report.renter.id }}">
+                                  <p class="mt-2"><strong>Renter:</strong> {{ report.renter.first_name }} {{ report.renter.last_name }}</p>
+                                </div>
+                              </div>
+
+                              <!-- Two Column Layout -->
+                              <div class="d-flex" style="height: 500px;">
+                                <!-- LEFT: Room List -->
+                                <div class="border-end bg-light" style="width: 220px; overflow-y: auto;">
+                                  <ul class="list-group list-group-flush" id="roomList">
+                                    {% for room_link in report.report_rooms.all %}
+                                    <li class="list-group-item {% if forloop.first %}active{% endif %}" data-room-id="{{ room_link.room.id }}" data-room-index="{{ forloop.counter0 }}">
+                                      {{ room_link.room.room_name }}
+                                    </li>
+                                    {% endfor %}
+                                  </ul>
+                                  <button type="button" class="btn btn-sm btn-primary m-2" id="addRoomBtn">+ Add Room</button>
+                                </div>
+
+                                <!-- RIGHT: Room Details -->
+                                <div class="flex-fill p-3" id="roomDetails">
+                                  {% for room_link in report.report_rooms.all %}
+                                  {% with room_index=forloop.counter0 %}
+                                  <div class="room-detail" data-room-id="{{ room_link.room.id }}" {% if not forloop.first %}style="display:none;"{% endif %}>
+                                    <input type="hidden" name="rooms[{{ room_index }}][id]" value="{{ room_link.room.id }}">
+                                    <h5>Room Name</h5>
+                                    <input type="text" name="rooms[{{ room_index }}][name]" class="form-control mb-2" value="{{ room_link.room.room_name }}" required>
+                                    <h6>Description</h6>
+                                    <input type="text" name="rooms[{{ room_index }}][description]" class="form-control mb-3" value="{{ room_link.room.description }}">
+
+                                    {% for area in room_link.room.area_conditions.all %}
+                                    <div class="row mb-2 room-condition">
+                                      <input type="hidden" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][id]" value="{{ area.id }}">
+                                      <div class="col-md-3">
+                                        <input type="text" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][area_name]" class="form-control" value="{{ area.area_name }}" required>
+                                      </div>
+                                      <div class="col-md-3">
+                                        <select name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][status]" class="form-control">
+                                          <option value="Clean" {% if area.status == 'Clean' %}selected{% endif %}>Clean</option>
+                                          <option value="Undamaged" {% if area.status == 'Undamaged' %}selected{% endif %}>Undamaged</option>
+                                          <option value="Working" {% if area.status == 'Working' %}selected{% endif %}>Working</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-md-3">
+                                        <input type="text" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][remarks]" class="form-control" value="{{ area.remarks }}">
+                                      </div>
+                                      <div class="col-md-3">
+                                        {% if area.photo %}
+                                          <img src="{{ area.photo.url }}" class="img-thumbnail mb-1" style="max-height: 100px;">
+                                        {% endif %}
+                                        <input type="file" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][photo]" class="form-control">
+                                      </div>
+                                    </div>
+                                    {% endfor %}
+
+                                    <div class="new-conditions-container" data-room-id="{{ room_link.room.id }}"></div>
+                                    <button type="button" class="btn btn-sm btn-success addConditionBtn" data-room-id="{{ room_link.room.id }}">+ Add Condition</button>
+                                  </div>
+                                  {% endwith %}
+                                  {% endfor %}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-success">Save Changes</button>
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                          </form>
                         </div>
+                      </div>
+                    </div>
 
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      // Initialize room counter
+                      let roomCounter = {{ report.report_rooms.count }};
+                      let newRoomCounter = 0;
 
+                      // Function to switch room view
+                      function switchToRoom(roomId) {
+                        // Update active state in room list
+                        document.querySelectorAll('#roomList .list-group-item').forEach(item => {
+                          item.classList.remove('active');
+                          if (item.getAttribute('data-room-id') === roomId.toString()) {
+                            item.classList.add('active');
+                          }
+                        });
 
+                        // Show corresponding room details
+                        document.querySelectorAll('#roomDetails .room-detail').forEach(room => {
+                          room.style.display = room.getAttribute('data-room-id') === roomId.toString() ? 'block' : 'none';
+                        });
+                      }
+
+                      // Add Room Button Click Handler
+                      document.getElementById('addRoomBtn').addEventListener('click', function() {
+                        const newRoomId = 'new-' + newRoomCounter++;
+
+                        // Add to room list
+                        const roomListItem = document.createElement('li');
+                        roomListItem.className = 'list-group-item active';
+                        roomListItem.setAttribute('data-room-id', newRoomId);
+                        roomListItem.textContent = 'New Room';
+                        document.getElementById('roomList').appendChild(roomListItem);
+
+                        // Add room details
+                        const roomDetails = document.getElementById('roomDetails');
+                        const newRoomHtml = `
+                          <div class="room-detail" data-room-id="${newRoomId}" style="display: block;">
+                            <input type="hidden" name="new_rooms[${roomCounter}][id]" value="${newRoomId}">
+                            <h5>Room Name</h5>
+                            <input type="text" name="new_rooms[${roomCounter}][name]" class="form-control mb-2" placeholder="Room Name" required>
+                            <h6>Description</h6>
+                            <input type="text" name="new_rooms[${roomCounter}][description]" class="form-control mb-3" placeholder="Description">
+
+                            <div class="new-conditions-container" data-room-id="${newRoomId}"></div>
+                            <button type="button" class="btn btn-sm btn-success addConditionBtn" data-room-id="${newRoomId}">+ Add Condition</button>
+                          </div>
+                        `;
+                        roomDetails.insertAdjacentHTML('beforeend', newRoomHtml);
+
+                        // Update active states
+                        document.querySelectorAll('#roomList .list-group-item').forEach(item => {
+                          item.classList.remove('active');
+                        });
+                        roomListItem.classList.add('active');
+
+                        roomCounter++;
+                      });
+
+                      // Add Condition Button Click Handler
+                      document.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('addConditionBtn')) {
+                          const roomId = e.target.getAttribute('data-room-id');
+                          const container = document.querySelector(`.new-conditions-container[data-room-id="${roomId}"]`);
+                          const conditionCount = container.querySelectorAll('.condition-row').length;
+
+                          let conditionHtml = '';
+
+                          if (roomId.includes('new-')) {
+                            // New room condition
+                            const roomIndex = roomId.split('-')[1];
+                            conditionHtml = `
+                              <div class="row mb-2 condition-row">
+                                <div class="col-md-3">
+                                  <input type="text" name="new_rooms[${roomIndex}][conditions][${conditionCount}][area_name]" class="form-control" placeholder="Area Name" required>
+                                </div>
+                                <div class="col-md-3">
+                                  <select name="new_rooms[${roomIndex}][conditions][${conditionCount}][status]" class="form-control">
+                                    <option value="Clean">Clean</option>
+                                    <option value="Undamaged">Undamaged</option>
+                                    <option value="Working">Working</option>
+                                  </select>
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="text" name="new_rooms[${roomIndex}][conditions][${conditionCount}][remarks]" class="form-control" placeholder="Remarks">
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="file" name="new_rooms[${roomIndex}][conditions][${conditionCount}][photo]" class="form-control">
+                                </div>
+                              </div>
+                            `;
+                          } else {
+                            // Existing room condition
+                            conditionHtml = `
+                              <div class="row mb-2 condition-row">
+                                <div class="col-md-3">
+                                  <input type="text" name="rooms[${roomId}][conditions][${conditionCount}][area_name]" class="form-control" placeholder="Area Name" required>
+                                </div>
+                                <div class="col-md-3">
+                                  <select name="rooms[${roomId}][conditions][${conditionCount}][status]" class="form-control">
+                                    <option value="Clean">Clean</option>
+                                    <option value="Undamaged">Undamaged</option>
+                                    <option value="Working">Working</option>
+                                  </select>
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="text" name="rooms[${roomId}][conditions][${conditionCount}][remarks]" class="form-control" placeholder="Remarks">
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="file" name="rooms[${roomId}][conditions][${conditionCount}][photo]" class="form-control">
+                                </div>
+                              </div>
+                            `;
+                          }
+
+                          container.insertAdjacentHTML('beforeend', conditionHtml);
+                        }
+                      });
+
+                      // Room list item click handler
+                      document.getElementById('roomList').addEventListener('click', function(e) {
+                        if (e.target.classList.contains('list-group-item')) {
+                          const roomId = e.target.getAttribute('data-room-id');
+                          switchToRoom(roomId);
+                        }
+                      });
+                    });
+                    </script>
 
 
 
@@ -376,6 +517,6 @@ function removeCondition(button) {
 <div class="mt-auto">
         {% include 'renter/home/footer.html' %}
     </div>
-<script src="{% static
+
 
 {% endblock %}

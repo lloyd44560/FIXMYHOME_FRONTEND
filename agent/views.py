@@ -381,6 +381,13 @@ class AgentJobCreateView(CreateView):
             form.instance.renter = property_instance.renter or None
             form.instance.agent = agent
 
+            # Access isurgent via related Services (category)
+            category = form.cleaned_data.get('category')
+            if category and category.isurgent:
+                form.instance.priority = True
+            else:
+                form.instance.priority = False
+
             # Save the form first to get job_code
             response = super().form_valid(form)
 
