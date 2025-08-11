@@ -1,7 +1,8 @@
 from django.db import models
 
-from .registerTrader import TraderRegistration
-from .teamMember import TeamMember
-from .contractorLicense import ContractorLicense
-from .jobs import Jobs
-from .biddingTrader import Bidding
+from models.registerTrader import TraderRegistration
+from models.teamMember import TeamMember
+from models.contractorLicense import ContractorLicense
+from models.jobs import Jobs
+from models.biddingTrader import Bidding
+from models.industryTrader import TraderIndustry

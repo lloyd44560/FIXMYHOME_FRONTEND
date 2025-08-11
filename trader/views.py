@@ -15,7 +15,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.views.generic.edit import UpdateView, FormView
 from django.contrib.auth.models import User
 
-from .models import TraderRegistration, TeamMember, ContractorLicense
+from .models import TraderRegistration, TeamMember, ContractorLicense, TraderIndustry
 from .models import Jobs, Bidding
 from agent.models import AgentRegister
 from .forms import TraderRegistrationForm, TeamMemberFormSet
@@ -76,7 +76,6 @@ class TraderRegistrationCreateView(CreateView):
 
             # ✅ Now get Holiday lists
             holidays = request.POST.getlist('holiday_date')
-            print(f"Parsed holidays: {holidays}")
             for name, position in zip(team_names, team_positions):
                 TeamMember.objects.create(
                     trader=trader, # <--- FK relation
@@ -102,7 +101,16 @@ class TraderRegistrationCreateView(CreateView):
                     trader=trader, # <--- FK relation
                     contractorLicense=licenses
                 )
-            
+
+            # ✅ Now loop the expertise lists
+            expertise = request.POST.getlist('industry_expertise')
+
+            for exp in expertise:
+                TraderIndustry.objects.create(
+                    trader=trader,  # <--- FK relation
+                    industry=exp
+                )
+
             return redirect(self.success_url)
         else:
             print(f"Form errors: {form.errors}, Formset errors: {formset.errors}, License errors: {form_license.errors}")
