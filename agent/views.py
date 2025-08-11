@@ -540,7 +540,7 @@ class InviteRenterView(FormView):
         email = form.cleaned_data["email"]
         token = str(uuid.uuid4())
 
-        invitation_link = self.request.build_absolute_uri(f"/register/?token={token}")
+        invitation_link = self.request.build_absolute_uri(f"/register_renter/?token={token}")
         send_mail(
             subject="You're invited to join!",
             message=f"Hi {name},\n\nYou've been invited! Register here: {invitation_link}",
