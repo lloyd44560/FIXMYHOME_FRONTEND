@@ -7,12 +7,13 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth import update_session_auth_hash
 from django.utils.timezone import now
 from django.conf import settings
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
+from urllib.parse import urlencode
 
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.views import View
 from django.views.generic import TemplateView, CreateView, ListView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -305,28 +306,60 @@ class RoomCreateView(CreateView):
 @method_decorator(login_required, name='dispatch')
 class RenterListView(ListView):
     model = Renter
-    template_name = 'components/home/manageRenters.html'  # you’ll create this
+    template_name = 'components/home/manageRenters.html'
     context_object_name = 'renters'
+    paginate_by = 10  # Adjust as needed
+
+    def post(self, request, *args, **kwargs):
+        # Extract filter parameters from POST
+        params = {
+            'page': '1',  # Force page to 1
+            'renter_name': request.POST.get('renter_name', '')
+        }
+        # Redirect to GET with page=1 and filter parameters
+        return HttpResponseRedirect(f"{reverse('manage_renters')}?{urlencode(params)}")
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object_list = self.get_queryset()
+            context = self.get_context_data()
+            return self.render_to_response(context)
+        except self.paginator.InvalidPage:
+            # Redirect to page 1 if the requested page is invalid
+            params = request.GET.copy()
+            params['page'] = '1'
+            return HttpResponseRedirect(f"{reverse('manage_renters')}?{params.urlencode()}")
 
     def get_queryset(self):
-        # Show all jobs, ordered by priority and scheduled/approved/confirmed date
         queryset = super().get_queryset()
 
-        # Get filter parameters from request
-        renter_name = self.request.GET.get('renter_name')
+        # Get filter parameters from request.POST or request.GET
+        renter_name = self.request.POST.get('renter_name') if self.request.method == 'POST' else self.request.GET.get('renter_name')
+
+        # Debugging: Log filter values and queryset count
+        print(f"Request method: {self.request.method}")
+        print(f"Filter - Renter Name: '{renter_name}'")
+        print(f"Initial queryset count: {queryset.count()}")
 
         # Apply filters if provided
         if renter_name:
             queryset = queryset.filter(name__icontains=renter_name)
+
+        print(f"Filtered queryset count: {queryset.count()}")
+        print(f"Filtered renters: {[r.name for r in queryset]}")
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Preserve filter values in template for form repopulation
-        context['filter_renter'] = self.request.GET.get('renter_name', '')
+        # Preserve filter values for form repopulation
+        if self.request.method == 'POST':
+            context['filter_renter'] = self.request.POST.get('renter_name', '')
+        else:
+            context['filter_renter'] = self.request.GET.get('renter_name', '')
 
+        print(f"Context filter: {context['filter_renter']}")
         return context
 
 class RenterUpdateView(UpdateView):
@@ -492,6 +525,29 @@ class PropertiesListView(ListView):
     model = Property
     template_name = 'components/home/propertiesList.html'
     context_object_name = 'properties'
+    paginate_by = 10  # Adjust as needed
+
+    def post(self, request, *args, **kwargs):
+        # Extract filter parameters from POST
+        params = {
+            'page': '1',  # Force page to 1
+            'status': request.POST.get('status', ''),
+            'address': request.POST.get('address', ''),
+            'renter': request.POST.get('renter', '')
+        }
+        # Redirect to GET with page=1 and filter parameters
+        return HttpResponseRedirect(f"{reverse('manage_properties')}?{urlencode(params)}")
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object_list = self.get_queryset()
+            context = self.get_context_data()
+            return self.render_to_response(context)
+        except self.paginator.InvalidPage:
+            # Redirect to page 1 if the requested page is invalid
+            params = request.GET.copy()
+            params['page'] = '1'
+            return HttpResponseRedirect(f"{reverse('manage_properties')}?{params.urlencode()}")
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -499,29 +555,32 @@ class PropertiesListView(ListView):
         # Filter only active properties
         queryset = queryset.filter(is_active=True)
 
-        # Get filter parameters from request
-        status = self.request.GET.get('status')
-        address = self.request.GET.get('address')
-        renter = self.request.GET.get('renter')
+        # Get filter parameters from request.POST or request.GET
+        status = self.request.POST.get('status') if self.request.method == 'POST' else self.request.GET.get('status')
+        address = self.request.POST.get('address') if self.request.method == 'POST' else self.request.GET.get('address')
+        renter = self.request.POST.get('renter') if self.request.method == 'POST' else self.request.GET.get('renter')
 
         # Apply filters if provided
         if status:
-            queryset = queryset.filter(status=status)  # Fixed: assumed 'status' instead of 'state'
+            queryset = queryset.filter(status=status)
         if address:
-            queryset = queryset.filter(address__icontains=address)  # Case-insensitive partial match
+            queryset = queryset.filter(address__icontains=address)
         if renter:
             queryset = queryset.filter(renter__name__icontains=renter)
-
         return queryset.order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Preserve filter values in template for form repopulation
-        context['filter_status'] = self.request.GET.get('status', '')
-        context['filter_address'] = self.request.GET.get('address', '')
-        context['filter_renter'] = self.request.GET.get('renter', '')
-
+        # Preserve filter values for form repopulation
+        if self.request.method == 'POST':
+            context['filter_status'] = self.request.POST.get('status', '')
+            context['filter_address'] = self.request.POST.get('address', '')
+            context['filter_renter'] = self.request.POST.get('renter', '')
+        else:
+            context['filter_status'] = self.request.GET.get('status', '')
+            context['filter_address'] = self.request.GET.get('address', '')
+            context['filter_renter'] = self.request.GET.get('renter', '')
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -556,20 +615,44 @@ class ActiveJobsListView(ListView):
     model = Jobs
     template_name = 'components/home/active_jobs_list.html'
     context_object_name = 'jobs'
+    paginate_by = 10  # Adjust as needed
+
+    def post(self, request, *args, **kwargs):
+        # Extract filter parameters from POST
+        params = {
+            'page': '1',  # Force page to 1
+            'status': request.POST.get('status', ''),
+            'category': request.POST.get('category', ''),
+            'priority': request.POST.get('priority', ''),
+            'trader': request.POST.get('trader', ''),
+            'scheduled_at': request.POST.get('scheduled_at', '')
+        }
+        # Redirect to GET with page=1 and filter parameters
+        return HttpResponseRedirect(f"{reverse('active_jobs_list')}?{urlencode(params)}")
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object_list = self.get_queryset()
+            context = self.get_context_data()
+            return self.render_to_response(context)
+        except self.paginator.InvalidPage:
+            # Redirect to page 1 if the requested page is invalid
+            params = request.GET.copy()
+            params['page'] = '1'
+            return HttpResponseRedirect(f"{reverse('active_jobs_list')}?{params.urlencode()}")
 
     def get_queryset(self):
-        # Show all jobs, ordered by priority and scheduled/approved/confirmed date
         queryset = super().get_queryset()
 
-        # Filter only active properties
+        # Filter only active jobs
         queryset = queryset.filter(is_active=True)
 
-        # Get filter parameters from request
-        status = self.request.GET.get('status')
-        category = self.request.GET.get('category')
-        priority = self.request.GET.get('priority')
-        trader = self.request.GET.get('trader')
-        scheduled_at = self.request.GET.get('scheduled_at')
+        # Get filter parameters from request.POST or request.GET
+        status = self.request.POST.get('status') if self.request.method == 'POST' else self.request.GET.get('status')
+        category = self.request.POST.get('category') if self.request.method == 'POST' else self.request.GET.get('category')
+        priority = self.request.POST.get('priority') if self.request.method == 'POST' else self.request.GET.get('priority')
+        trader = self.request.POST.get('trader') if self.request.method == 'POST' else self.request.GET.get('trader')
+        scheduled_at = self.request.POST.get('scheduled_at') if self.request.method == 'POST' else self.request.GET.get('scheduled_at')
 
         # Apply filters if provided
         if status:
@@ -584,24 +667,30 @@ class ActiveJobsListView(ListView):
             queryset = queryset.filter(priority=True)
         elif priority == 'false':
             queryset = queryset.filter(priority=False)
-
         return queryset.order_by('-priority', '-scheduled_at', '-approved_at', '-confirmed_at')
 
     def get_context_data(self, **kwargs):
-        category = self.request.GET.get('category')
-
         context = super().get_context_data(**kwargs)
-        context['status_options'] = dict(Jobs._meta.get_field('status').choices)
+
+        # Preserve filter values for form repopulation
+        category = self.request.POST.get('category', '')
+        if self.request.method == 'POST':
+            context['filter_status'] = self.request.POST.get('status', '')
+            context['filter_category'] = int(category) if category and category.isdigit() else ''
+            context['filter_priority'] = self.request.POST.get('priority', '')
+            context['filter_trader'] = self.request.POST.get('trader', '')
+            context['filter_scheduled_at'] = self.request.POST.get('scheduled_at', '')
+        else:
+            context['filter_status'] = self.request.GET.get('status', '')
+            context['filter_category'] = self.request.GET.get('category', '')
+            context['filter_priority'] = self.request.GET.get('priority', '')
+            context['filter_trader'] = self.request.GET.get('trader', '')
+            context['filter_scheduled_at'] = self.request.GET.get('scheduled_at', '')
+
+        # Status and category options for form
+        context['status_options'] = dict(self.model._meta.get_field('status').choices)
         context['category_options'] = {
             service.id: service.description
             for service in Services.objects.all()
         }
-
-        # Preserve filter values in template for form repopulation
-        context['filter_status'] = self.request.GET.get('status', '')
-        context['filter_category'] = int(category) if category and category.isdigit() else ''
-        context['filter_priority'] = self.request.GET.get('priority', '')
-        context['filter_trader'] = self.request.GET.get('trader', '')
-        context['filter_scheduled_at'] = self.request.GET.get('scheduled_at', '')
-
         return context

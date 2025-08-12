@@ -94,6 +94,52 @@
     </table>
   </div>
 
+  <!-- Pagination Controls -->
+  {% if page_obj.has_other_pages %}
+    <div class="pagination flex justify-center items-center mt-6 space-x-2">
+      <!-- Previous Button -->
+      {% if page_obj.has_previous %}
+      <a href="{% url 'active_jobs_list' %}?page={{ page_obj.previous_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
+        class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+        onclick="saveScrollPosition()">
+        &laquo; Previous
+      </a>
+      {% else %}
+      <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
+        &laquo; Previous
+      </span>
+      {% endif %}
+
+      <!-- Page Numbers -->
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <span class="px-3 py-2 bg-blue-500 text-white rounded font-semibold">
+            {{ num }}
+          </span>
+          {% else %}
+          <a href="{% url 'active_jobs_list' %}?page={{ num }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
+            class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+            onclick="saveScrollPosition()">
+            {{ num }}
+          </a>
+        {% endif %}
+      {% endfor %}
+
+      <!-- Next Button -->
+      {% if page_obj.has_next %}
+      <a href="{% url 'active_jobs_list' %}?page={{ page_obj.next_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
+        class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+        onclick="saveScrollPosition()">
+        Next &raquo;
+      </a>
+      {% else %}
+      <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
+        Next &raquo;
+      </span>
+      {% endif %}
+    </div>
+  {% endif %}
+
   <!-- Mobile Kanban layout -->
   <div class="sm:hidden space-y-4">
     {% for job in jobs %}
