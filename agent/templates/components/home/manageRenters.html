@@ -9,7 +9,8 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Renters</h2>
 
     <!-- Filter Form -->
-    <form method="GET" class="mb-6">
+    <form id="filterForm" method="POST" class="mb-6">
+      {% csrf_token %}
         <div class="flex flex-col md:flex-row gap-4">
             <!-- Address Filter -->
             <div>
@@ -88,6 +89,53 @@
         {% endfor %}
       </div>
     </div>
+
+    <!-- Pagination Controls -->
+    {% if page_obj.has_other_pages %}
+      <div class="pagination flex justify-center items-center mt-6 space-x-2">
+        <!-- Previous Button -->
+        {% if page_obj.has_previous %}
+        <a href="{% url 'manage_renters' %}?page={{ page_obj.previous_page_number }}{% if filter_renter %}&renter_name={{ filter_renter|urlencode }}{% endif %}"
+          class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          onclick="saveScrollPosition()">
+          &laquo; Previous
+        </a>
+        {% else %}
+        <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
+          &laquo; Previous
+        </span>
+        {% endif %}
+
+        <!-- Page Numbers -->
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="px-3 py-2 bg-blue-500 text-white rounded font-semibold">
+          {{ num }}
+        </span>
+        {% else %}
+        <a href="{% url 'manage_renters' %}?page={{ num }}{% if filter_renter %}&renter_name={{ filter_renter|urlencode }}{% endif %}"
+          class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          onclick="saveScrollPosition()">
+          {{ num }}
+        </a>
+        {% endif %}
+        {% endfor %}
+
+        <!-- Next Button -->
+        {% if page_obj.has_next %}
+        <a href="{% url 'manage_renters' %}?page={{ page_obj.next_page_number }}{% if filter_renter %}&renter_name={{ filter_renter|urlencode }}{% endif %}"
+          class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          onclick="saveScrollPosition()">
+          Next &raquo;
+        </a>
+        {% else %}
+        <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
+          Next &raquo;
+        </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
     {% if messages %}
       <div class="fixed top-6 right-6 z-50 space-y-2">
         {% for message in messages %}
