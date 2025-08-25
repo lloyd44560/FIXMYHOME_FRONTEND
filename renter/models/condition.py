@@ -59,6 +59,15 @@ class RenterRoom(models.Model):
     description = models.TextField(blank=True,null=True)
     photo = models.ImageField(upload_to='room_photos/', blank=True, null=True)
 
+    # room_photo1 and on and on thanks
+    # Additional photos (up to 5)
+    room_photo1 = models.ImageField(upload_to='room_photos/', blank=True, null=True)
+    room_photo2 = models.ImageField(upload_to='room_photos/', blank=True, null=True)
+    room_photo3 = models.ImageField(upload_to='room_photos/', blank=True, null=True)
+    room_photo4 = models.ImageField(upload_to='room_photos/', blank=True, null=True)
+    room_photo5 = models.ImageField(upload_to='room_photos/', blank=True, null=True)
+
+
     def __str__(self):
         return self.room_name
 
@@ -76,10 +85,19 @@ class RenterRoomAreaCondition(models.Model):
         default='Clean'
     )
 
-    # ✅ Optional: Photo
+    # Optional: Photo
     photo = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
 
-    # ✅ Optional: Remarks field
+    # area_photo 1 to  # area_photo 5
+
+    # Additional photos (up to 5)
+    area_photo1 = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
+    area_photo2 = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
+    area_photo3 = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
+    area_photo4 = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
+    area_photo5 = models.ImageField(upload_to='area_condition_photos/', blank=True, null=True)
+
+    # Optional: Remarks field
     remarks = models.TextField(blank=True, null=True)
 
     def __str__(self):

@@ -6,185 +6,280 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   {% load static %}
 
-  <!-- Tailwind & Bootstrap -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap Icons for consistency with existing icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
-<body class="bg-gray-100 text-gray-800 d-flex flex-column min-vh-100">
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-sans">
 
   {% include 'renter/home/navbar.html' %}
 
-  <!--<main class="flex-grow max-w-6xl mx-auto py-10 px-4">-->
-    <!--<div class="flex justify-between items-center mb-6">-->
-    <!--  <h1 class="text-3xl font-bold">My Properties</h1>-->
-    <!--  <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" data-bs-toggle="modal" data-bs-target="#addPropertyModal">+ Add Property</button>-->
-    <!--</div>-->
-
-    <div id="notification" class="hidden mb-4 p-3 rounded text-white"></div>
-
-<div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
-  <div class="p-4 border-b bg-gray-50">
-    <h2 class="text-xl font-semibold text-gray-700">My Properties</h2>
-  </div>
-
-  <form method="get" class="d-flex mb-3 p-3">
-    <input type="text" name="q" value="{{ search_query }}" class="form-control me-2" placeholder="Search properties...">
-    <button type="submit" class="btn btn-primary">Search</button>
-  </form>
-
-  <!-- Fixed height container -->
-  <div class="table-container" style="max-height: 500px; min-height: 500px; overflow-y: auto;">
-    <table class="table table-hover table-bordered align-middle mb-0 w-100">
-      <thead class="table-light text-center">
-        <tr>
-          <th>#</th>
-          <th>Property Name</th>
-          <th>City</th>
-          <th>Status</th>
-          <th>Photo</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for prop in properties %}
-        <tr>
-          <td class="text-center">{{ forloop.counter }}</td>
-          <td class="fw-semibold">{{ prop.name }}</td>
-          <td>{{ prop.city }}</td>
-          <td class="text-center">
-            {% if prop.status == 'vacant' %}
-              <span class="badge bg-success">Vacant</span>
-            {% else %}
-              <span class="badge bg-danger">Occupied</span>
-            {% endif %}
-          </td>
-          <td class="text-center">
-            {% if prop.property_photo %}
-              <img src="{{ prop.property_photo.url }}" class="property-img rounded shadow-sm">
-            {% else %}
-              <span class="text-muted">No Photo</span>
-            {% endif %}
-          </td>
-          <td class="text-center">
-            <div class="d-flex justify-content-center gap-2 flex-wrap">
-              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                data-bs-target="#editModal{{ prop.id }}">
-                <i class="bi bi-pencil-square me-1"></i> Edit
-              </button>
-              <a href="{% url 'unlink_property' prop.id %}" class="btn btn-sm btn-outline-warning"
-                onclick="return confirm('Unlink this property from your account?')">
-                <i class="bi bi-link-45deg me-1"></i> Unlink
-              </a>
-            </div>
-          </td>
-        </tr>
-        {% empty %}
-        <!-- Empty state -->
-        <tr>
-          <td colspan="6" class="text-center py-5">
-            <div class="empty-state">
-              <i class="bi bi-house-door-fill text-secondary" style="font-size: 3rem;"></i>
-              <p class="mt-2 text-muted">No properties available</p>
-              <!--<button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addPropertyModal">-->
-              <!--  + Add Property-->
-              <!--</button>-->
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <div class="mt-4 text-center">
-    <nav aria-label="Property page navigation">
-      <ul class="pagination justify-content-center">
-        {% if properties.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?q={{ search_query }}&page={{ properties.previous_page_number }}">Previous</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled"><span class="page-link">Previous</span></li>
-        {% endif %}
-
-        {% for page_num in properties.paginator.page_range %}
-          {% if properties.number == page_num %}
-            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-          {% else %}
-            <li class="page-item">
-              <a class="page-link" href="?q={{ search_query }}&page={{ page_num }}">{{ page_num }}</a>
-            </li>
-          {% endif %}
-        {% endfor %}
-
-        {% if properties.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?q={{ search_query }}&page={{ properties.next_page_number }}">Next</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled"><span class="page-link">Next</span></li>
-        {% endif %}
-      </ul>
-    </nav>
-  </div>
-</div>
-
-  </div>
-<!--</main>-->
-
-
-  <!-- Add Property Modal -->
-  <div class="modal fade" id="addPropertyModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <form method="POST" enctype="multipart/form-data" class="modal-content" action="{% url 'add_property' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">Add Property</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-md-6"><label>Property Name *</label> <input  name="name" class="form-control" required placeholder="Property Name" required></div>
-          <div class="col-md-6"> <label>Floor Count </label> <input name="floor_count" type="number" class="form-control" placeholder="Floor Count"></div>
-          <div class="col-md-6"><label>City </label> <input name="city" class="form-control" placeholder="City"></div>
-          <div class="col-md-6"><label>State </label> <input name="state" class="form-control" placeholder="State"></div>
-          <div class="col-md-12"><label>Address </label>  <textarea name="address" class="form-control" placeholder="Address"></textarea></div>
-          <div class="col-md-6"><label>Renter Name</label> <input name="renter_name" class="form-control" placeholder="Renter Name"></div>
-          <div class="col-md-6"><label>Renter Contact</label> <input name="renter_contact" class="form-control" placeholder="Renter Contact"></div>
-          <div class="col-md-6"><label>Rent</label> <input name="rent" type="number" step="0.01" class="form-control" placeholder="Rent"></div>
-          <div class="col-md-6"><label>Postal Code</label> <input name="postal_code" class="form-control" placeholder="Postal Code"></div>
-          <div class="col-md-6"><label>Lease Start</label> <input name="lease_start" type="date" class="form-control"></div>
-          <div class="col-md-6"><label>Lease End </label> <input name="lease_end" type="date" class="form-control"></div>
-          <div class="col-md-6">
-            <label>Select Agent * </label>
-            <select name="agent_id" class="form-control" required>
-              <option value="" disabled selected>-- Choose an agent --</option>
-              {% for agent in agents %}
-              <option value="{{ agent.id }}">{{ agent.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-6">
-            <select name="status" class="form-control">
-              <option value="vacant">Vacant</option>
-              <option value="occupied">Occupied</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label>Property Image</label>
-            <input name="property_photo" type="file" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Add Property</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </form>
+  <main class="flex-grow w-full py-12 px-4">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">My Home</h1>
+      <!--<button class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addPropertyModal">-->
+      <!--  + Add Property-->
+      <!--</button>-->
     </div>
-  </div>
+
+    <div id="notification" class="hidden mb-6 p-4 rounded-lg text-white"></div>
+
+    <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden  w-full">
+      <div class="p-6 bg-gray-50 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-700">Property List</h2>
+      </div>
+
+      <form method="get" class="flex gap-3 p-6 bg-white">
+        <input type="text" name="q" value="{{ search_query }}" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search properties...">
+        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Search</button>
+      </form>
+
+      <!-- Table container with full width and fixed height -->
+      <div class="overflow-x-auto w-full">
+        <div class="w-full overflow-y-auto" style="max-height: 600px;">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-12">#</th>
+                <th class="px-6 py-4 text-sm font-medium text-gray-600">Property Name</th>
+                <th class="px-6 py-4 text-sm font-medium text-gray-600">City</th>
+                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Status</th>
+                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-32">Photo</th>
+                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-48">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for prop in properties %}
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4 text-center text-sm text-gray-600">{{ forloop.counter }}</td>
+                <td class="px-6 py-4 font-semibold text-gray-800">{{ prop.name }}</td>
+                <td class="px-6 py-4 text-gray-600">{{ prop.city }}</td>
+                <td class="px-6 py-4 text-center">
+                  {% if prop.status == 'vacant' %}
+                    <span class="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">Vacant</span>
+                  {% else %}
+                    <span class="inline-block px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">Occupied</span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 text-center">
+                  {% if prop.property_photo %}
+                    <img src="{{ prop.property_photo.url }}" class="w-24 h-24 object-cover rounded-lg shadow-sm border border-gray-200 mx-auto">
+                  {% else %}
+                    <span class="text-gray-500">No Photo</span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex justify-center gap-3">
+                    <!--<button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200" data-bs-toggle="modal" data-bs-target="#editModal{{ prop.id }}">-->
+                    <!--  <i class="bi bi-pencil-square mr-1"></i> Edit-->
+                    <!--</button>-->
+                    <a href="{% url 'unlink_property' prop.id %}" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition-colors duration-200" onclick="return confirm('Unlink this property from your account?')">
+                      <i class="bi bi-link-45deg mr-1"></i> Unlink
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-12">
+                  <div class="flex flex-col items-center">
+                    <i class="bi bi-house-door-fill text-gray-400" style="font-size: 3.5rem;"></i>
+                    <p class="mt-3 text-gray-500 text-lg">No properties available</p>
+                    <button class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
+                      + Add Property
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="p-6">
+        <nav aria-label="Property page navigation">
+          <ul class="flex justify-center gap-2">
+            {% if properties.has_previous %}
+              <li>
+                <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ properties.previous_page_number }}">Previous</a>
+              </li>
+            {% else %}
+              <li>
+                <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Previous</span>
+              </li>
+            {% endif %}
+
+            {% for page_num in properties.paginator.page_range %}
+              {% if properties.number == page_num %}
+                <li>
+                  <span class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg">{{ page_num }}</span>
+                </li>
+              {% else %}
+                <li>
+                  <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ page_num }}">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if properties.has_next %}
+              <li>
+                <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ properties.next_page_number }}">Next</a>
+              </li>
+            {% else %}
+              <li>
+                <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Next</span>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+    
+    
+    
+    <!-- Profile COmpletion Section -->
+    
+    <!-- Progress Section -->
+      <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+          <h3 class="text-3xl font-bold text-center text-gray-900 mb-8">Complete Your Profile</h3>
+          <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">A fully completed profile helps you connect with traders and agents faster, ensuring compliance with Australian property standards.</p>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-8">
+            <div class="bg-blue-600 h-4 rounded-full" style="width: 75%;"></div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+              <span class="text-green-500 text-2xl mr-3">✓</span>
+              <span class="text-gray-700">Add your personal details</span>
+            </div>
+            <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+              <span class="text-green-500 text-2xl mr-3">✓</span>
+              <span class="text-gray-700">Add your agent details</span>
+            </div>
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                <span class="text-gray-700">Complete Condition Report</span>
+              </div>
+              <a href="/condition-reports/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                <span class="text-gray-700">Add Maintenance Requests</span>
+              </div>
+              <a href="/jobs/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                <span class="text-gray-700">Add Appliance Reports</span>
+              </div>
+              <a href="/appliance-reports/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                <span class="text-gray-700">Add Minimum Standard Reports</span>
+              </div>
+              <a href="/standard-reports/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+          </div>
+          <div class="mt-8 text-center">
+            <a href="/profile/" class="text-blue-600 font-semibold hover:underline">View All Tasks →</a>
+          </div>
+        </div>
+      </section>    
+    <!-- Add Property Modal -->
+    <div class="modal fade" id="addPropertyModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <form method="POST" enctype="multipart/form-data" class="modal-content" action="{% url 'add_property' %}">
+          {% csrf_token %}
+          <div class="modal-header border-b border-gray-200">
+            <h5 class="text-xl font-semibold text-gray-800">Add Property</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Property Name *</label>
+                <input name="name" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required placeholder="Property Name">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Floor Count</label>
+                <input name="floor_count" type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Floor Count">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                <input name="city" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="City">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                <input name="state" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="State">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <textarea name="address" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Address"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Renter Name</label>
+                <input name="renter_name" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Renter Name">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Renter Contact</label>
+                <input name="renter_contact" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Renter Contact">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rent</label>
+                <input name="rent" type="number" step="0.01" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Rent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                <input name="postal_code" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Postal Code">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lease Start</label>
+                <input name="lease_start" type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lease End</label>
+                <input name="lease_end" type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Select Agent *</label>
+                <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                  <option value="" disabled selected>-- Choose an agent --</option>
+                  {% for agent in agents %}
+                  <option value="{{ agent.id }}">{{ agent.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <option value="vacant">Vacant</option>
+                  <option value="occupied">Occupied</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Property Image</label>
+                <input name="property_photo" type="file" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-t border-gray-200 p-4">
+            <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Add Property</button>
+            <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
 
   <!-- Scripts -->
   <script>
@@ -209,21 +304,15 @@
     });
   </script>
 
+  <style>
+    .property-img {
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
 
-<style>
-  .property-img {
-    width: 500px;
-    height: 500px;
-    object-fit: cover;
-    border: 1px solid #ddd;
-  }
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-</style>
   {% include 'renter/home/footer.html' %}
-
 </body>
 </html>

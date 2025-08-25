@@ -74,6 +74,16 @@ class InvitationForm(forms.Form):
     name = forms.CharField(max_length=100, label="Renter Name")
     email = forms.EmailField(label="Renter Email")
 
+    renter_contact = forms.CharField(max_length=100, label="Renter Contact", required=False)
+
+    # Property details
+    property_name = forms.CharField(max_length=200, label="Property Name", required=False)
+    address = forms.CharField(max_length=255, label="Address", required=False)
+    lease_start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False, label="Lease Start")
+    lease_end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False, label="Lease End")
+    rent = forms.DecimalField(max_digits=10, decimal_places=2, required=False, label="Rent")
+    status = forms.CharField(max_length=50, required=False, label="Status")
+
 class AgentCreateRoomForm(forms.ModelForm):
     class Meta:
         model = Rooms

@@ -26,7 +26,7 @@ def thirdparty_register(request):
             phone=phone
         )
         return redirect('thirdparty_login')
-    
+
     return render(request, 'thirdparty/register.html')
 
 def thirdparty_login(request):
@@ -56,16 +56,12 @@ def thirdparty_home(request):
     traders_count = TraderRegistration.objects.count()
     reports_count = ConditionReport.objects.count()  # only if this exists
 
-    
-
-
-
     context = {
         'renters': renters,
         'properties': properties,
         'traders': traders,
         'agents': agents,
-        
+
         'users_count': users_count,
         'properties_count': properties_count,
         'agents_count': agents_count,
@@ -80,7 +76,7 @@ def thirdparty_home(request):
 def third_party_account(request):
 
     user = request.user
-    
+
 
     thirdparty = ThirdParty.objects.filter(user=user).first()
 

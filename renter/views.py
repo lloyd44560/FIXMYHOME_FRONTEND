@@ -36,7 +36,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.utils.crypto import get_random_string
 from renter.models import RenterRoom, RenterRoomAreaCondition, RoomApplianceReport,MainConditionReport,ConditionReportRoom
 import traceback
-
+from thirdparty.models import ThirdParty
 def home(request):
     return render(request, 'renter/home.html')
 
@@ -83,6 +83,7 @@ def register(request):
 
 def login_page(request):
     return render(request, 'renter/login.html')
+
 def login_view(request):
     locked_until_str = request.session.get('locked_until')
     if locked_until_str:
@@ -157,6 +158,11 @@ def login_view(request):
                     request.session['renter_company'] = renter_record.company_name
                     request.session['renter_contact'] = renter_record.contact_person
                     request.session['renter_email'] = renter_record.email
+
+                  # ** Additional redirect check for ThirdParty **
+                third_party_record = ThirdParty.objects.filter(user=user).first()
+                if third_party_record:
+                    return redirect('/third_party/home/')
 
                 # Redirect by role
                 if user_obj.is_staff:
@@ -688,9 +694,65 @@ def register_renter(request):
     agents = AgentRegister.objects.all()
 
     if request.method == 'GET':
+        # Get renter's name, email, and agent_id from GET parameters
+        prefill_name = request.GET.get('name', '')
+        prefill_email = request.GET.get('email', '')
+        agent_id = request.GET.get('agent_id', '')
+
+        # Initialize prefill_data with renter's details
+        prefill_data = {
+            "name": prefill_name,
+            "email": prefill_email,
+        }
+
+        # Fetch agent details if agent_id is provided
+        if agent_id:
+            try:
+                agent = AgentRegister.objects.get(id=agent_id)
+                prefill_data.update({
+                    "agent_name": agent.name or "",
+                    "agent_email": agent.email or "",
+                    "agent_phone": agent.phone or "",
+                    "agent_company": agent.company_name or "",
+                    "agent_company_address": agent.company_address or "",
+                    "agent_company_email": agent.company_email or "",
+                    "agent_company_landline": agent.company_landline or "",
+                    "agent_contractor_license": agent.contractor_license or "",
+                    "agent_service": agent.service or "",
+                    "agent_state": agent.state or "",
+                    "agent_municipality": agent.municipality or "",
+                    "agent_city": agent.city or "",
+                    "agent_address_line_1": agent.address_line_1 or "",
+                    "agent_address_line_2": agent.address_line_2 or "",
+                    "agent_postal_code": agent.postal_code or "",
+                })
+            except AgentRegister.DoesNotExist:
+                # Handle case where agent_id is invalid
+                prefill_data.update({
+                    "agent_name": "",
+                    "agent_email": "",
+                    "agent_phone": "",
+                    "agent_company": "",
+                    "agent_company_address": "",
+                    "agent_company_email": "",
+                    "agent_company_landline": "",
+                    "agent_contractor_license": "",
+                    "agent_service": "",
+                    "agent_state": "",
+                    "agent_municipality": "",
+                    "agent_city": "",
+                    "agent_address_line_1": "",
+                    "agent_address_line_2": "",
+                    "agent_postal_code": "",
+                })
+
         return render(request, 'renter/register.html', {
-            'agents': agents
+            'agents': agents,
+            'prefill_name': prefill_name,
+            'prefill_email': prefill_email,
+            'prefill': prefill_data
         })
+
 
     elif request.method == 'POST':
         try:
@@ -797,7 +859,7 @@ def register_renter(request):
 
                 # Create Property
                 property = Property.objects.create(
-                    
+
                     renter=renter,
                     floor_count=floor_count,
                     state=house_state,
@@ -807,7 +869,7 @@ def register_renter(request):
                     agent = AgentRegister.objects.get(id=agent_id) if agent_id else None,
                     postal_code=postal_code,
                     property_photo=property_image,
-                    condition_report=condition_file,
+                    # condition_report=condition_file,
                     lease_start=lease_start,
                     lease_end=lease_end,
                     # agent=agent,
@@ -830,7 +892,7 @@ def register_renter(request):
 
                 # Parse room list JSON and save rooms
                 if room_list_raw:
-                    
+
                     try:
                         room_list = json.loads(room_list_raw)
                         if not isinstance(room_list, list):
@@ -850,7 +912,7 @@ def register_renter(request):
                         return json_error(f"Invalid room list format: {str(e)}")
                 else:
                     print("No room list received.")
-                
+
                 #
 
             else:
@@ -1071,7 +1133,7 @@ def welcome(request):
                 'agents': agents,
             })
 
-        elif ThirdParty.objects.filter(user=user).exists():
+        elif ThirdParty.objects.filter(user=user).first():
             return redirect('thirdparty_account')
 
         else:

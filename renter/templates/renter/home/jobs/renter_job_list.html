@@ -2,163 +2,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Manage Maintenance Request - FixMyHouse</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- Select2 for dropdowns -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+  <style>
+    .select2-container .select2-selection--single {
+      height: 38px;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: 24px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 38px;
+    }
+  </style>
 </head>
-
-<body class="bg-gray-100 text-gray-800">
-  {% include 'renter/home/navbar.html' %}
-
-<main class="w-full mx-auto py-10 px-4">
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-sans">
+  <main class="flex-grow w-full mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h3 fw-bold text-dark">My Maintenance Requests</h1>
-      <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addJobModal">
-        <i class="bi bi-plus-circle me-1"></i> Add Maintenance Requests
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">My Maintenance Requests</h1>
+      <button class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addJobModal">
+        <i class="bi bi-plus-circle mr-1"></i> Add Maintenance Request
       </button>
     </div>
 
     <!-- Notification -->
-    <div id="notification" class="alert alert-success d-none" role="alert"></div>
+    <div id="notification" class="hidden mb-6 p-4 rounded-lg text-white bg-green-500" role="alert"></div>
 
     <!-- Jobs Table -->
-    <div class="table-responsive shadow-sm rounded bg-white border">
-
-
-      <form method="GET" class="d-flex mb-3" action="">
-        <input type="text" name="q" class="form-control me-2" placeholder="Search jobs..." value="{{ search_query }}">
-        <button type="submit" class="btn btn-primary">Search</button>
+    <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden w-full">
+      <form method="GET" class="flex gap-3 p-6 bg-white">
+        <input type="text" name="q" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search jobs..." value="{{ search_query }}">
+        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Search</button>
       </form>
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light text-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Job Code</th>
-            <th scope="col">Status</th>
-            <th scope="col">Priority</th>
-            <th scope="col">Issues</th>
-            <th scope="col" class="text-center">Additional Notes</th>
-            <th scope="col" class="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="text-dark">
-          {% for job in jobs %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-           <td><span class="fw-semibold text-dark">{{ job.job_code }}</span></td>
-           <td><span class="badge bg-{{ job.status|lower|slugify }} text-dark">{{ job.status }}</span></td>
-            <td>
-              <span class="badge {% if job.priority %}bg-danger{% else %}bg-secondary{% endif %}">
-                {% if job.priority %}Urgent{% else %}Non-urgent{% endif %}
-              </span>
-            </td>
-            <td>{{ job.category }}</td>
-            <td>{{ job.notes|truncatechars:50 }}</td>
-            <td class="text-center">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}"> Edit
-                <i class="bi bi-pencil"></i>
-              </button>
-              <a href="{% url 'delete_job' job.id %}" class="btn btn-outline-danger btn-sm me-1"
-                onclick="return confirm('Delete this job?')"> Delete
-                <i class="bi bi-trash"></i>
-              </a>
 
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
+      <div class="overflow-x-auto w-full">
+        <table class="min-w-full text-left border-collapse w-full">
+          <thead class="bg-gray-50 sticky top-0 z-10">
+            <tr>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-12">#</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600">Job Code</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Status</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Priority</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600">Issues</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600">Additional Notes</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-48">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in jobs %}
+            <tr class="hover:bg-gray-50 transition-colors duration-150">
+              <td class="px-6 py-4 text-center text-sm text-gray-600">{{ forloop.counter }}</td>
+              <td class="px-6 py-4 font-semibold text-gray-800">{{ job.job_code }}</td>
+              <td class="px-6 py-4 text-center">
+                <span class="inline-block px-3 py-1 text-sm font-medium text-gray-800 bg-{{ job.status|lower|slugify }}-100 rounded-full">{{ job.status }}</span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="inline-block px-3 py-1 text-sm font-medium {% if job.priority %}text-red-800 bg-red-100{% else %}text-gray-800 bg-gray-200{% endif %} rounded-full">
+                  {% if job.priority %}Urgent{% else %}Non-urgent{% endif %}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-gray-600">{{ job.category.description }}</td>
+              <td class="px-6 py-4 text-gray-600">{{ job.notes|truncatechars:50 }}</td>
+              <td class="px-6 py-4 text-center">
+                <div class="flex justify-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
+                    <i class="bi bi-pencil mr-1"></i> Edit
+                  </button>
+                  <a href="{% url 'delete_job' job.id %}" class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors duration-200" onclick="return confirm('Delete this job?')">
+                    <i class="bi bi-trash mr-1"></i> Delete
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-12">
+                <div class="flex flex-col items-center">
+                  <i class="bi bi-tools text-gray-400" style="font-size: 3.5rem;"></i>
+                  <p class="mt-3 text-gray-500 text-lg">No maintenance requests available</p>
+                  <button class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addJobModal">
+                    + Add Maintenance Request
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-      </table>
-
-
-      <nav aria-label="Job Pagination">
-        <ul class="pagination justify-content-center">
-          {% if jobs.has_previous %}
-            <li class="page-item">
-              <a class="page-link" href="?page={{ jobs.previous_page_number }}&q={{ search_query }}">Previous</a>
+      <!-- Pagination -->
+      <div class="p-6">
+        <nav aria-label="Job Pagination">
+          <ul class="flex justify-center gap-2">
+            {% if jobs.has_previous %}
+            <li>
+              <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?page={{ jobs.previous_page_number }}&q={{ search_query }}">Previous</a>
             </li>
-          {% else %}
-            <li class="page-item disabled"><span class="page-link">Previous</span></li>
-          {% endif %}
-
-          {% for num in jobs.paginator.page_range %}
-            {% if jobs.number == num %}
-              <li class="page-item active"><span class="page-link">{{ num }}</span></li>
             {% else %}
-              <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ search_query }}">{{ num }}</a></li>
-            {% endif %}
-          {% endfor %}
-
-          {% if jobs.has_next %}
-            <li class="page-item">
-              <a class="page-link" href="?page={{ jobs.next_page_number }}&q={{ search_query }}">Next</a>
+            <li>
+              <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Previous</span>
             </li>
-          {% else %}
-            <li class="page-item disabled"><span class="page-link">Next</span></li>
-          {% endif %}
-        </ul>
-      </nav>
+            {% endif %}
+            {% for num in jobs.paginator.page_range %}
+            {% if jobs.number == num %}
+            <li>
+              <span class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg">{{ num }}</span>
+            </li>
+            {% else %}
+            <li>
+              <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?page={{ num }}&q={{ search_query }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% if jobs.has_next %}
+            <li>
+              <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?page={{ jobs.next_page_number }}&q={{ search_query }}">Next</a>
+            </li>
+            {% else %}
+            <li>
+              <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Next</span>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
     </div>
   </main>
 
   <!-- Edit Modals -->
   {% for job in jobs %}
-  <div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1">
+  <div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1" aria-labelledby="editJobModalLabel{{ job.id }}" aria-hidden="true">
     <div class="modal-dialog">
       <form method="POST" action="{% url 'edit_job' job.id %}" class="modal-content">
         {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Maintenance Request: {{ job.job_code }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header border-b border-gray-200">
+          <h5 class="text-xl font-semibold text-gray-800" id="editJobModalLabel{{ job.id }}">Edit Maintenance Request: {{ job.job_code }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-
-
-         <div class="mb-3">
-          <label>Issues</label>
-          <select name="category" class="form-select edit-category" data-job-id="{{ job.id }}" id="editCategory{{ job.id }}">
-            <option value="" disabled>-- Select Service Category --</option>
-            {% for service in services %}
-              <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}"
-                {% if service.id == job.category.id %}selected{% endif %}>
-                {{ service.description }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-
-          <div class="mb-3">
-            <label>Agent</label>
-            <select name="agent_id" class="form-select">
-              {% for agent in agents %}
+        <div class="modal-body p-6">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Issues</label>
+              <select name="category" class="edit-category w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-job-id="{{ job.id }}" id="editCategory{{ job.id }}">
+                <option value="" disabled>-- Select Service Category --</option>
+                {% for service in services %}
+                <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}" {% if service.id == job.category.id %}selected{% endif %}>
+                  {{ service.description }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>
+              <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="" disabled>-- Select Agent --</option>
+                {% for agent in agents %}
                 <option value="{{ agent.id }}" {% if agent.id == job.agent_id %}selected{% endif %}>{{ agent.name }}</option>
-              {% endfor %}
-            </select>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+              <textarea name="notes" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional Notes">{{ job.notes }}</textarea>
+            </div>
+            <input type="hidden" name="priority" id="editPriority{{ job.id }}" value="{% if job.priority %}true{% else %}false{% endif %}">
           </div>
-
-           <div class="mb-3">
-            <label>Additional Notes</label>
-            <textarea  name="notes" class="form-control">{{ job.notes }}</textarea>
-          </div>
-
-
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <div class="modal-footer border-t border-gray-200 p-4">
+          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Save</button>
+          <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Cancel</button>
         </div>
       </form>
     </div>
@@ -166,142 +195,90 @@
   {% endfor %}
 
   <!-- Add Job Modal -->
-  <div class="modal fade" id="addJobModal" tabindex="-1">
+  <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <form method="POST" action="{% url 'add_job' %}" class="modal-content">
         {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">Add New Maintenance Request</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header border-b border-gray-200">
+          <h5 class="text-xl font-semibold text-gray-800" id="addJobModalLabel">Add New Maintenance Request</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-
-
-          <!--<div class="mb-3">-->
-          <!--  <label>Status</label>-->
-          <!--  <select name="status" class="form-select">-->
-          <!--    <option value="quoted">Quoted</option>-->
-          <!--    <option value="confirmed">Confirmed</option>-->
-          <!--    <option value="approved">Approved</option>-->
-          <!--    <option value="scheduled">Scheduled</option>-->
-          <!--  </select>-->
-          <!--</div>-->
-
-        <div class="mb-3">
-          <label>Issues</label>
-            <select name="category" id="categorySelect" class="form-select" required>
-              <option value="" disabled selected>-- Select Service Category --</option>
-              {% for service in services %}
+        <div class="modal-body p-6">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Issues</label>
+              <select name="category" id="categorySelect" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>-- Select Service Category --</option>
+                {% for service in services %}
                 <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}">{{ service.description }}</option>
-              {% endfor %}
-            </select>
-        </div>
-
-
-
-          <div class="mb-3">
-            <label>Agent</label>
-            <select name="agent_id" class="form-select" required>
-              <option value="" disabled selected>-- Select Agent --</option>
-              {% for agent in agents %}
-              <option value="{{ agent.id }}">{{ agent.name }}</option>
-              {% endfor %}
-            </select>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>
+              <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>-- Select Agent --</option>
+                {% for agent in agents %}
+                <option value="{{ agent.id }}">{{ agent.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+              <textarea name="notes" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional Notes"></textarea>
+            </div>
+            <input type="hidden" name="priority" id="prioritySelect">
           </div>
-
-          <!--<div class="mb-3">-->
-          <!--  <label>Trader</label>-->
-          <!--  <select name="trader_id" class="form-select" required>-->
-          <!--    <option value="" disabled selected>-- Select Trader --</option>-->
-          <!--    {% for trader in traders %}-->
-          <!--    <option value="{{ trader.id }}">{{ trader.name }}</option>-->
-          <!--    {% endfor %}-->
-          <!--  </select>-->
-          <!--</div>-->
-            <div class="mb-3">
-            <label>Additional Notes</label>
-            <textarea  name="notes" class="form-control" placeholder="Additional Notes"></textarea>
-          </div>
-
-        <!--<div class="mb-3">-->
-        <!--  <label>Priority</label>-->
-        <!--  <select name="priority" id="prioritySelect" class="form-select" disabled>-->
-        <!--    <option value="false">Normal</option>-->
-        <!--    <option value="true">High</option>-->
-        <!--  </select>-->
-        <!--</div>-->
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer border-t border-gray-200 p-4">
+          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Save</button>
+          <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Close</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-white text-center text-sm py-3 border-t mt-5">
-    {% include 'renter/home/footer.html' %}
-  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Initialize Select2 for Add Job Modal
+      $('#categorySelect').select2({
+        placeholder: "-- Select Service Category --",
+        width: '100%',
+        dropdownParent: $('#addJobModal')
+      });
+
+      // Initialize Select2 for Edit Job Modals
+      $('.edit-category').each(function () {
+        $(this).select2({
+          placeholder: "-- Select Service Category --",
+          width: '100%',
+          dropdownParent: $(this).closest('.modal')
+        });
+      });
+
+      // Handle priority logic for add modal
+      $('#categorySelect').on('select2:select', function () {
+        const isUrgent = $(this).find(':selected').data('isurgent');
+        $('#prioritySelect').val(isUrgent ? 'true' : 'false');
+      });
+
+      // Handle priority logic for edit modals
+      $('.edit-category').on('select2:select', function () {
+        const isUrgent = $(this).find(':selected').data('isurgent');
+        const jobId = $(this).data('job-id');
+        $('#editPriority' + jobId).val(isUrgent ? 'true' : 'false');
+      });
+
+      // Ensure modals are initialized
+      $('.modal').on('shown.bs.modal', function () {
+        $(this).find('.edit-category').select2('destroy').select2({
+          placeholder: "-- Select Service Category --",
+          width: '100%',
+          dropdownParent: $(this)
+        });
+      });
+    });
+  </script>
 </body>
-
-<style>
-  html, body {
-    height: 100%;
-  }
-  body {
-    display: flex;
-    flex-direction: column;
-  }
-  main {
-    flex: 1 0 auto;
-  }
-  footer {
-    flex-shrink: 0;
-  }
-</style>
 </html>
-<script>
-  $(document).ready(function () {
-    // Initialize Select2
-    $('#categorySelect').select2({
-      placeholder: "-- Select Service Category --",
-      width: '100%',
-      dropdownParent: $('#addJobModal')
-    });
-
-    $('#prioritySelect').select2({
-      placeholder: "Select Priority",
-      width: '100%',
-      dropdownParent: $('#addJobModal')
-    });
-
-    // On category change, adjust the priority
-    $('#categorySelect').on('change', function () {
-      const isUrgent = $(this).find(':selected').data('isurgent');
-
-      if (isUrgent === true || isUrgent === "true") {
-        $('#prioritySelect').val("true").trigger('change');
-      } else {
-        $('#prioritySelect').val("false").trigger('change');
-      }
-    });
-  });
-</script>
-<script>
-  document.querySelectorAll('.edit-category').forEach(function (select) {
-    select.addEventListener('change', function () {
-      const selectedOption = this.options[this.selectedIndex];
-      const isUrgent = selectedOption.getAttribute('data-isurgent') === 'true';
-      const jobId = this.getAttribute('data-job-id');
-      const prioritySelect = document.getElementById('editPriority' + jobId);
-
-      if (prioritySelect) {
-        prioritySelect.value = isUrgent ? 'true' : 'false';
-      }
-    });
-  });
-</script>
-
-
-

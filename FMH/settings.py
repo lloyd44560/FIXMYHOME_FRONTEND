@@ -224,3 +224,5 @@ MEDIA_ROOT = BASE_DIR / 'static/renter/images/uploads/'
 
 
 SOCIALACCOUNT_ADAPTER = 'renter.adapter.CustomSocialAccountAdapter'
+
+X_FRAME_OPTIONS = 'ALLOW-FROM http://https://sandbox.fixmh.com'

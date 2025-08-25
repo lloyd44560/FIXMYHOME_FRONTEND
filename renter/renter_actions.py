@@ -52,6 +52,7 @@ import re
 from django.db.models import Prefetch
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponse
 # 1. Index view for Properties
 @login_required
 def property_index(request):
@@ -246,7 +247,7 @@ def add_property(request):
 
             prop = Property.objects.create(
                 renter=renter,
-                agent=agent,  # ✅ssign agent
+                agent=agent,  #  Assign agent
                 name=data.get('name'),
                 floor_count=data.get('floor_count'),
                 city=data.get('city'),
@@ -310,8 +311,6 @@ def unlink_property(request, id):
     except Exception as e:
         print("Unlink error:", e)
         return redirect
-
-
 
 @login_required
 def edit_property(request, id):
@@ -505,7 +504,7 @@ def delete_job(request, id):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 
-########################################################################################## Renter Min. Standard Report ########################################################################################################
+##################################################################################################################### Renter Min. Standard Report ########################################################################################################
 @login_required
 def standard_report_list(request):
     renter = request.user.renter
@@ -735,7 +734,6 @@ def save_condition_report(request):
                 area = request.POST.get(f'area_name_{room_index}_{condition_index}')
                 if not area:
                     break  # Done with conditions for this room
-
                 status = request.POST.get(f'status_{room_index}_{condition_index}')
                 remarks = request.POST.get(f'remarks_{room_index}_{condition_index}')
                 photo = request.FILES.get(f'photo_{room_index}_{condition_index}')
@@ -753,13 +751,8 @@ def save_condition_report(request):
 
         messages.success(request, "Condition Report created successfully.")
         return redirect('condition_report_list')
-
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-
-# def condition_report_list(request):
-#     reports = MainConditionReport.objects.filter(renter=request.user.renter)
-#     return render(request, 'renter/home/condition_reports/list.html', {'reports': reports})
 
 def get_condition_report_data(request, report_id):
     report = get_object_or_404(MainConditionReport, pk=report_id)
@@ -813,52 +806,137 @@ def condition_report_list(request):
         'reports': reports,
         'room_names': room_names,
     })
+
 @login_required
+@csrf_exempt
 def edit_condition_report(request, report_id):
     report = get_object_or_404(MainConditionReport, id=report_id, renter=request.user.renter)
 
     if request.method == 'POST':
-        # Update uploaded file if given
-        if request.FILES.get('uploaded_file'):
-            report.uploaded_file = request.FILES['uploaded_file']
-        report.save()
+        print(request.POST)  # Add this line to see all POST data
 
-        # Loop over posted rooms
-        for key in request.POST:
-            if key.startswith("room_name_"):
-                idx = key.split("_")[-1]
-                room_name = request.POST.get(f"room_name_{idx}")
-                description = request.POST.get(f"room_description_{idx}")
-                room_id = request.POST.get(f"room_id_{idx}")
-                photo = request.FILES.get(f"room_photo_{idx}")
 
-                if room_id:
-                    # Update existing
-                    room = get_object_or_404(RenterRoom, id=room_id, renter=request.user.renter)
-                    room.room_name = room_name
-                    room.description = description
-                    if photo:
-                        room.photo = photo
-                    room.save()
-                else:
-                    # Create new
-                    RenterRoom.objects.create(
+        # new_rooms_json = request.POST.get("new_rooms_json")
+        print("=== DEBUG new_rooms_json ===")
+        # print(new_rooms_json)
+
+        # Pwede ka rin mag return muna ng HttpResponse para makita agad
+        # return HttpResponse(f"Received JSON: {new_rooms_json}")
+
+
+        print("\n=== DEBUG: POST DATA ===")
+        for k, v in request.POST.items():
+            print(f"{k}: {v}")
+        print("=== DEBUG: FILES ===")
+        for k, f in request.FILES.items():
+            print(f"{k}: {f}")
+        print("========================\n")
+
+        new_rooms_json = request.POST.get("new_rooms_json")
+        if new_rooms_json:
+            try:
+                new_rooms = json.loads(new_rooms_json)
+            except json.JSONDecodeError as e:
+                # return HttpResponse(f"Invalid JSON data: {e}")
+                print("Invalid JSON data:")
+            with transaction.atomic():
+                for room_data in new_rooms:
+                    room_name = room_data.get("room_name", "").strip()
+                    room_description = room_data.get("room_description", "").strip()
+
+                    if not room_name:
+                        continue  # Skip if no room name
+
+                    # Gumawa ng bagong room record
+                    new_room = RenterRoom.objects.create(
                         renter=request.user.renter,
-                        property=report.renter.property,  # adjust if different relation
                         room_name=room_name,
-                        description=description,
-                        photo=photo if photo else None
+                        description=room_description
                     )
 
-        return redirect('condition_report_list')
+                    # I-link ang bagong room sa report
+                    ConditionReportRoom.objects.create(
+                        report=report,
+                        room=new_room
+                    )
 
-    renter_rooms = RenterRoom.objects.filter(renter=request.user.renter)
-    return render(request, 'edit_condition_report.html', {
-        'report': report,
-        'renter_rooms': renter_rooms
-    })
+                    # Gumawa ng area conditions para sa bawat area
+                    areas = room_data.get("areas", [])
+                    for area in areas:
+                        area_name = area.get("area_name", "").strip()
+                        status = area.get("status", "").strip() or "Clean"  # default "Clean"
+                        remarks = area.get("remarks", "").strip()
 
+                        if not area_name:
+                            continue  # Skip if no area name
 
+                        RenterRoomAreaCondition.objects.create(
+                            room=new_room,
+                            area_name=area_name,
+                            status=status,
+                            remarks=remarks
+                        )
+
+            # return HttpResponse("Rooms and areas saved successfully.")
+
+        # return HttpResponse("No new_rooms_json data found.")
+
+        try:
+            with transaction.atomic():
+                # Update existing rooms
+                print("\n--- Updating existing rooms ---")
+                for idx, room_link in enumerate(report.report_rooms.all(), start=1):
+                    current_name = room_link.room.room_name
+                    room_name_key = f"room_name_{room_link.room.id}"
+                    new_name = request.POST.get(room_name_key)
+                    print(f"room_name_key: {room_name_key}, POST value: {request.POST.get(room_name_key)}")
+                    print(f"Room {idx} current name: {current_name}, new name: {new_name}")
+
+                    if new_name and new_name.strip() != current_name:
+                        room_link.room.room_name = new_name.strip()
+                        room_link.room.save()
+                        print(f"✔ Room {idx} name updated to: {new_name}")
+
+                # Update existing conditions
+                print("\n--- Updating existing conditions ---")
+                rooms = [rr.room for rr in report.report_rooms.all()]
+                for condition in RenterRoomAreaCondition.objects.filter(room__in=rooms):
+                    print(f"Condition {condition.id} BEFORE: {condition.area_name} | {condition.status} | {condition.remarks}")
+                    condition.area_name = request.POST.get(f'area_name_{condition.id}', condition.area_name)
+                    condition.status = request.POST.get(f'status_{condition.id}', condition.status)
+                    condition.remarks = request.POST.get(f'remarks_{condition.id}', condition.remarks)
+
+                    uploaded_photo = request.FILES.get(f'photo_{condition.id}')
+                    if uploaded_photo:
+                        condition.photo = uploaded_photo
+                        print(f"✔ Condition {condition.id} photo updated.")
+
+                    condition.save()
+                    print(f"✔ Condition {condition.id} updated to: {condition.area_name} | {condition.status} | {condition.remarks}")
+
+                # Handle NEW rooms & conditions
+                # Hanapin lahat ng keys na nagsisimula sa 'new_room_name'
+                new_room_keys = [key for key in request.POST.keys() if key.startswith("new_room_name")]
+                print(f" Found new room keys: {new_room_keys}")
+
+                # Update uploaded file for the whole report
+                uploaded_file = request.FILES.get('uploaded_file')
+                if uploaded_file:
+                    report.uploaded_file = uploaded_file
+                    report.save()
+                    print(f"✔ Uploaded file for report {report.id} updated.")
+
+                # messages.success(request, "Condition Report created successfully.")
+                # return redirect('condition_report_list')
+                messages.success(request, "Condition Report updated successfully.")
+                print("✔ All updates committed successfully.")
+                return redirect('condition_report_list')
+
+        except Exception as e:
+            messages.error(request, f"Error updating report: {e}")
+            print(f"Error: {e}")
+
+    return redirect('condition_report_list')
 
 @login_required
 def delete_renter_room(request, pk):
@@ -1018,3 +1096,7 @@ def delete_appliance_report(request, pk):
     messages.success(request, 'Appliance Report deleted successfully.')
     return redirect('appliance_report_list')
 
+# Experimental all in one report view
+
+def notebook_view(request):
+    return render(request, 'renter/home/notebook.html')

@@ -1,195 +1,157 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome Home - FixMyHome</title>
   <script src="https://cdn.tailwindcss.com"></script>
-    <!-- ✅ USE Bootstrap 5 only -->
-    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
-            {% include 'renter/home/navbar.html' %}
-
+  <!-- Bootstrap Icons for consistency -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
-{% load static %}
-<body class="bg-gray-50">
+<body class="bg-gray-50 font-sans">
+  {% include 'renter/home/navbar.html' %}
 
-
-<!-- Tabs Navigation -->
-
-
-<!-- Tabs Content -->
-<div class="tab-content" id="mainTabsContent">
-  <div class="tab-pane fade show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
-    <!-- Property Table Section (injected from template) -->
-
+  <!-- Hero Section -->
+  <section class="relative flex items-center justify-center px-4 py-24 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat min-h-[70vh]" style="background-image: url('{% static 'renter/images/RENTER_BG.jpg' %}');">
+  <div class="absolute inset-0 bg-black/65 backdrop-blur-sm"></div>
+  <div class="relative z-10 max-w-3xl mx-auto text-left pl-8 sm:pl-12 lg:pl-16">
+    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-white drop-shadow-xl">Welcome Back, {{ user.first_name }}!</h2>
+    <p class="text-white text-lg sm:text-xl lg:text-2xl mb-8 drop-shadow-xl max-w-2xl">
+      Manage your properties, report maintenance issues, and connect with agents and traders seamlessly.
+    </p>
+    <a href="/properties/" class="inline-block bg-blue-600 text-white py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 text-lg font-semibold">
+      Manage Your Properties
+    </a>
   </div>
-  <div class="tab-pane fade" id="minimum-standard-reports" role="tabpanel" aria-labelledby="standards-tab">
-    <!-- Minimum Standard Report Section (injected from template) -->
-
-  </div>
-</div>
-
-
-    <!-- Hero Section with Background -->
-
-<section class="relative flex items-center justify-center px-8 py-12 bg-cover bg-center bg-no-repeat min-h-[60vh]"
-    style="background-image: url('{% static 'renter/images/RENTER_BG.jpg' %}');">
-
-    <!-- Strong Dark Overlay -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-
-    <!-- Text Container -->
-    <div class="relative z-10 max-w-3xl mx-auto text-left">
-        <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-2xl">
-            Welcome Back {{ user.first_name }}!
-        </h2>
-        <p class="text-white text-lg md:text-xl mb-6 drop-shadow-2xl">
-            Quickly report maintenance issues, track requests, and manage your property with ease.
-        </p>
-        <a href="#" class="inline-block bg-blue-600 text-white py-3 px-6 rounded-full shadow hover:bg-blue-700 transition text-base font-semibold">
-            Get Started
-        </a>
-    </div>
-
 </section>
-    <!-- Features Section -->
-    <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h3 class="text-xl font-bold text-blue-600 mb-2">Manage Properties</h3>
-        <p class="text-gray-600 mb-4">Easily create and track your maintenance requests. Keep all your property details organized and accessible anytime.</p>
-        <a href="/properties/" class="text-blue-600 hover:underline">Manage your properties →</a>
-      </div>
-      <!--<div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">-->
-      <!--  <h3 class="text-xl font-bold text-blue-600 mb-2">View My Agents</h3>-->
-      <!--  <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Stay connected with your agents and get real-time updates.</p>-->
-      <!--  <a href="#" class="text-blue-600 hover:underline">Manage linked agents →</a>-->
-      <!--</div>-->
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h3 class="text-xl font-bold text-blue-600 mb-2">Maintenance Requests</h3>
-        <p class="text-gray-600 mb-4">Manage your maintenance requests. Assign tasks, track progress, and ensure everything gets done on time.</p>
-        <a href="/jobs/" class="text-blue-600 hover:underline">Manage your maintenance requests →</a>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h3 class="text-xl font-bold text-blue-600 mb-2">Condition Reports</h3>
-        <p class="text-gray-600 mb-4">Easily create and track your maintenance requests. Document the state of rooms before and after leasing.</p>
-        <a href="/condition-reports/" class="text-blue-600 hover:underline">Manage your condition reports →</a>
-      </div>
-    </section>
 
-    <section class="grid md:grid-cols-3 gap-6 px-8 my-16">
-
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h3 class="text-xl font-bold text-blue-600 mb-2">Appliance Reports</h3>
-        <p class="text-gray-600 mb-4">Monitor the status of all your service requests. Ensure all appliances are functioning properly and report issues quickly.</p>
-        <a href="/appliance-reports/" class="text-blue-600 hover:underline">Manage your appliance reports →</a>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h3 class="text-xl font-bold text-blue-600 mb-2">Minimum Standard Reports</h3>
-        <p class="text-gray-600 mb-4">Complete your profile for a better experience. Submit compliance reports to meet property standards and regulations.</p>
-        <a href="/standard-reports/" class="text-blue-600 hover:underline">Manage your minimum standard reports →</a>
-      </div>
-    </section>
-
-
-  <!-- Progress Section -->
-  <section class="bg-white mx-8 my-16 p-6 rounded-lg shadow">
-    <h3 class="text-2xl font-bold mb-4 text-gray-800">Complete Your Profile</h3>
-    <p class="text-gray-600 mb-4">Profiles that are 100% complete get more attention from traders.</p>
-
-    <div class="w-full bg-blue-100 rounded-full h-3 mb-4">
-      <div class="bg-blue-600 h-3 rounded-full" style="width: 75%;"></div>
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex items-center bg-gray-100 p-4 rounded-lg">
-        <span class="text-green-500 text-2xl mr-3">✓</span>
-        <span>Add your personal details</span>
-      </div>
-      <div class="flex items-center bg-gray-100 p-4 rounded-lg">
-        <span class="text-green-500 text-2xl mr-3">✓</span>
-        <span>Add your agent details</span>
-      </div>
-      <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
-        <div class="flex items-center">
-          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-          <span>Complete Condition Report</span>
+  <!-- Features Section -->
+  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Why Choose FixMyHouse?</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
+          <i class="bi bi-house-door-fill text-blue-600 text-4xl mb-4"></i>
+          <h4 class="text-xl font-semibold text-gray-800 mb-3">Streamlined Property Management</h4>
+          <p class="text-gray-600 mb-4">Easily manage your rental properties, track tenancy agreements, and ensure compliance with Australian tenancy laws.</p>
+          <!--<a href="/properties/" class="text-blue-600 hover:underline font-medium">Manage Properties →</a>-->
         </div>
-        <a href="" class="text-blue-600 hover:underline">→</a>
-      </div>
-    <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
-        <div class="flex items-center">
-          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-          <span>Add Job Requests</span>
+        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
+          <i class="bi bi-tools text-blue-600 text-4xl mb-4"></i>
+          <h4 class="text-xl font-semibold text-gray-800 mb-3">Fast Maintenance Requests</h4>
+          <p class="text-gray-600 mb-4">Report issues quickly and connect with trusted traders for prompt repairs, keeping your property in top condition.</p>
+          <!--<a href="/jobs/" class="text-blue-600 hover:underline font-medium">Submit a Request →</a>-->
         </div>
-        <a href="#" class="text-blue-600 hover:underline">→</a>
-      </div>
-
-      <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
-        <div class="flex items-center">
-          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-          <span>Add Appliance reports</span>
+        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
+          <i class="bi bi-person-check-fill text-blue-600 text-4xl mb-4"></i>
+          <h4 class="text-xl font-semibold text-gray-800 mb-3">Trusted Agent Connections</h4>
+          <p class="text-gray-600 mb-4">Work with licensed property agents to handle leasing, inspections, and compliance with ease.</p>
+          <!--<a href="/agents/" class="text-blue-600 hover:underline font-medium">Connect with Agents →</a>-->
         </div>
-        <a href="#" class="text-blue-600 hover:underline">→</a>
       </div>
-
-     <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
-        <div class="flex items-center">
-          <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-          <span>Add Minimum Standard Reports</span>
-        </div>
-        <a href="#" class="text-blue-600 hover:underline">→</a>
-      </div>
-    </div>
-
-      <!-- Properties Section -->
-  <br/>
-
-
-<!-- Minimum Standard Report  -->
-
-
-    <div class="mt-6 text-right">
-      <a href="#" class="text-blue-600 font-semibold hover:underline">View all tasks</a>
     </div>
   </section>
+{% load static %}
+<section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
+  <div class="max-w-7xl mx-auto">
+    <h3 class="text-4xl font-extrabold text-center text-gray-900 mb-16 tracking-tight">How FixMyHouse Works</h3>
+    <div class="space-y-16">
+      <!-- Renter Section -->
+      <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+        <div class="md:w-1/2">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Renter managing property" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+        </div>
+        <div class="md:w-1/2">
+          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Renters: Your Home, Your Control</h4>
+          <p class="text-gray-600 mb-6 leading-relaxed">
+            As a renter, FixMyHouse empowers you to report maintenance issues quickly, track repairs, and communicate with your property agent. Ensure your rental meets minimum standards, like proper ventilation and safety features, while keeping your lease details organized.
+          </p>
+          <a href="/properties/" class="inline-block bg-blue-600 text-white py-2.5 px-6 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-300 font-medium">
+            Start Managing Your Rental
+          </a>
+        </div>
+      </div>
+      <!-- Trader Section -->
+      <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+        <div class="md:w-1/2">
+          <img src="https://images.unsplash.com/photo-1581091215367-59ab6b52d2a9?auto=format&fit=crop&w=800&q=80" alt="Trader fixing property" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+        </div>
+        <div class="md:w-1/2">
+          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Traders: Reliable Repairs, Fast</h4>
+          <p class="text-gray-600 mb-6 leading-relaxed">
+            Traders on FixMyHouse are licensed professionals who handle maintenance requests efficiently. From plumbing to electrical work, traders receive detailed job requests from renters or agents and provide timely updates. Traders must comply with regulations to ensure quality repairs.
+          </p>
+          <a href="/jobs/" class="inline-block bg-blue-600 text-white py-2.5 px-6 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-300 font-medium">
+            View Maintenance Jobs
+          </a>
+        </div>
+      </div>
+      <!-- Agent Section -->
+      <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+        <div class="md:w-1/2">
+          <img src="https://images.unsplash.com/photo-1596079890680-7b1d9ffb2a6d?auto=format&fit=crop&w=800&q=80" alt="Agent managing property" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+        </div>
+        <div class="md:w-1/2">
+          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Agents: Seamless Property Management</h4>
+          <p class="text-gray-600 mb-6 leading-relaxed">
+            Property agents act as the bridge between renters and property owners, handling lease agreements, routine inspections, and maintenance coordination. FixMyHouse streamlines communication, allowing agents to assign traders, track progress, and ensure compliance with state regulations.
+          </p>
+          <a href="/agents/" class="inline-block bg-blue-600 text-white py-2.5 px-6 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-300 font-medium">
+            Manage Your Properties
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
   <!-- Testimonials Section -->
-  <section class="bg-blue-50 py-16 px-8">
-    <h3 class="text-3xl font-bold text-center mb-12">What Our Users Say</h3>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
-        <p class="text-gray-600 italic mb-4">"FixMyHouse made it so easy to report maintenance issues. The response time is amazing!"</p>
-        <h4 class="font-bold text-blue-600">- Jane D.</h4>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
-        <p class="text-gray-600 italic mb-4">"I love being able to track all my requests in one place. Very user-friendly."</p>
-        <h4 class="font-bold text-blue-600">- Mark S.</h4>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
-        <p class="text-gray-600 italic mb-4">"The design is clean and I can complete my profile in minutes. Highly recommended!"</p>
-        <h4 class="font-bold text-blue-600">- Sarah W.</h4>
+  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-blue-50">
+    <div class="max-w-7xl mx-auto">
+      <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">What Our Users Say</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
+          <p class="text-gray-600 italic mb-4">"FixMyHome made reporting maintenance issues so simple. I got a response from my agent within hours!"</p>
+          <h4 class="font-semibold text-blue-600">- Jane D., Renter, Sydney</h4>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
+          <p class="text-gray-600 italic mb-4">"As a trader, I love how FixMyHome organizes job requests. It’s easy to track and complete tasks."</p>
+          <h4 class="font-semibold text-blue-600">- Mark S., Plumber, Melbourne</h4>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
+          <p class="text-gray-600 italic mb-4">"Managing multiple properties is a breeze with FixMyHome. The platform keeps everything in one place."</p>
+          <h4 class="font-semibold text-blue-600">- Sarah W., Property Agent, Brisbane</h4>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Contact Us Section -->
-  <section class="px-8 py-16">
-    <h3 class="text-3xl font-bold text-center mb-6">Need Help?</h3>
-    <p class="text-center text-gray-600 mb-8">Contact our support team and we'll get back to you as soon as possible.</p>
-    <div class="flex justify-center">
-      <a href="#" class="bg-blue-600 text-white py-3 px-6 rounded-full hover:bg-blue-700 transition">Contact Us</a>
+  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+    <div class="max-w-7xl mx-auto text-center">
+      <h3 class="text-3xl font-bold text-gray-900 mb-6">Need Help?</h3>
+      <p class="text-gray-600 mb-8 max-w-2xl mx-auto">Our support team is here to assist with any questions about managing your properties, reporting issues, or connecting with agents and traders.</p>
+      <a href="/contact/" class="inline-block bg-blue-600 text-white py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 text-lg font-semibold">Contact Us</a>
     </div>
   </section>
 
+  <style>
+     a {
+      text-decoration: none !important;
+    }
+
+     a:hover {
+      text-decoration: none !important;
+    }
+
+  </style>
   <!-- Footer -->
-  {% include 'renter/home/footer.html' %}
-
-
+  <footer class="bg-gray-800 text-white py-8">
+    {% include 'renter/home/footer.html' %}
+  </footer>
 </body>
-
 </html>

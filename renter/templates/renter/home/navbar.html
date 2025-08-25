@@ -2,113 +2,228 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Welcome Home - FixMyHouse</title>
+  <title>FixMyHouse Navbar</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  {% load static %}
+
+  <style>
+    /* Override Bootstrap styles for Tailwind navbar */
+    #tailwind-navbar * {
+      box-sizing: border-box;
+    }
+
+    #tailwind-navbar .btn {
+      all: unset;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    /* Fix Bootstrap icon margins in Tailwind context */
+    #tailwind-navbar .bi {
+      margin-right: 0.5rem;
+    }
+
+    /* Smooth transitions */
+    #tw-menu {
+      transition: all 0.3s ease-in-out;
+    }
+
+    #tailwind-navbar a {
+      text-decoration: none !important;
+    }
+
+    #tailwind-navbar a:hover {
+      text-decoration: none !important;
+    }
+
+    /* Better mobile menu styling */
+    @media (max-width: 767px) {
+      #tw-menu.show {
+        display: block !important;
+      }
+    }
+  </style>
 </head>
 <body class="bg-gray-50">
 
-<!-- Navbar -->
-<nav class="flex justify-between items-center px-6 py-4 bg-white shadow-md sticky top-0 z-50">
-  <!-- Logo -->
-  <h1 class="text-2xl font-bold text-blue-600 flex items-center space-x-2">
-    <img src="{% static 'renter/images/FMH PROPOSED LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
-    <span>FixMyHouse</span>
-  </h1>
+  <!-- Tailwind Navbar Wrapper -->
+  <div id="tailwind-navbar" class="relative z-50">
+    <nav class="bg-white shadow-md border-b border-gray-200 sticky top-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
 
-  <!-- Hamburger Button -->
-  <button id="menu-btn" class="block md:hidden focus:outline-none z-50">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  </button>
+          <!-- Logo Section -->
+          <div class="flex items-center space-x-3 flex-shrink-0">
+            <img src="/static/renter/images/FMH PROPOSED LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
+            <span class="text-xl md:text-2xl font-bold text-blue-600 whitespace-nowrap">FixMyHouse</span>
+          </div>
 
-  <!-- Nav Links -->
-<div id="menu" class="hidden lg:flex flex-col lg:flex-row lg:items-center absolute lg:static top-[64px] left-0 w-full lg:w-auto bg-white p-4 lg:p-0 shadow-md lg:shadow-none z-40 space-y-4 lg:space-y-0 lg:space-x-8 overflow-y-auto max-h-[80vh]">
-    <a href="/welcome/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
-      </svg>
-      <span>Home</span>
-    </a>
-    <!-- Other menu items remain the same -->
-    <a href="/properties/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5 1.5m0 0L12 4.5l7.5 7.5M4.5 11.5V19a2 2 0 002 2H9v-6h6v6h2.5a2 2 0 002-2v-7.5" />
-      </svg>
-      <span>Properties</span>
-    </a>
-    <a href="/maintenance/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h.5M15 12h.5a2 2 0 110 4H15m0 0v1a3 3 0 01-3 3H9a3 3 0 01-3-3v-1" />
-      </svg>
-      <span>Maintenance</span>
-    </a>
-    <a href="/condition-reports/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8M8 8h8M4 6h16M4 18h16" />
-      </svg>
-      <span>Condition Reports</span>
-    </a>
-    <a href="/appliance-reports/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-9 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-      <span>Appliance Reports</span>
-    </a>
-    <a href="/standard-reports/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7M12 4v1m0 4v2m0 4v2m0 4v1" />
-      </svg>
-      <span>Minimum Standards</span>
-    </a>
-    <!--<a href="/chat/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">-->
-    <!--  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
-    <!--    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 4h.01M4 6h16v12H4z" />-->
-    <!--  </svg>-->
-    <!--  <span>Messages</span>-->
-    <!--</a>-->
-    <!--<a href="/account/" class="flex items-center text-gray-700 hover:text-blue-600 transition space-x-2">-->
-    <!--  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
-    <!--    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" />-->
-    <!--  </svg>-->
-    <!--  <span>Account</span>-->
-    <!--</a>-->
-    <form id="logout-form" method="POST" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-        </svg>
-        Logout
-      </button>
-    </form>
+          <!-- Desktop Navigation -->
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+
+              <!-- Home -->
+              <a href="/welcome/" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200">
+                <i class="bi bi-house text-lg mr-2"></i>
+                <span>Home</span>
+              </a>
+
+              <!-- Properties -->
+              <a href="/properties/" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200">
+                <i class="bi bi-building text-lg mr-2"></i>
+                <span>My Home </span>
+              </a>
+
+
+              <!-- Minimum Standards -->
+              <a href="/report/" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200">
+                <i class="bi bi-list-check text-lg mr-2"></i>
+                <span>Reports</span>
+              </a>
+
+            </div>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+            <button id="tw-menu-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition duration-200">
+              <span class="sr-only">Open main menu</span>
+              <svg id="menu-icon-open" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg id="menu-icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="tw-menu" class="hidden md:hidden">
+          <div class="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-b-lg">
+
+            <!-- Home -->
+            <a href="/welcome/" class="flex items-center px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200 border-b border-gray-100">
+              <i class="bi bi-house text-lg mr-3 text-blue-600"></i>
+              <span>Home</span>
+            </a>
+
+            <!-- Properties -->
+            <a href="/properties/" class="flex items-center px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200 border-b border-gray-100">
+              <i class="bi bi-building text-lg mr-3 text-blue-600"></i>
+              <span>Properties</span>
+            </a>
+
+            <!-- Maintenance -->
+            <a href="/maintenance/" class="flex items-center px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200 border-b border-gray-100">
+              <i class="bi bi-tools text-lg mr-3 text-blue-600"></i>
+              <span>Maintenance</span>
+            </a>
+
+            <!-- Condition Reports -->
+            <a href="/condition-reports/" class="flex items-center px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200 border-b border-gray-100">
+              <i class="bi bi-journal-text text-lg mr-3 text-blue-600"></i>
+              <span>Condition Reports</span>
+            </a>
+
+            <!-- Appliance Reports -->
+            <a href="/appliance-reports/" class="flex items-center px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200 border-b border-gray-100">
+              <i class="bi bi-tv text-lg mr-3 text-blue-600"></i>
+              <span>Appliance Reports</span>
+            </a>
+
+            <!-- Minimum Standards -->
+            <a href="/standard-reports/" class="flex items-center px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition duration-200">
+              <i class="bi bi-list-check text-lg mr-3 text-blue-600"></i>
+              <span>Minimum Standards</span>
+            </a>
+
+            <!-- Logout -->
+            <form id="logout-form" method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                  </svg>
+                  Logout
+                </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </nav>
   </div>
-</nav>
 
-<style>
-@media (max-width: 1024px) {
-  #menu {
-    transition: all 0.3s ease;
-    transform-origin: top right;
-    transform: translateX(100%);
-  }
-  #menu:not(.hidden) {
-    transform: translateX(0);
-  }
-}
 
-</style>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Mobile Toggle Script -->
-<script>
-  const menuBtn = document.getElementById('menu-btn');
-  const menu = document.getElementById('menu');
+  <!-- Custom JavaScript -->
+  <script>
+    const twMenuBtn = document.getElementById('tw-menu-btn');
+    const twMenu = document.getElementById('tw-menu');
+    const menuIconOpen = document.getElementById('menu-icon-open');
+    const menuIconClose = document.getElementById('menu-icon-close');
 
-  menuBtn.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-  });
-</script>
+    // Toggle mobile menu
+    twMenuBtn.addEventListener('click', () => {
+      const isHidden = twMenu.classList.contains('hidden');
+
+      if (isHidden) {
+        twMenu.classList.remove('hidden');
+        twMenu.classList.add('show');
+        menuIconOpen.classList.add('hidden');
+        menuIconClose.classList.remove('hidden');
+      } else {
+        twMenu.classList.add('hidden');
+        twMenu.classList.remove('show');
+        menuIconOpen.classList.remove('hidden');
+        menuIconClose.classList.add('hidden');
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!twMenuBtn.contains(e.target) && !twMenu.contains(e.target)) {
+        twMenu.classList.add('hidden');
+        twMenu.classList.remove('show');
+        menuIconOpen.classList.remove('hidden');
+        menuIconClose.classList.add('hidden');
+      }
+    });
+
+    // Auto-close mobile menu on window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        twMenu.classList.add('hidden');
+        twMenu.classList.remove('show');
+        menuIconOpen.classList.remove('hidden');
+        menuIconClose.classList.add('hidden');
+      }
+    });
+
+    // Smooth scroll for anchor links (if any)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>

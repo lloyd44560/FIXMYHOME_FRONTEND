@@ -83,7 +83,7 @@ urlpatterns = [
 
 # For Maintainance Request Listings
 
-    path('maintenance/', renter_actions.list_jobs, name='job_list'),
+    path('maintenance/', renter_actions.list_jobs, name='maintenance_list'),
     path('jobs/add/', renter_actions.add_job, name='add_job'),
     path('jobs/edit/<int:job_id>/', renter_actions.edit_job, name='edit_job'),
     path('jobs/delete/<int:id>/', renter_actions.delete_job, name='delete_job'),
@@ -144,5 +144,6 @@ urlpatterns = [
     path('appliance-reports/edit/<int:report_id>/', renter_actions.edit_appliance_report, name='edit_appliance_report'),
     path('delete-appliance/<int:pk>/', renter_actions.delete_appliance_report, name='delete_appliance_report'),
 
+    path('report/', renter_actions.notebook_view, name='report'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

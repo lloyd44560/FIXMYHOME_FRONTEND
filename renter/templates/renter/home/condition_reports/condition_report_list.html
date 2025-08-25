@@ -1,522 +1,951 @@
 {% block content %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manage your property assign rooms and its conditions </title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- In base.html inside <head> -->
-    <!-- ✅ External CSS like Bootstrap -->
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Manage Your Property: Assign Rooms and Conditions</title>
+
+    <!-- External CSS like Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- ✅ Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-  {% include 'renter/home/navbar.html' %}
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">Condition Reports</h2>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
-          Add Condition Report
-        </button>
-    </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
+<body>
 
 
-            <form method="get" class="row g-2 mb-3">
-              <div class="col-auto">
-                <select name="room_name" class="form-select" onchange="this.form.submit()">
-                  <option value="">Filter by Room</option>
-                  {% for name in room_names %}
-                    <option value="{{ name }}" {% if request.GET.room_name == name %}selected{% endif %}>
-                      {{ name }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-            </form>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-primary">Condition Reports</h2>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
+                Add Condition Report
+            </button>
+        </div>
 
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <!-- Filter Form -->
+                <form method="get" class="row g-2 mb-3">
+                    <div class="col-auto">
+                        <select name="room_name" class="form-select" onchange="this.form.submit()">
+                            <option value="">Filter by Room</option>
+                            {% for name in room_names %}
+                                <option value="{{ name }}" {% if request.GET.room_name == name %}selected{% endif %}>
+                                    {{ name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
 
-            <div class="p-3">
-              <input type="text" id="searchInput" class="form-control" placeholder="Search condition reports...">
-            </div>
-              <div class="container mt-3">
-                {% for message in messages %}
-                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                {% endfor %}
-              </div>
+                <!-- Search Input -->
+                <div class="p-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search condition reports...">
+                </div>
 
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-secondary">#</th>
-                        <th class="text-secondary">Report Number</th>
-                        <th class="text-secondary">Date Created</th>
-                        <th class="text-secondary">Renter Name</th>
-                        <th class="text-secondary">File</th>
-                        <th class="text-secondary text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for report in reports %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td class="fw-semibold text-dark">{{ report.report_number }}</td>
-                        <td>{{ report.date_created|date:"M d, Y" }}</td>
-                        <td>{{ report.renter.user.get_full_name }}</td>
-                        <td>
-                          {% if report.uploaded_file %}
-                            <a href="{{ report.uploaded_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                              <i class="bi bi-file-earmark-arrow-down"></i> Download
-                            </a>
-                          {% else %}
-                            <span class="text-muted">No file</span>
-                          {% endif %}
-                        </td>
+                <!-- Messages -->
+                <div class="container mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
 
-                        <td class="text-center">
-                            <div class="btn-group" role="group">
-                               <!--<a href="#" class="btn btn-sm btn-outline-info" data-bs-toggle="modal"-->
-                               <!--    data-bs-target="#viewReportModal_{{ report.id }}">-->
-                               <!--   <i class="bi bi-eye"></i> View-->
-                               <!-- </a>-->
-                               <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editReportModal{{ report.id }}">
-                                  <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <!--<a href="#" class="btn btn-sm btn-outline-danger">-->
-                                <!--    <i class="bi bi-trash"></i> Delete-->
-                                <!--</a>-->
-                            </div>
-                        </td>
+                <!-- Reports Table -->
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-secondary">#</th>
+                            <th class="text-secondary">Report Number</th>
+                            <th class="text-secondary">Date Created</th>
+                            <th class="text-secondary">Renter Name</th>
+                            <th class="text-secondary">File</th>
+                            <th class="text-secondary text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td class="fw-semibold text-dark">{{ report.report_number }}</td>
+                                <td>{{ report.date_created|date:"M d, Y" }}</td>
+                                <td>{{ report.renter.user.get_full_name }}</td>
+                                <td>
+                                    {% if report.uploaded_file %}
+                                        <a href="{{ report.uploaded_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-file-earmark-arrow-down"></i> Download
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">No file</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editReportModal_{{ report.id }}">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
 
-                        <!-- View Report Modal -->
-                        <div class="modal fade" id="viewReportModal_{{ report.id }}" tabindex="-1" aria-labelledby="viewModalLabel_{{ report.id }}" aria-hidden="true">
+                            <!-- Edit Report Modal -->
+                         <!-- Enhanced Edit Modal -->
+                            <div class="modal fade" id="editReportModal_{{ report.id }}" tabindex="-1" aria-labelledby="editModalLabel_{{ report.id }}" aria-hidden="true">
                           <div class="modal-dialog modal-xl">
                             <div class="modal-content">
-                              <div class="modal-header bg-light">
-                                <h5 class="modal-title" id="viewModalLabel_{{ report.id }}">View Condition Report - {{ report.report_number }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                              </div>
+                              <form method="POST" enctype="multipart/form-data" action="{% url 'edit_condition_report' report.id %}" id="form">
+                                {% csrf_token %}
+                                <div class="row g-0">
 
-                              <div class="modal-body">
-                                <div class="mb-3"><strong>Date Created:</strong> {{ report.date_created|date:"M d, Y" }}</div>
-                                <div class="mb-3"><strong>Renter Name:</strong> {{ report.renter.user.get_full_name }}</div>
-
-                                {% for room in report.report_rooms.all %}
-                                <div class="card mb-3">
-                                  <div class="card-header bg-primary text-white">
-                                    Room: {{ room.room.room_name }}
+                                  <!-- LEFT SECTION -->
+                                  <div class="col-md-3 border-end p-3 bg-light">
+                                    <h6 class="fw-bold">Report Information</h6>
+                                    <p class="mb-1"><strong>ID:</strong> {{ report.id }}</p>
+                                    <p class="mb-1"><strong>Name:</strong> {{ report.name }}</p>
+                                    <p class="mb-3"><strong>File:</strong>
+                                      {% if report.file %}
+                                        <a href="{{ report.file.url }}" target="_blank">View File</a>
+                                      {% else %}
+                                        <span class="text-muted">No file</span>
+                                      {% endif %}
+                                    </p>
+                                    <hr>
+                                    <h6 class="fw-bold">Rooms</h6>
+                                    <ul class="list-group mb-3" style="max-height: 300px; overflow-y: auto;">
+                                      {% for room_link in report.report_rooms.all %}
+                                      <li class="list-group-item list-group-item-action" onclick="showRoom('{{ room_link.id }}')">
+                                        {{ room_link.room.room_name }}
+                                      </li>
+                                      {% endfor %}
+                                    </ul>
+                                    <button type="button" class="btn btn-success w-100" onclick="addRoomBlockEdit({{ report.id }})">
+                                      + Add Room
+                                    </button>
                                   </div>
-                                  <div class="card-body">
-                                    {% for condition in room.room.area_conditions.all %}
-                                    <div class="row mb-3">
-                                      <div class="col-md-3"><strong>Area Name:</strong> {{ condition.area_name }}</div>
-                                      <div class="col-md-2"><strong>Status:</strong> {{ condition.status }}</div>
-                                      <div class="col-md-3"><strong>Remarks:</strong> {{ condition.remarks }}</div>
-                                      <div class="col-md-4">
-                                        {% if condition.photo %}
-                                          <img src="{{ condition.photo.url }}" class="img-thumbnail" style="max-height:100px;">
-                                        {% else %}
-                                          <span class="text-muted">No photo</span>
-                                        {% endif %}
-                                      </div>
-                                    </div>
-                                    {% empty %}
-                                      <p class="text-muted">No conditions.</p>
-                                    {% endfor %}
-                                  </div>
-                                </div>
-                                {% empty %}
-                                <p class="text-muted">No rooms for this report.</p>
-                                {% endfor %}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
 
-
-
-                    <!-- Edit Report Modal -->
-                    <div class="modal fade" id="editReportModal{{ report.id }}" tabindex="-1" aria-labelledby="editReportModalLabel{{ report.id }}" aria-hidden="true">
-                      <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                          <form method="post" enctype="multipart/form-data" action="{% url 'edit_condition_report' report.id %}" id="reportForm">
-                            {% csrf_token %}
-                            <div class="modal-header bg-primary text-white">
-                              <h5 class="modal-title">Edit Condition Report - {{ report.report_number }}</h5>
-                              <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-
-                            <div class="modal-body p-0">
-                              <!-- Report Info -->
-                              <div class="p-3 border-bottom">
-                                <div class="row mb-3">
-                                  <div class="col-md-6">
-                                    <label>Report Number</label>
-                                    <input type="text" class="form-control" name="report_number" value="{{ report.report_number }}" required>
-                                  </div>
-                                  <input type="hidden" name="renter" value="{{ report.renter.id }}">
-                                  <p class="mt-2"><strong>Renter:</strong> {{ report.renter.first_name }} {{ report.renter.last_name }}</p>
-                                </div>
-                              </div>
-
-                              <!-- Two Column Layout -->
-                              <div class="d-flex" style="height: 500px;">
-                                <!-- LEFT: Room List -->
-                                <div class="border-end bg-light" style="width: 220px; overflow-y: auto;">
-                                  <ul class="list-group list-group-flush" id="roomList">
+                                  <!-- RIGHT SECTION -->
+                                  <div class="col-md-9 p-4" id="roomDetailsContainer_{{ report.id }}">
                                     {% for room_link in report.report_rooms.all %}
-                                    <li class="list-group-item {% if forloop.first %}active{% endif %}" data-room-id="{{ room_link.room.id }}" data-room-index="{{ forloop.counter0 }}">
-                                      {{ room_link.room.room_name }}
-                                    </li>
-                                    {% endfor %}
-                                  </ul>
-                                  <button type="button" class="btn btn-sm btn-primary m-2" id="addRoomBtn">+ Add Room</button>
-                                </div>
+                                    <div class="room-block" id="roomBlock_{{ room_link.id }}" style="{% if not forloop.first %}display:none;{% endif %}">
 
-                                <!-- RIGHT: Room Details -->
-                                <div class="flex-fill p-3" id="roomDetails">
-                                  {% for room_link in report.report_rooms.all %}
-                                  {% with room_index=forloop.counter0 %}
-                                  <div class="room-detail" data-room-id="{{ room_link.room.id }}" {% if not forloop.first %}style="display:none;"{% endif %}>
-                                    <input type="hidden" name="rooms[{{ room_index }}][id]" value="{{ room_link.room.id }}">
-                                    <h5>Room Name</h5>
-                                    <input type="text" name="rooms[{{ room_index }}][name]" class="form-control mb-2" value="{{ room_link.room.room_name }}" required>
-                                    <h6>Description</h6>
-                                    <input type="text" name="rooms[{{ room_index }}][description]" class="form-control mb-3" value="{{ room_link.room.description }}">
+                                      <!-- Room Info -->
+                                      <div class="mb-3">
+                                        <label class="fw-bold">Room Name</label>
+                                        <input type="text" name="room_name_{{ room_link.room.id }}" class="form-control" value="{{ room_link.room.room_name }}">
+                                      </div>
+                                      <div class="mb-3">
+                                        <label class="fw-bold">Room Description</label>
+                                        <textarea name="room_description_{{ room_link.room.id }}" class="form-control">{{ room_link.room.description }}</textarea>
+                                      </div>
+                                      <div class="mb-3">
+                                        <label class="fw-bold">Room Images</label>
+                                        <input type="file" name="room_photos_{{ room_link.room.id }}" multiple class="form-control">
+                                        {% for photo in room_link.room.photos.all %}
+                                          <img src="{{ photo.url }}" class="img-thumbnail mt-2 me-2" style="max-height:100px;">
+                                        {% endfor %}
+                                      </div>
 
-                                    {% for area in room_link.room.area_conditions.all %}
-                                    <div class="row mb-2 room-condition">
-                                      <input type="hidden" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][id]" value="{{ area.id }}">
-                                      <div class="col-md-3">
-                                        <input type="text" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][area_name]" class="form-control" value="{{ area.area_name }}" required>
+                                      <hr>
+                                      <h6 class="fw-bold">Area Conditions</h6>
+                                      {% for condition in room_link.room.area_conditions.all %}
+                                      <div class="row mb-3">
+                                        <div class="col-md-3">
+                                          <label>Area Name</label>
+                                          <input type="text" name="area_name_{{ condition.id }}" value="{{ condition.area_name }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-2">
+                                          <label>Status</label>
+                                          <select name="status_{{ condition.id }}" class="form-select">
+                                            <option value="Good" {% if condition.status == "Good" %}selected{% endif %}>Good</option>
+                                            <option value="Needs Repair" {% if condition.status == "Needs Repair" %}selected{% endif %}>Needs Repair</option>
+                                          </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <label>Remarks</label>
+                                          <input type="text" name="remarks_{{ condition.id }}" value="{{ condition.remarks }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label>Images</label>
+                                          <input type="file" name="photo_{{ condition.id }}" multiple class="form-control">
+                                          {% for img in condition.photos.all %}
+                                            <img src="{{ img.url }}" class="img-thumbnail mt-2 me-2" style="max-height:100px;">
+                                          {% endfor %}
+                                        </div>
                                       </div>
-                                      <div class="col-md-3">
-                                        <select name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][status]" class="form-control">
-                                          <option value="Clean" {% if area.status == 'Clean' %}selected{% endif %}>Clean</option>
-                                          <option value="Undamaged" {% if area.status == 'Undamaged' %}selected{% endif %}>Undamaged</option>
-                                          <option value="Working" {% if area.status == 'Working' %}selected{% endif %}>Working</option>
-                                        </select>
-                                      </div>
-                                      <div class="col-md-3">
-                                        <input type="text" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][remarks]" class="form-control" value="{{ area.remarks }}">
-                                      </div>
-                                      <div class="col-md-3">
-                                        {% if area.photo %}
-                                          <img src="{{ area.photo.url }}" class="img-thumbnail mb-1" style="max-height: 100px;">
-                                        {% endif %}
-                                        <input type="file" name="rooms[{{ room_index }}][conditions][{{ forloop.counter0 }}][photo]" class="form-control">
-                                      </div>
+                                      {% endfor %}
+
                                     </div>
                                     {% endfor %}
-
-                                    <div class="new-conditions-container" data-room-id="{{ room_link.room.id }}"></div>
-                                    <button type="button" class="btn btn-sm btn-success addConditionBtn" data-room-id="{{ room_link.room.id }}">+ Add Condition</button>
                                   </div>
-                                  {% endwith %}
-                                  {% endfor %}
                                 </div>
-                              </div>
+
+                                <!-- Hidden Field for New Rooms -->
+                                <input name="new_rooms_json" id="new_rooms_json">
+
+
+                                <!-- Container for newly added rooms -->
+                                <div id="editRoomsContainer_{{ report.id }}"></div>
+
+                                <!-- Footer -->
+                                <div class="modal-footer border-top">
+                                  <button type="submit" class="btn btn-primary" onclick="collectRoomData({{ report.id }})">Save Changes</button>
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                              </form>
                             </div>
-
-                            <div class="modal-footer">
-                              <button type="submit" class="btn btn-success">Save Changes</button>
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                      // Initialize room counter
-                      let roomCounter = {{ report.report_rooms.count }};
-                      let newRoomCounter = 0;
-
-                      // Function to switch room view
-                      function switchToRoom(roomId) {
-                        // Update active state in room list
-                        document.querySelectorAll('#roomList .list-group-item').forEach(item => {
-                          item.classList.remove('active');
-                          if (item.getAttribute('data-room-id') === roomId.toString()) {
-                            item.classList.add('active');
-                          }
-                        });
-
-                        // Show corresponding room details
-                        document.querySelectorAll('#roomDetails .room-detail').forEach(room => {
-                          room.style.display = room.getAttribute('data-room-id') === roomId.toString() ? 'block' : 'none';
-                        });
-                      }
-
-                      // Add Room Button Click Handler
-                      document.getElementById('addRoomBtn').addEventListener('click', function() {
-                        const newRoomId = 'new-' + newRoomCounter++;
-
-                        // Add to room list
-                        const roomListItem = document.createElement('li');
-                        roomListItem.className = 'list-group-item active';
-                        roomListItem.setAttribute('data-room-id', newRoomId);
-                        roomListItem.textContent = 'New Room';
-                        document.getElementById('roomList').appendChild(roomListItem);
-
-                        // Add room details
-                        const roomDetails = document.getElementById('roomDetails');
-                        const newRoomHtml = `
-                          <div class="room-detail" data-room-id="${newRoomId}" style="display: block;">
-                            <input type="hidden" name="new_rooms[${roomCounter}][id]" value="${newRoomId}">
-                            <h5>Room Name</h5>
-                            <input type="text" name="new_rooms[${roomCounter}][name]" class="form-control mb-2" placeholder="Room Name" required>
-                            <h6>Description</h6>
-                            <input type="text" name="new_rooms[${roomCounter}][description]" class="form-control mb-3" placeholder="Description">
-
-                            <div class="new-conditions-container" data-room-id="${newRoomId}"></div>
-                            <button type="button" class="btn btn-sm btn-success addConditionBtn" data-room-id="${newRoomId}">+ Add Condition</button>
                           </div>
-                        `;
-                        roomDetails.insertAdjacentHTML('beforeend', newRoomHtml);
-
-                        // Update active states
-                        document.querySelectorAll('#roomList .list-group-item').forEach(item => {
-                          item.classList.remove('active');
-                        });
-                        roomListItem.classList.add('active');
-
-                        roomCounter++;
-                      });
-
-                      // Add Condition Button Click Handler
-                      document.addEventListener('click', function(e) {
-                        if (e.target.classList.contains('addConditionBtn')) {
-                          const roomId = e.target.getAttribute('data-room-id');
-                          const container = document.querySelector(`.new-conditions-container[data-room-id="${roomId}"]`);
-                          const conditionCount = container.querySelectorAll('.condition-row').length;
-
-                          let conditionHtml = '';
-
-                          if (roomId.includes('new-')) {
-                            // New room condition
-                            const roomIndex = roomId.split('-')[1];
-                            conditionHtml = `
-                              <div class="row mb-2 condition-row">
-                                <div class="col-md-3">
-                                  <input type="text" name="new_rooms[${roomIndex}][conditions][${conditionCount}][area_name]" class="form-control" placeholder="Area Name" required>
-                                </div>
-                                <div class="col-md-3">
-                                  <select name="new_rooms[${roomIndex}][conditions][${conditionCount}][status]" class="form-control">
-                                    <option value="Clean">Clean</option>
-                                    <option value="Undamaged">Undamaged</option>
-                                    <option value="Working">Working</option>
-                                  </select>
-                                </div>
-                                <div class="col-md-3">
-                                  <input type="text" name="new_rooms[${roomIndex}][conditions][${conditionCount}][remarks]" class="form-control" placeholder="Remarks">
-                                </div>
-                                <div class="col-md-3">
-                                  <input type="file" name="new_rooms[${roomIndex}][conditions][${conditionCount}][photo]" class="form-control">
-                                </div>
-                              </div>
-                            `;
-                          } else {
-                            // Existing room condition
-                            conditionHtml = `
-                              <div class="row mb-2 condition-row">
-                                <div class="col-md-3">
-                                  <input type="text" name="rooms[${roomId}][conditions][${conditionCount}][area_name]" class="form-control" placeholder="Area Name" required>
-                                </div>
-                                <div class="col-md-3">
-                                  <select name="rooms[${roomId}][conditions][${conditionCount}][status]" class="form-control">
-                                    <option value="Clean">Clean</option>
-                                    <option value="Undamaged">Undamaged</option>
-                                    <option value="Working">Working</option>
-                                  </select>
-                                </div>
-                                <div class="col-md-3">
-                                  <input type="text" name="rooms[${roomId}][conditions][${conditionCount}][remarks]" class="form-control" placeholder="Remarks">
-                                </div>
-                                <div class="col-md-3">
-                                  <input type="file" name="rooms[${roomId}][conditions][${conditionCount}][photo]" class="form-control">
-                                </div>
-                              </div>
-                            `;
-                          }
-
-                          container.insertAdjacentHTML('beforeend', conditionHtml);
-                        }
-                      });
-
-                      // Room list item click handler
-                      document.getElementById('roomList').addEventListener('click', function(e) {
-                        if (e.target.classList.contains('list-group-item')) {
-                          const roomId = e.target.getAttribute('data-room-id');
-                          switchToRoom(roomId);
-                        }
-                      });
-                    });
-                    </script>
+                        </div>
 
 
-
-
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center text-muted py-4">
-                            <i class="bi bi-info-circle me-1"></i> No condition reports found.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-
-
-        <!-- Add Main Condition Report Modal -->
-        <div class="modal fade" id="addConditionReportModal" tabindex="-1" aria-labelledby="addConditionReportModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-              <form id="mainConditionReportForm" method="post" action="{% url 'save_condition_report' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="modal-header">
-                  <h5 class="modal-title" id="addConditionReportModalLabel">Add Condition Report</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label>Condition Report Number:</label>
-                    <input type="text" name="report_number" class="form-control" required>
-                  </div>
-
-
-                    <div class="mb-3">
-                      <label for="uploaded_file">Attach File (PDF, DOC, etc):</label>
-                      <input type="file" name="uploaded_file" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    </div>
-
-                  <hr>
-                  <div id="roomsContainer"></div>
-
-                  <button type="button" class="btn btn-success mt-3" onclick="addRoomBlock()">+ Add Room</button>
-                </div>
-
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary">Save Report</button>
-                </div>
-              </form>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <i class="bi bi-info-circle me-1"></i> No condition reports found.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-          </div>
+            <script>
+                function collectRoomData(modalId) {
+                    let rooms = [];
+
+                    const container = document.getElementById(`editRoomsContainer_${modalId}`);
+                    alert(modalId);
+                    if (!container) {
+                        alert(`Container not found for modal ID: ${modalId}`);
+                        return;
+                    }
+
+                    container.querySelectorAll(".room-block").forEach(function (roomEl) {
+                        let roomId = roomEl.getAttribute("data-room-id");
+                        let roomName = roomEl.querySelector(`input[name^='room_name_edit']`)?.value || "";
+                        let roomDescription = roomEl.querySelector(`textarea[name^='room_description_edit']`)?.value || "";
+
+                        let areas = [];
+                        roomEl.querySelectorAll(".condition-row").forEach(function (areaEl) {
+                            let areaName = areaEl.querySelector(`input[name^='area_name_edit']`)?.value || "";
+                            let status = areaEl.querySelector(`select[name^='status_edit']`)?.value || "";
+                            let remarks = areaEl.querySelector(`input[name^='remarks_edit']`)?.value || "";
+
+                            areas.push({
+                                area_name: areaName,
+                                status: status,
+                                remarks: remarks
+                            });
+                        });
+
+                        rooms.push({
+                            room_id: roomId,
+                            room_name: roomName,
+                            room_description: roomDescription,
+                            areas: areas
+                        });
+                    });
+
+                    alert(JSON.stringify(rooms));
+                    document.getElementById(`new_rooms_json_${modalId}`).value = JSON.stringify(rooms);
+                }
+            </script>
+
+            <!-- Add Condition Report Modal -->
+            <!-- Add Condition Report Modal -->
+
+<!-- Improved Add Condition Report Modal -->
+<div class="modal fade" id="addConditionReportModal" tabindex="-1" aria-labelledby="addConditionReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl-custom modal-dialog-custom">
+        <div class="modal-content modal-content-custom">
+            <form id="mainConditionReportForm" method="post" action="{% url 'save_condition_report' %}" enctype="multipart/form-data" class="h-100 d-flex flex-column">
+                 {% csrf_token %}
+                <!-- Enhanced Header -->
+                <div class="modal-header modal-header-custom">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-badge me-3">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <h4 class="modal-title fw-bold text-white mb-0" id="addConditionReportModalLabel">
+                                Create Condition Report
+                            </h4>
+                            <p class="text-white-50 mb-0 small">Document property conditions with detailed room assessments</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Enhanced Body -->
+                <div class="modal-body modal-body-custom">
+                    <div class="row g-0 h-100">
+
+                        <!-- LEFT PANEL - Enhanced -->
+                        <div class="col-md-4 left-panel">
+                            <div class="section-title">
+                                <i class="fas fa-info-circle"></i>
+                                Report Information
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label label-custom">
+                                    <i class="fas fa-hashtag me-2"></i>Report Number
+                                </label>
+                                <input type="text" name="report_number" class="form-control form-control-custom"
+                                       placeholder="Enter report number" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label label-custom">
+                                    <i class="fas fa-paperclip me-2"></i>Attach Document
+                                </label>
+                                <input type="file" name="uploaded_file" class="form-control form-control-custom"
+                                       accept=".pdf,.doc,.docx,.xls,.xlsx">
+                                <small class="text-muted">PDF, DOC, XLS files supported</small>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="section-title">
+                                <i class="fas fa-door-open"></i>
+                                Rooms Overview
+                            </div>
+
+                            <div class="mb-3" style="max-height: 300px; overflow-y: auto;">
+                                <ul class="list-unstyled" id="roomListSidebar">
+                                    <!-- Dynamically populated room list -->
+                                </ul>
+                            </div>
+
+                            <button type="button" class="btn btn-success-custom btn-custom w-100" onclick="addRoomBlock()">
+                                <i class="fas fa-plus me-2"></i>Add New Room
+                            </button>
+                        </div>
+
+                        <!-- RIGHT PANEL - Enhanced -->
+                        <div class="col-md-8 right-panel">
+                            <div class="section-title mb-4">
+                                <i class="fas fa-home"></i>
+                                Room Details & Conditions
+                            </div>
+
+                            <div id="roomsContainer">
+                                <!-- Room blocks will be dynamically added here -->
+                                <div class="text-center py-5">
+                                    <i class="fas fa-plus-circle text-muted" style="font-size: 4rem;"></i>
+                                    <h5 class="text-muted mt-3">No rooms added yet</h5>
+                                    <p class="text-muted">Click "Add New Room" to get started</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Footer -->
+                <div class="modal-footer modal-footer-custom">
+                    <div class="d-flex justify-content-between w-100">
+                        <div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                All fields marked with * are required
+                            </small>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-secondary btn-custom me-2" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary-custom btn-custom">
+                                <i class="fas fa-save me-2"></i>Save Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-
-
-
-
     </div>
 </div>
 
-
-<script>
-let roomIndex = 0;
-
-function addRoomBlock() {
-  const container = document.getElementById('roomsContainer');
-
-  const roomHTML = `
-    <div class="card p-3 mb-3 room-block" data-room-index="${roomIndex}">
-      <div class="d-flex justify-content-between align-items-center">
-        <h5>Room</h5>
-        <button type="button" class="btn btn-sm btn-danger" onclick="removeRoom(this)">Remove Room</button>
-      </div>
-      <input type="text" name="room_name_${roomIndex}" placeholder="Room Name" class="form-control mb-2" required>
-      <textarea name="room_description_${roomIndex}" class="form-control mb-2" placeholder="Room Description"></textarea>
-
-      <div class="condition-container" data-room-index="${roomIndex}">
-        <!-- Initial condition -->
-      </div>
-
-      <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addCondition(${roomIndex})">+ Add Condition</button>
+        </div>
     </div>
-  `;
-  container.insertAdjacentHTML('beforeend', roomHTML);
-  addCondition(roomIndex);  // Add 1 default condition
-  roomIndex++;
-}
 
+    <!-- JavaScript for dynamic room and condition management -->
+    <script>
+        let roomIndex = 0;
+    let roomCounter = 1;
+
+    function addRoomBlock() {
+        const container = document.getElementById('roomsContainer');
+
+        // Clear the "no rooms" message if it exists
+        if (container.innerHTML.includes('No rooms added yet')) {
+            container.innerHTML = '';
+        }
+
+        const roomHTML = `
+            <div class="room-card" data-room-index="${roomIndex}">
+                <div class="room-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-badge me-3">
+                                <i class="fas fa-door-closed"></i>
+                            </div>
+                            <h5 class="mb-0 fw-bold text-primary">Room ${roomCounter}</h5>
+                        </div>
+                        <button type="button" class="btn btn-danger-custom btn-custom btn-sm" onclick="removeRoom(this)">
+                            <i class="fas fa-trash me-1"></i>Remove
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label label-custom">
+                            <i class="fas fa-tag me-2"></i>Room Name *
+                        </label>
+                        <input type="text" name="room_name_${roomIndex}" placeholder="e.g., Living Room, Bedroom 1"
+                               class="form-control form-control-custom" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label label-custom">
+                            <i class="fas fa-camera me-2"></i>Room Photos
+                        </label>
+                        <input type="file" name="room_photos_${roomIndex}[]" class="form-control form-control-custom"
+                               multiple onchange="previewRoomPhotos(event, ${roomIndex})">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label label-custom">
+                        <i class="fas fa-align-left me-2"></i>Room Description
+                    </label>
+                    <textarea name="room_description_${roomIndex}" class="form-control form-control-custom"
+                              rows="3" placeholder="Describe the room layout, features, etc."></textarea>
+                </div>
+
+                <div id="roomPhotoPreview_${roomIndex}" class="d-flex flex-wrap gap-3 mb-4"></div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-primary mb-0">
+                        <i class="fas fa-list-check me-2"></i>Area Conditions
+                    </h6>
+                    <button type="button" class="btn btn-outline-primary btn-custom btn-sm" onclick="addCondition(${roomIndex})">
+                        <i class="fas fa-plus me-1"></i>Add Condition
+                    </button>
+                </div>
+
+                <div class="condition-container" data-room-index="${roomIndex}"></div>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', roomHTML);
+        addCondition(roomIndex);  // Add 1 default condition
+        updateRoomSidebar();
+        roomIndex++;
+        roomCounter++;
+    }
+    function previewRoomPhotos(event, index) {
+        const previewContainer = document.getElementById(`roomPhotoPreview_${index}`);
+        previewContainer.innerHTML = ""; // Clear previous previews
+
+        const files = event.target.files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("img-thumbnail");
+                        img.style.height = "80px";
+                        img.style.objectFit = "cover";
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
 function addCondition(roomIndex) {
-  const conditionContainer = document.querySelector(`.condition-container[data-room-index="${roomIndex}"]`);
-  const conditionCount = conditionContainer.querySelectorAll('.condition-row').length;
-  const conditionHTML = `
-    <div class="row condition-row align-items-end mb-2">
-      <div class="col-md-3">
-        <input type="text" name="area_name_${roomIndex}_${conditionCount}" placeholder="Area Name" class="form-control" required>
-      </div>
-      <div class="col-md-2">
-        <select name="status_${roomIndex}_${conditionCount}" class="form-control">
-          <option value="Clean">Clean</option>
-          <option value="Undamaged">Undamaged</option>
-          <option value="Working">Working</option>
-        </select>
-      </div>
-      <div class="col-md-3">
-        <input type="file" name="photo_${roomIndex}_${conditionCount}" class="form-control">
-      </div>
-      <div class="col-md-3">
-        <input type="text" name="remarks_${roomIndex}_${conditionCount}" placeholder="Remarks" class="form-control">
-      </div>
-      <div class="col-md-1">
-        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCondition(this)">✕</button>
-      </div>
-    </div>
-  `;
-  conditionContainer.insertAdjacentHTML('beforeend', conditionHTML);
-}
+        const conditionContainer = document.querySelector(`.condition-container[data-room-index="${roomIndex}"]`);
+        const conditionCount = conditionContainer.querySelectorAll('.condition-row').length;
 
-function removeRoom(button) {
-  const card = button.closest('.room-block');
-  card.remove();
-}
+        const conditionHTML = `
+            <div class="condition-row" data-condition-index="${conditionCount}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label label-custom">Area Name *</label>
+                        <input type="text" name="area_name_${roomIndex}_${conditionCount}"
+                               placeholder="e.g., Walls, Floor, Ceiling" class="form-control form-control-custom" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label label-custom">Status</label>
+                        <select name="status_${roomIndex}_${conditionCount}" class="form-control select-custom">
+                            <option value="Clean">✅ Clean</option>
+                            <option value="Undamaged">🛡️ Undamaged</option>
+                            <option value="Working">⚙️ Working</option>
+                            <option value="Damaged">⚠️ Damaged</option>
+                            <option value="Needs Repair">🔧 Needs Repair</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label label-custom">Photos</label>
+                        <input type="file" name="area_photos_${roomIndex}_${conditionCount}[]"
+                               class="form-control form-control-custom" multiple
+                               onchange="previewAreaPhotos(event, ${roomIndex}, ${conditionCount})">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label label-custom">Remarks</label>
+                        <input type="text" name="remarks_${roomIndex}_${conditionCount}"
+                               placeholder="Additional notes" class="form-control form-control-custom">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger-custom btn-custom btn-sm" onclick="removeCondition(this)">
+                            <i class="fas fa-times">x</i>
+                        </button>
+                    </div>
+                </div>
+                <div id="areaPhotoPreview_${roomIndex}_${conditionCount}" class="d-flex flex-wrap gap-2 mt-3"></div>
+            </div>
+        `;
+        conditionContainer.insertAdjacentHTML('beforeend', conditionHTML);
+    }
 
-function removeCondition(button) {
-  const row = button.closest('.condition-row');
-  row.remove();
-}
-</script>
-<!-- 🔽 ADD THIS BELOW -->
-<script>
-  document.getElementById('searchInput').addEventListener('input', function () {
-    const filter = this.value.toLowerCase();
-    const rows = document.querySelectorAll('table tbody tr');
+    function removeRoom(button) {
+        button.closest('.room-card').remove();
+        updateRoomSidebar();
 
-    rows.forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(filter) ? '' : 'none';
+        // Show "no rooms" message if container is empty
+        const container = document.getElementById('roomsContainer');
+        if (!container.querySelector('.room-card')) {
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-plus-circle text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="text-muted mt-3">No rooms added yet</h5>
+                    <p class="text-muted">Click "Add New Room" to get started</p>
+                </div>
+            `;
+        }
+    }
+
+function updateRoomSidebar() {
+        const sidebar = document.getElementById('roomListSidebar');
+        const rooms = document.querySelectorAll('.room-card');
+
+        sidebar.innerHTML = '';
+
+        rooms.forEach((room, index) => {
+            const roomNameInput = room.querySelector('input[name*="room_name"]');
+            const roomName = roomNameInput ? roomNameInput.value || `Room ${index + 1}` : `Room ${index + 1}`;
+            const conditionCount = room.querySelectorAll('.condition-row').length;
+
+            const listItem = document.createElement('li');
+            listItem.className = 'room-list-item';
+            listItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold">${roomName}</div>
+                        <small class="text-muted">${conditionCount} conditions</small>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            `;
+
+            listItem.onclick = () => {
+                room.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+
+            sidebar.appendChild(listItem);
+        });
+
+        if (rooms.length === 0) {
+            sidebar.innerHTML = '<li class="text-muted text-center py-3"><em>No rooms added</em></li>';
+        }
+    }
+
+    // Update sidebar when room names change
+    document.addEventListener('input', function(e) {
+        if (e.target.name && e.target.name.includes('room_name')) {
+            updateRoomSidebar();
+        }
     });
-  });
-</script>
 
+function previewAreaPhotos(event, roomIndex, conditionIndex) {
+    const previewContainer = document.getElementById(`areaPhotoPreview_${roomIndex}_${conditionIndex}`);
+    previewContainer.innerHTML = ""; // Clear old previews
 
-<style>
-    html, body {
-        height: 100%;
+    const files = event.target.files;
+    if (files.length > 0) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("img-thumbnail");
+                    img.style.height = "70px";
+                    img.style.objectFit = "cover";
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     }
-    body {
-        display: flex;
-        flex-direction: column;
+}
+
+  function removeeditRoom(button) {
+        button.closest('.room-card').remove();
+        updateRoomSidebar();
+
+        // Show "no rooms" message if container is empty
+        const container = document.getElementById('roomsContainer');
+        if (!container.querySelector('.room-card')) {
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-plus-circle text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="text-muted mt-3">No rooms added yet</h5>
+                    <p class="text-muted">Click "Add New Room" to get started</p>
+                </div>
+            `;
+        }
     }
-    .mt-auto {
-        margin-top: auto;
+
+    function removeCondition(button) {
+        button.closest('.condition-row').remove();
     }
-</style>
-<div class="mt-auto">
-        {% include 'renter/home/footer.html' %}
-    </div>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll('table tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+
+       let newRoomIndex = 0; // Counter for new rooms
+
+        function addRoomBlockEdit(modalId) {
+            const container = document.getElementById(`editRoomsContainer_${modalId}`);
+            if (!container) {
+                console.error(`Container not found for modal ID: ${modalId}`);
+                return;
+            }
+
+            const currentIndex = newRoomIndex;
+
+            const roomHTML = `
+                <div class="card p-3 mb-3 room-block" data-room-id="edit${currentIndex}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>New Room</h5>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeRoom(this)">Remove Room</button>
+                    </div>
+                    <input type="text" name="room_name_edit${currentIndex}" placeholder="Room Name" class="form-control mb-2" required>
+                    <textarea name="room_description_edit${currentIndex}" class="form-control mb-2" placeholder="Room Description"></textarea>
+
+                    <div class="condition-container" data-room-id="edit${currentIndex}"></div>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addConditionEdit(${currentIndex})">+ Add Condition</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', roomHTML);
+
+            // Add first condition automatically
+            addConditionEdit(currentIndex);
+
+            newRoomIndex++;
+        }
 
 
+        function addConditionEdit(roomIndex) {
+            const conditionContainer = document.querySelector(`.condition-container[data-room-id="edit${roomIndex}"]`);
+            if (!conditionContainer) return;
+
+            const conditionCount = conditionContainer.querySelectorAll('.condition-row').length;
+
+            const conditionHTML = `
+                <div class="row condition-row align-items-end mb-2">
+                    <div class="col-md-3">
+                        <input type="text" name="area_name_edit${roomIndex}_${conditionCount}" placeholder="Area Name" class="form-control" required>
+                    </div>
+                    <div class="col-md-2">
+                        <select name="status_edit${roomIndex}_${conditionCount}" class="form-control">
+                            <option value="Clean">Clean</option>
+                            <option value="Undamaged">Undamaged</option>
+                            <option value="Working">Working</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="file" name="photo_edit${roomIndex}_${conditionCount}" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="remarks_edit${roomIndex}_${conditionCount}" placeholder="Remarks" class="form-control">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCondition(this)">✕</button>
+                    </div>
+                </div>
+            `;
+            conditionContainer.insertAdjacentHTML('beforeend', conditionHTML);
+        }
+
+        function removeRoom(button) {
+                    const card = button.closest('.room-block');
+                    card.remove();
+                }
+
+        function removeCondition(button) {
+            const row = button.closest('.condition-row');
+            row.remove();
+        }
+
+    </script>
+
+    <script>
+        function showRoom(roomId) {
+          document.querySelectorAll('.room-block').forEach(block => block.style.display = 'none');
+          document.getElementById('roomBlock_' + roomId).style.display = 'block';
+        }
+
+
+        function removeRoom(button) {
+            const card = button.closest('.room-block');
+            card.remove();
+        }
+
+        function removeCondition(button) {
+            const row = button.closest('.condition-row');
+            row.remove();
+        }
+
+    </script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .mt-auto {
+            margin-top: auto;
+        }
+    </style>
+
+
+      <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --danger-color: #dc2626;
+            --warning-color: #d97706;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-xl-custom {
+            max-width: 95vw;
+            width: 95vw;
+            height: 90vh;
+        }
+
+        .modal-dialog-custom {
+            margin: 2.5vh auto;
+        }
+
+        .modal-content-custom {
+            height: 90vh;
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 16px 16px 0 0;
+            padding: 1.5rem 2rem;
+            border: none;
+        }
+
+        .modal-body-custom {
+            padding: 0;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .left-panel {
+            background: linear-gradient(180deg, var(--light-bg), #ffffff);
+            border-right: 2px solid var(--border-color);
+            padding: 2rem;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .right-panel {
+            padding: 2rem;
+            height: 100%;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control-custom {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .room-card {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .room-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .room-header {
+            background: linear-gradient(135deg, var(--light-bg), #ffffff);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .condition-row {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .condition-row:hover {
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-custom {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, var(--success-color), #047857);
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, var(--danger-color), #b91c1c);
+            color: white;
+        }
+
+        .room-list-item {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .room-list-item:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .photo-preview {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .photo-preview:hover {
+            transform: scale(1.05);
+        }
+
+        .select-custom {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem;
+            background: white;
+        }
+
+        .modal-footer-custom {
+            border-top: 2px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            background: var(--light-bg);
+            border-radius: 0 0 16px 16px;
+        }
+
+        .label-custom {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .icon-badge {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+    </style>
+
+
+
+
+</body>
+</html>
 {% endblock %}

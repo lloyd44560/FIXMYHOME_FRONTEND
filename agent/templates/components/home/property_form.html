@@ -14,6 +14,7 @@
     {% csrf_token %}
 
     <div class=" gap-6">
+
         <label class="block text-sm font-medium text-gray-700 mb-2">Property Name</label>
         {{ form.name|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
         <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Address</label>
@@ -28,11 +29,12 @@
           <p class="text-sm text-red-600 mt-1">{{ form.renter_name.errors.0 }}</p>
         {% endif %}
       </div>
-      <div class="flex sm:justify-start justify-end">
-        <a href="{% url 'renter_invitation' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition shadow">
-          Send Invitation
-        </a>
-      </div>
+         <div class="flex sm:justify-start justify-end">
+            <a href="{% if form.instance.id %}{% url 'renter_invitation' %}?name={{ form.renter_name.value|urlencode }}&email={{ form.renter_contact.value|urlencode }}&property_id={{ form.instance.id|urlencode }}&property_name={{ form.name.value|urlencode }}&property_address={{ form.address.value|urlencode }}&property_lease_start={{ form.lease_start.value|date:'m/d/Y'|urlencode }}&property_lease_end={{ form.lease_end.value|date:'m/d/Y'|urlencode }}&property_rent={{ form.rent.value|urlencode }}&property_status={{ form.status.value|urlencode }}{% else %}#{% endif %}"
+               class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition shadow {% if not form.renter_name.value or not form.renter_contact.value or not form.instance.id %}opacity-50 pointer-events-none{% endif %}">
+                Send Invitation
+            </a>
+        </div>
     </div>
 
     <div>
