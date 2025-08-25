@@ -14,15 +14,13 @@
         <form method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-xl mx-auto">
             {% csrf_token %}
             <div>
-
-
-                  {{form.instance.id|add_class:"w-full border border-gray-300 rounded-md p-2" }}
-                <label for="id_name" class="block text-left text-gray-700 font-semibold">Renter Name</label>
-                {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+              {{form.instance.id|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+              <label for="id_name" class="block text-left text-gray-700 font-semibold">Renter Name</label>
+              {{ form.name|add_class:"w-full border border-gray-300 rounded-md p-2" }}
             </div>
             <div>
-                <label for="id_email" class="block text-left text-gray-700 font-semibold">Renter Email</label>
-                {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
+              <label for="id_email" class="block text-left text-gray-700 font-semibold">Renter Email</label>
+              {{ form.email|add_class:"w-full border border-gray-300 rounded-md p-2" }}
             </div>
 
             <div>
@@ -60,9 +58,8 @@
               {{ form.status|add_class:"w-full border border-gray-300 rounded-md p-2" }}
             </div>
 
-
             <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                Send Invitation
+              Send Invitation
             </button>
         </form>
     </div>

@@ -23,6 +23,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
+from datetime import datetime
 
 from renter.models import Renter
 from trader.models import Jobs, Bidding
@@ -94,7 +95,7 @@ class AgentHomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Get only active properties
-        properties_list = Property.objects.filter(is_active__in=[True])
+        properties_list = Property.objects.filter(is_active=True).order_by('-created_at')
 
         # Set up pagination
         paginator = Paginator(properties_list, 10)  # Show 10 properties per page
