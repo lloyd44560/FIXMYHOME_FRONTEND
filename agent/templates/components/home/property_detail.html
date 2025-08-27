@@ -9,6 +9,7 @@
   <h2 class="text-2xl font-bold mb-4 text-blue-700">Property Details</h2>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+    <div><strong>Property ID:</strong> {{ property.property_id }}</div>
     <div><strong>Name:</strong> {{ property.name }}</div>
     <div><strong>Status:</strong> {{ property.get_status_display }}</div>
     <div><strong>Address:</strong> {{ property.address }}</div>
@@ -20,6 +21,7 @@
     <div><strong>Lease Period:</strong> {{ property.lease_start }} to {{ property.lease_end }}</div>
     <div><strong>Renter:</strong> {{ property.renter }}</div>
     <div><strong>Agent:</strong> {{ property.agent.user.username }}</div>
+    <div><strong>Key Number:</strong> {{ property.key_number }}</div>
   </div>
 
   {% if property.property_photo %}
