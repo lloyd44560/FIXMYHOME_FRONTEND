@@ -15,13 +15,38 @@
 </head>
 
 <body>
+<style>
 
+     body {
+      font-family: 'Lexend', sans-serif;
+    }
+    .btn-primary {
+      background-color: #293272;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #1f2558;
+    }
+    .btn-accent {
+      background-color: #EF7153;
+      color: white;
+    }
+    .btn-accent:hover {
+      background-color: #d75f44;
+    }
+    a {
+    text-decoration: none !important;
+    }
+    a:hover {
+      text-decoration: none !important;
+    }
+  </style>
 
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-primary">Condition Reports</h2>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConditionReportModal">
-                Add Condition Report
+                <i class="bi bi-plus-circle mr-1"></i> Add Condition Report
             </button>
         </div>
 
@@ -72,7 +97,7 @@
                         {% for report in reports %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td class="fw-semibold text-dark">{{ report.report_number }}</td>
+                                <td >{{ report.report_number }}</td>
                                 <td>{{ report.date_created|date:"M d, Y" }}</td>
                                 <td>{{ report.renter.user.get_full_name }}</td>
                                 <td>

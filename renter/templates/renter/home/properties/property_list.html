@@ -34,7 +34,7 @@
 
       <form method="get" class="flex gap-3 p-6 bg-white">
         <input type="text" name="q" value="{{ search_query }}" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search properties...">
-        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Search</button>
+        <button type="submit" class="bg-[#293272] text-white px-5 py-2 rounded-lg hover:bg-[#1f2558] transition-colors duration-200">Search</button>
       </form>
 
       <!-- Table container with full width and fixed height -->
@@ -310,6 +310,29 @@
       height: 96px;
       object-fit: cover;
       border: 1px solid #e5e7eb;
+    }
+     body {
+      font-family: 'Lexend', sans-serif;
+    }
+    .btn-primary {
+      background-color: #293272;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #1f2558;
+    }
+    .btn-accent {
+      background-color: #EF7153;
+      color: white;
+    }
+    .btn-accent:hover {
+      background-color: #d75f44;
+    }
+    a {
+    text-decoration: none !important;
+    }
+    a:hover {
+      text-decoration: none !important;
     }
   </style>
 

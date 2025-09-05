@@ -7,20 +7,16 @@
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-   <!-- Navbar -->
-    {% include 'renter/navbar.html' %}
-
+  <!-- Navbar -->
+  {% include 'renter/navbar.html' %}
   {% load static %}
   <form method="POST" action="/login_renter/">
   {% csrf_token %}
-
-
   <main class="flex-grow flex justify-center items-center px-4">
-
-
   </main>
   <div class="flex justify-center items-center min-h-screen bg-gray-100 px-4">
     <div class="max-w-screen-xl w-full bg-white shadow sm:rounded-lg flex flex-col lg:flex-row justify-center flex-1">
@@ -34,11 +30,12 @@
         </div>
 
         <div class="flex flex-col items-start mt-4">
-          <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold">Welcome To</h1>
-          <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-6">Fix My House</h1>
+          <!-- <div class="flex flex-col items-start mt-8 py-4"> -->
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4" style="color: #293272;">Welcome To</h1>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold" style="color: #293272;">Fix My House</h1>
+          <!-- </div> -->
 
           <input type="hidden" name="next" value="{{ next }}">
-
           <div class="w-full mt-4">
             <div class="max-w-md w-full mx-auto">
 
@@ -55,32 +52,32 @@
                 </div>
               {% endif %}
 
-              <div class="mb-4">
-                <input
-                  class="w-full px-6 py-3 rounded-lg border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-[#0000FF] focus:bg-white transition duration-200"
-                  type="text"
-                  placeholder="Email Address"
-                  name="email"
-                  {% if lockout %}disabled{% endif %}
-                />
-              </div>
+            <div class="mb-4">
+              <input
+                class="w-full px-6 py-3 rounded-lg border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-[#F28C38] focus:bg-white transition duration-200"
+                type="text"
+                placeholder="Username"
+                name="email"
+                {% if lockout %}disabled{% endif %}
+              />
+            </div>
 
-              <div class="mb-4">
-                <input
-                  class="w-full px-6 py-3 rounded-lg border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-[#0000FF] focus:bg-white transition duration-200"
-                  type="password"
-                  placeholder="Password"
-                  name="password"
-                  {% if lockout %}disabled{% endif %}
-                />
-              </div>
+            <div class="mb-4">
+              <input
+                class="w-full px-6 py-3 rounded-lg border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-[#F28C38] focus:bg-white transition duration-200"
+                type="password"
+                placeholder="Password"
+                name="password"
+                {% if lockout %}disabled{% endif %}
+              />
+            </div>
 
               <div class="mb-4">
                 <a href="{% url 'password_reset' %}" class="text-gray-600 text-sm font-medium hover:underline">Forgot Password?</a>
               </div>
 
               <button
-                class="w-full font-semibold bg-[#086cfc] text-white py-3 rounded-lg hover:bg-[#4795fd] transition duration-300 flex items-center justify-center"
+                class="w-full font-semibold bg-[#293272] text-white py-3 rounded-lg hover:bg-[#293290] transition duration-300 flex items-center justify-center"
                 type="submit"
                 {% if lockout %}disabled{% endif %}
               >
@@ -95,7 +92,6 @@
                    Sign Up Here
                   </button>
                 </span>
-
 
                 <!-- Signup Role Modal -->
                 <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -142,11 +138,7 @@
                     </div>
                   </div>
                 </div>
-
-
             </div>
-
-
 
               <div class="my-8 flex items-center">
                 <div class="flex-grow border-b border-gray-300"></div>
@@ -161,7 +153,6 @@
                 <a href="{% url 'social:begin' 'google-oauth2' %}" class="bg-[#DB4437] w-10 h-10 rounded-full text-white font-bold flex items-center justify-center">
                   G
                 </a>
-
               </div>
 
             </div>
@@ -169,8 +160,8 @@
         </div>
       </div>
 
-<!-- Right Side with Play Button and Background -->
-<div class="flex flex-1 items-center justify-center overflow-hidden rounded-r-lg relative px-4 py-8 lg:py-0"
+  <!-- Right Side with Play Button and Background -->
+  <div class="flex flex-1 items-center justify-center overflow-hidden rounded-r-lg relative px-4 py-8 lg:py-0"
      style="background-image: url('{% static 'renter/images/login_wallpaper.jpg' %}'); background-size: cover; background-position: center;">
 
   <!-- Optional dark overlay -->
@@ -186,19 +177,17 @@
 </div>
 
 <!-- Fullscreen Video Modal -->
-<div id="fullscreen-video" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999]">
-  <button type="button" onclick="hideVideo()" class="absolute top-4 right-4 text-white text-3xl z-[10000]">✖</button>
-
-  <video id="fmhVideo" class="w-full h-full object-contain z-10"
-         controls
-         playsinline
-         muted
-         preload="auto">
-    <source src="{% static 'videos/Fmh Video.mp4' %}" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</div>
-
+      <div id="fullscreen-video" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999]">
+        <button type="button" onclick="hideVideo()" class="absolute top-4 right-4 text-white text-3xl z-[10000]">✖</button>
+        <video id="fmhVideo" class="w-full h-full object-contain z-10"
+              controls
+              playsinline
+              muted
+              preload="auto">
+          <source src="{% static 'videos/Fmh Video.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
     </div>
   </div>
    </main>
@@ -295,9 +284,10 @@
   .fade-in.show {
     opacity: 1;
   }
+  body {
+      font-family: 'Lexend', sans-serif;
+    }
 </style>
-
-
   <!-- Footer -->
   {% include 'renter/home/footer.html' %}
 

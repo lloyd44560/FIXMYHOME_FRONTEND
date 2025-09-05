@@ -29,6 +29,30 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow {
       height: 38px;
     }
+
+    body {
+      font-family: 'Lexend', sans-serif;
+    }
+    .btn-primary {
+      background-color: #293272;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #1f2558;
+    }
+    .btn-accent {
+      background-color: #EF7153;
+      color: white;
+    }
+    .btn-accent:hover {
+      background-color: #d75f44;
+    }
+    a {
+    text-decoration: none !important;
+    }
+    a:hover {
+      text-decoration: none !important;
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-sans">
@@ -36,7 +60,11 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-900">My Maintenance Requests</h1>
-      <button class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addJobModal">
+      <!-- Add Maintenance Request Button -->
+      <button 
+        class="bg-[#293272] text-white px-5 py-2.5 rounded-lg hover:bg-[#1f2558] transition-colors duration-200 font-medium" 
+        data-bs-toggle="modal" 
+        data-bs-target="#addJobModal">
         <i class="bi bi-plus-circle mr-1"></i> Add Maintenance Request
       </button>
     </div>
@@ -48,7 +76,11 @@
     <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden w-full">
       <form method="GET" class="flex gap-3 p-6 bg-white">
         <input type="text" name="q" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search jobs..." value="{{ search_query }}">
-        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Search</button>
+        <button 
+          type="submit" 
+          class="bg-[#293272] text-white px-5 py-2 rounded-lg hover:bg-[#1f2558] transition-colors duration-200">
+          Search
+        </button>
       </form>
 
       <div class="overflow-x-auto w-full">
@@ -282,3 +314,30 @@
   </script>
 </body>
 </html>
+
+<style>
+
+     body {
+      font-family: 'Lexend', sans-serif;
+    }
+    .btn-primary {
+      background-color: #293272;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #1f2558;
+    }
+    .btn-accent {
+      background-color: #EF7153;
+      color: white;
+    }
+    .btn-accent:hover {
+      background-color: #d75f44;
+    }
+    a {
+    text-decoration: none !important;
+    }
+    a:hover {
+      text-decoration: none !important;
+    }
+  </style>
