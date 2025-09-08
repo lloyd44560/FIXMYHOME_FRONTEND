@@ -1,13 +1,13 @@
+{% load static %}
+
 <div class="w-full px-4 pt-16 bg-blue-50">
   <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4 max-w-screen-xl mx-auto">
     <div class="sm:col-span-2">
       <a href="/" aria-label="Go home" title="FixMyHouse" class="inline-flex items-center">
           <!-- Logo Section -->
           <div class="flex items-center space-x-3 flex-shrink-0">
-            <img src="/static/renter/images/FMH PROPOSED LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
-
+            <img src="{% static 'agent/images/FMH_NEW_LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
           </div>
-
         <span class="ml-2 text-xl font-bold tracking-wide text-blue-900 uppercase">FixMyHouse</span>
       </a>
       <div class="mt-6 lg:max-w-sm">
