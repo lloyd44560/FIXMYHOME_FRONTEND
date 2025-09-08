@@ -1,12 +1,13 @@
+{% load static %}
+
 <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
     <!-- Logo -->
-    <h1 class="text-3xl font-bold text-blue-600 flex items-center gap-2">
-         <!-- Logo Section -->
-          <div class="flex items-center space-x-3 flex-shrink-0">
-            <img src="/static/renter/images/FMH PROPOSED LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
-          </div>
-
-        <span>Agent Portal</span>
+    <h1 class="text-2xl font-bold text-blue-600 flex items-center gap-2">
+        <!-- Logo Section -->
+        <div class="flex items-center space-x-3 flex-shrink-0">
+            <img src="{% static 'agent/images/FMH_NEW_LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
+        </div>
+        <span>FixMyHouse</span>
     </h1>
 
     <!-- Nav Links -->

@@ -1,15 +1,18 @@
+{% load static %}
+
 <div class="w-full px-4 pt-16 mt-[7rem] bg-blue-50">
   <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4 max-w-screen-xl mx-auto">
     <div class="sm:col-span-2">
-      <a href="/" aria-label="Go home" title="FixMyHome" class="inline-flex items-center">
-        <svg class="w-8 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9.75L12 3l9 6.75V20a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-4H10v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.75z"></path>
-        </svg>
-        <span class="ml-2 text-xl font-bold tracking-wide text-blue-900 uppercase">FixMyHome</span>
+      <a href="/" aria-label="Go home" title="FixMyHouse" class="inline-flex items-center">
+          <!-- Logo Section -->
+          <div class="flex items-center space-x-3 flex-shrink-0">
+            <img src="{% static 'agent/images/FMH_NEW_LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
+          </div>
+        <span class="ml-2 text-xl font-bold tracking-wide text-blue-900 uppercase">FixMyHouse</span>
       </a>
       <div class="mt-6 lg:max-w-sm">
         <p class="text-sm text-blue-900">
-          At FixMyHome, we believe every home deserves a fresh start. From repairs to renovations, we’ve got your back.
+          At FixMyHouse, we believe every home deserves a fresh start. From repairs to renovations, we’ve got your back.
         </p>
         <p class="mt-4 text-sm text-blue-900">
           Discover seamless home solutions, trusted by families, powered by innovation, and delivered with care.
