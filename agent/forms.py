@@ -2,10 +2,6 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from renter.models import Renter
-
-# from django.forms import inlineformset_factory
-
-from renter.models import Renter
 from trader.models import Jobs, Bidding
 from .models import AgentRegister, Property, Rooms
 
