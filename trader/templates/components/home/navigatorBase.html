@@ -1,10 +1,12 @@
+{% load static %}
+
 <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
-    <!-- Logo -->
-    <h1 class="text-3xl font-bold text-blue-600 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
-        </svg>
-        <span>Trader Portal</span>
+    <!-- Logo Section -->
+    <h1 class="text-2xl font-bold text-blue-600 flex items-center gap-2">
+        <div class="flex items-center space-x-3 flex-shrink-0">
+            <img src="{% static 'trader/images/FMH_NEW_LOGO.png' %}" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
+        </div>
+        <span>FixMyHouse</span>
     </h1>
 
     <!-- Nav Links -->
