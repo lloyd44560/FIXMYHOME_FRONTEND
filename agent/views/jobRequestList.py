@@ -81,12 +81,14 @@ class ActiveJobsListView(ListView):
             context['filter_priority'] = self.request.POST.get('priority', '')
             context['filter_trader'] = self.request.POST.get('trader', '')
             context['filter_scheduled_at'] = self.request.POST.get('scheduled_at', '')
+            print(context['filter_category'], 'POST')
         else:
             context['filter_status'] = self.request.GET.get('status', '')
             context['filter_category'] = self.request.GET.get('category', '')
             context['filter_priority'] = self.request.GET.get('priority', '')
             context['filter_trader'] = self.request.GET.get('trader', '')
             context['filter_scheduled_at'] = self.request.GET.get('scheduled_at', '')
+            print(context['filter_category'], 'GET')
 
         # Status and category options for form
         context['status_options'] = dict(self.model._meta.get_field('status').choices)
@@ -94,4 +96,9 @@ class ActiveJobsListView(ListView):
             service.id: service.description
             for service in Services.objects.all()
         }
+        for key, label in context['category_options'].items():
+            if str(key) == context['filter_category']:
+                print(key, label, 'SELECTED')
+            print(key, label, 'CATEGORY OPTION')
+        
         return context
