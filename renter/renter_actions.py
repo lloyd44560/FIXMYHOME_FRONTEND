@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from datetime import datetime
 
-from renter.models import Renter, Property, ConditionReport,EmailVerification, FailedLoginAttempt, MinimumStandardReport
+from renter.models import Renter, Property, ConditionReport,EmailVerification, FailedLoginAttempt, MinimumStandardReport,RequestReport
 from thirdparty.models import ThirdParty
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -53,6 +53,7 @@ from django.db.models import Prefetch
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
+
 # 1. Index view for Properties
 @login_required
 def property_index(request):
@@ -1100,3 +1101,110 @@ def delete_appliance_report(request, pk):
 
 def notebook_view(request):
     return render(request, 'renter/home/notebook.html')
+
+
+
+
+# Request of Renter to Agent for Reports
+
+
+
+def request_report_list(request):
+    reports = RequestReport.objects.all().order_by('-date_requested')
+    renters = Renter.objects.all()
+    agents = AgentRegister.objects.all()
+    return render(request, 'renter/home/reports/request_report_list.html', {
+        'reports': reports,
+        'renters': renters,
+        'agents': agents,
+    })
+
+
+def add_request_report(request):
+    try:
+        renter = request.user.renter
+    except Exception:
+        messages.error(request, "No renter profile found for the logged-in user.")
+        return redirect('request_report_list')
+
+    if request.method == 'POST':
+        report_type = request.POST.get('report_type')
+        reason = request.POST.get('reason')
+        agent_id = request.POST.get('agent')
+
+        agent = get_object_or_404(AgentRegister, id=agent_id)
+
+        # Save the report
+        report = RequestReport.objects.create(
+            report_type=report_type,
+            reason=reason,
+            renter=renter,
+            agent=agent,
+            date_requested=timezone.now(),
+        )
+
+        # ------------------------
+        #  Send email to agent
+        # ------------------------
+        subject = f"New Report Request from {renter.user.get_full_name() or renter.user.username}"
+
+        message = (
+            f"Dear {agent.name},\n\n"
+            f"A renter has submitted a new request report assigned to you.\n\n"
+            f" Report Type: {report.get_report_type_display()}\n"
+            f" Reason: {report.reason}\n"
+            f" Renter: {renter.user.get_full_name()} ({renter.user.email})\n"
+            f" Date Requested: {report.date_requested.strftime('%B %d, %Y %I:%M %p')}\n\n"
+            f"Please log in to the FixMyHome system to review the details and take the necessary action.\n\n"
+            f"Thank you for your continued support in assisting renters.\n\n"
+            f"Best regards,\n"
+            f"The FixMyHome Team"
+        )
+
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[agent.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            messages.warning(request, f"Report saved but email could not be sent. Error: {str(e)}")
+
+        messages.success(request, "Request report created and notification sent to the agent.")
+        return redirect('request_report_list')
+
+    return redirect('request_report_list')
+
+
+def edit_request_report(request, pk):
+    report = get_object_or_404(RequestReport, pk=pk)
+
+    if request.method == 'POST':
+        report.report_type = request.POST.get('report_type')
+        report.reason = request.POST.get('reason')
+
+        # Force renter = logged-in user’s renter
+        try:
+            renter = Renter.objects.get(user=request.user)
+            report.renter = renter
+        except Renter.DoesNotExist:
+            return HttpResponse("No renter profile found for this user.", status=400)
+
+        # Update agent if provided
+        agent_id = request.POST.get('agent')
+        if agent_id:
+            report.agent = get_object_or_404(AgentRegister, id=agent_id)
+
+        report.save()
+        return redirect('request_report_list')  # make sure this matches urls.py
+
+    return redirect('request_report_list')
+
+
+def delete_request_report(request, pk):
+    report = get_object_or_404(RequestReport, pk=pk)
+    if request.method == 'POST':
+        report.delete()
+        return redirect('request_report_list')

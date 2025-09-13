@@ -29,6 +29,11 @@ class Jobs(models.Model):
     scheduled_at = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(null=True, blank=True, default=True)
 
+    # Added for backlogs Creation of Maintenance Request by Renter: Add selections for "When did the issue occur?" and
+    issue_found_at = models.DateTimeField(null=True, blank=True)
+    renter_availability = models.DateTimeField(null=True, blank=True)
+    issue_been_fixed_before = models.BooleanField(default=False)
+
     def save(self, *args, **kwargs):
         # Always regenerate job_code based on current status
         prefix = self.status[:3].upper()  # 'QUO', 'APP', etc.
@@ -47,3 +52,12 @@ class Jobs(models.Model):
 
     def __str__(self):
         return self.job_code
+
+# Added for multiple images for maintenance requests
+class JobImage(models.Model):
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="job_images/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.job.job_code}"

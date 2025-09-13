@@ -16,44 +16,6 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-  <style>
-    .select2-container .select2-selection--single {
-      height: 38px;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      padding: 0.5rem 1rem;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-      line-height: 24px;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-      height: 38px;
-    }
-
-    body {
-      font-family: 'Lexend', sans-serif;
-    }
-    .btn-primary {
-      background-color: #293272;
-      color: white;
-    }
-    .btn-primary:hover {
-      background-color: #1f2558;
-    }
-    .btn-accent {
-      background-color: #EF7153;
-      color: white;
-    }
-    .btn-accent:hover {
-      background-color: #d75f44;
-    }
-    a {
-    text-decoration: none !important;
-    }
-    a:hover {
-      text-decoration: none !important;
-    }
-  </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-sans">
   <main class="flex-grow w-full mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -61,9 +23,9 @@
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-900">My Maintenance Requests</h1>
       <!-- Add Maintenance Request Button -->
-      <button 
-        class="bg-[#293272] text-white px-5 py-2.5 rounded-lg hover:bg-[#1f2558] transition-colors duration-200 font-medium" 
-        data-bs-toggle="modal" 
+      <button
+        class="bg-[#293272] text-white px-5 py-2.5 rounded-lg hover:bg-[#1f2558] transition-colors duration-200 font-medium"
+        data-bs-toggle="modal"
         data-bs-target="#addJobModal">
         <i class="bi bi-plus-circle mr-1"></i> Add Maintenance Request
       </button>
@@ -74,10 +36,10 @@
 
     <!-- Jobs Table -->
     <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden w-full">
-      <form method="GET" class="flex gap-3 p-6 bg-white">
+      <form method="GET" class="flex gap-3 p-6 bg-white" >
         <input type="text" name="q" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search jobs..." value="{{ search_query }}">
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           class="bg-[#293272] text-white px-5 py-2 rounded-lg hover:bg-[#1f2558] transition-colors duration-200">
           Search
         </button>
@@ -93,6 +55,7 @@
               <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Priority</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600">Issues</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600">Additional Notes</th>
+              <th class="px-6 py-4 text-sm font-medium text-gray-600">Images</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-48">Actions</th>
             </tr>
           </thead>
@@ -111,6 +74,11 @@
               </td>
               <td class="px-6 py-4 text-gray-600">{{ job.category.description }}</td>
               <td class="px-6 py-4 text-gray-600">{{ job.notes|truncatechars:50 }}</td>
+              <td class="px-6 py-4">
+                  {% for img in job.images.all %}
+                    <img src="{{ img.image.url }}" class="h-12 w-12 rounded object-cover inline-block mr-1">
+                  {% endfor %}
+                </td>
               <td class="px-6 py-4 text-center">
                 <div class="flex justify-center gap-3">
                   <button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
@@ -182,7 +150,7 @@
   {% for job in jobs %}
   <div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1" aria-labelledby="editJobModalLabel{{ job.id }}" aria-hidden="true">
     <div class="modal-dialog">
-      <form method="POST" action="{% url 'edit_job' job.id %}" class="modal-content">
+      <form method="POST" action="{% url 'edit_job' job.id %}" class="modal-content" enctype="multipart/form-data" >
         {% csrf_token %}
         <div class="modal-header border-b border-gray-200">
           <h5 class="text-xl font-semibold text-gray-800" id="editJobModalLabel{{ job.id }}">Edit Maintenance Request: {{ job.job_code }}</h5>
@@ -210,6 +178,63 @@
                 {% endfor %}
               </select>
             </div>
+
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">When did the issue occur?</label>
+              <input type="datetime-local" name="issue_found_at"
+                     value="{{ job.issue_found_at|date:'Y-m-d\TH:i' }}"
+                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Renter Availability</label>
+              <input type="datetime-local" name="renter_availability"
+                     value="{{ job.renter_availability|date:'Y-m-d\TH:i' }}"
+                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input type="checkbox" name="issue_been_fixed_before" id="issueFixedBefore{{ job.id }}"
+                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                     {% if job.issue_been_fixed_before %}checked{% endif %}>
+              <label for="issueFixedBefore{{ job.id }}" class="text-sm font-medium text-gray-700">Has the issue been fixed before?</label>
+            </div>
+             <!-- Existing images -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Existing Images</label>
+                <div class="flex flex-wrap gap-3">
+                  {% for image in job.images.all %}
+                  <div class="relative border rounded p-1">
+                    <img src="{{ image.file.url }}" class="w-20 h-20 object-cover rounded">
+                    <label class="absolute top-0 right-0 bg-white p-1 rounded">
+                      <input type="checkbox" name="delete_images" value="{{ image.id }}"> ✕
+                    </label>
+                  </div>
+                  {% empty %}
+                  <p class="text-gray-500">No images uploaded</p>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Upload new images -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 5)</label>
+                <div id="edit-image-upload-container-{{ job.id }}">
+                  <input type="file" name="images" accept="image/*"
+                         class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2">
+                </div>
+
+                <button type="button" data-job-id="{{ job.id }}"
+                        class="add-edit-image-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                  + Add another image
+                </button>
+
+                <p id="edit-image-limit-msg-{{ job.id }}" class="text-red-500 text-sm mt-1 hidden">
+                  You can only upload up to 5 images.
+                </p>
+              </div>
+
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
               <textarea name="notes" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional Notes">{{ job.notes }}</textarea>
@@ -229,7 +254,7 @@
   <!-- Add Job Modal -->
   <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <form method="POST" action="{% url 'add_job' %}" class="modal-content">
+      <form method="POST" action="{% url 'add_job' %}" class="modal-content" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-header border-b border-gray-200">
           <h5 class="text-xl font-semibold text-gray-800" id="addJobModalLabel">Add New Maintenance Request</h5>
@@ -247,6 +272,30 @@
               </select>
             </div>
             <div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">When did the issue occur?</label>
+              <input type="datetime-local" name="issue_found_at"
+                     value="{{ job.issue_found_at|date:'Y-m-d\TH:i' }}"
+                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Renter Availability</label>
+              <input type="datetime-local" name="renter_availability"
+                     value="{{ job.renter_availability|date:'Y-m-d\TH:i' }}"
+                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input type="checkbox" name="issue_been_fixed_before" id="issueFixedBefore{{ job.id }}"
+                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                     {% if job.issue_been_fixed_before %}checked{% endif %}>
+              <label for="issueFixedBefore{{ job.id }}" class="text-sm font-medium text-gray-700">Has the issue been fixed before?</label>
+            </div>
+
+
+            </div>
+            <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>
               <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                 <option value="" disabled selected>-- Select Agent --</option>
@@ -256,6 +305,50 @@
               </select>
             </div>
             <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 5)</label>
+
+              <div id="image-upload-container">
+                <input type="file" name="images" accept="image/*"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2">
+              </div>
+
+              <button type="button" id="add-image-btn"
+                      class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                + Add another image
+              </button>
+
+              <p id="image-limit-msg" class="text-red-500 text-sm mt-1 hidden">
+                You can only upload up to 5 images.
+              </p>
+            </div>
+
+            <script>
+              const container = document.getElementById("image-upload-container");
+              const addBtn = document.getElementById("add-image-btn");
+              const limitMsg = document.getElementById("image-limit-msg");
+
+              addBtn.addEventListener("click", () => {
+                const inputs = container.querySelectorAll("input[type='file']");
+                if (inputs.length >= 5) {
+                  limitMsg.classList.remove("hidden");
+                  return;
+                }
+
+                const newInput = document.createElement("input");
+                newInput.type = "file";
+                newInput.name = "images";  // multiple inputs with same name → Django will receive a list
+                newInput.accept = "image/*";
+                newInput.className = "w-full border border-gray-300 rounded-lg px-4 py-2 mb-2";
+
+                container.appendChild(newInput);
+
+                if (container.querySelectorAll("input[type='file']").length >= 5) {
+                  addBtn.disabled = true;
+                  addBtn.classList.add("opacity-50", "cursor-not-allowed");
+                }
+              });
+            </script>
+            <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
               <textarea name="notes" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional Notes"></textarea>
             </div>
@@ -263,7 +356,7 @@
           </div>
         </div>
         <div class="modal-footer border-t border-gray-200 p-4">
-          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Save</button>
+          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Post Request</button>
           <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Close</button>
         </div>
       </form>
@@ -312,12 +405,83 @@
       });
     });
   </script>
+
+
+  <!-- Edit Modal Script-->
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".add-edit-image-btn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const jobId = btn.getAttribute("data-job-id");
+        const container = document.getElementById("edit-image-upload-container-" + jobId);
+        const limitMsg = document.getElementById("edit-image-limit-msg-" + jobId);
+
+        const inputs = container.querySelectorAll("input[type='file']");
+        if (inputs.length >= 5) {
+          limitMsg.classList.remove("hidden");
+          return;
+        }
+
+        const newInput = document.createElement("input");
+        newInput.type = "file";
+        newInput.name = "images";
+        newInput.accept = "image/*";
+        newInput.className = "w-full border border-gray-300 rounded-lg px-4 py-2 mb-2";
+
+        container.appendChild(newInput);
+
+        if (container.querySelectorAll("input[type='file']").length >= 5) {
+          btn.disabled = true;
+          btn.classList.add("opacity-50", "cursor-not-allowed");
+        }
+      });
+    });
+  });
+  </script>
+
 </body>
 </html>
 
 <style>
 
      body {
+      font-family: 'Lexend', sans-serif;
+    }
+    .btn-primary {
+      background-color: #293272;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #1f2558;
+    }
+    .btn-accent {
+      background-color: #EF7153;
+      color: white;
+    }
+    .btn-accent:hover {
+      background-color: #d75f44;
+    }
+    a {
+    text-decoration: none !important;
+    }
+    a:hover {
+      text-decoration: none !important;
+    }
+    .select2-container .select2-selection--single {
+      height: 38px;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: 24px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 38px;
+    }
+
+    body {
       font-family: 'Lexend', sans-serif;
     }
     .btn-primary {

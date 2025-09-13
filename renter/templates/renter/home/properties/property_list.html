@@ -140,7 +140,21 @@
       </div>
     </div>
     
-    
+     <!--iframe page po here yung may url na request-reports/ -->
+
+    <div class="container mt-4">
+      <h3 class="mb-3">Request Reports</h3>
+
+      <div class="card shadow-sm rounded-3">
+        <div class="card-body p-0">
+          <iframe
+            src="{% url 'request_report_list' %}"
+            style="width: 100%; height: 80vh; border: none;"
+            title="Request Reports">
+          </iframe>
+        </div>
+      </div>
+    </div>
     
     <!-- Profile COmpletion Section -->
     
