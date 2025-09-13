@@ -152,5 +152,12 @@ urlpatterns = [
     path('request-reports/edit/<int:pk>/', renter_actions.edit_request_report, name='edit_request_report'),
     path('request-reports/delete/<int:pk>/', renter_actions.delete_request_report, name='delete_request_report'),
 
+#   Calendar View of Renter Side
+
+
+    path("calendar/", renter_actions.calendar_view, name="calendar"),
+    path("events/", renter_actions.event_list, name="event_list"),
+    path("events/add/", renter_actions.add_event, name="add_event"),
+    
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

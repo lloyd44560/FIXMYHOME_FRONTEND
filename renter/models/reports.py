@@ -30,8 +30,6 @@ class MinimumStandardReport(models.Model):
     audit_expiry = models.DateField(null=True, blank=True)
 
 
-
-
 # Added for Renter request for reports by Agent
 class RequestReport(models.Model):
     REPORT_CHOICES = [
@@ -78,3 +76,12 @@ class RequestReport(models.Model):
 
     def __str__(self):
         return f"{self.get_report_type_display()} by {self.renter} ({self.date_requested.strftime('%Y-%m-%d')})"
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    start = models.DateField()
+    end = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title

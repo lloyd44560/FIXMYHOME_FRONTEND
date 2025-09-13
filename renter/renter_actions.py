@@ -23,7 +23,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
 from .forms import JobForm
-from trader.models import Jobs
+from trader.models import Jobs, JobImage
 from trader.models.servicesTrader import Services
 from trader.models import TraderRegistration
 from agent.models.propertyAgent import Property
@@ -415,14 +415,18 @@ def add_job(request):
 
             # Set priority depending on whether the selected service is urgent
             priority = service.isurgent  # This will be True or False
-
+            images = request.FILES.getlist('images')
             job = Jobs.objects.create(
                 agent=agent,
                 renter=renter,
                 notes=request.POST.get('notes'),
                 category=service,        # save the selected category/service
                 priority=priority        # save the computed priority (True/False)
+
             )
+            for img in images:
+
+                JobImage.objects.create(job=job, image=img)
 
             return redirect('/maintenance/')
         except Exception as e:
@@ -1208,3 +1212,22 @@ def delete_request_report(request, pk):
     if request.method == 'POST':
         report.delete()
         return redirect('request_report_list')
+
+
+
+# Calendar  View
+def calendar_view(request):
+    return render(request, "renter/home/calendar/calendar.html")
+
+@csrf_exempt
+def add_event(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        title = data.get("title")
+        start = parse_date(data.get("start"))
+        event = Event.objects.create(title=title, start=start)
+        return JsonResponse({"id": event.id, "title": event.title, "start": str(event.start)})
+
+def event_list(request):
+    events = Event.objects.all().values("id", "title", "start", "end")
+    return JsonResponse(list(events), safe=False)
