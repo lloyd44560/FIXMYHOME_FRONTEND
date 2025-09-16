@@ -18,6 +18,56 @@
             <span>Home</span>
         </a>
 
+        <!-- Notifications Tab -->
+        <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" class="relative flex items-center text-gray-700 hover:text-blue-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <span>Notifications</span>
+
+                <!-- 🔔 Badge (optional, only if unread > 0) -->
+                {% if unread_count > 0 %}
+                <span class="absolute -top-1 -right-4 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {{ unread_count }}
+                </span>
+                {% endif %}
+            </button>
+
+            <!-- Dropdown Panel -->
+            <div 
+                x-show="open" 
+                @click.away="open = false" 
+                x-transition 
+                class="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-lg border border-gray-100 z-50">
+
+                <div class="p-4 border-b border-gray-200 font-semibold text-gray-700">
+                    Notifications
+                </div>
+
+                <div class="p-4 bg-white shadow rounded-lg">
+                    <h2 class="font-bold mb-2">Unread Notifications ({{ unread_count }})</h2>
+    
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        {% for notif in unread_messages %}
+                            <li class="p-2 border-b">
+                                <span class="font-semibold">{{ notif.message_description }}</span><br>
+                                <span class="text-xs text-gray-500">{{ notif.created_at|date:"M d, Y H:i" }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="text-gray-400 italic">No unread notifications</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="p-3 border-t border-gray-200 text-center">
+                    <a href="#" class="text-blue-600 text-sm font-medium hover:underline">
+                        View All Notifications
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <a href="#" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 4h.01M4 6h16v12H4z" />

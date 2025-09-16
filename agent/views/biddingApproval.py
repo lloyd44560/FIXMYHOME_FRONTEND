@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils import timezone
 
 from trader.models import Bidding
+from trader.models import TraderNotification
 from agent.models import AgentRegister
 from agent.forms import BiddingApprovalForm
 
@@ -25,9 +26,26 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         return hasattr(self.request.user, 'agentregister')
 
     def form_valid(self, form):
+        agent = AgentRegister.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
-        bidding.approved_at = timezone.now()
-        bidding.approved_by = AgentRegister.objects.filter(user=self.request.user).first()
+        
+        # Create a notification to Trader
+        if not bidding.is_approved: # Rejected
+            print('Rejected Bid')
+            print(bidding.trader, 'Trader')
+            TraderNotification.objects.create(
+                trader_id=bidding.trader, 
+                message_description=f"Unfortunately, your quotation on '{bidding.jobs.job_code}' was not selected."
+            )
+        elif bidding.is_approved: # Approved
+            print('Approved Bid')
+            TraderNotification.objects.create(
+                trader_id=bidding.trader, 
+                message_description=f"Congratulations! Your quotation on '{bidding.jobs.job_code}' was approved."
+            )
+            bidding.approved_at = timezone.now()
+            bidding.approved_by = agent
+
         bidding.save()
         messages.success(self.request, 'Bid approval status updated.')
         return super().form_valid(form)

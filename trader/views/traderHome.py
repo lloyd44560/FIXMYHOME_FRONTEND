@@ -3,6 +3,7 @@ from django.utils.timezone import now
 from django.views.generic import TemplateView
 
 from trader.models import Jobs
+from trader.models import TraderNotification
 
 # Middleware decorator
 from django.utils.decorators import method_decorator
@@ -31,5 +32,15 @@ class TraderHomeView(TemplateView):
         today = now().date()
         context['today_urgent'] = Jobs.objects.filter(scheduled_at__date=today, priority=True).count()
         context['today_non_urgent'] = Jobs.objects.filter(scheduled_at__date=today, priority=False).count()
-        
+
+        # Base unread notifications
+        unread_qs = TraderNotification.objects.filter(
+            trader_id__user=self.request.user,  # join through TraderRegistration
+            seen=False
+        ).order_by("-created_at")
+
+        # Notifications for Trader
+        context["unread_messages"] = unread_qs
+        context["unread_count"] = unread_qs.count()
+                
         return context
