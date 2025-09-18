@@ -3,6 +3,7 @@ from .traderRegister import TraderRegistrationCreateView
 from .traderHome import TraderHomeView
 from .traderProfile import TraderProfileView
 from .traderSecurity import TraderEditSecurityView
+from .traderNotification import NotificationListView,NotificationDetailView
 #  ============ Bidding Views ============
 from .biddingRegister import BiddingCreateView
 # ============ Job Views ============

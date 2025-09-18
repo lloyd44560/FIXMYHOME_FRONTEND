@@ -49,11 +49,13 @@
                     <h2 class="font-bold mb-2">Unread Notifications ({{ unread_count }})</h2>
     
                     <ul class="space-y-2 text-sm text-gray-700">
-                        {% for notif in unread_messages %}
-                            <li class="p-2 border-b">
-                                <span class="font-semibold">{{ notif.message_description }}</span><br>
-                                <span class="text-xs text-gray-500">{{ notif.created_at|date:"M d, Y H:i" }}</span>
-                            </li>
+                        {% for notif in unread_notifications %}
+                            <a href="{% url 'notification_detail' notif.pk %}">
+                                <li class="p-2 border-b">
+                                    <span class="font-semibold">{{ notif.message_description }}</span><br>
+                                    <span class="text-xs text-gray-500">{{ notif.created_at|date:"M d, Y H:i" }}</span>
+                                </li>
+                            </a>
                         {% empty %}
                             <li class="text-gray-400 italic">No unread notifications</li>
                         {% endfor %}
@@ -61,7 +63,7 @@
                 </div>
 
                 <div class="p-3 border-t border-gray-200 text-center">
-                    <a href="#" class="text-blue-600 text-sm font-medium hover:underline">
+                    <a href="{% url 'notification_list' %}" class="text-blue-600 text-sm font-medium hover:underline">
                         View All Notifications
                     </a>
                 </div>
