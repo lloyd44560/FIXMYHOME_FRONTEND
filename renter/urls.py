@@ -157,7 +157,7 @@ urlpatterns = [
 
     path("calendar/", renter_actions.calendar_view, name="calendar"),
     path("events/", renter_actions.event_list, name="event_list"),
-    path("events/add/", renter_actions.add_event, name="add_event"),
-    
+    path("add-event", renter_actions.add_event, name="add_event"),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

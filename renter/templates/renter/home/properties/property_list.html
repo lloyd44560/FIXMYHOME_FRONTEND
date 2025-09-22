@@ -13,157 +13,147 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-sans">
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen" style="font-family: 'Lexend', sans-serif;">
 
   {% include 'renter/home/navbar.html' %}
 
-  <main class="flex-grow w-full py-12 px-4">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">My Home</h1>
-      <!--<button class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addPropertyModal">-->
-      <!--  + Add Property-->
-      <!--</button>-->
-    </div>
-
-    <div id="notification" class="hidden mb-6 p-4 rounded-lg text-white"></div>
-
-    <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden  w-full">
-      <div class="p-6 bg-gray-50 border-b border-gray-200">
-        <h2 class="text-xl font-semibold text-gray-700">Property List</h2>
+  <main class="flex-grow w-full py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header Section -->
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">My Home</h1>
+        <!-- Uncomment and style if needed -->
+        <!-- <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
+          + Add Property
+        </button> -->
       </div>
 
-      <form method="get" class="flex gap-3 p-6 bg-white">
-        <input type="text" name="q" value="{{ search_query }}" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search properties...">
-        <button type="submit" class="bg-[#293272] text-white px-5 py-2 rounded-lg hover:bg-[#1f2558] transition-colors duration-200">Search</button>
-      </form>
+      <div id="notification" class="hidden mb-6 p-4 rounded-lg text-white bg-green-500"></div>
 
-      <!-- Table container with full width and fixed height -->
-      <div class="overflow-x-auto w-full">
-        <div class="w-full overflow-y-auto" style="max-height: 600px;">
-        <table class="w-full text-left border-collapse">
-            <thead class="bg-gray-50 sticky top-0 z-10">
-              <tr>
-                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-12">#</th>
-                <th class="px-6 py-4 text-sm font-medium text-gray-600">Property Name</th>
-                <th class="px-6 py-4 text-sm font-medium text-gray-600">City</th>
-                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Status</th>
-                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-32">Photo</th>
-                <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-48">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for prop in properties %}
-              <tr class="hover:bg-gray-50 transition-colors duration-150">
-                <td class="px-6 py-4 text-center text-sm text-gray-600">{{ forloop.counter }}</td>
-                <td class="px-6 py-4 font-semibold text-gray-800">{{ prop.name }}</td>
-                <td class="px-6 py-4 text-gray-600">{{ prop.city }}</td>
-                <td class="px-6 py-4 text-center">
-                  {% if prop.status == 'vacant' %}
-                    <span class="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">Vacant</span>
-                  {% else %}
-                    <span class="inline-block px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">Occupied</span>
-                  {% endif %}
-                </td>
-                <td class="px-6 py-4 text-center">
-                  {% if prop.property_photo %}
-                    <img src="{{ prop.property_photo.url }}" class="w-24 h-24 object-cover rounded-lg shadow-sm border border-gray-200 mx-auto">
-                  {% else %}
-                    <span class="text-gray-500">No Photo</span>
-                  {% endif %}
-                </td>
-                <td class="px-6 py-4 text-center">
-                  <div class="flex justify-center gap-3">
-                    <!--<button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200" data-bs-toggle="modal" data-bs-target="#editModal{{ prop.id }}">-->
-                    <!--  <i class="bi bi-pencil-square mr-1"></i> Edit-->
-                    <!--</button>-->
-                    <a href="{% url 'unlink_property' prop.id %}" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition-colors duration-200" onclick="return confirm('Unlink this property from your account?')">
-                      <i class="bi bi-link-45deg mr-1"></i> Unlink
-                    </a>
-                  </div>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="6" class="text-center py-12">
-                  <div class="flex flex-col items-center">
-                    <i class="bi bi-house-door-fill text-gray-400" style="font-size: 3.5rem;"></i>
-                    <p class="mt-3 text-gray-500 text-lg">No properties available</p>
-                    <button class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
-                      + Add Property
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+      <!-- Property List Card -->
+      <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden mb-8">
+        <div class="p-6 bg-gray-50 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-700">Property List</h2>
         </div>
-      </div>
-
-      <!-- Pagination -->
-      <div class="p-6">
-        <nav aria-label="Property page navigation">
-          <ul class="flex justify-center gap-2">
-            {% if properties.has_previous %}
-              <li>
-                <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ properties.previous_page_number }}">Previous</a>
-              </li>
-            {% else %}
-              <li>
-                <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Previous</span>
-              </li>
-            {% endif %}
-
-            {% for page_num in properties.paginator.page_range %}
-              {% if properties.number == page_num %}
+        <form method="get" class="flex gap-3 p-6 bg-white">
+          <input type="text" name="q" value="{{ search_query }}" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search properties...">
+          <button type="submit" class="bg-[#293272] text-white px-4 py-2 rounded-lg hover:bg-[#1f2558] transition-colors duration-200">Search</button>
+        </form>
+        <div class="overflow-x-auto">
+          <div class="w-full overflow-y-auto" style="max-height: 600px;">
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-gray-50 sticky top-0 z-10">
+                <tr>
+                  <th class="px-6 py-3 text-sm font-medium text-gray-600 text-center w-12">#</th>
+                  <th class="px-6 py-3 text-sm font-medium text-gray-600">Property Name</th>
+                  <th class="px-6 py-3 text-sm font-medium text-gray-600">City</th>
+                  <th class="px-6 py-3 text-sm font-medium text-gray-600 text-center w-24">Status</th>
+                  <th class="px-6 py-3 text-sm font-medium text-gray-600 text-center w-32">Photo</th>
+                  <th class="px-6 py-3 text-sm font-medium text-gray-600 text-center w-48">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for prop in properties %}
+                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                  <td class="px-6 py-4 text-center text-sm text-gray-600">{{ forloop.counter }}</td>
+                  <td class="px-6 py-4 font-semibold text-gray-800">{{ prop.name }}</td>
+                  <td class="px-6 py-4 text-gray-600">{{ prop.city }}</td>
+                  <td class="px-6 py-4 text-center">
+                    {% if prop.status == 'vacant' %}
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">Vacant</span>
+                    {% else %}
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">Occupied</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    {% if prop.property_photo %}
+                      <img src="{{ prop.property_photo.url }}" class="w-24 h-24 object-cover rounded-lg shadow-sm border border-gray-200 mx-auto">
+                    {% else %}
+                      <span class="text-gray-500">No Photo</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <div class="flex justify-center gap-3">
+                      <a href="{% url 'unlink_property' prop.id %}" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition-colors duration-200" onclick="return confirm('Unlink this property from your account?')">
+                        <i class="bi bi-link-45deg mr-1"></i> Unlink
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center py-12">
+                    <div class="flex flex-col items-center">
+                      <i class="bi bi-house-door-fill text-gray-400" style="font-size: 3.5rem;"></i>
+                      <p class="mt-3 text-gray-500 text-lg">No properties available</p>
+                      <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
+                        + Add Property
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="p-6">
+          <nav aria-label="Property page navigation">
+            <ul class="flex justify-center gap-2">
+              {% if properties.has_previous %}
                 <li>
-                  <span class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg">{{ page_num }}</span>
+                  <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ properties.previous_page_number }}">Previous</a>
                 </li>
               {% else %}
                 <li>
-                  <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ page_num }}">{{ page_num }}</a>
+                  <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Previous</span>
                 </li>
               {% endif %}
-            {% endfor %}
-
-            {% if properties.has_next %}
-              <li>
-                <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ properties.next_page_number }}">Next</a>
-              </li>
-            {% else %}
-              <li>
-                <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Next</span>
-              </li>
-            {% endif %}
-          </ul>
-        </nav>
-      </div>
-    </div>
-    
-     <!--iframe page po here yung may url na request-reports/ -->
-
-    <div class="container mt-4">
-      <h3 class="mb-3">Request Reports</h3>
-
-      <div class="card shadow-sm rounded-3">
-        <div class="card-body p-0">
-          <iframe
-            src="{% url 'request_report_list' %}"
-            style="width: 100%; height: 80vh; border: none;"
-            title="Request Reports">
-          </iframe>
+              {% for page_num in properties.paginator.page_range %}
+                {% if properties.number == page_num %}
+                  <li>
+                    <span class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg">{{ page_num }}</span>
+                  </li>
+                {% else %}
+                  <li>
+                    <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ page_num }}">{{ page_num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              {% if properties.has_next %}
+                <li>
+                  <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100" href="?q={{ search_query }}&page={{ properties.next_page_number }}">Next</a>
+                </li>
+              {% else %}
+                <li>
+                  <span class="px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-300 rounded-lg cursor-not-allowed">Next</span>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
         </div>
       </div>
-    </div>
-    
-    <!-- Profile COmpletion Section -->
-    
-    <!-- Progress Section -->
-      <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+
+      <!-- Request Reports Section -->
+      <div class="container mt-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">Request Reports</h3>
+        <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
+          <div class="card-body p-0">
+            <iframe
+              src="{% url 'request_report_list' %}"
+              style="width: 100%; height: 80vh; border: none;"
+              title="Request Reports">
+            </iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Completion Section -->
+      <section class="py-12 px-4 sm:px-6 lg:px-8 bg-white mt-8">
         <div class="max-w-7xl mx-auto">
-          <h3 class="text-3xl font-bold text-center text-gray-900 mb-8">Complete Your Profile</h3>
-          <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">A fully completed profile helps you connect with traders and agents faster, ensuring compliance with Australian property standards.</p>
-          <div class="w-full bg-gray-200 rounded-full h-4 mb-8">
+          <h3 class="text-3xl font-bold text-center text-gray-900 mb-6">Complete Your Profile</h3>
+          <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">A fully completed profile helps you connect with traders and agents faster, ensuring compliance with Australian property standards.</p>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
             <div class="bg-blue-600 h-4 rounded-full" style="width: 75%;"></div>
           </div>
           <div class="grid md:grid-cols-2 gap-4">
@@ -204,17 +194,19 @@
               <a href="/standard-reports/" class="text-blue-600 hover:underline font-medium">→</a>
             </div>
           </div>
-          <div class="mt-8 text-center">
+          <div class="mt-6 text-center">
             <a href="/profile/" class="text-blue-600 font-semibold hover:underline">View All Tasks →</a>
           </div>
         </div>
-      </section>    
+      </section>
+    </div>
+
     <!-- Add Property Modal -->
     <div class="modal fade" id="addPropertyModal" tabindex="-1">
       <div class="modal-dialog modal-lg">
         <form method="POST" enctype="multipart/form-data" class="modal-content" action="{% url 'add_property' %}">
           {% csrf_token %}
-          <div class="modal-header border-b border-gray-200">
+          <div class="modal-header border-b border-gray-200 p-4">
             <h5 class="text-xl font-semibold text-gray-800">Add Property</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -286,9 +278,9 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer border-t border-gray-200 p-4">
-            <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Add Property</button>
-            <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Close</button>
+          <div class="modal-footer border-t border-gray-200 p-4 flex justify-end gap-3">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Add Property</button>
+            <button type="button" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Close</button>
           </div>
         </form>
       </div>
@@ -325,25 +317,8 @@
       object-fit: cover;
       border: 1px solid #e5e7eb;
     }
-     body {
-      font-family: 'Lexend', sans-serif;
-    }
-    .btn-primary {
-      background-color: #293272;
-      color: white;
-    }
-    .btn-primary:hover {
-      background-color: #1f2558;
-    }
-    .btn-accent {
-      background-color: #EF7153;
-      color: white;
-    }
-    .btn-accent:hover {
-      background-color: #d75f44;
-    }
     a {
-    text-decoration: none !important;
+      text-decoration: none !important;
     }
     a:hover {
       text-decoration: none !important;
