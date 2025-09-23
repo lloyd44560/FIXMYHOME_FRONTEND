@@ -3,6 +3,7 @@ from django.utils.timezone import now
 from django.views.generic import TemplateView
 
 from trader.models import Jobs
+from trader.models import TraderNotification
 
 # Middleware decorator
 from django.utils.decorators import method_decorator
@@ -31,5 +32,5 @@ class TraderHomeView(TemplateView):
         today = now().date()
         context['today_urgent'] = Jobs.objects.filter(scheduled_at__date=today, priority=True).count()
         context['today_non_urgent'] = Jobs.objects.filter(scheduled_at__date=today, priority=False).count()
-        
+                
         return context

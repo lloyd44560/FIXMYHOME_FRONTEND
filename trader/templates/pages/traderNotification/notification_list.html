@@ -1,0 +1,75 @@
+{% extends "baseTrader.html" %}
+{% block content %}
+
+{% load widget_tweaks %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBase.html' %}
+
+<div class="max-w-5xl mx-auto py-12 px-6 sm:px-8 lg:px-12">
+    <div class="flex justify-between items-center mb-10">
+        <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">Notifications</h2>
+        <button 
+            x-data="{ open: false }" 
+            @click="open = !open" 
+            class="text-gray-600 hover:text-gray-900 focus:outline-none"
+        >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+    </div>
+
+    <div x-data="{ notifications: {{ notifications|length }} }" class="space-y-6">
+        <template x-if="notifications === 0">
+            <div class="text-center py-12 bg-gradient-to-br from-white to-gray-50 shadow-md rounded-2xl border border-gray-100">
+                <p class="text-xl text-gray-600 font-medium">✨ You're all caught up!</p>
+                <p class="text-sm text-gray-400 mt-2">No new notifications to display.</p>
+            </div>
+        </template>
+
+        <div class="space-y-4">
+            {% for notif in notifications %}
+                <a 
+                    href="{% url 'notification_detail' notif.pk %}" 
+                    x-data="{ dismissed: false }" 
+                    x-show="!dismissed"
+                    class="block bg-white rounded-2xl shadow-md border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out"
+                >
+                    <div class="flex items-center justify-between p-6">
+                        <div class="flex-1 space-y-3">
+                            <p class="text-gray-900 text-lg font-semibold leading-tight line-clamp-2">
+                                {{ notif.message|truncatewords:20 }}
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                {{ notif.created_at|date:"M d, Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            {% if not notif.seen %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 shadow-sm">
+                                    New
+                                </span>
+                            {% endif %}
+                            <button 
+                                @click="dismissed = true" 
+                                class="text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200"
+                                title="Dismiss notification"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{% endblock %}

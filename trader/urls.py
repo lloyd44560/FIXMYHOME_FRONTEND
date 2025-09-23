@@ -5,6 +5,8 @@ from trader.views import (
     TraderHomeView,
     TraderProfileView,
     TraderEditSecurityView,
+    NotificationListView, 
+    NotificationDetailView,
     JobListView,
     BiddingCreateView,
 )
@@ -17,6 +19,8 @@ urlpatterns = [
     path('home/', TraderHomeView.as_view(), name='home_trader'),
     path('profile-trader/', TraderProfileView.as_view(), name='profile_trader'),
     path('profile/security/', TraderEditSecurityView.as_view(), name='trader_edit_security'),
+    path("notifications/", NotificationListView.as_view(), name="notification_list"),
+    path("notifications/<int:pk>/", NotificationDetailView.as_view(), name="notification_detail"),
     path('jobs/', JobListView.as_view(), name='job_list'),
     path('bidding/create/', BiddingCreateView.as_view(), name='bidding_create'),
 ]

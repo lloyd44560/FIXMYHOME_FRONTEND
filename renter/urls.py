@@ -146,4 +146,18 @@ urlpatterns = [
 
     path('report/', renter_actions.notebook_view, name='report'),
 
+#  Request of Report to Agent
+    path('request-reports/', renter_actions.request_report_list, name='request_report_list'),
+    path('request-reports/add/', renter_actions.add_request_report, name='add_request_report'),
+    path('request-reports/edit/<int:pk>/', renter_actions.edit_request_report, name='edit_request_report'),
+    path('request-reports/delete/<int:pk>/', renter_actions.delete_request_report, name='delete_request_report'),
+
+#   Calendar View of Renter Side
+
+
+    path("calendar/", renter_actions.calendar_view, name="calendar"),
+    path("events/", renter_actions.event_list, name="event_list"),
+    path("add-event", renter_actions.add_event, name="add_event"),
+
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
