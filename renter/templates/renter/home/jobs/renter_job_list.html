@@ -37,13 +37,23 @@
     <!-- Jobs Table -->
     <div class="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden w-full">
       <form method="GET" class="flex gap-3 p-6 bg-white" >
-        <input type="text" name="q" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search jobs..." value="{{ search_query }}">
+        <input type="text" name="q" class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Search maintenance request..." value="{{ search_query }}">
         <button
           type="submit"
           class="bg-[#293272] text-white px-5 py-2 rounded-lg hover:bg-[#1f2558] transition-colors duration-200">
           Search
         </button>
       </form>
+
+        {% if messages %}
+          <div id="messages" class="mt-3">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} rounded p-2 mb-2 fade show" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
 
       <div class="overflow-x-auto w-full">
         <table class="min-w-full text-left border-collapse w-full">
@@ -204,16 +214,14 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Existing Images</label>
                 <div class="flex flex-wrap gap-3">
-                  {% for image in job.images.all %}
-                  <div class="relative border rounded p-1">
-                    <img src="{{ image.file.url }}" class="w-20 h-20 object-cover rounded">
-                    <label class="absolute top-0 right-0 bg-white p-1 rounded">
-                      <input type="checkbox" name="delete_images" value="{{ image.id }}"> ✕
-                    </label>
-                  </div>
-                  {% empty %}
-                  <p class="text-gray-500">No images uploaded</p>
-                  {% endfor %}
+                 {% for image in job.images.all %}
+                      <div class="relative border rounded p-1">
+                        <img src="{{ image.image.url }}" class="w-20 h-20 object-cover rounded">
+                        <label class="absolute top-0 right-0 bg-white p-1 rounded">
+                          <input type="checkbox" name="delete_images" value="{{ image.id }}"> ✕
+                        </label>
+                      </div>
+                    {% endfor %}
                 </div>
               </div>
 
@@ -438,6 +446,48 @@
       });
     });
   });
+
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".add-edit-image-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const jobId = btn.getAttribute("data-job-id");
+      const container = document.getElementById("edit-image-upload-container-" + jobId);
+      const limitMsg = document.getElementById("edit-image-limit-msg-" + jobId);
+
+      const inputs = container.querySelectorAll("input[type='file']");
+      if (inputs.length >= 5) {
+        limitMsg.classList.remove("hidden");
+        return;
+      }
+
+      const newInput = document.createElement("input");
+      newInput.type = "file";
+      newInput.name = "images";   // keep same name so Django sees list
+      newInput.accept = "image/*";
+      newInput.className = "w-full border border-gray-300 rounded-lg px-4 py-2 mb-2";
+
+      container.appendChild(newInput);
+
+      if (container.querySelectorAll("input[type='file']").length >= 5) {
+        btn.disabled = true;
+        btn.classList.add("opacity-50", "cursor-not-allowed");
+      }
+    });
+  });
+});
+
+     // Auto-hide messages after 5s
+  setTimeout(function () {
+    const messages = document.getElementById("messages");
+    if (messages) {
+      messages.style.transition = "opacity 0.5s ease";
+      messages.style.opacity = "0";
+      setTimeout(() => messages.remove(), 500); // remove after fade
+    }
+  }, 5000);
+
   </script>
 
 </body>
