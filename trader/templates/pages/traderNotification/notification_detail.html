@@ -1,26 +1,38 @@
 {% extends "baseTrader.html" %}
 {% block content %}
 
-{% load widget_tweaks %}
 <!-- Top Navigation -->
 {% include 'components/home/navigatorBase.html' %}
 
 <div class="max-w-3xl mx-auto py-12 px-6 sm:px-8 lg:px-12">
     <div class="bg-white shadow-lg rounded-2xl p-8 border border-gray-100 transition-all duration-300 hover:shadow-xl">
-        <h2 class="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Notification</h2>
-        <p class="text-gray-700 text-lg leading-relaxed mb-6">
-            {{ notification.message }}
-        </p>
-        <p class="text-sm text-gray-500 mb-8">
-            {{ notification.created_at|date:"M d, Y H:i" }}
+        <!-- Title -->
+        <h2 class="text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+            {{ notification.subject|default:"(No Subject Provided)" }}
+        </h2>
+
+        <!-- Meta info -->
+        <div class="flex items-center text-sm text-gray-500 mb-6 space-x-4">
+            <span class="px-3 py-1 rounded-md {% if notification.priority %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-600{% endif %} font-medium">
+                {% if notification.priority %} Urgent {% else %} Normal {% endif %}
+            </span>
+            <span>
+                {{ notification.created_at|date:"M d, Y H:i" }}
+            </span>
+        </div>
+
+        <!-- Message -->
+        <p class="text-gray-700 text-lg leading-relaxed mb-8">
+            {{ notification.message_description|default:"No message provided." }}
         </p>
 
+        <!-- Back Button -->
         <a 
             href="{% url 'notification_list' %}" 
             x-data="{ hovered: false }" 
             @mouseenter="hovered = true" 
             @mouseleave="hovered = false"
-            class="inline-flex items-center px-5 py-3 rounded-lg bg-blue-600 text-white font-medium text-sm tracking-wide hover:bg-blue-700 transition-all duration-200 transform"
+            class="inline-flex items-center px-5 py-3 rounded-lg bg-[#293272] text-white font-medium text-sm tracking-wide hover:bg-[#162060] transition-all duration-200 transform"
             :class="{ 'scale-105 shadow-md': hovered }"
         >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,8 +44,4 @@
 </div>
 
 {% include 'components/footerTrader.html' %}
-{% endblock %}
-
-{% block scripts %}
-    <!-- JS Scrips here! -->
 {% endblock %}
