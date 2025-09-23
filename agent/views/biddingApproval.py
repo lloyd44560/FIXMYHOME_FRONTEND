@@ -1,8 +1,10 @@
 from django.urls import reverse_lazy
+from django.conf import settings
 from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils import timezone
+from django.core.mail import send_mail
 
 from trader.models import Bidding
 from trader.models import TraderNotification
@@ -30,21 +32,47 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         bidding = form.save(commit=False)
         
         # Create a notification to Trader
-        if not bidding.is_approved: # Rejected
-            print('Rejected Bid')
-            print(bidding.trader, 'Trader')
+        if not bidding.is_approved:  # Rejected
             TraderNotification.objects.create(
-                trader_id=bidding.trader, 
-                message_description=f"Unfortunately, your quotation on '{bidding.jobs.job_code}' was not selected."
+                trader_id=bidding.trader,
+                subject=(
+                    f"Unfortunately, your quotation on '{bidding.jobs.job_code}' "
+                    "was not selected."
+                ),
+                message_description=bidding.approval_notes
             )
-        elif bidding.is_approved: # Approved
-            print('Approved Bid')
+
+            # Example: Send rejection email (optional)
+            send_mail(
+                subject="Quotation Result",
+                message=f"Hi {bidding.trader.name},\n\n"
+                        f"Unfortunately, your quotation on '{bidding.jobs.job_code}' "
+                        f"was not selected.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[bidding.trader.email],
+            )
+
+        elif bidding.is_approved:  # Approved
             TraderNotification.objects.create(
-                trader_id=bidding.trader, 
-                message_description=f"Congratulations! Your quotation on '{bidding.jobs.job_code}' was approved."
+                trader_id=bidding.trader,
+                subject=(f"Congratulations! Your quotation on '{bidding.jobs.job_code}' "
+                    "was approved."),
+                message_description=bidding.approval_notes
             )
+
             bidding.approved_at = timezone.now()
             bidding.approved_by = agent
+
+            # Example: Send approval email
+            send_mail(
+                subject="Quotation Approved!",
+                message=f"Hi {bidding.trader.name},\n\n"
+                        f"Congratulations! Your quotation on '{bidding.jobs.job_code}' "
+                        f"was approved.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[bidding.trader.email],
+            )
+
 
         bidding.save()
         messages.success(self.request, 'Bid approval status updated.')

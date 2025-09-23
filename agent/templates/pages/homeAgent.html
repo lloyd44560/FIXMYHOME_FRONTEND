@@ -11,44 +11,44 @@
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Quote Requests</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Quote Requests</h2>
         <p class="text-sm">View and respond to service quote requests.<br/></p>
-        <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a>
+        <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Quotes</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Properties</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Properties</h2>
         <p class="text-sm">Manage all listed rental properties and their details.</p>
-        <a href="{% url 'manage_properties' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Properties</a>
+        <a href="{% url 'manage_properties' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Properties</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Renters</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Renters</h2>
         <p class="text-sm">View and manage tenant profiles.<br/><br/></p>
-        <a href="{% url 'manage_renters' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Renters</a>
+        <a href="{% url 'manage_renters' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Renters</a>
     </div>
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Maintenance Report</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Maintenance Report</h2>
         <p class="text-sm">Track and reported maintenance issues.<br/></p>
-        <a href="{% url 'active_jobs_list' %}" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Maintenance</a>
+        <a href="{% url 'active_jobs_list' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Maintenance</a>
     </div>
   </section>
 
     <!-- Properties Table Section -->
-    <div class="max-w-7xl mx-auto px-6 py-8 space-y-10 overflow-x-auto">
-        <h2 class="text-2xl font-bold mb-4 text-blue-700">Properties</h2>
+    <div class="max-w-7xl mx-auto px-6 py-8 overflow-x-auto">
+        <h2 class="text-2xl font-bold mb-4 text-[#293272]">Properties</h2>
 
         <div class="flex justify-start mb-4 gap-4">
             <a href="{% url 'property_create' %}"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+              class="bg-[#293272] hover:bg-[#162060] text-white font-medium px-4 py-2 rounded-md shadow text-sm">
               + Create Property
             </a>
         </div>
 
         <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible">
           <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
-            <thead class="bg-blue-700 text-white hidden sm:table-header-group">
+            <thead class="bg-[#293272] text-white hidden sm:table-header-group">
               <tr>
                 <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
@@ -167,7 +167,7 @@
           <!-- Page Numbers -->
           {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
-              <span class="px-3 py-2 bg-blue-500 text-white rounded font-semibold">
+              <span class="px-3 py-2 bg-[#EF715C] text-white rounded font-semibold">
                   {{ num }}
               </span>
               {% else %}
@@ -197,7 +197,7 @@
 
   <!-- New Messages -->
   <section>
-    <h2 class="text-blue-600 font-bold text-xl mb-3">New Messages</h2>
+    <h2 class="text-[#293272] font-bold text-xl mb-3">New Messages</h2>
       <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
           No new messages at the moment.
       </div>
@@ -205,11 +205,11 @@
 
   <!-- Calendar -->
   <section>
-    <h2 class="text-blue-600 font-bold text-xl mb-3">Calendar</h2>
+    <h2 class="text-[#293272] font-bold text-xl mb-3">Calendar</h2>
       <div class="flex items-center justify-between border rounded-xl px-6 py-4 bg-gray-50 shadow w-full max-w-sm">
-          <button class="text-blue-600 text-xl font-bold">&lt;</button>
+          <button class="text-[#293272] text-xl font-bold">&lt;</button>
           <span class="font-medium">June 2024</span>
-          <button class="text-blue-600 text-xl font-bold">&gt;</button>
+          <button class="text-[#293272] text-xl font-bold">&gt;</button>
       </div>
   </section>
 

@@ -8,13 +8,7 @@ from trader.models import TraderRegistration, TeamMember, ContractorLicense, Tra
 from trader.forms import TraderRegistrationForm, TeamMemberFormSet
 from trader.forms import ContractorLicenseSet
 
-# Middleware decorator
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from trader.decorators.traderOnly import trader_required
-
 # View for the registration page
-@method_decorator([login_required, trader_required], name='dispatch')
 class TraderRegistrationCreateView(CreateView):
     model = TraderRegistration
     form_class = TraderRegistrationForm
