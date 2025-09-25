@@ -10,13 +10,7 @@ from django.contrib.auth.models import User
 from agent.models import AgentRegister
 from agent.forms import CreateAgentFormClass
 
-# Middleware decorator
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from agent.decorators.agentOnly import agent_required
-
 # Create your views here.
-@method_decorator([login_required, agent_required], name='dispatch')
 class AgentRegistrationCreateView(CreateView):
     model = AgentRegister
     form_class = CreateAgentFormClass

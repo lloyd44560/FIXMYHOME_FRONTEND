@@ -2,12 +2,12 @@
     <!-- To Quote Requests -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">To Quote Requests</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">To Quote Requests</h2>
         <a href="{% url 'job_list' %}?status=quoted&priority=true">
-            <p class="text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
         </a>
         <a href="{% url 'job_list' %}?status=quoted&priority=false">
-            <p class="text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
         </a>
         <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
     </div>
@@ -15,12 +15,12 @@
     <!-- Pending Quotes -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Pending Quotes</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Pending Quotes</h2>
         <a href="{% url 'job_list' %}?status=quoted&priority=true">
-            <p class="text-sm hover:underline">{{ pending_urgent }} urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ pending_urgent }} urgent</p>
         </a>
         <a href="{% url 'job_list' %}?status=quoted&priority=false">
-            <p class="text-sm hover:underline">{{ pending_non_urgent }} non-urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ pending_non_urgent }} non-urgent</p>
         </a>
         <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
     </div>
@@ -28,12 +28,12 @@
     <!-- Jobs Today -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Today</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Today</h2>
         <a href="{% url 'job_list' %}?status=scheduled&priority=true">
-            <p class="text-sm hover:underline">{{ today_urgent }} urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ today_urgent }} urgent</p>
         </a>
         <a href="{% url 'job_list' %}?status=scheduled&priority=false">
-            <p class="text-sm hover:underline">{{ today_non_urgent }} non-urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ today_non_urgent }} non-urgent</p>
         </a>
         <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
     </div>
@@ -41,12 +41,12 @@
     <!-- Jobs Approved -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-blue-600 text-lg mb-2">Jobs Approved</h2>
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Approved</h2>
         <a href="{% url 'job_list' %}?status=approved&priority=true">
-            <p class="text-sm hover:underline">{{ approved_urgent }} urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ approved_urgent }} urgent</p>
         </a>
         <a href="{% url 'job_list' %}?status=approved&priority=false">
-            <p class="text-sm hover:underline">{{ approved_non_urgent }} non-urgent</p>
+            <p class="text-[#EF7153] text-sm hover:underline">{{ approved_non_urgent }} non-urgent</p>
         </a>
         <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
     </div>

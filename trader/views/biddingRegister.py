@@ -1,4 +1,5 @@
 from django.urls import reverse_lazy
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic import CreateView
@@ -23,6 +24,8 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Set trader as current user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
         form.instance.trader = trader
+        
+        messages.success(self.request, "Your quotation has been submitted successfully and is now pending agent review.")
         return super().form_valid(form)
 
     def get_form(self, form_class=None):
