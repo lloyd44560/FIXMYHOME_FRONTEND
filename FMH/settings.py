@@ -34,6 +34,7 @@ DEFAULT_FROM_EMAIL = 'noreply@fixmh.com'
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +46,12 @@ INSTALLED_APPS = [
     'trader',
     'social_django',
      'agent',
-     'thirdparty'
+     'thirdparty',
+    'chat',
+
+    
+    'channels',
+
 
 
 
@@ -228,3 +234,12 @@ MEDIA_ROOT = BASE_DIR / 'static/renter/images/uploads/'
 SOCIALACCOUNT_ADAPTER = 'renter.adapter.CustomSocialAccountAdapter'
 
 X_FRAME_OPTIONS = 'ALLOW-FROM http://https://sandbox.fixmh.com'
+
+
+ASGI_APPLICATION = 'FMH.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
