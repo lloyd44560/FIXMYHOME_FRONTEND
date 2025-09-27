@@ -96,10 +96,10 @@
               <td class="p-3 text-center">
                 <div class="d-flex justify-content-center gap-2">
                   <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editRequestReportModal{{ report.id }}">
-                    <i class="bi bi-pencil"></i>
+                    <i class="bi bi-pencil">Edit</i>
                   </button>
                   <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRequestReportModal{{ report.id }}">
-                    <i class="bi bi-trash"></i>
+                    <i class="bi bi-trash">Delete</i>
                   </button>
                 </div>
               </td>
@@ -205,6 +205,9 @@
                   <option value="appliance">Appliance Report</option>
                   <option value="minimum_standard">Minimum Standard Reports</option>
                 </select>
+
+                <!--Display the property dropdown here -->
+
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold text-gray-700">Reason</label>

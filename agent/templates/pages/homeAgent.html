@@ -195,6 +195,100 @@
       {% endif %}
   </div>
 
+<section>
+  <h2 class="text-[#293272] font-bold text-xl mb-3">Renter Requests</h2>
+  {% if renter_requests %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Renter</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Type</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Status</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Date</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Reason</th>
+            <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in renter_requests %}
+          <tr class="border-t">
+            <td class="px-4 py-2 text-sm text-gray-700">{{ req.renter }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700">{{ req.get_report_type_display }}</td>
+            <td class="px-4 py-2 text-sm">
+              <span class="px-2 py-1 rounded text-white
+                {% if req.status == 'sent' %} bg-blue-500
+                {% elif req.status == 'in_progress' %} bg-yellow-500
+                {% elif req.status == 'completed' %} bg-green-500
+                {% elif req.status == 'rejected' %} bg-red-500
+                {% endif %}
+              ">
+                {{ req.get_status_display }}
+              </span>
+            </td>
+            <td class="px-4 py-2 text-sm text-gray-700">{{ req.date_requested|date:"Y-m-d H:i" }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700">
+              {% if req.reason %}
+                {{ req.reason }}
+              {% else %}
+                <span class="text-gray-400 italic">N/A</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-2 text-center">
+            <button
+              onclick="openRespondModal('{{ req.id }}', '{{ req.renter }}')"
+              class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+              Respond
+            </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
+      No renter request at the moment.
+    </div>
+  {% endif %}
+</section>
+
+<!-- Modal -->
+<div id="respondModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Respond to Report Request</h3>
+
+   <form method="POST" action="{% url 'home_agent' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="request_id" id="requestIdInput">
+
+      <div class="mb-2">
+        <label class="block text-left">Subject</label>
+        <input type="text" name="subject" class="w-full border rounded px-3 py-2">
+      </div>
+
+      <div class="mb-2">
+        <label class="block text-left">Message</label>
+        <textarea name="message" rows="4" class="w-full border rounded px-3 py-2"></textarea>
+      </div>
+
+      <div class="mb-2">
+        <label class="block text-left">Attachment</label>
+        <input type="file" name="attachment" class="w-full border rounded px-3 py-2">
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+          Send
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+
+
   <!-- New Messages -->
   <section>
     <h2 class="text-[#293272] font-bold text-xl mb-3">New Messages</h2>
@@ -263,4 +357,19 @@
           }
       });
   </script>
+
+  <!--Script for responding to renter request -->
+  <script>
+      function openRespondModal(requestId, renterName) {
+        document.getElementById("respondModal").classList.remove("hidden");
+        document.getElementById("requestIdInput").value = requestId;
+      }
+
+      function closeRespondModal() {
+        document.getElementById("respondModal").classList.add("hidden");
+      }
+    </script>
+
+
+
 {% endblock %}

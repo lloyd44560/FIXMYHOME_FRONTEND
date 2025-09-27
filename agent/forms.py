@@ -130,3 +130,13 @@ class BiddingApprovalForm(forms.ModelForm):
         widgets = {
             'approval_notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Approval notes (optional)'}),
         }
+
+
+
+# Renter Request forms
+
+
+class RespondRequestForm(forms.Form):
+    subject = forms.CharField(max_length=255)
+    message = forms.CharField(widget=forms.Textarea)
+    request_id = forms.IntegerField(widget=forms.HiddenInput)
