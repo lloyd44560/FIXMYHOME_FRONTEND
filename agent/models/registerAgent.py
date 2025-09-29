@@ -46,6 +46,12 @@ class AgentRegister(models.Model):
     address_line_2 = models.CharField(max_length=255, blank=True, null=True)
     postal_code = models.CharField(max_length=20, blank=True)
 
+    
+    # Additional for property manager
+    license_number = models.CharField(max_length=100, blank=True, null=True)
+    is_property_manager = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
     def __str__(self):
         return self.name
     

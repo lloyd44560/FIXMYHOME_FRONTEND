@@ -7,9 +7,9 @@ from django.urls import reverse_lazy,reverse
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView
 from trader.models import Jobs
-from agent.models import AgentRegister, Property
+from agent.models import AgentRegister, Property, PropertyManager
 from renter.models import RequestReport
-from agent.forms import RespondRequestForm
+from agent.forms import RespondRequestForm,PropertyManagerForm
 
 # Middleware decorator
 from agent.decorators.agentOnly import agent_required
@@ -27,16 +27,31 @@ class AgentHomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        agent = AgentRegister.objects.get(user=self.request.user)
         # Get only active properties
         properties_list = Property.objects.filter(is_active=True).order_by('-created_at')
-
+        properties_portfolio_list = Property.objects.filter(
+            is_active=True,
+            property_manager=agent  #
+        ).order_by('-created_at')
         # Set up pagination
         paginator = Paginator(properties_list, 10)  # Show 10 properties per page
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
+        # Pagination for properties portfolio
+        portfolio_paginator = Paginator(properties_portfolio_list, 10)  
+        portfolio_page_number = self.request.GET.get('portfolio_page')  
+        portfolio_page_obj = portfolio_paginator.get_page(portfolio_page_number)
+
         context['properties'] = page_obj
         context['page_obj'] = page_obj  # For pagination controls
+
+        context['properties_portfolio'] = portfolio_page_obj
+        context['portfolio_page_obj'] = portfolio_page_obj  # For portfolio pagination controls
+
+
+        # pagawan din ng context and page_obj si properties_portfolio_list
 
         agent = AgentRegister.objects.get(user=self.request.user)
 
@@ -59,44 +74,64 @@ class AgentHomeView(TemplateView):
         context['renter_requests'] = RequestReport.objects.filter(agent=agent).order_by('-date_requested')
         context['respond_form'] = RespondRequestForm()
 
+
+        context['property_managers'] = AgentRegister.objects.filter(is_property_manager=True)
+
+        context['add_manager_form'] = PropertyManagerForm()
         return context
 
+    # Save ng property manager to eh paano naman yung edit and delete ? 
     def post(self, request, *args, **kwargs):
-        request_id = request.POST.get("request_id")
-        subject = request.POST.get("subject")
-        message_text = request.POST.get("message")
-        attachment = request.FILES.get("attachment")
+        #  Property Manager form submission
+        if 'name' in request.POST or 'manager_name' in request.POST:
+            form = PropertyManagerForm(request.POST)
+            if form.is_valid():
+                manager = form.save(commit=False)
+                # manager.user = request.user  # assign a user here
+                manager.is_property_manager = True       # set default as True
+                manager.save()
+                messages.success(request, "Property Manager added successfully!")
+            else:
+                for field, errors in form.errors.items():
+                    messages.error(request, f"{field}: {', '.join(errors)}")
+            return redirect("home_agent")
 
-        # Get renter & agent
-        from renter.models import RequestReport
-        req = RequestReport.objects.get(id=request_id)
-        renter_email = req.renter.user.email  # assuming renter has a linked user with email
-        agent_email = request.user.email
+        #  Renter Request form submission
+        if 'request_id' in request.POST:
+            request_id = request.POST.get("request_id")
+            subject = request.POST.get("subject")
+            message_text = request.POST.get("message")
+            attachment = request.FILES.get("attachment")
 
-        # Build email
-        email = EmailMessage(
-            subject=subject,
-            body=message_text,
-            from_email=agent_email,
-            to=[renter_email],
-        )
+            from renter.models import RequestReport
+            req = RequestReport.objects.get(id=request_id)
+            renter_email = req.renter.user.email  # assuming renter has a linked user with email
+            agent_email = request.user.email
 
-        # Attach file if present
-        if attachment:
-            email.attach(attachment.name, attachment.read(), attachment.content_type)
+            # Build email
+            email = EmailMessage(
+                subject=subject,
+                body=message_text,
+                from_email=agent_email,
+                to=[renter_email],
+            )
 
-        # Send it
-        email.send()
+            # Attach file if present
+            if attachment:
+                email.attach(attachment.name, attachment.read(), attachment.content_type)
 
-        # Optionally update status
-        req.status = "in_progress"
-        req.save()
+            # Send it
+            email.send()
 
-        # Add success message
-        messages.success(request, f"Response successfully sent to {req.renter}")
+            # Update status
+            req.status = "in_progress"
+            req.save()
 
-        # Redirect to GET so the message shows
-        from django.shortcuts import redirect
+            messages.success(request, f"Response successfully sent to {req.renter}")
+            return redirect("home_agent")
+
+        # If neither form submitted
+        messages.error(request, "Invalid submission.")
         return redirect("home_agent")
 
 

@@ -36,6 +36,8 @@ class PropertyUpdateView(UpdateView):
             renter_qs = Renter.objects.filter(name__iexact=renter_name)
             if renter_qs.exists():
                 property.renter = renter_qs.first()
+          # Update property manager
+        property.property_manager = form.cleaned_data.get('property_manager')
         property.save()
         messages.success(self.request, 'Property details updated successfully.')
         return redirect(self.success_url)

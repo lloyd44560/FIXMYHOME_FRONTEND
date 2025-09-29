@@ -29,6 +29,10 @@ class PropertyCreateView(CreateView):
             renter_qs = Renter.objects.filter(name__iexact=renter_name)
             if renter_qs.exists():
                 property.renter = renter_qs.first()
+        
+        # Set property manager
+        property.property_manager = form.cleaned_data.get('property_managers')
+
         property.save()
         messages.success(self.request, "Property created successfully!")
         return redirect(self.success_url)

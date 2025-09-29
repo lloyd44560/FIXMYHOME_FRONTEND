@@ -13,6 +13,31 @@ def street_code(street: str | None) -> str:
     letters_only = re.sub(r'[^A-Za-z]', '', street).upper()
     return (letters_only + "XXXX")[:4]
 
+
+# This will be removed if Property Managers will just be Agents also
+class PropertyManager(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="property_manager_profile"
+    )
+    name = models.CharField(max_length=255)
+    home_address = models.TextField()
+    contact_number = models.CharField(max_length=20)
+    email_address = models.EmailField(unique=True)
+    licenses = models.CharField(max_length=255)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Property Manager"
+        verbose_name_plural = "Property Managers"
+
+    def __str__(self):
+        return self.name
+
+        
 class Property(models.Model):
     renter = models.ForeignKey(Renter, on_delete=models.SET_NULL, related_name='rent_property', null=True, blank=True)
     agent = models.ForeignKey(AgentRegister, on_delete=models.CASCADE, null=False, related_name='own_properties')
@@ -45,6 +70,14 @@ class Property(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='vacant')
 
+    property_manager = models.ForeignKey(
+        AgentRegister,      
+        on_delete=models.SET_NULL,  
+        null=True,
+        blank=True,
+        related_name="properties"
+    )
+
     def _next_ref_number(self) -> str:
         prefix = street_code(self.street)
 
@@ -76,3 +109,4 @@ class Property(models.Model):
 
     def __str__(self):
         return f'{self.ref_number}'
+

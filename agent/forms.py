@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 
 from renter.models import Renter
 from trader.models import Jobs, Bidding
-from .models import AgentRegister, Property, Rooms
+from .models import AgentRegister, Property, Rooms, PropertyManager
+
 
 class CreateAgentFormClass(forms.ModelForm):
     confirm_password = forms.CharField(
@@ -37,6 +38,16 @@ class AgentCreatePropertyForm(forms.ModelForm):
             'placeholder': 'Type renter name...'
         })
     )
+    
+    property_manager = forms.ModelChoiceField(
+        queryset=AgentRegister.objects.filter(is_property_manager=True),
+        label="Property Manager",
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'w-full border border-gray-300 rounded-md p-2'
+        })
+    )
+
     class Meta:
         model = Property
         exclude = ['agent']
@@ -140,3 +151,17 @@ class RespondRequestForm(forms.Form):
     subject = forms.CharField(max_length=255)
     message = forms.CharField(widget=forms.Textarea)
     request_id = forms.IntegerField(widget=forms.HiddenInput)
+
+
+
+class PropertyManagerForm(forms.ModelForm):
+    class Meta:
+        model = AgentRegister
+        fields = ['name', 'address_line_1', 'phone', 'email', 'license_number']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'w-full border rounded px-3 py-2'}),
+            'address_line_1': forms.Textarea(attrs={'class': 'w-full border rounded px-3 py-2', 'rows': 2}),
+            'phone': forms.TextInput(attrs={'class': 'w-full border rounded px-3 py-2'}),
+            'email': forms.EmailInput(attrs={'class': 'w-full border rounded px-3 py-2'}),
+            'license_number': forms.TextInput(attrs={'class': 'w-full border rounded px-3 py-2'}),
+        }
