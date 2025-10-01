@@ -23,28 +23,28 @@ class Jobs(models.Model):
     job_code = models.CharField(max_length=20, unique=True)
     notes = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='quoted')
-    quoted_at = models.DateTimeField(default=timezone.now)
-    confirmed_at = models.DateTimeField(null=True, blank=True)
-    approved_at = models.DateTimeField(null=True, blank=True)
-    scheduled_at = models.DateTimeField(null=True, blank=True)
+    quoted_at = models.DateField(default=timezone.now)
+    confirmed_at = models.DateField(null=True, blank=True)
+    approved_at = models.DateField(null=True, blank=True)
+    scheduled_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(null=True, blank=True, default=True)
 
     # Added for backlogs Creation of Maintenance Request by Renter: Add selections for "When did the issue occur?" and
-    issue_found_at = models.DateTimeField(null=True, blank=True)
-    renter_availability = models.DateTimeField(null=True, blank=True)
+    issue_found_at = models.DateField(null=True, blank=True)
+    renter_availability = models.DateField(null=True, blank=True)
     issue_been_fixed_before = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # Always regenerate job_code based on current status
-        prefix = self.status[:3].upper()  # 'QUO', 'APP', etc.
+        # prefix = self.status[:3].upper()  # 'QUO', 'APP', etc.
         
         count = 1
-        base_code = f"{prefix}-{count:05d}"
+        base_code = f"QUO-{count:05d}"
 
         # Increment until unique
         while Jobs.objects.exclude(pk=self.pk).filter(job_code=base_code).exists():
             count += 1
-            base_code = f"{prefix}-{count:05d}"
+            base_code = f"QUO-{count:05d}"
 
         self.job_code = base_code
 

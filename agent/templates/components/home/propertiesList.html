@@ -6,12 +6,12 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 <!-- Properties Table Section -->
-<div class="max-w-7xl mx-auto px-6 py-8 space-y-10">
-    <h2 class="text-2xl font-bold mb-4 text-blue-700">Properties</h2>
+<div class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full">
+    <h2 class="text-2xl font-bold mb-4 text-[#293272]">Properties</h2>
 
     <div class="flex justify-start mb-4 gap-4">
         <a href="{% url 'property_create' %}"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+            class="bg-[#293272] hover:bg-[#162060]  text-white font-medium px-4 py-2 rounded-md shadow text-sm">
             + Create Property
         </a>
     </div>
@@ -52,7 +52,7 @@
 
     <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible">
       <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
-        <thead class="bg-blue-700 text-white hidden sm:table-header-group">
+        <thead class="bg-[#293272] text-white hidden sm:table-header-group">
           <tr>
             <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
             <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
@@ -171,7 +171,7 @@
         <!-- Page Numbers -->
         {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
-        <span class="px-3 py-2 bg-blue-500 text-white rounded font-semibold">
+        <span class="px-3 py-2 bg-[#EF715C] text-white rounded font-semibold">
           {{ num }}
         </span>
         {% else %}

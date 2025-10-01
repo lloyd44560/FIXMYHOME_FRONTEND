@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.utils.timezone import now
+from django.utils import timezone
 
 from django.urls import reverse_lazy,reverse
 
@@ -28,14 +28,16 @@ class AgentHomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         agent = AgentRegister.objects.get(user=self.request.user)
+
         # Get only active properties
         properties_list = Property.objects.filter(is_active=True).order_by('-created_at')
         properties_portfolio_list = Property.objects.filter(
             is_active=True,
             property_manager=agent  #
         ).order_by('-created_at')
+
         # Set up pagination
-        paginator = Paginator(properties_list, 10)  # Show 10 properties per page
+        paginator = Paginator(properties_list, 5)  # Show 10 properties per page
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
@@ -49,7 +51,6 @@ class AgentHomeView(TemplateView):
 
         context['properties_portfolio'] = portfolio_page_obj
         context['portfolio_page_obj'] = portfolio_page_obj  # For portfolio pagination controls
-
 
         # pagawan din ng context and page_obj si properties_portfolio_list
 
@@ -66,18 +67,16 @@ class AgentHomeView(TemplateView):
         context['approved_non_urgent'] = Jobs.objects.filter(agent=agent, status='approved', priority=False).count()
 
         # Jobs Today (scheduled today)
-        today = now().date()
-        context['today_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=True).count()
-        context['today_non_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at__date=today, priority=False).count()
+        context['today_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at=timezone.now().date(), priority=True).count()
+        context['today_non_urgent'] = Jobs.objects.filter(agent=agent, scheduled_at=timezone.now().date(), priority=False).count()
 
         # Add renter requests for this agent
         context['renter_requests'] = RequestReport.objects.filter(agent=agent).order_by('-date_requested')
         context['respond_form'] = RespondRequestForm()
 
-
         context['property_managers'] = AgentRegister.objects.filter(is_property_manager=True)
-
         context['add_manager_form'] = PropertyManagerForm()
+
         return context
 
     # Save ng property manager to eh paano naman yung edit and delete ? 

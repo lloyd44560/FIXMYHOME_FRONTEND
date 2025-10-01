@@ -5,8 +5,8 @@
 <!-- Top Navigation -->
 {% include 'components/home/navigatorBaseAgent.html' %}
 
-<div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-8 m-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Renters</h2>
+<div class="max-w-7xl px-4 sm:px-6 lg:px-8 py-8 m-6 w-full">
+    <h2 class="text-2xl font-bold text-[#293272] mb-6">Manage Renters</h2>
 
     <!-- Filter Form -->
     <form id="filterForm" method="POST" class="mb-6">
@@ -47,7 +47,7 @@
               <td class="px-6 py-4 whitespace-nowrap">{{ renter.phone }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-right">
                 <a href="{% url 'edit_renter' renter.id %}"
-                  class="inline-flex items-center px-4 py-1.5 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none">
+                  class="inline-flex items-center px-4 py-1.5 text-sm font-medium text-white bg-[#293272] rounded hover:bg-[#162060] focus:outline-none">
                   Edit
                 </a>
               </td>
@@ -109,7 +109,7 @@
         <!-- Page Numbers -->
         {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
-        <span class="px-3 py-2 bg-blue-500 text-white rounded font-semibold">
+        <span class="px-3 py-2 bg-[#EF715C] text-white rounded font-semibold">
           {{ num }}
         </span>
         {% else %}
