@@ -30,6 +30,9 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         agent = AgentRegister.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
+
+        # Example: update related Job status
+        job = bidding.jobs 
         
         # Create a notification to Trader
         if not bidding.is_approved:  # Rejected
@@ -62,6 +65,10 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
 
             bidding.approved_at = timezone.now()
             bidding.approved_by = agent
+
+            job.status = "approved"
+            job.trader = bidding.trader
+            job.save()
 
             # Example: Send approval email
             send_mail(

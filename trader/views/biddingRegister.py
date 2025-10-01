@@ -1,5 +1,7 @@
 from django.urls import reverse_lazy
+from django.conf import settings
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic import CreateView
@@ -24,6 +26,28 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Set trader as current user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
         form.instance.trader = trader
+
+        # Use form.instance (not bidding yet)
+        job = form.instance.jobs  
+
+        # Check for duplicates
+        if Bidding.objects.filter(trader=trader, jobs=job).exists():
+            messages.error(self.request, "You have already submitted a quotation for this job.")
+            return self.form_invalid(form)
+
+        # Save the bidding first
+        bidding = form.save()
+
+        # Send email to agent (or trader depending on your logic)
+        send_mail(
+            subject=f"New Quotation Submitted - {bidding.jobs.job_code}",
+            message=f"Hi {bidding.jobs.agent.name},\n\n"
+                    f"A new quotation has been submitted by {trader.name} "
+                    f"for Job {bidding.jobs.job_code}. Please review it.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[bidding.jobs.agent.user.email or bidding.jobs.agent.email],  # email to agent
+            fail_silently=False,
+        )
         
         messages.success(self.request, "Your quotation has been submitted successfully and is now pending agent review.")
         return super().form_valid(form)

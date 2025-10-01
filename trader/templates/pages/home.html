@@ -5,15 +5,83 @@
 {% include 'components/home/navigatorBase.html' %}
 
 <!-- Page Content -->
-<main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+<main class="max-w-7xl mx-auto px-6 py-8 space-y-10 w-full">
   <!-- Dashboard Cards -->
-  {% include 'components/home/dashboard_cards.html' %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- To Quote Requests -->
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
+        <h2 class="font-bold text-[#293272] text-lg mb-2">
+          <a href="{% url 'quote_list' %}">
+            To Quote Requests
+          </a>
+        </h2>
+        <a href="{% url 'quote_list' %}?priority=true">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'quote_list' %}?priority=false">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
+        </a>
+        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+    </div>
+
+    <!-- Pending Quotes -->
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Pending Quotes</h2>
+        <a href="{% url 'quote_list' %}?status=pending&priority=true">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ pending_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'quote_list' %}?status=pending&priority=false">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ pending_non_urgent }} non-urgent</p>
+        </a>
+        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+    </div>
+
+    <!-- Jobs Today -->
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Today</h2>
+        <a href="{% url 'job_list' %}?status=scheduled&priority=true">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ today_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'job_list' %}?status=scheduled&priority=false">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ today_non_urgent }} non-urgent</p>
+        </a>
+        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+    </div>
+
+    <!-- Jobs Approved -->
+    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
+        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Approved</h2>
+        <a href="{% url 'job_list' %}?status=approved&priority=true">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ approved_urgent }} urgent</p>
+        </a>
+        <a href="{% url 'job_list' %}?status=approved&priority=false">
+            <p class="text-[#EF7153] text-sm hover:underline">{{ approved_non_urgent }} non-urgent</p>
+        </a>
+        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+    </div>
+  </div>
 
   <!-- New Messages -->
-  {% include 'components/home/messages_section.html' %}
+  <section>
+    <h2 class="text-[#293272] font-bold text-xl mb-3">New Messages</h2>
+    <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
+        No new messages at the moment.
+    </div>
+  </section>
 
   <!-- Calendar -->
-  {% include 'components/home/calendar_section.html' %}
+  <section>
+    <h2 class="text-[#293272] font-bold text-xl mb-3">Calendar</h2>
+    <div class="flex items-center justify-between border rounded-xl px-6 py-4 bg-gray-50 shadow w-full max-w-sm">
+        <button class="text-[#293272] text-xl font-bold">&lt;</button>
+        <span class="font-medium">June 2024</span>
+        <button class="text-[#293272] text-xl font-bold">&gt;</button>
+    </div>
+  </section>
 
   {% if messages %}
     <div
