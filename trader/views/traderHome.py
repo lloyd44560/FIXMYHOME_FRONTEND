@@ -47,17 +47,6 @@ class TraderHomeView(TemplateView):
             is_active=True
         ).count()
 
-        context['approved_urgent'] = Jobs.objects.filter(
-            status='approved', 
-            priority=True, 
-            trader_id=trader
-        ).count()
-        context['approved_non_urgent'] = Jobs.objects.filter(
-            status='approved', 
-            priority=False, 
-            trader_id=trader
-        ).count()
-
         # Jobs Today (scheduled today)
         context['today_urgent'] = Jobs.objects.filter(
             scheduled_at=timezone.now().date(), 
@@ -66,6 +55,18 @@ class TraderHomeView(TemplateView):
         ).count()
         context['today_non_urgent'] = Jobs.objects.filter(
             scheduled_at=timezone.now().date(),
+            priority=False, 
+            trader_id=trader
+        ).count()
+
+        # Approved Jobs
+        context['approved_urgent'] = Jobs.objects.filter(
+            status='approved', 
+            priority=True, 
+            trader_id=trader
+        ).count()
+        context['approved_non_urgent'] = Jobs.objects.filter(
+            status='approved', 
             priority=False, 
             trader_id=trader
         ).count()

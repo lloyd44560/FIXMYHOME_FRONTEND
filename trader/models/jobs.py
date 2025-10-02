@@ -28,6 +28,8 @@ class Jobs(models.Model):
     approved_at = models.DateField(null=True, blank=True)
     scheduled_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(null=True, blank=True, default=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     # Added for backlogs Creation of Maintenance Request by Renter: Add selections for "When did the issue occur?" and
     issue_found_at = models.DateField(null=True, blank=True)

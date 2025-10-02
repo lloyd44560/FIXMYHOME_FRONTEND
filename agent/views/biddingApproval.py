@@ -4,6 +4,7 @@ from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils import timezone
+from django.shortcuts import redirect
 from django.core.mail import send_mail
 
 from trader.models import Bidding
@@ -31,6 +32,10 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         agent = AgentRegister.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
 
+        if bidding.end_date < bidding.start_date:
+            messages.error(self.request, "End date cannot be earlier than start date.")
+            return self.form_invalid(form)
+        
         # Example: update related Job status
         job = bidding.jobs 
         
@@ -66,8 +71,11 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
             bidding.approved_at = timezone.now()
             bidding.approved_by = agent
 
+            # Fill Job details
             job.status = "approved"
             job.trader = bidding.trader
+            job.start_date = bidding.start_date
+            job.end_date = bidding.end_date
             job.save()
 
             # Example: Send approval email

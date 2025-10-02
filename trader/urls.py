@@ -1,6 +1,7 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth.views import LogoutView
 from trader.views import (
+    calendar_events,
     TraderRegistrationCreateView,
     TraderHomeView,
     TraderProfileView,
@@ -18,6 +19,7 @@ urlpatterns = [
 
     # =============== Middleware added: Login Required =============== 
     path('home/', TraderHomeView.as_view(), name='home_trader'),
+    path("home/calendar/events/", calendar_events, name="calendar_events"),
     path('profile-trader/', TraderProfileView.as_view(), name='profile_trader'),
     path('profile/security/', TraderEditSecurityView.as_view(), name='trader_edit_security'),
     path("notifications/", NotificationListView.as_view(), name="notification_list"),
