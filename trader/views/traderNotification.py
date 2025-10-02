@@ -5,9 +5,12 @@ from django.views.generic import TemplateView, ListView, DetailView
 from trader.models import Jobs
 from trader.models import TraderNotification
 
-# Middlewares
+# Middleware decorator
+from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
-from agent.decorators.agentOnly import agent_required
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from trader.decorators.traderOnly import trader_required
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,7 +40,6 @@ class NotificationListView(LoginRequiredMixin, ListView):
         return TraderNotification.objects.filter(
             trader_id__user=self.request.user
         ).order_by("-created_at")
-
 
 class NotificationDetailView(LoginRequiredMixin, DetailView):
     model = TraderNotification

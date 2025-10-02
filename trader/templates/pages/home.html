@@ -4,6 +4,36 @@
 <!-- Top Navigation -->
 {% include 'components/home/navigatorBase.html' %}
 
+<style>
+  /* Make the calendar container responsive */
+  #calendar {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Adjust buttons for smaller screens */
+  .fc .fc-toolbar-chunk button {
+    padding: 0.25rem 0.5rem;  /* smaller buttons */
+    font-size: 0.75rem;
+  }
+
+  /* Event cards */
+  .fc .fc-event {
+    background-color: #293272;
+    color: #fff;        
+    border-radius: 0.5rem;   
+    padding: 0.25rem 0.5rem; 
+    font-size: 0.875rem;    
+  }
+
+  /* Calendar title */
+  .fc .fc-toolbar-title {
+    color: #293272;
+    font-weight: 700;  
+    font-size: 1.125rem; 
+  }
+</style>
+
 <!-- Page Content -->
 <main class="max-w-7xl mx-auto px-6 py-8 space-y-10 w-full">
   <!-- Dashboard Cards -->
@@ -28,7 +58,9 @@
     <!-- Pending Quotes -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Pending Quotes</h2>
+        <a href="{% url 'quote_list' %}?status=pending">
+          <h2 class="font-bold text-[#293272] text-lg mb-2">Pending Quotes</h2>
+        </a>
         <a href="{% url 'quote_list' %}?status=pending&priority=true">
             <p class="text-[#EF7153] text-sm hover:underline">{{ pending_urgent }} urgent</p>
         </a>
@@ -41,7 +73,9 @@
     <!-- Jobs Today -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Today</h2>
+        <a href="{% url 'job_list' %}?status=scheduled">
+          <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Today</h2>
+        </a>
         <a href="{% url 'job_list' %}?status=scheduled&priority=true">
             <p class="text-[#EF7153] text-sm hover:underline">{{ today_urgent }} urgent</p>
         </a>
@@ -54,7 +88,9 @@
     <!-- Jobs Approved -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
         <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Approved</h2>
+        <a href="{% url 'job_list' %}?status=approved">
+          <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Approved</h2>
+        </a>
         <a href="{% url 'job_list' %}?status=approved&priority=true">
             <p class="text-[#EF7153] text-sm hover:underline">{{ approved_urgent }} urgent</p>
         </a>
@@ -75,11 +111,9 @@
 
   <!-- Calendar -->
   <section>
-    <h2 class="text-[#293272] font-bold text-xl mb-3">Calendar</h2>
-    <div class="flex items-center justify-between border rounded-xl px-6 py-4 bg-gray-50 shadow w-full max-w-sm">
-        <button class="text-[#293272] text-xl font-bold">&lt;</button>
-        <span class="font-medium">June 2024</span>
-        <button class="text-[#293272] text-xl font-bold">&gt;</button>
+    <h2 class="text-[#293272] font-bold text-xl mb-3">Calendar Events</h2>
+    <div class="bg-white p-4 rounded-xl shadow w-full overflow-x-auto">
+      <div id="calendar"></div>
     </div>
   </section>
 
@@ -101,5 +135,40 @@
 {% endblock %}
 
 {% block scripts %}
-    <!-- JS links here -->
+  <!-- FullCalendar CSS & JS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    function getToolbar() {
+      if (window.innerWidth < 640) {  // sm breakpoint
+        return {
+          left: 'prev,next today',
+          center: 'title',
+          right: ''   // hide extra buttons on mobile
+        }
+      } else {
+        return {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        }
+      }
+    }
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: getToolbar(),
+      windowResize: function(view) {
+        calendar.setOption('headerToolbar', getToolbar());
+      },
+      events: 'calendar/events/',
+    });
+
+    calendar.render();
+  });
+  </script>
 {% endblock %}

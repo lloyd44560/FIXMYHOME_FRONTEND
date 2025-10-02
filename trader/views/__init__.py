@@ -1,6 +1,7 @@
 # ============ Trader Views ============
 from .traderRegister import TraderRegistrationCreateView
 from .traderHome import TraderHomeView
+from .traderCalendarEvents import calendar_events
 from .traderProfile import TraderProfileView
 from .traderSecurity import TraderEditSecurityView
 from .traderNotification import NotificationListView,NotificationDetailView

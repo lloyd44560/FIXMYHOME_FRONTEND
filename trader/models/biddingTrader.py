@@ -26,6 +26,8 @@ class Bidding(models.Model):
     notes = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
 
     # Approval fields
     is_approved = models.BooleanField(null=True, blank=True, default=None, help_text="None=pending, True=approved, False=rejected")

@@ -137,9 +137,21 @@ class AgentCreateJobForm(forms.ModelForm):
 class BiddingApprovalForm(forms.ModelForm):
     class Meta:
         model = Bidding
-        fields = ['is_approved', 'approval_notes']
+        fields = ['is_approved', 'approval_notes', 'start_date', 'end_date']
         widgets = {
             'approval_notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Approval notes (optional)'}),
+            'start_date': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'w-full border border-gray-300 rounded-md p-2'
+                }
+            ),
+            'end_date': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'w-full border border-gray-300 rounded-md p-2'
+                }
+            ),
         }
 
 
