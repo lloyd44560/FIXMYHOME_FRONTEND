@@ -1,69 +1,166 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Message
+from django.http import JsonResponse
 from django.db.models import Q
-from datetime import datetime
 from django.utils import timezone
-from django.core.paginator import Paginator  # import paginator
+from django.core.paginator import Paginator
+from django.utils.text import slugify
+from .models import Message
+from renter.models import Renter
+from trader.models import TraderRegistration
+from agent.models import AgentRegister
+
+def get_user_role(user):
+    if Renter.objects.filter(user=user).exists():
+        return "Renter"
+    elif TraderRegistration.objects.filter(email=user.email).exists():
+        return "Trader"
+    elif AgentRegister.objects.filter(email=user.email).exists():
+        return "Agent"
+    return "Unknown"
+
+@login_required
+def chat_room(request, room_slug):
+    search_query = request.GET.get('search', '')
+
+    if room_slug == "general":
+        # General chat: use a dummy user or just None
+        room_user = None
+        # For general chat, messages without a receiver
+        chats = Message.objects.filter(receiver__isnull=True).order_by("timestamp")
+
+        # Sidebar: you may still want to show users
+        all_users = User.objects.exclude(id=request.user.id)
+        users_with_roles = []
+
+        for u in all_users:
+            role = get_user_role(u)
+            last_message = Message.objects.filter(
+                (Q(sender=request.user) & Q(receiver=u)) |
+                (Q(sender=u) & Q(receiver=request.user))
+            ).order_by("-timestamp").first()
+
+            users_with_roles.append({
+                "user": u,
+                "role": role,
+                "last_message": last_message,
+                "slug": slugify(u.username)
+            })
+
+        # Sort sidebar by last message
+        users_with_roles.sort(
+            key=lambda x: x["last_message"].timestamp if x["last_message"] else timezone.make_aware(timezone.datetime.min),
+            reverse=True
+        )
+
+        # Pagination
+        paginator = Paginator(users_with_roles, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, "chat.html", {
+            "room_user": room_user,
+            "room_slug": room_slug,
+            "chats": chats,
+            "user_last_messages": users_with_roles,  # send all
+            "search_query": search_query,
+        })
+
+    else:
+        # Map slug to actual user
+        try:
+            room_user = next(u for u in User.objects.exclude(id=request.user.id) if slugify(u.username) == room_slug)
+        except StopIteration:
+            return render(request, "not_found.html", status=404)
+
+        # Chats between current user and the room user
+        chats = Message.objects.filter(
+            (Q(sender=request.user) & Q(receiver=room_user)) |
+            (Q(sender=room_user) & Q(receiver=request.user))
+        ).order_by("timestamp")
+
+        if search_query:
+            chats = chats.filter(content__icontains=search_query)
+
+        # Build sidebar as above
+        all_users = User.objects.exclude(id=request.user.id)
+        users_with_roles = []
+        for u in all_users:
+            role = get_user_role(u)
+            if role in ["Renter", "Agent"]:
+                last_message = Message.objects.filter(
+                    (Q(sender=request.user) & Q(receiver=u)) |
+                    (Q(sender=u) & Q(receiver=request.user))
+                ).order_by("-timestamp").first()
+                users_with_roles.append({
+                    "user": u,
+                    "role": role,
+                    "last_message": last_message,
+                    "slug": slugify(u.username)
+                })
+
+        users_with_roles.sort(
+            key=lambda x: x["last_message"].timestamp if x["last_message"] else timezone.make_aware(timezone.datetime.min),
+            reverse=True
+        )
+
+        paginator = Paginator(users_with_roles, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, "chat.html", {
+            "room_user": room_user,
+            "room_slug": room_slug,
+            "chats": chats,
+            "user_last_messages": page_obj,
+            "page_obj": page_obj,
+            "search_query": search_query,
+        })
 
 
 @login_required
-def chat_room(request, room_name):
-    search_query = request.GET.get('search', '') 
+def fetch_messages(request, room_slug):
+    try:
+        room_user = next(u for u in User.objects.exclude(id=request.user.id) if slugify(u.username) == room_slug)
+    except StopIteration:
+        return JsonResponse({"error": "User not found"}, status=404)
 
-    # Must have a dynamic filter here, currently this is displaying all  registered users in auth.user
-    # This will be dynamic based from the role of the logged in user
-    
-    # FOr this we need to determine the user role:
-        # If the user is renter this will be the list of users to chat
-        # If the user is agent this will be the list of users to chat
-        # If the user is trader this will be the list of users to chat
-
-    # For now all users muna
-
-    users = User.objects.exclude(id=request.user.id) 
-
-    # fetch messages between current user and selected room_name as in the username of the user 
     chats = Message.objects.filter(
-        (Q(sender=request.user) & Q(receiver__username=room_name)) |
-        (Q(receiver=request.user) & Q(sender__username=room_name))
-    )
+        (Q(sender=request.user) & Q(receiver=room_user)) |
+        (Q(sender=room_user) & Q(receiver=request.user))
+    ).order_by("timestamp")
 
-    if search_query:
-        chats = chats.filter(Q(content__icontains=search_query))  
+    messages = [
+        {
+            "sender": msg.sender.username,
+            "content": msg.content,
+            "timestamp": msg.timestamp.strftime("%H:%M"),
+        }
+        for msg in chats
+    ]
+    return JsonResponse({"messages": messages})
 
-    chats = chats.order_by('timestamp') 
 
-    # build last messages per user
-    user_last_messages = []
-    for user in users:
-        last_message = Message.objects.filter(
-            (Q(sender=request.user) & Q(receiver=user)) |
-            (Q(receiver=request.user) & Q(sender=user))
-        ).order_by('-timestamp').first()
+@login_required
+def send_message(request, room_slug):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=400)
 
-        user_last_messages.append({
-            'user': user,
-            'last_message': last_message
-        })
+    try:
+        room_user = next(u for u in User.objects.exclude(id=request.user.id) if slugify(u.username) == room_slug)
+    except StopIteration:
+        return JsonResponse({"error": "User not found"}, status=404)
 
-    # sort by last_message timestamp
-    user_last_messages.sort(
-        key=lambda x: x['last_message'].timestamp if x['last_message'] else timezone.make_aware(datetime.min),
-        reverse=True
-    )
+    import json
+    data = json.loads(request.body)
+    content = data.get("message", "").strip()
+    if not content:
+        return JsonResponse({"error": "Empty message"}, status=400)
 
-    #  Paginate user list (10 per page) If the user has many chats
-    paginator = Paginator(user_last_messages, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'chat.html', {
-        'room_name': room_name,
-        'chats': chats,
-        'users': users,
-        'user_last_messages': page_obj,  # paginated object
-        'page_obj': page_obj,
-        'search_query': search_query 
+    msg = Message.objects.create(sender=request.user, receiver=room_user, content=content)
+    return JsonResponse({
+        "sender": msg.sender.username,
+        "content": msg.content,
+        "timestamp": msg.timestamp.strftime("%H:%M")
     })

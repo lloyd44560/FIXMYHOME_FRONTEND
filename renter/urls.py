@@ -43,8 +43,8 @@ urlpatterns = [
 
     path('account/', views.renter_account, name='renter_account'),
     # path('messages/',  views.messages, name='renter_messages'),
-    path('chat/', views.demo_chat, name='demo_chat'),
-    path('chat/<str:job_number>/', views.chat_thread, name='chat_thread'),
+    # path('chat/', views.demo_chat, name='demo_chat'),
+    # path('chat/<str:job_number>/', views.chat_thread, name='chat_thread'),
 
     path('login-error/', views.login_error, name='login_error'),
     path('no-account/', TemplateView.as_view(template_name='no_account.html'), name='no_account'),

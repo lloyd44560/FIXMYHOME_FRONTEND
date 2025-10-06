@@ -20,7 +20,7 @@
             <span>Home</span>
         </a>
 
-        <a href="#" class="flex items-center text-gray-700 hover:text-[#EF7153] transition gap-2">
+        <a href="{% url 'agent_chat' %}" class="flex items-center text-gray-700 hover:text-[#EF7153] transition gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 4h.01M4 6h16v12H4z" />
             </svg>
@@ -33,7 +33,7 @@
             </svg>
             <span>Account</span>
         </a>
-      
+
         <form id="logout-form" method="POST" action="{% url 'logout_agent' %}">
             {% csrf_token %}
             <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">

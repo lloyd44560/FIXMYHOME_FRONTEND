@@ -1,441 +1,143 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ room_name }}</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      body, html {
-        height: 100%;
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-      }
-      .chat-container {
-        height: 100vh;
-        display: flex;
-      }
-      .sidebar {
-        background: linear-gradient(180deg, #1f2937, #111827);
-        color: white;
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        transition: width 0.3s ease;
-      }
-      .sidebar.collapsed {
-        width: 80px;
-      }
-      .sidebar .contacts {
-        flex-grow: 1;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #6b7280 #1f2937;
-      }
-      .sidebar a {
-        color: white;
-        text-decoration: none;
-        transition: background 0.2s ease, transform 0.2s ease;
-      }
-      .sidebar a:hover {
-        background-color: #374151;
-        transform: translateX(5px);
-      }
-      .sidebar a.active {
-        background-color: #4b5563;
-        border-left: 4px solid #3b82f6;
-      }
-      .chat-area {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        background: #f3f4f6;
-      }
-      #chatbox {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding: 20px;
-        background: #ffffff;
-        transition: all 0.3s ease;
-      }
-      .chat-message {
-        border-radius: 12px;
-        padding: 12px 16px;
-        margin-bottom: 12px;
-        max-width: 75%;
-        animation: fadeIn 0.3s ease-in;
-      }
-      .chat-message.sender {
-        background: #3b82f6;
-        color: white;
-        margin-left: auto;
-        text-align: right;
-      }
-      .chat-message.receiver {
-        background: #e5e7eb;
-        color: #1f2937;
-        margin-right: auto;
-      }
-      .chat-input {
-        padding: 16px;
-        background: #ffffff;
-        border-top: 1px solid #e5e7eb;
-      }
-      .chat-input button {
-        background: #3b82f6;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
-        transition: background 0.2s ease;
-      }
-      .chat-input button:hover {
-        background: #2563eb;
-      }
-      .logout {
-        padding: 16px;
-        background: #111827;
-        text-align: center;
-      }
-      .profile-img {
-        transition: transform 0.2s ease;
-      }
-      .profile-img:hover {
-        transform: scale(1.1);
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      /* Custom Scrollbar */
-      #chatbox::-webkit-scrollbar {
-        width: 8px;
-      }
-      #chatbox::-webkit-scrollbar-track {
-        background: #f3f4f6;
-      }
-      #chatbox::-webkit-scrollbar-thumb {
-        background: #6b7280;
-        border-radius: 4px;
-      }
-      .chat-message {
-  transition: all 0.3s ease;
-  animation: fadeIn 0.5s ease-in;
-}
-.chat-message.sender .fa-check {
-  opacity: 0.8;
-  transition: opacity 0.2s ease;
-}
-.chat-message:hover .fa-check {
-  opacity: 1;
-}
-.chat-message .rounded-xl {
-  position: relative;
-  overflow: hidden;
-}
-.chat-message.sender .rounded-xl {
-  border-bottom-right-radius: 4px;
-}
-.chat-message.receiver .rounded-xl {
-  border-bottom-left-radius: 4px;
-}
-#chatbox {
-  padding: 24px;
-  background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
-  scrollbar-width: thin;
-  scrollbar-color: #9ca3af #f3f4f6;
-}
-#chatbox::-webkit-scrollbar {
-  width: 6px;
-}
-#chatbox::-webkit-scrollbar-thumb {
-  background: #9ca3af;
-  border-radius: 3px;
-}
-#chatbox::-webkit-scrollbar-track {
-  background: #f3f4f6;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-    </style>
-  </head>
-  <body>
-    <div class="chat-container">
-      <!-- Sidebar -->
-      <div class="sidebar p-4 flex flex-col">
-        <div class="flex justify-between items-center mb-4">
-          <h5 class="text-lg font-semibold">Chats</h5>
-          <button id="toggle-sidebar" class="text-white focus:outline-none">
-            <i class="fas fa-bars"></i>
-          </button>
-        </div>
-        <div class="contacts flex-grow">
-          {% for item in user_last_messages %}
-          <a
-            href="{% url 'chat' item.user.username %}"
-            class="flex items-center p-3 rounded-lg mb-2 {% if item.user.username == room_name %} active {% endif %}"
-          >
-            <div class="flex-1">
-              <div class="flex justify-between">
-                <strong class="text-sm truncate">{{ item.user.username }}</strong>
-                {% if item.last_message %}
-                <small class="text-xs text-gray-400">{{ item.last_message.timestamp|date:"H:i" }}</small>
-                {% endif %}
-              </div>
-              <div>
-                {% if item.last_message %}
-                <small class="text-xs text-gray-300 truncate block">
-                  {% if item.last_message.sender == request.user %}You: {% endif %}
-                  {{ item.last_message.content|truncatewords:5 }}
-                </small>
-                {% else %}
-                <small class="text-xs text-gray-400">No messages yet</small>
-                {% endif %}
-              </div>
-            </div>
-          </a>
-          {% endfor %}
-        </div>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ room_user.username }}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100">
+<div class="flex h-screen">
 
-        <!-- Pagination -->
-        <div class="mt-4">
-          <nav aria-label="User pagination">
-            <ul class="flex justify-center space-x-1">
-              {% if page_obj.has_previous %}
-              <li>
-                <a class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 text-xs" href="?page={{ page_obj.previous_page_number }}">&laquo; Prev</a>
-              </li>
-              {% endif %}
-              {% for num in page_obj.paginator.page_range %}
-              <li>
-                <a
-                  class="px-3 py-1 rounded text-xs {% if page_obj.number == num %} bg-blue-600 text-white {% else %} bg-gray-700 hover:bg-gray-600 {% endif %}"
-                  href="?page={{ num }}"
-                >
-                  {{ num }}
-                </a>
-              </li>
-              {% endfor %}
-              {% if page_obj.has_next %}
-              <li>
-                <a class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 text-xs" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
-              </li>
-              {% endif %}
-            </ul>
-          </nav>
-        </div>
-
-        <!-- Logout -->
-        <div class="logout mt-auto">
-          <h6 class="text-sm"><i class="fas fa-user mr-2"></i>{{ request.user.username|title }}</h6>
-          <!-- <a href="{% url 'logout' %}" class="text-red-400 hover:text-red-300 text-sm">
-            <i class="fas fa-sign-out-alt mr-1"></i> Logout
-          </a> -->
-        </div>
-      </div>
-
-      <!-- Chat Area -->
-      <div class="chat-area flex flex-col">
-        <!-- Header -->
-        <div class="flex items-center p-4 border-b border-gray-200 bg-white">
-          <img
-            src="https://ui-avatars.com/api/?name={{ room_name|urlencode }}&size=64&background=random"
-            class="rounded-full h-12 w-12 profile-img"
-          />
-          <h4 class="ml-3 text-lg font-semibold">{{ room_name }}</h4>
-          <form method="GET" class="ml-auto">
-            <input
-              type="text"
-              name="search"
-              class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Search messages..."
-              value="{{ search_query }}"
-            />
-          </form>
-        </div>
-
-        <!-- Chatbox -->
-        <!-- Chatbox -->
-        <div id="chatbox" class="relative">
-          {% if chats %}
-          {% for message in chats %}
-          <div class="chat-message flex items-start mb-4 {% if message.sender == request.user %} sender justify-end {% else %} receiver justify-start {% endif %}">
-            <!-- Avatar (visible only for receiver) -->
-            {% if message.sender != request.user %}
-            <img
-              src="https://ui-avatars.com/api/?name={{ message.sender.username|urlencode }}&size=40&background=random"
-              class="rounded-full h-10 w-10 mr-3 mt-1 flex-shrink-0 profile-img"
-            />
-            {% endif %}
-            <div class="flex flex-col">
-              <!-- Message Bubble -->
-              <div class="relative px-4 py-2 rounded-xl max-w-[75%] shadow-sm {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-200 text-gray-800 {% endif %}">
-                <span>{{ message.content }}</span>
-                <!-- Timestamp -->
-                <small class="block text-xs mt-1 {% if message.sender == request.user %} text-blue-100 {% else %} text-gray-500 {% endif %}">
-                  {{ message.timestamp|date:"H:i" }}
-                </small>
-                <!-- Sent/Received Indicator for Sender -->
-                {% if message.sender == request.user %}
-                <i class="fas fa-check text-xs absolute -bottom-4 right-2 text-blue-300"></i>
-                {% endif %}
-              </div>
-            </div>
-            <!-- Avatar (visible only for sender, placed after message) -->
-            {% if message.sender == request.user %}
-            <img
-              src="https://ui-avatars.com/api/?name={{ message.sender.username|urlencode }}&size=40&background=random"
-              class="rounded-full h-10 w-10 ml-3 mt-1 flex-shrink-0 profile-img"
-            />
+  <!-- Sidebar -->
+  <div class="w-72 bg-gray-900 text-white flex flex-col">
+    <h2 class="p-4 font-bold text-xl border-b border-gray-700">Chats</h2>
+    <div class="flex-1 overflow-y-auto">
+      {% for item in user_last_messages %}
+      <a href="{% url 'chat' item.slug %}" 
+         class="block px-4 py-3 border-b border-gray-800 hover:bg-gray-700 transition 
+                {% if item.user.username == room_user.username %}bg-gray-700 font-semibold{% endif %}">
+          <div class="flex justify-between items-center">
+            <span>{{ item.user.username }}</span>
+            {% if item.last_message %}
+              <span class="text-xs text-gray-400">{{ item.last_message.timestamp|date:"H:i" }}</span>
             {% endif %}
           </div>
-          {% endfor %}
-          {% else %}
-          <p class="text-center text-gray-500 mt-10">No messages yet.</p>
+          {% if item.last_message %}
+            <div class="text-sm text-gray-400 truncate">{{ item.last_message.content|truncatewords:5 }}</div>
           {% endif %}
-        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
 
-        <!-- Input -->
-        <div class="chat-input">
-          <div class="flex">
-            <input
-              type="text"
-              id="my_input"
-              class="flex-1 border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Type a message..."
-              required
-            />
-            <button id="submit_button" class="ml-2 btn">Send</button>
-          </div>
+  <!-- Chat Area -->
+  <div class="flex-1 flex flex-col">
+    
+    <!-- Chat Header -->
+    <div class="p-4 bg-white border-b flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+        <div>
+          <h3 class="font-semibold text-lg">{{ room_user.username }}</h3>
+          <p class="text-xs text-gray-500">Active now</p>
         </div>
       </div>
     </div>
-    {{slug|json_script:"room_slug"}}
 
-    <script>
-      const chatbox = document.querySelector("#chatbox");
+    <!-- Chat Messages -->
+    <div class="flex-1 p-4 overflow-y-auto bg-gray-50" id="chatbox">
+      {% for message in chats %}
+      <div class="mb-4 {% if message.sender == request.user %}text-right{% else %}text-left{% endif %}">
+        <div class="inline-block px-4 py-2 rounded-2xl shadow 
+          {% if message.sender == request.user %}
+            bg-blue-500 text-white rounded-br-none
+          {% else %}
+            bg-gray-200 text-gray-800 rounded-bl-none
+          {% endif %}">
+          {{ message.content }}
+        </div>
+        <div class="text-xs text-gray-400 mt-1">
+          {{ message.timestamp|date:"H:i" }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
 
-      // Function to scroll to the bottom of the chatbox
-      function scrollToBottom() {
-        chatbox.scrollTop = chatbox.scrollHeight;
-      }
+    <!-- Input Area -->
+    <div class="p-4 bg-white border-t flex items-center gap-2">
+      <input type="text" id="my_input" placeholder="Type a message..." 
+             class="flex-1 px-4 py-2 border rounded-full focus:ring focus:ring-blue-300">
+      <button id="submit_button" 
+              class="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium">
+        Send
+      </button>
+    </div>
+  </div>
 
-      // Scroll to bottom when the page is loaded
-      scrollToBottom();
+</div>
 
-      const roomName = JSON.parse(
-        document.getElementById("room_slug").textContent
-      );
-      const chatSocket = new WebSocket(
-        "ws://" + window.location.host + "/ws/chat/{{ room_name }}/"
-      );
+<!-- Script -->
+<script>
+$(document).ready(function() {
+    const roomSlug = "{{ room_slug }}";
 
-      chatSocket.onopen = function (e) {
-        console.log("The connection was set up successfully!");
-      };
-      chatSocket.onclose = function (e) {
-        console.log("Something unexpected happened!");
-      };
+    function fetchMessages() {
+        $.ajax({
+            url: "{% url 'fetch_messages' room_slug %}",
+            type: "GET",
+            success: function(data) {
+                const chatbox = $("#chatbox");
+                chatbox.empty();
+                data.messages.forEach(msg => {
+                    const align = msg.sender === "{{ request.user.username }}" ? "text-right" : "text-left";
+                    const bubble = msg.sender === "{{ request.user.username }}"
+                      ? "bg-blue-500 text-white rounded-br-none"
+                      : "bg-gray-200 text-gray-800 rounded-bl-none";
 
-      document.querySelector("#my_input").focus();
-      document.querySelector("#my_input").onkeyup = function (e) {
-        if (e.keyCode == 13) {
-          e.preventDefault();
-          document.querySelector("#submit_button").click();
-        }
-      };
-
-      document.querySelector("#submit_button").onclick = function (e) {
-        var messageInput = document.querySelector("#my_input").value;
-
-        if (messageInput.length == 0) {
-          alert("Add some input first or press the Send button!");
-        } else {
-          chatSocket.send(
-            JSON.stringify({
-              message: messageInput,
-              username: "{{ request.user.username }}",
-              room_name: "{{ room_name }}",
-            })
-          );
-          document.querySelector("#my_input").value = "";
-        }
-      };
-
-      chatSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-
-        if (data.message && data.sender) {
-          const chatbox = document.querySelector("#chatbox");
-          const noMessages = document.querySelector(".text-center.text-gray-500");
-          if (noMessages) {
-            noMessages.style.display = "none";
-          }
-
-          const div = document.createElement("div");
-          div.className =
-            "chat-message " +
-            (data.sender === "{{ request.user.username }}"
-              ? "sender"
-              : "receiver");
-          div.innerHTML = `<div><span>${data.message}</span></div>`;
-          chatbox.appendChild(div);
-          scrollToBottom();
-
-          const lastMessage = document.querySelector(
-            ".active .text-xs.truncate"
-          );
-          if (lastMessage) {
-            lastMessage.innerHTML =
-              data.sender === "{{ request.user.username }}"
-                ? "You: " + data.message
-                : data.message;
-
-            const timestamp = document.querySelector(".active .text-xs.text-gray-400");
-            const date = new Date().toUTCString();
-            timestamp.innerHTML = date.slice(17, 22);
-
-            const chats = document.querySelectorAll(".contacts a");
-            const chatsArray = Array.from(chats);
-            const chatsSorted = chatsArray.sort((a, b) => {
-              const aTime = a.querySelector(".text-xs.text-gray-400").innerHTML;
-              const bTime = b.querySelector(".text-xs.text-gray-400").innerHTML;
-              return aTime < bTime ? 1 : -1;
-            });
-
-            const contacts = document.querySelector(".contacts");
-            contacts.innerHTML = "";
-            chatsSorted.forEach((chat) => {
-              contacts.appendChild(chat);
-            });
-          } else {
-            console.error("No active chat selected");
-          }
-        } else {
-          console.error("Message or sender data is missing:", data);
-        }
-      };
-
-      // Sidebar toggle functionality
-      document.querySelector("#toggle-sidebar").onclick = function () {
-        const sidebar = document.querySelector(".sidebar");
-        sidebar.classList.toggle("collapsed");
-        const contacts = document.querySelectorAll(".contacts a");
-        contacts.forEach((contact) => {
-          contact.classList.toggle("justify-center");
-          const text = contact.querySelector(".flex-1");
-          text.style.display = sidebar.classList.contains("collapsed") ? "none" : "block";
+                    chatbox.append(`
+                      <div class="mb-4 ${align}">
+                        <div class="inline-block px-4 py-2 rounded-2xl shadow ${bubble}">
+                          ${msg.content}
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">${msg.timestamp}</div>
+                      </div>
+                    `);
+                });
+                chatbox.scrollTop(chatbox[0].scrollHeight);
+            }
         });
-      };
-    </script>
-  </body>
+    }
+
+    $("#submit_button").click(function() {
+        const msg = $("#my_input").val().trim();
+        if (!msg) return;
+
+        $.ajax({
+            url: "{% url 'send_message' room_slug %}",
+            type: "POST",
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data: JSON.stringify({message: msg}),
+            contentType: "application/json",
+            success: function() {
+                $("#my_input").val("");
+                fetchMessages();
+            }
+        });
+    });
+
+    $("#my_input").keypress(function(e){
+        if(e.which == 13){
+            $("#submit_button").click();
+            return false;
+        }
+    });
+
+    setInterval(fetchMessages, 3000);
+    fetchMessages();
+});
+</script>
+</body>
 </html>

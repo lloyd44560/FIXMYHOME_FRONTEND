@@ -6,7 +6,7 @@ from trader.views import (
     TraderHomeView,
     TraderProfileView,
     TraderEditSecurityView,
-    NotificationListView, 
+    NotificationListView,
     NotificationDetailView,
     QuoteListView,
     JobListView,
@@ -17,7 +17,7 @@ urlpatterns = [
     path('register/', TraderRegistrationCreateView.as_view(), name='register_submit'),
     path('logout-trader/', LogoutView.as_view(next_page=reverse_lazy('login'), http_method_names=['post']), name='logout_trader'),
 
-    # =============== Middleware added: Login Required =============== 
+    # =============== Middleware added: Login Required ===============
     path('home/', TraderHomeView.as_view(), name='home_trader'),
     path("home/calendar/events/", calendar_events, name="calendar_events"),
     path('profile-trader/', TraderProfileView.as_view(), name='profile_trader'),
@@ -27,4 +27,5 @@ urlpatterns = [
     path('quote/', QuoteListView.as_view(), name='quote_list'),
     path('jobs/', JobListView.as_view(), name='job_list'),
     path('bidding/create/', BiddingCreateView.as_view(), name='bidding_create'),
+    path('chat/', TraderHomeView.trader_chat, name='trader_chat'),
 ]
