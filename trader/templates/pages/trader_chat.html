@@ -8,16 +8,9 @@
 <!-- Top Navigation -->
 {% include 'components/home/navigatorBase.html' %}
 
-
-
-
 {% load static %}
 <body class="bg-gray-50">
-
-
-
   <div class="container mt-5">
-
      <!-- Iframe pointing to the general chat room -->
     <iframe
         src="{{ chat_url }}"
@@ -26,12 +19,11 @@
     </iframe>
 </div>
 
-
-
 {% include 'components/footerTrader.html' %}
 
-
 {% block scripts %}
+  <!-- Alpine.js CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <!-- FullCalendar CSS & JS -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
