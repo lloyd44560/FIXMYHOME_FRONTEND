@@ -58,14 +58,16 @@ class TraderRegistrationCreateView(CreateView):
             # ✅ Now loop the team member lists
             team_names = request.POST.getlist('team_name')
             team_positions = request.POST.getlist('team_position')
+            team_email = request.POST.getlist('team_email')
             form_data = formset.cleaned_data[0]
 
             # ✅ Now get Holiday lists
             holidays = request.POST.getlist('holiday_date')
-            for name, position in zip(team_names, team_positions):
+            for name, position, email in zip(team_names, team_positions, team_email):
                 TeamMember.objects.create(
                     trader=trader, # <--- FK relation
                     teamName=name,
+                    email=email,
                     position=position,  
                     labour_rate_per_hour = form_data['labour_rate_per_hour'],
                     callout_rate = form_data['callout_rate'],
@@ -99,5 +101,4 @@ class TraderRegistrationCreateView(CreateView):
 
             return redirect(self.success_url)
         else:
-            print(f"Form errors: {form.errors}, Formset errors: {formset.errors}, License errors: {form_license.errors}")
             return render(request, self.template_name, {'form': form, 'formset': formset})

@@ -5,3 +5,4 @@ from .jobs import Jobs, JobImage
 from .biddingTrader import Bidding
 from .industryTrader import TraderIndustry
 from .traderNotification import TraderNotification
+from .leaveHolidayReq import Leaves

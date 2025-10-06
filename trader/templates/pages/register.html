@@ -242,6 +242,7 @@
         // --- Add Another TeamMember Functionality ---
         const teamNameInput = document.querySelector('input[name$="-teamName"]');
         const positionInput = document.querySelector('input[name$="-position"]');
+        const emailInput = document.querySelector('input[name$="-email"]');
         const addTeamMemberBtn = document.getElementById('addTeamMember');
         const teamMemberList = document.getElementById('teamMemberList');
 
@@ -253,7 +254,7 @@
         }
 
         // --- Create <li> for a team member ---
-        function createTeamMemberItem(name, position) {
+        function createTeamMemberItem(name, position, email) {
             const li = document.createElement('li');
             li.className = "flex items-center justify-between border p-2 rounded-md bg-gray-50";
 
@@ -271,6 +272,11 @@
             positionInput.type = 'hidden';
             positionInput.name = 'team_position';
             positionInput.value = position;
+
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'team_email';
+            emailInput.value = email || '';
             // ========================================================
 
             const controls = document.createElement('div');
@@ -288,6 +294,7 @@
             editBtnTeamMember.addEventListener('click', () => {
                 teamNameInput.value = name;
                 positionInput.value = position;
+                emailInput.value = email;
                 li.remove();
 
                 updateTeamMemberHeader();
@@ -315,6 +322,7 @@
             li.appendChild(controls);
             li.appendChild(teamNameInput);
             li.appendChild(positionInput);
+            li.appendChild(emailInput);
 
             return li;
         }
@@ -328,11 +336,13 @@
 
             const name = teamNameInput.value.trim();
             const position = positionInput.value.trim();
+            const email = emailInput.value.trim();
 
             if (name && position) {
-                teamMemberList.appendChild(createTeamMemberItem(name, position));
+                teamMemberList.appendChild(createTeamMemberItem(name, position, email));
                 teamNameInput.value = '';
                 positionInput.value = '';
+                emailInput.value = '';
                 updateTeamMemberHeader();
             } else {
                 alert('Please enter name and position');

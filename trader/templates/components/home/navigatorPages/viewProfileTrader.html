@@ -1,64 +1,114 @@
 {% extends "baseTrader.html" %}
 
 {% block content %}
-<!-- Top Navigation -->
 {% include 'components/home/navigatorBase.html' %}
 
-<div x-data="{ showModal: false }" class="flex items-center justify-center min-h-screen">
-  <div class="bg-white shadow-xl rounded-2xl p-8 max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-    <!-- Profile Info -->
-    <div class="flex flex-col">
-      <div class="flex flex-col items-center text-center">
-        <div class="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center">
-          <svg class="w-14 h-14 text-[#EF715E]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+<div 
+  x-data="{ 
+    showModal: false, 
+    showTeam: false, 
+    showAddMember: false,
+    isMember: {{ is_member|yesno:'true,false' }},
+    teamMembers: {{ team_members|safe|default:'[]' }},
+    showEdit: false,
+    selectedMember: {}, 
+    
+    openEditMemberModal(member) { 
+      this.selectedMember = member; 
+      this.showEdit = true; 
+    },
+    InviteMember(member) {
+      member.invited = true;
+      setTimeout(() => member.invited = false, 3000);
+      console.log('Inviting member:', member);
+      fetch(`team-members/invite/${member.id}/`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Error: ' + (data.error || 'Failed to send invite.'));
+          }
+        });
+    },
+  }" 
+  class="flex items-center justify-center min-h-screen px-4"
+>
+  <div class="bg-white shadow-xl rounded-2xl p-8 max-w-4xl w-full relative">
+
+    <!-- Team Members (Top Right Corner) -->
+    <template x-if="!isMember">
+      <div class="absolute top-4 right-4 flex items-center space-x-2">
+        <span class="text-sm sm:text-base font-medium text-gray-700">Team Members:</span>
+        <button
+          @click="showTeam = true"
+          class="flex items-center space-x-2 bg-[#293272] text-white text-sm sm:text-base font-semibold px-4 py-2 rounded-full shadow hover:bg-[#162060] transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4" />
           </svg>
+          <span>Manage ({{ team_members|length|default:0 }})</span>
+        </button>
+      </div>
+    </template>
+
+    <!-- Profile Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+      <div class="flex flex-col">
+        <div class="flex flex-col items-center text-center">
+          <div class="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center">
+            <svg class="w-14 h-14 text-[#EF715E]" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+            </svg>
+          </div>
+          <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ full_name }}</h2>
+          <p class="text-gray-500 mt-1 text-sm break-all">{{ email }}</p>
         </div>
-        <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ full_name }}</h2>
-        <p class="text-gray-500 mt-1">{{ email }}</p>
+
+        <div class="flex flex-col justify-between md:pl-[4rem]">
+          <div class="mt-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Benefits</h3>
+            <ul class="list-disc list-inside text-gray-600 space-y-1">
+              <li><a href="#" class="text-gray-600 hover:underline">FMH Lottery</a></li>
+              <li><a href="#" class="text-gray-600 hover:underline">FMH Local Businesses</a></li>
+            </ul>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Support</h3>
+            <ul class="list-disc list-inside text-gray-600 space-y-1">
+              <li><a href="#" class="text-gray-600 hover:underline">Help / FAQs</a></li>
+              <li><a href="#" class="text-gray-600 hover:underline">Rate the App</a></li>
+            </ul>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Security</h3>
+            <ul class="list-disc list-inside text-gray-600 space-y-1">
+              <li><a href="{% url 'trader_edit_security' %}" class="text-[#293272] hover:underline">Edit Security</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-col justify-between md:pl-[4rem]">
-        <div class="mt-6">
-          <h3 class="text-sm font-semibold text-gray-700 mb-2">Benefits</h3>
-          <ul class="list-disc list-inside text-gray-600 space-y-1">
-            <li><a href="#" class="text-gray-600 hover:underline">FMH Lottery</a></li>
-            <li><a href="#" class="text-gray-600 hover:underline">FMH Local Businesses</a></li>
-          </ul>
+      <!-- Account Info -->
+      <div class="flex flex-col justify-between">
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-600">Phone Number</label>
+            <input type="text" value="{{ phone }}" class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled />
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-600">Address</label>
+            <input type="text" value="{{ address }}" class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled />
+            <input type="text" value="{{ addressTwo }}" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled />
+          </div>
         </div>
 
-        <div class="mt-6">
-          <h3 class="text-sm font-semibold text-gray-700 mb-2">Support</h3>
-          <ul class="list-disc list-inside text-gray-600 space-y-1">
-            <li><a href="#" class="text-gray-600 hover:underline">Help / FAQs</a></li>
-            <li><a href="#" class="text-gray-600 hover:underline">Rate the App</a></li>
-          </ul>
-        </div>
-
-        <div class="mt-6">
-          <h3 class="text-sm font-semibold text-gray-700 mb-2">Security</h3>
-          <ul class="list-disc list-inside text-gray-600 space-y-1">
-            <li><a href="{% url 'trader_edit_security' %}" class="text-[#293272] hover:underline">Edit Security</a></li>
-          </ul>
-        </div>
+        <button @click="showModal = true"
+          class="mt-8 bg-[#293272] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#162060] transition w-full md:w-auto">
+          Edit Profile
+        </button>
       </div>
-    </div>
-
-    <!-- Account Info -->
-    <div class="flex flex-col justify-between">
-      <div class="space-y-4">
-        <div>
-          <label class="text-sm font-medium text-gray-600">Phone Number</label>
-          <input type="text" value="{{ phone }}" class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled/>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-gray-600">Address</label>
-          <input type="text" value="{{ address }}" class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled/>
-          <input type="text" value="{{ addressTwo }}" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" disabled/>
-        </div>
-      </div>
-
-      <button @click="showModal = true" class="mt-8 bg-[#293272] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#162060] transition w-full md:w-auto">Edit Profile</button>
     </div>
   </div>
 
@@ -92,33 +142,143 @@
     </div>
   </div>
 
-  {% if messages %}
-    <div class="fixed top-6 right-6 z-50 space-y-2">
-      {% for message in messages %}
-        <div
-          x-data="{ show: true }"
-          x-init="setTimeout(() => show = false, 4000)"
-          x-show="show"
-          class="px-4 py-2 rounded shadow-md transition ease-in-out
-                {% if 'error' in message.tags %}
-                  bg-red-500 text-white
-                {% elif 'success' in message.tags %}
-                  bg-green-500 text-white
-                {% else %}
-                  bg-gray-500 text-white
-                {% endif %}"
-        >
-          {{ message }}
-        </div>
-      {% endfor %}
+  <!-- Team Members Modal (List View) -->
+  <div x-show="showTeam" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="relative w-full h-screen max-w-4xl bg-white rounded shadow-xl overflow-hidden">
+      <!-- Header -->
+      <div class="sticky top-0 z-10 bg-white border-b flex items-center justify-between px-6 py-4">
+        <h2 class="text-2xl font-bold text-[#293272]">Team Members</h2>
+        <button @click="showTeam = false" class="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Body -->
+      <div class="overflow-y-auto h-[calc(100vh-72px)] px-6 py-6">
+        <template x-if="teamMembers.length === 0">
+          <p class="text-gray-500 text-center mt-8">No team members available.</p>
+        </template>
+
+        <template x-if="teamMembers.length > 0">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+
+              <tbody class="bg-white divide-y divide-gray-100">
+                <template x-for="(member, index) in teamMembers" :key="index">
+                  <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-3 text-sm text-gray-700" x-text="index + 1"></td>
+                    <td class="px-6 py-3 text-sm text-gray-800 font-medium" x-text="member.name"></td>
+                    <td class="px-6 py-3 text-sm text-gray-600" x-text="member.email || '— No Email —'"></td>
+                    <td class="px-6 py-3 text-sm text-gray-500" x-text="member.role || 'Member'"></td>
+
+                    <!-- Action Buttons -->
+                    <td class="px-6 py-3 text-right">
+                      <!-- If member has NO email → show Edit -->
+                      <template x-if="!member.email">
+                        <button
+                          @click="openEditMemberModal(member)"
+                          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition">
+                          Add Email
+                        </button>
+                      </template>
+
+                      <!-- If member HAS email → show Invite -->
+                      <template x-if="member.email">
+                        <button
+                          @click="InviteMember(member)"
+                          x-text="member.invited ? 'Invited ✅' : 'Invite'"
+                          :class="member.invited 
+                            ? 'bg-green-100 text-green-700 cursor-default' 
+                            : 'bg-[#293272] text-white hover:bg-[#162060] cursor-pointer'"
+                          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition"
+                        ></button>
+                      </template>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </template>
+      </div>
     </div>
-  {% endif %}
+  </div>
+
+  <div x-show="showEdit" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+      <h2 class="text-xl font-semibold text-[#293272] mb-4">Add Email</h2>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-600">Name</label>
+          <input type="text" readonly x-model="selectedMember.name" class="w-full border rounded px-3 py-2 mt-1" />
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-600">Email</label>
+          <input type="text" x-model="selectedMember.email" class="w-full border rounded px-3 py-2 mt-1" />
+        </div>
+
+        <div class="text-right space-x-2">
+          <button @click="showEdit = false" class="px-4 py-2 bg-gray-200 text-gray-700 rounded">Cancel</button>
+          <button 
+            @click="
+              fetch(`team-members/edit/${selectedMember.id}/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(selectedMember),
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  const index = teamMembers.findIndex(m => m.id === selectedMember.id);
+                  if (index !== -1) teamMembers[index] = selectedMember;
+                  showEdit = false;
+                } else {
+                  alert('Error: ' + (data.error || 'Failed to update.'));
+                }
+              })
+            "
+            class="px-4 py-2 bg-[#293272] text-white rounded hover:bg-[#162060]"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Member Sub-Modal -->
+  <div x-show="showAddMember" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Add Team Member</h3>
+      <div class="space-y-3">
+        <input type="text" placeholder="Full Name" x-model="newName" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring" />
+        <input type="text" placeholder="Position" x-model="newRole" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring" />
+        <input type="email" placeholder="Email" x-model="newEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring" />
+      </div>
+      <div class="flex justify-end mt-6 space-x-2">
+        <button @click="showAddMember = false" class="px-4 py-2 rounded-lg border">Cancel</button>
+        <button 
+          @click="teamMembers.push({ name: newName, email: newEmail, role: newRole }); showAddMember = false; newName=''; newEmail=''; newRole='';"
+          class="px-4 py-2 bg-[#293272] text-white rounded-lg font-semibold hover:bg-[#162060] transition">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% include 'components/footerTrader.html' %}
 {% endblock %}
 
 {% block scripts %}
-  <!-- Alpine.js CDN -->
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}

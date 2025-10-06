@@ -24,7 +24,7 @@ function updateStep() {
         }
 
         if (stepIndicators[index]) {
-            stepIndicators[index].classList.toggle('bg-blue-600', index === currentStep);
+            stepIndicators[index].classList.toggle('bg-[#EF7153]', index === currentStep);
             stepIndicators[index].classList.toggle('text-white', index === currentStep);
             stepIndicators[index].classList.toggle('bg-gray-300', index !== currentStep);
             stepIndicators[index].classList.toggle('text-gray-600', index !== currentStep);

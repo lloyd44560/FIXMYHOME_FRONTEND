@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 
 from trader.models import TraderRegistration
 from trader.forms import TraderEditProfileForm
+from trader.forms import TeamMember
 
 # Middleware decorator
 from django.utils.decorators import method_decorator
@@ -31,12 +32,28 @@ class TraderProfileView(UpdateView):
         user = self.request.user
         trader = self.get_object()
 
+        # Fetch all team members linked to this trader
+        team_members_qs = TeamMember.objects.filter(trader=trader)
+
+        # Convert queryset to list of dicts (serializable)
+        team_members = [
+            {
+                "id": member.id,
+                "name": member.teamName,
+                "email": member.email,
+                "role": member.position,
+                # "date_joined": member.date_joined.strftime("%Y-%m-%d"),
+            }
+            for member in team_members_qs
+        ]
         if trader:
             context['full_name'] = user.get_full_name() or trader.name
             context['email'] = user.email or trader.email
             context['phone'] = trader.phone
             context['address'] = trader.address_line_1
             context['addressTwo'] = trader.address_line_2
+            context['team_members'] = team_members
+            context['is_member'] = trader.isTeamMember
 
         else:
             context['error'] = "Trader profile not found."

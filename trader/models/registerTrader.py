@@ -12,6 +12,11 @@ class TraderRegistration(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=50)
     password = models.CharField(max_length=255, null=True, blank=True)
+
+    # Trader Roles
+    isAdmin = models.BooleanField(default=False)
+    isDirector = models.BooleanField(default=True)
+    isTeamMember = models.BooleanField(default=False)
     
     # Company Details
     COMPANY_TYPE_CHOICES = [

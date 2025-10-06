@@ -2,11 +2,13 @@ from django.urls import reverse_lazy
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic import CreateView
 
 from trader.models import TraderRegistration
+from trader.models import TeamMember
 from trader.models import Bidding
 from trader.forms import BiddingForm
 
@@ -34,6 +36,11 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         if Bidding.objects.filter(trader=trader, jobs=job).exists():
             messages.error(self.request, "You have already submitted a quotation for this job.")
             return self.form_invalid(form)
+        
+        # Auto-assign team member
+        if trader.isTeamMember:
+            team_member = TeamMember.objects.filter(user=self.request.user).first()
+            form.instance.team_member = team_member
 
         # Save the bidding first
         bidding = form.save()
@@ -56,5 +63,14 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         form = super().get_form(form_class)
         # Only filter team_member by trader, not jobs
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
-        form.fields['team_member'].queryset = form.fields['team_member'].queryset.filter(trader=trader)
+        team_member_val = form.fields['team_member'].queryset.filter(Q(trader=trader) | Q(user=self.request.user))
         return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        trader = TraderRegistration.objects.filter(user=self.request.user).first()
+        val = trader.isDirector or trader.isAdmin if trader else False
+        # Add flag for template condition
+        context['is_director'] = val
+        context['memberName'] = trader.name if trader else ''
+        return context
