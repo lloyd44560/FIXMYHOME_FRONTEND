@@ -10,6 +10,7 @@ from trader.models import TraderRegistration
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from trader.decorators.traderOnly import trader_required
+from django.shortcuts import render, redirect,get_object_or_404
 
 # View for the home page
 @method_decorator([login_required, trader_required], name='dispatch')
@@ -24,51 +25,61 @@ class TraderHomeView(TemplateView):
 
         # Count by status & priority
         context['to_quote_urgent'] = Bidding.objects.filter(
-            jobs__priority=True, 
-            trader_id=trader, 
+            jobs__priority=True,
+            trader_id=trader,
             is_active=True
         ).count()
         context['to_quote_non_urgent'] = Bidding.objects.filter(
-            jobs__priority=False, 
-            trader_id=trader, 
+            jobs__priority=False,
+            trader_id=trader,
             is_active=True
         ).count()
 
         context['pending_urgent'] = Bidding.objects.filter(
-            is_approved=None, 
-            jobs__priority=True, 
+            is_approved=None,
+            jobs__priority=True,
             trader_id=trader,
             is_active=True
         ).count()
         context['pending_non_urgent'] = Bidding.objects.filter(
-            is_approved=None, 
-            jobs__priority=False, 
+            is_approved=None,
+            jobs__priority=False,
             trader_id=trader,
             is_active=True
         ).count()
 
         # Jobs Today (scheduled today)
         context['today_urgent'] = Jobs.objects.filter(
-            scheduled_at=timezone.now().date(), 
-            priority=True, 
+            scheduled_at=timezone.now().date(),
+            priority=True,
             trader_id=trader
         ).count()
         context['today_non_urgent'] = Jobs.objects.filter(
             scheduled_at=timezone.now().date(),
-            priority=False, 
+            priority=False,
             trader_id=trader
         ).count()
 
         # Approved Jobs
         context['approved_urgent'] = Jobs.objects.filter(
-            status='approved', 
-            priority=True, 
+            status='approved',
+            priority=True,
             trader_id=trader
         ).count()
         context['approved_non_urgent'] = Jobs.objects.filter(
-            status='approved', 
-            priority=False, 
+            status='approved',
+            priority=False,
             trader_id=trader
         ).count()
-                
+
         return context
+
+    @login_required
+    def trader_chat(request):
+        chat_url = "/chat/chat/general/"  # This points to the chat app
+        return render(request, 'pages/trader_chat.html', {"chat_url": chat_url})
+
+
+# display the chat page here
+
+

@@ -16,7 +16,7 @@ urlpatterns = [
     path('register/', AgentRegistrationCreateView.as_view(), name='register_agent'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('login'), http_method_names=['post']), name='logout_agent'),
 
-    # =============== Middleware added: Login Required =============== 
+    # =============== Middleware added: Login Required ===============
     # path('send-invitation-renter/', views.AgentSendInvitation.as_view(), name='renter_invitation'),
     path('home/', AgentHomeView.as_view(), name='home_agent'),
     path('profile-agent/', AgentEditProfileView.as_view(), name='profile_agent'),
@@ -38,6 +38,7 @@ urlpatterns = [
     path('active-jobs/', ActiveJobsListView.as_view(), name='active_jobs_list'),
 
     path('bids/', AgentBidListView.as_view(), name='agent_bid_list'),
-    path('bidding/<int:pk>/approve/', BiddingApprovalView.as_view(), name='bidding_approval')
-    
+    path('bidding/<int:pk>/approve/', BiddingApprovalView.as_view(), name='bidding_approval'),
+    path('chat/', AgentHomeView.agent_chat, name='agent_chat'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

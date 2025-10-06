@@ -1,0 +1,46 @@
+{% extends "baseAgent.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- Top Navigation -->
+{% include 'components/home/navigatorBaseAgent.html' %}
+
+  <div class="container mt-5">
+
+     <!-- Iframe pointing to the general chat room -->
+    <iframe
+        src="{{ chat_url }}"
+        style="width: 100%; height: 80vh; border: none;"
+        title="General Chat">
+    </iframe>
+</div>
+
+
+
+{% include 'components/footerAgent.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <!-- Alpine.js CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- JavaScript for Scroll Position Handling -->
+  <script>
+    // Save scroll position before navigating
+    function saveScrollPosition() {
+        sessionStorage.setItem('scrollPosition', window.scrollY);
+    }
+
+    // Restore scroll position on page load
+    window.addEventListener('load', () => {
+        const scrollPosition = sessionStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo({
+                top: parseInt(scrollPosition),
+                behavior: 'smooth' // Smooth scrolling for better UX
+            });
+            // Optionally clear the stored position
+            sessionStorage.removeItem('scrollPosition');
+        }
+    });
+  </script>
+{% endblock %}

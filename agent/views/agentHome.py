@@ -15,8 +15,9 @@ from agent.forms import RespondRequestForm,PropertyManagerForm
 from agent.decorators.agentOnly import agent_required
 
 from django.core.mail import EmailMessage
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect,render, get_object_or_404
 from django.contrib import messages
+
 
 
 # View for the home page
@@ -42,8 +43,8 @@ class AgentHomeView(TemplateView):
         page_obj = paginator.get_page(page_number)
 
         # Pagination for properties portfolio
-        portfolio_paginator = Paginator(properties_portfolio_list, 10)  
-        portfolio_page_number = self.request.GET.get('portfolio_page')  
+        portfolio_paginator = Paginator(properties_portfolio_list, 10)
+        portfolio_page_number = self.request.GET.get('portfolio_page')
         portfolio_page_obj = portfolio_paginator.get_page(portfolio_page_number)
 
         context['properties'] = page_obj
@@ -79,7 +80,7 @@ class AgentHomeView(TemplateView):
 
         return context
 
-    # Save ng property manager to eh paano naman yung edit and delete ? 
+    # Save ng property manager to eh paano naman yung edit and delete ?
     def post(self, request, *args, **kwargs):
         #  Property Manager form submission
         if 'name' in request.POST or 'manager_name' in request.POST:
@@ -132,5 +133,10 @@ class AgentHomeView(TemplateView):
         # If neither form submitted
         messages.error(request, "Invalid submission.")
         return redirect("home_agent")
+
+    @login_required
+    def agent_chat(request):
+        chat_url = "/chat/chat/general/"  # This points to the chat app
+        return render(request, 'components/home/agent_chat.html', {"chat_url": chat_url})
 
 

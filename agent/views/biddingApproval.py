@@ -16,6 +16,10 @@ from agent.forms import BiddingApprovalForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from agent.decorators.agentOnly import agent_required
+from django.contrib.auth.models import User
+from chat.models import Message
+
+from renter.models import Renter
 
 @method_decorator([login_required, agent_required], name='dispatch')
 class BiddingApprovalView(UserPassesTestMixin, UpdateView):
@@ -35,10 +39,10 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         if bidding.end_date < bidding.start_date:
             messages.error(self.request, "End date cannot be earlier than start date.")
             return self.form_invalid(form)
-        
+
         # Example: update related Job status
-        job = bidding.jobs 
-        
+        job = bidding.jobs
+
         # Create a notification to Trader
         if not bidding.is_approved:  # Rejected
             TraderNotification.objects.create(
@@ -67,6 +71,21 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
                     "was approved."),
                 message_description=bidding.approval_notes
             )
+
+            # trigger a conversation between the users
+            try:
+                renter_obj = Renter.objects.filter(name=bidding.jobs.renter).first()
+                trader_user = User.objects.filter(email=bidding.trader.email).first()
+
+                if renter_obj and renter_obj.user:  # siguraduhin may user FK
+                    Message.objects.create(
+                        sender=trader_user,      # current logged-in user
+                        receiver=renter_obj.user,      # user linked sa Renter
+                        content="Predefined message for the approved job."
+                    )
+            except Renter.DoesNotExist:
+                renter_obj = None
+
 
             bidding.approved_at = timezone.now()
             bidding.approved_by = agent
