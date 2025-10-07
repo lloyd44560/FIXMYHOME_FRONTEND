@@ -23,6 +23,8 @@ class TraderHomeView(TemplateView):
         # ✅ Get the trader linked to the logged-in user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
 
+        context['is_member'] = trader.isTeamMember
+
         # Count by status & priority
         context['to_quote_urgent'] = Bidding.objects.filter(
             jobs__priority=True,

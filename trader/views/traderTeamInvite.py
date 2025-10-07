@@ -55,6 +55,7 @@ def invite_team_member(request, member_id):
             )
 
             member.user = user
+            member.trader = traderMember
             member.save()
 
             # Send invite email

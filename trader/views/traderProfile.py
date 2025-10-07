@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 
-from trader.models import TraderRegistration
+from trader.models import TraderRegistration, Leaves
 from trader.forms import TraderEditProfileForm
 from trader.forms import TeamMember
 
@@ -34,7 +34,6 @@ class TraderProfileView(UpdateView):
 
         # Fetch all team members linked to this trader
         team_members_qs = TeamMember.objects.filter(trader=trader)
-
         # Convert queryset to list of dicts (serializable)
         team_members = [
             {
@@ -46,6 +45,23 @@ class TraderProfileView(UpdateView):
             }
             for member in team_members_qs
         ]
+
+        # Fetch all leave requests for trader's team
+        leave_requests_qs = Leaves.objects.filter(team_member__user=user).order_by('-created_at')
+        # Convert queryset to list of dicts (safe for JSON)
+        leave_requests = [
+            {
+                "id": leave.id,
+                "name": leave.team_member.teamName if leave.team_member else "—",
+                "leave_type": leave.leave_type,
+                "start_date": leave.start_date.strftime("%Y-%m-%d"),
+                "end_date": leave.end_date.strftime("%Y-%m-%d"),
+                "reason": leave.reason or "—",
+                "status": leave.status or "Pending",
+            }
+            for leave in leave_requests_qs
+        ]
+
         if trader:
             context['full_name'] = user.get_full_name() or trader.name
             context['email'] = user.email or trader.email
@@ -54,7 +70,7 @@ class TraderProfileView(UpdateView):
             context['addressTwo'] = trader.address_line_2
             context['team_members'] = team_members
             context['is_member'] = trader.isTeamMember
-
+            context['leave_requests'] = leave_requests
         else:
             context['error'] = "Trader profile not found."
 

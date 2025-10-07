@@ -1,133 +1,151 @@
 {% extends "baseTrader.html" %}
 
 {% block content %}
-<!-- Top Navigation -->
 {% include 'components/home/navigatorBase.html' %}
 
 <style>
-  /* Make the calendar container responsive */
   #calendar {
     max-width: 100%;
     overflow-x: auto;
   }
 
-  /* Adjust buttons for smaller screens */
   .fc .fc-toolbar-chunk button {
-    padding: 0.25rem 0.5rem;  /* smaller buttons */
+    padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
 
-  /* Event cards */
   .fc .fc-event {
-    background-color: #293272;
-    color: #fff;        
-    border-radius: 0.5rem;   
-    padding: 0.25rem 0.5rem; 
-    font-size: 0.875rem;    
+    color: #fff;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
   }
 
-  /* Calendar title */
   .fc .fc-toolbar-title {
     color: #293272;
-    font-weight: 700;  
-    font-size: 1.125rem; 
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  /* Tooltip styling */
+  .fc-tooltip {
+    position: absolute;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* Fix FullCalendar tooltip behind navbar or modal */
+  .fc-popover,
+  .fc-more-popover,
+  .fc-popover.fc-more-popover,
+  .fc-event-tooltip {
+    z-index: 999999 !important;
+    position: fixed !important;
+  }
+
+  /* Ensure it’s visible above any container */
+  .fc-popover-body,
+  .fc-popover-header {
+    position: relative !important;
+    z-index: inherit !important;
   }
 </style>
 
-<!-- Page Content -->
 <main class="max-w-7xl mx-auto px-6 py-8 space-y-10 w-full">
+
   <!-- Dashboard Cards -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
     <!-- To Quote Requests -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">
-          <a href="{% url 'quote_list' %}">
-            To Quote Requests
-          </a>
-        </h2>
-        <a href="{% url 'quote_list' %}?priority=true">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
-        </a>
-        <a href="{% url 'quote_list' %}?priority=false">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
-        </a>
-        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+      <h2 class="font-bold text-[#293272] text-lg mb-2">
+        <a href="{% url 'quote_list' %}">To Quote Requests</a>
+      </h2>
+      <a href="{% url 'quote_list' %}?priority=true">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
+      </a>
+      <a href="{% url 'quote_list' %}?priority=false">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
+      </a>
     </div>
 
     <!-- Pending Quotes -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <a href="{% url 'quote_list' %}?status=pending">
-          <h2 class="font-bold text-[#293272] text-lg mb-2">Pending Quotes</h2>
-        </a>
-        <a href="{% url 'quote_list' %}?status=pending&priority=true">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ pending_urgent }} urgent</p>
-        </a>
-        <a href="{% url 'quote_list' %}?status=pending&priority=false">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ pending_non_urgent }} non-urgent</p>
-        </a>
-        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+      <a href="{% url 'quote_list' %}?status=pending">
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Pending Quotes</h2>
+      </a>
+      <a href="{% url 'quote_list' %}?status=pending&priority=true">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ pending_urgent }} urgent</p>
+      </a>
+      <a href="{% url 'quote_list' %}?status=pending&priority=false">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ pending_non_urgent }} non-urgent</p>
+      </a>
     </div>
 
     <!-- Jobs Today -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <a href="{% url 'job_list' %}?status=scheduled">
-          <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Today</h2>
-        </a>
-        <a href="{% url 'job_list' %}?status=scheduled&priority=true">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ today_urgent }} urgent</p>
-        </a>
-        <a href="{% url 'job_list' %}?status=scheduled&priority=false">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ today_non_urgent }} non-urgent</p>
-        </a>
-        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+      <a href="{% url 'job_list' %}?status=scheduled">
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Today</h2>
+      </a>
+      <a href="{% url 'job_list' %}?status=scheduled&priority=true">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ today_urgent }} urgent</p>
+      </a>
+      <a href="{% url 'job_list' %}?status=scheduled&priority=false">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ today_non_urgent }} non-urgent</p>
+      </a>
     </div>
 
     <!-- Jobs Approved -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <a href="{% url 'job_list' %}?status=approved">
-          <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Approved</h2>
-        </a>
-        <a href="{% url 'job_list' %}?status=approved&priority=true">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ approved_urgent }} urgent</p>
-        </a>
-        <a href="{% url 'job_list' %}?status=approved&priority=false">
-            <p class="text-[#EF7153] text-sm hover:underline">{{ approved_non_urgent }} non-urgent</p>
-        </a>
-        <!-- <a href="" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1 rounded transition">View Quotes</a> -->
+      <a href="{% url 'job_list' %}?status=approved">
+        <h2 class="font-bold text-[#293272] text-lg mb-2">Jobs Approved</h2>
+      </a>
+      <a href="{% url 'job_list' %}?status=approved&priority=true">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ approved_urgent }} urgent</p>
+      </a>
+      <a href="{% url 'job_list' %}?status=approved&priority=false">
+        <p class="text-[#EF7153] text-sm hover:underline">{{ approved_non_urgent }} non-urgent</p>
+      </a>
     </div>
   </div>
-
-  <!-- New Messages -->
-  <!-- <section>
-    <h2 class="text-[#293272] font-bold text-xl mb-3">New Messages</h2>
-    <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
-        No new messages at the moment.
-    </div>
-  </section> -->
 
   <!-- Calendar -->
   <section>
     <h2 class="text-[#293272] font-bold text-xl mb-3">Calendar Events</h2>
+
+    <!-- Legend -->
+    <div class="flex items-center gap-4 mb-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="w-4 h-4 rounded bg-[#293272] inline-block"></span> Jobs
+      </div>
+      {% if is_member %}
+        <div class="flex items-center gap-2">
+          <span class="w-4 h-4 rounded bg-[#EF7153] inline-block"></span> Leaves
+        </div>
+      {% endif %}
+    </div>
+
     <div class="bg-white p-4 rounded-xl shadow w-full overflow-x-auto">
       <div id="calendar"></div>
     </div>
   </section>
 
   {% if messages %}
-    <div
-      x-data="{ show: true }"
-      x-init="setTimeout(() => show = false, 4000)"
-      x-show="show"
-      class="fixed top-6 right-6 z-50 bg-green-500 text-white px-4 py-2 rounded shadow-md transition ease-in-out"
-    >
-      {% for message in messages %}
-        {{ message }}
-      {% endfor %}
-    </div>
+  <div
+    x-data="{ show: true }"
+    x-init="setTimeout(() => show = false, 4000)"
+    x-show="show"
+    class="fixed top-6 right-6 z-50 bg-green-500 text-white px-4 py-2 rounded shadow-md transition ease-in-out"
+  >
+    {% for message in messages %}
+      {{ message }}
+    {% endfor %}
+  </div>
   {% endif %}
 </main>
 
@@ -141,34 +159,64 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
+      var calendarEl = document.getElementById('calendar');
 
-    function getToolbar() {
-      if (window.innerWidth < 640) {  // sm breakpoint
-        return {
-          left: 'prev,next today',
-          center: 'title',
-          right: ''   // hide extra buttons on mobile
-        }
-      } else {
-        return {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      function getToolbar() {
+        if (window.innerWidth < 640) {
+          return {
+            left: 'prev,next today',
+            center: 'title',
+            right: ''
+          }
+        } else {
+          return {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+          }
         }
       }
-    }
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      headerToolbar: getToolbar(),
-      windowResize: function(view) {
-        calendar.setOption('headerToolbar', getToolbar());
-      },
-      events: 'calendar/events/',
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: getToolbar(),
+        windowResize: function() {
+          calendar.setOption('headerToolbar', getToolbar());
+        },
+        events: 'calendar/events/',
+        eventDidMount: function(info) {
+          // 🧹 1. Remove browser tooltip
+          info.el.removeAttribute('title');
+
+          // 🧹 2. Disable default <a> link tooltip behavior
+          if (info.el.tagName === 'A') {
+            info.el.removeAttribute('href');
+          }
+
+          // Optional: custom tooltip near event (hover card)
+          info.el.addEventListener('mouseenter', function(e) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'absolute bg-black text-white text-xs px-2 py-1 rounded shadow';
+            tooltip.style.position = 'absolute';
+            tooltip.style.top = e.pageY + 10 + 'px';
+            tooltip.style.left = e.pageX + 10 + 'px';
+            tooltip.innerText = info.event.title;
+            tooltip.id = 'custom-tooltip';
+            document.body.appendChild(tooltip);
+          });
+
+          info.el.addEventListener('mouseleave', function() {
+            const tooltip = document.getElementById('custom-tooltip');
+            if (tooltip) tooltip.remove();
+          });
+        },
+        eventMouseEnter: function(info) {
+          // Prevent browser tooltip entirely
+          info.el.removeAttribute('title');
+        }
+      });
+
+      calendar.render();
     });
-
-    calendar.render();
-  });
   </script>
 {% endblock %}

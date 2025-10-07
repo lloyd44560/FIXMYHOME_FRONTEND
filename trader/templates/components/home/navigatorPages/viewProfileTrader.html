@@ -12,6 +12,14 @@
     teamMembers: {{ team_members|safe|default:'[]' }},
     showEdit: false,
     selectedMember: {}, 
+
+    showLeaveModal: false,
+    showLeaveList: false,
+    leaveRequests: {{ leave_requests|safe|default:'[]' }},
+    leaveType: '',
+    startDate: '',
+    endDate: '',
+    reason: '',
     
     openEditMemberModal(member) { 
       this.selectedMember = member; 
@@ -46,6 +54,21 @@
               d="M12 4v16m8-8H4" />
           </svg>
           <span>Manage ({{ team_members|length|default:0 }})</span>
+        </button>
+      </div>
+    </template>
+
+    <!-- Holiday (Top Right Corner) -->
+    <template x-if="isMember">
+      <div class="absolute top-4 right-4 flex items-center space-x-2">
+        <button
+          @click="showLeaveModal = true"
+          class="flex items-center space-x-2 bg-[#293272] text-white text-sm sm:text-base font-semibold px-4 py-2 rounded-full shadow hover:bg-[#162060] transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Request Leave</span>
         </button>
       </div>
     </template>
@@ -141,140 +164,33 @@
       </div>
     </div>
   </div>
+  
+  <!-- Manage Leave Request Modal -->
+  {% include 'components/home/navigatorPages/requestLeave.html' %}
+  <!-- Manage Team Member Modal -->
+  {% include 'components/home/navigatorPages/teamMemberModal.html' %}
 
-  <!-- Team Members Modal (List View) -->
-  <div x-show="showTeam" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div class="relative w-full h-screen max-w-4xl bg-white rounded shadow-xl overflow-hidden">
-      <!-- Header -->
-      <div class="sticky top-0 z-10 bg-white border-b flex items-center justify-between px-6 py-4">
-        <h2 class="text-2xl font-bold text-[#293272]">Team Members</h2>
-        <button @click="showTeam = false" class="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
-      </div>
-
-      <!-- Body -->
-      <div class="overflow-y-auto h-[calc(100vh-72px)] px-6 py-6">
-        <template x-if="teamMembers.length === 0">
-          <p class="text-gray-500 text-center mt-8">No team members available.</p>
-        </template>
-
-        <template x-if="teamMembers.length > 0">
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                </tr>
-              </thead>
-
-              <tbody class="bg-white divide-y divide-gray-100">
-                <template x-for="(member, index) in teamMembers" :key="index">
-                  <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-3 text-sm text-gray-700" x-text="index + 1"></td>
-                    <td class="px-6 py-3 text-sm text-gray-800 font-medium" x-text="member.name"></td>
-                    <td class="px-6 py-3 text-sm text-gray-600" x-text="member.email || '— No Email —'"></td>
-                    <td class="px-6 py-3 text-sm text-gray-500" x-text="member.role || 'Member'"></td>
-
-                    <!-- Action Buttons -->
-                    <td class="px-6 py-3 text-right">
-                      <!-- If member has NO email → show Edit -->
-                      <template x-if="!member.email">
-                        <button
-                          @click="openEditMemberModal(member)"
-                          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition">
-                          Add Email
-                        </button>
-                      </template>
-
-                      <!-- If member HAS email → show Invite -->
-                      <template x-if="member.email">
-                        <button
-                          @click="InviteMember(member)"
-                          x-text="member.invited ? 'Invited ✅' : 'Invite'"
-                          :class="member.invited 
-                            ? 'bg-green-100 text-green-700 cursor-default' 
-                            : 'bg-[#293272] text-white hover:bg-[#162060] cursor-pointer'"
-                          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition"
-                        ></button>
-                      </template>
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </template>
-      </div>
-    </div>
-  </div>
-
-  <div x-show="showEdit" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-    <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-      <h2 class="text-xl font-semibold text-[#293272] mb-4">Add Email</h2>
-
-      <div class="space-y-4">
-        <div>
-          <label class="text-sm text-gray-600">Name</label>
-          <input type="text" readonly x-model="selectedMember.name" class="w-full border rounded px-3 py-2 mt-1" />
-        </div>
-
-        <div>
-          <label class="text-sm text-gray-600">Email</label>
-          <input type="text" x-model="selectedMember.email" class="w-full border rounded px-3 py-2 mt-1" />
-        </div>
-
-        <div class="text-right space-x-2">
-          <button @click="showEdit = false" class="px-4 py-2 bg-gray-200 text-gray-700 rounded">Cancel</button>
-          <button 
-            @click="
-              fetch(`team-members/edit/${selectedMember.id}/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(selectedMember),
-              })
-              .then(res => res.json())
-              .then(data => {
-                if (data.success) {
-                  const index = teamMembers.findIndex(m => m.id === selectedMember.id);
-                  if (index !== -1) teamMembers[index] = selectedMember;
-                  showEdit = false;
-                } else {
-                  alert('Error: ' + (data.error || 'Failed to update.'));
-                }
-              })
-            "
-            class="px-4 py-2 bg-[#293272] text-white rounded hover:bg-[#162060]"
+  <!-- {% if messages %}
+    <div class="fixed top-6 right-6 z-50 space-y-2">
+      {% for message in messages %}
+        <div
+          x-data="{ show: true }"
+          x-init="setTimeout(() => show = false, 4000)"
+          x-show="show"
+          class="px-4 py-2 rounded shadow-md transition ease-in-out
+            {% if 'error' in message.tags %}
+              bg-red-500 text-white
+            {% elif 'success' in message.tags %}
+              bg-green-500 text-white
+            {% else %}
+              bg-gray-500 text-white
+            {% endif %}"
           >
-            Save
-          </button>
+          {{ message }}
         </div>
-      </div>
+      {% endfor %}
     </div>
-  </div>
-
-  <!-- Add Member Sub-Modal -->
-  <div x-show="showAddMember" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Add Team Member</h3>
-      <div class="space-y-3">
-        <input type="text" placeholder="Full Name" x-model="newName" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring" />
-        <input type="text" placeholder="Position" x-model="newRole" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring" />
-        <input type="email" placeholder="Email" x-model="newEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring" />
-      </div>
-      <div class="flex justify-end mt-6 space-x-2">
-        <button @click="showAddMember = false" class="px-4 py-2 rounded-lg border">Cancel</button>
-        <button 
-          @click="teamMembers.push({ name: newName, email: newEmail, role: newRole }); showAddMember = false; newName=''; newEmail=''; newRole='';"
-          class="px-4 py-2 bg-[#293272] text-white rounded-lg font-semibold hover:bg-[#162060] transition">
-          Add
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+  {% endif %} -->
 
 {% include 'components/footerTrader.html' %}
 {% endblock %}

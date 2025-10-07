@@ -13,6 +13,7 @@ from trader.views import (
     BiddingCreateView,
     edit_team_member,
     invite_team_member,
+    request_leave,
 )
 
 urlpatterns = [
@@ -25,6 +26,7 @@ urlpatterns = [
     path('profile-trader/', TraderProfileView.as_view(), name='profile_trader'),
     path('profile-trader/team-members/edit/<int:member_id>/', edit_team_member, name='edit_team_member'),
     path('profile-trader/team-members/invite/<int:member_id>/', invite_team_member, name='invite_team_member'),
+    path("profile-trader/leave/request/", request_leave, name="leave_request"),
     path('profile/security/', TraderEditSecurityView.as_view(), name='trader_edit_security'),
     path("notifications/", NotificationListView.as_view(), name="notification_list"),
     path("notifications/<int:pk>/", NotificationDetailView.as_view(), name="notification_detail"),
