@@ -16,8 +16,8 @@
     <h2 class="p-4 font-bold text-xl border-b border-gray-700">Chats</h2>
     <div class="flex-1 overflow-y-auto">
       {% for item in user_last_messages %}
-      <a href="{% url 'chat' item.slug %}" 
-         class="block px-4 py-3 border-b border-gray-800 hover:bg-gray-700 transition 
+      <a href="{% url 'chat' item.slug %}"
+         class="block px-4 py-3 border-b border-gray-800 hover:bg-gray-700 transition
                 {% if item.user.username == room_user.username %}bg-gray-700 font-semibold{% endif %}">
           <div class="flex justify-between items-center">
             <span>{{ item.user.username }}</span>
@@ -33,9 +33,23 @@
     </div>
   </div>
 
+  <div class="pagination text-center mt-3">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Previous</a>
+      {% endif %}
+
+      <span class="mx-2">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-secondary">Next</a>
+      {% endif %}
+    </div>
+
   <!-- Chat Area -->
   <div class="flex-1 flex flex-col">
-    
+
     <!-- Chat Header -->
     <div class="p-4 bg-white border-b flex items-center justify-between shadow-sm">
       <div class="flex items-center gap-3">
@@ -51,7 +65,7 @@
     <div class="flex-1 p-4 overflow-y-auto bg-gray-50" id="chatbox">
       {% for message in chats %}
       <div class="mb-4 {% if message.sender == request.user %}text-right{% else %}text-left{% endif %}">
-        <div class="inline-block px-4 py-2 rounded-2xl shadow 
+        <div class="inline-block px-4 py-2 rounded-2xl shadow
           {% if message.sender == request.user %}
             bg-blue-500 text-white rounded-br-none
           {% else %}
@@ -68,9 +82,9 @@
 
     <!-- Input Area -->
     <div class="p-4 bg-white border-t flex items-center gap-2">
-      <input type="text" id="my_input" placeholder="Type a message..." 
+      <input type="text" id="my_input" placeholder="Type a message..."
              class="flex-1 px-4 py-2 border rounded-full focus:ring focus:ring-blue-300">
-      <button id="submit_button" 
+      <button id="submit_button"
               class="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium">
         Send
       </button>

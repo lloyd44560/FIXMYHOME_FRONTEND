@@ -10,6 +10,8 @@ from .models import Message
 from renter.models import Renter
 from trader.models import TraderRegistration
 from agent.models import AgentRegister
+from django.core.paginator import Paginator
+
 
 def get_user_role(user):
     if Renter.objects.filter(user=user).exists():
@@ -74,7 +76,7 @@ def chat_room(request, room_slug):
         except StopIteration:
             return render(request, "not_found.html", status=404)
 
-        # Chats between current user and the room user
+        # Chats between current user and the selected room user
         chats = Message.objects.filter(
             (Q(sender=request.user) & Q(receiver=room_user)) |
             (Q(sender=room_user) & Q(receiver=request.user))
@@ -83,23 +85,25 @@ def chat_room(request, room_slug):
         if search_query:
             chats = chats.filter(content__icontains=search_query)
 
-        # Build sidebar as above
+        # Sidebar: show ALL users (not filtered by role)
         all_users = User.objects.exclude(id=request.user.id)
         users_with_roles = []
+
         for u in all_users:
             role = get_user_role(u)
-            if role in ["Renter", "Agent"]:
-                last_message = Message.objects.filter(
-                    (Q(sender=request.user) & Q(receiver=u)) |
-                    (Q(sender=u) & Q(receiver=request.user))
-                ).order_by("-timestamp").first()
-                users_with_roles.append({
-                    "user": u,
-                    "role": role,
-                    "last_message": last_message,
-                    "slug": slugify(u.username)
-                })
+            last_message = Message.objects.filter(
+                (Q(sender=request.user) & Q(receiver=u)) |
+                (Q(sender=u) & Q(receiver=request.user))
+            ).order_by("-timestamp").first()
 
+            users_with_roles.append({
+                "user": u,
+                "role": role,
+                "last_message": last_message,
+                "slug": slugify(u.username)
+            })
+
+        # Sort sidebar by most recent conversation
         users_with_roles.sort(
             key=lambda x: x["last_message"].timestamp if x["last_message"] else timezone.make_aware(timezone.datetime.min),
             reverse=True
@@ -113,7 +117,7 @@ def chat_room(request, room_slug):
             "room_user": room_user,
             "room_slug": room_slug,
             "chats": chats,
-            "user_last_messages": page_obj,
+            "user_last_messages": users_with_roles,  # show all
             "page_obj": page_obj,
             "search_query": search_query,
         })
