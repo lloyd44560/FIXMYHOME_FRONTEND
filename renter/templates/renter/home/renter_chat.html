@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Messages - FixMyHouse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% load static %}
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons for consistency with existing icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen" style="font-family: 'Lexend', sans-serif;">
+
+  {% include 'renter/home/navbar.html' %}
+
+  <div class="container mt-5">
+
+     <!-- Iframe pointing to the general chat room -->
+    <iframe
+        src="{{ chat_url }}"
+        style="width: 100%; height: 80vh; border: none;"
+        title="General Chat">
+    </iframe>
+</div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuBtn = document.getElementById('menu-btn');
+      const menu = document.getElementById('menu');
+      if (menuBtn && menu) {
+        menuBtn.addEventListener('click', () => menu.classList.toggle('hidden'));
+      }
+
+      const activeTab = sessionStorage.getItem('activeTab') || 'traders';
+      const tabContent = document.getElementById(`tab-${activeTab}`);
+      if (tabContent) tabContent.classList.remove("hidden");
+
+      const reopenModal = sessionStorage.getItem('reopenEditJobModal') === 'true';
+      if (reopenModal) {
+        const job = JSON.parse(sessionStorage.getItem('editJobData') || '{}');
+        if (job.id) openEditJobModal(job.id, job.jobCode, job.isPriority, job.status, job.notes);
+        sessionStorage.removeItem('reopenEditJobModal');
+        sessionStorage.removeItem('editJobData');
+      }
+    });
+  </script>
+
+  <style>
+    .property-img {
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+    }
+    a {
+      text-decoration: none !important;
+    }
+    a:hover {
+      text-decoration: none !important;
+    }
+  </style>
+
+  {% include 'renter/home/footer.html' %}
+</body>

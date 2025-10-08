@@ -1268,3 +1268,10 @@ def event_list(request):
         e["start"] = e["start"].isoformat() if e["start"] else None
         e["end"] = e["end"].isoformat() if e["end"] else None
     return JsonResponse(events, safe=False, json_dumps_params={"cls": DjangoJSONEncoder})
+
+
+
+@login_required
+def renter_chat(request):
+    chat_url = "/chat/chat/general/"  # This points to the chat app
+    return render(request, 'renter/home/renter_chat.html', {"chat_url": chat_url})

@@ -159,5 +159,6 @@ urlpatterns = [
     path("events/", renter_actions.event_list, name="event_list"),
     path("add-event", renter_actions.add_event, name="add_event"),
 
+    path('chat/', renter_actions.renter_chat, name='renter_chat'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
