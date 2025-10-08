@@ -23,6 +23,8 @@ class Jobs(models.Model):
     job_code = models.CharField(max_length=20, unique=True)
     notes = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='quoted')
+    bid_status = models.CharField(max_length=20, choices=[('open', 'Open'), ('closed', 'Closed')], default='open')
+    bid_count = models.IntegerField(default=0)
     quoted_at = models.DateField(default=timezone.now)
     confirmed_at = models.DateField(null=True, blank=True)
     approved_at = models.DateField(null=True, blank=True)
@@ -40,16 +42,23 @@ class Jobs(models.Model):
         # Always regenerate job_code based on current status
         # prefix = self.status[:3].upper()  # 'QUO', 'APP', etc.
         
-        count = 1
-        base_code = f"QUO-{count:05d}"
+        # --- Auto close bid if bid_count >= 3 ---
+        if self.bid_count >= 3:
+            self.bid_status = "closed"
+        else:
+            self.bid_status = "open"
 
-        # Increment until unique
-        while Jobs.objects.exclude(pk=self.pk).filter(job_code=base_code).exists():
-            count += 1
+        # --- Generate job_code only if not set (to avoid regenerating on every save) ---
+        if not self.job_code:
+            count = 1
             base_code = f"QUO-{count:05d}"
 
-        self.job_code = base_code
+            # Increment until unique
+            while Jobs.objects.filter(job_code=base_code).exists():
+                count += 1
+                base_code = f"QUO-{count:05d}"
 
+            self.job_code = base_code
         super().save(*args, **kwargs)
 
     def __str__(self):

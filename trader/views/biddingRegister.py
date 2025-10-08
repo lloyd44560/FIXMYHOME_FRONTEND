@@ -9,7 +9,7 @@ from django.views.generic import CreateView
 
 from trader.models import TraderRegistration
 from trader.models import TeamMember
-from trader.models import Bidding
+from trader.models import Bidding, Jobs
 from trader.forms import BiddingForm
 
 # Middleware decorator
@@ -45,6 +45,10 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Save the bidding first
         bidding = form.save()
 
+        # ✅ Increment job bid count
+        job.bid_count += 1
+        job.save()
+
         # Send email to agent (or trader depending on your logic)
         send_mail(
             subject=f"New Quotation Submitted - {bidding.jobs.job_code}",
@@ -64,6 +68,12 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Only filter team_member by trader, not jobs
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
         team_member_val = form.fields['team_member'].queryset.filter(Q(trader=trader) | Q(user=self.request.user))
+        job_val = form.fields['jobs'].queryset.filter(
+            bid_status='open',
+            status='quoted'
+        )
+        print("Team Member Val:", team_member_val)
+        print("Job Val:", job_val)
         return form
 
     def get_context_data(self, **kwargs):
@@ -73,4 +83,11 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Add flag for template condition
         context['is_director'] = val
         context['memberName'] = trader.name if trader else ''
+
+        # ✅ Filter only quoted + open jobs and order DESC by quoted_at or id
+        context['jobs_filtered'] = Jobs.objects.filter(
+            bid_status='open',
+            status='quoted'
+        ).order_by('-quoted_at')
+
         return context
