@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 
-from trader.models import TraderRegistration, Leaves
+from trader.models import TraderRegistration, Leaves, TraderIndustry
 from trader.forms import TraderEditProfileForm
 from trader.forms import TeamMember
 
@@ -63,14 +63,25 @@ class TraderProfileView(UpdateView):
         ]
 
         if trader:
+            # Add industries for sidebar
+            industries = []
+            industries = [
+                i.industry.replace("_", " ").title()
+                for i in TraderIndustry.objects.filter(trader_id=trader)
+            ] if trader else []
+
             context['full_name'] = user.get_full_name() or trader.name
             context['email'] = user.email or trader.email
             context['phone'] = trader.phone
             context['address'] = trader.address_line_1
             context['addressTwo'] = trader.address_line_2
+            context['state'] = trader.state
+            context['company_name'] = trader.company_name
+            context['abn'] = trader.abn
             context['team_members'] = team_members
             context['is_member'] = trader.isTeamMember
             context['leave_requests'] = leave_requests
+            context['industries'] = industries
         else:
             context['error'] = "Trader profile not found."
 
@@ -82,8 +93,8 @@ class TraderProfileView(UpdateView):
         # Fields to update
         fields = [
             'name', 'email', 'phone', 'company_type', 'company_name', 'company_address',
-            'company_email', 'company_landline', 'abn', 'industry', 'other_expertise', 
-            'state', 'municipality', 'city', 'postal_code', 'address_line_1', 'address_line_2',
+            'company_email', 'company_landline', 'abn', 'industry', 'state', 'municipality', 
+            'city', 'postal_code', 'address_line_1', 'address_line_2',
         ]
 
         for field in fields:
