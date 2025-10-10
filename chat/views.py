@@ -65,7 +65,8 @@ def chat_room(request, room_slug):
             "room_user": room_user,
             "room_slug": room_slug,
             "chats": chats,
-            "user_last_messages": users_with_roles,  # send all
+            "user_last_messages": page_obj,  # use paginated object
+            "page_obj": page_obj,
             "search_query": search_query,
         })
 
@@ -117,11 +118,10 @@ def chat_room(request, room_slug):
             "room_user": room_user,
             "room_slug": room_slug,
             "chats": chats,
-            "user_last_messages": users_with_roles,  # show all
+            "user_last_messages": page_obj,  # ✅ use paginated object
             "page_obj": page_obj,
             "search_query": search_query,
         })
-
 
 @login_required
 def fetch_messages(request, room_slug):
