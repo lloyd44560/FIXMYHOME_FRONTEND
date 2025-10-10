@@ -67,13 +67,6 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         form = super().get_form(form_class)
         # Only filter team_member by trader, not jobs
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
-        team_member_val = form.fields['team_member'].queryset.filter(Q(trader=trader) | Q(user=self.request.user))
-        job_val = form.fields['jobs'].queryset.filter(
-            bid_status='open',
-            status='quoted'
-        )
-        print("Team Member Val:", team_member_val)
-        print("Job Val:", job_val)
         return form
 
     def get_context_data(self, **kwargs):
@@ -89,5 +82,10 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
             bid_status='open',
             status='quoted'
         ).order_by('-quoted_at')
+        
+        # Filter team members by trader if director
+        if trader.isDirector:
+            team_member_val = TeamMember.objects.filter(trader_id=trader)
+        context['team_member_filtered'] = team_member_val or TeamMember.objects.none()
 
         return context
