@@ -196,123 +196,112 @@
       {% endif %}
   </div>
 
-
-
   <!-- Property portfolio  -->
+  {% if request.user.agentregister.is_property_manager %}
+    <div class="max-w-7xl mx-auto px-6 py-8 overflow-x-auto">
+      <h2 class="text-2xl font-bold mb-4 text-[#293272]">Properties Portfolio</h2>
+      <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible">
+        <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
+          <thead class="bg-[#293272] text-white hidden sm:table-header-group">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Renter</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Lease Dates</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Rent</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Status</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
+            </tr>
+          </thead>
 
-{% if request.user.agentregister.is_property_manager %}
-  <div class="max-w-7xl mx-auto px-6 py-8 overflow-x-auto">
-        <h2 class="text-2xl font-bold mb-4 text-[#293272]">Properties Portfolio</h2>
+          <tbody class="sm:divide-y sm:divide-gray-200">
+            {% for property in properties_portfolio %}
+            <!-- Kanban-style row for mobile -->
+            <tr
+              class="block sm:table-row bg-white border border-gray-200 sm:border-0 rounded-xl sm:rounded-none shadow-sm sm:shadow-none my-4 sm:my-0 px-4 py-4 sm:px-0 sm:py-0">
+              <!-- Property -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Property</p>
+                <div class="font-semibold text-blue-900">{{ property.name }}</div>
+                <div class="font-semibold text-blue-900">{{ property.property_id }}</div>
+                <div class="text-sm text-blue-800">{{ property.address }}</div>
+              </td>
 
-        <!-- <div class="flex justify-start mb-4 gap-4">
-            <a href="{% url 'property_create' %}"
-              class="bg-[#293272] hover:bg-[#162060] text-white font-medium px-4 py-2 rounded-md shadow text-sm">
-              + Create Property
-            </a>
-        </div> -->
+              <!-- Image -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Image</p>
+                {% if property.property_photo %}
+                <img src="{{ property.property_photo.url }}" alt="{{ property.name }}"
+                  class="w-16 h-16 rounded object-cover border border-gray-300" />
+                {% else %}
+                <div class="w-16 h-16 rounded bg-gray-200 flex items-center justify-center text-gray-500 text-sm">N/A</div>
+                {% endif %}
+              </td>
 
-        <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible">
-          <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
-            <thead class="bg-[#293272] text-white hidden sm:table-header-group">
-              <tr>
-                <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Renter</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Lease Dates</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Rent</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Status</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
-              </tr>
-            </thead>
+              <!-- Renter -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Renter</p>
+                <div class="text-gray-800">{{ property.renter }}</div>
+                <div class="text-sm text-gray-500">{{ property.renter_contact }}</div>
+              </td>
 
-            <tbody class="sm:divide-y sm:divide-gray-200">
-              {% for property in properties_portfolio %}
-              <!-- Kanban-style row for mobile -->
-              <tr
-                class="block sm:table-row bg-white border border-gray-200 sm:border-0 rounded-xl sm:rounded-none shadow-sm sm:shadow-none my-4 sm:my-0 px-4 py-4 sm:px-0 sm:py-0">
-                <!-- Property -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Property</p>
-                  <div class="font-semibold text-blue-900">{{ property.name }}</div>
-                  <div class="font-semibold text-blue-900">{{ property.property_id }}</div>
-                  <div class="text-sm text-blue-800">{{ property.address }}</div>
-                </td>
+              <!-- Lease Dates -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Lease Dates</p>
+                <div class="text-gray-700">{{ property.lease_start }} – {{ property.lease_end }}</div>
+              </td>
 
-                <!-- Image -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Image</p>
-                  {% if property.property_photo %}
-                  <img src="{{ property.property_photo.url }}" alt="{{ property.name }}"
-                    class="w-16 h-16 rounded object-cover border border-gray-300" />
-                  {% else %}
-                  <div class="w-16 h-16 rounded bg-gray-200 flex items-center justify-center text-gray-500 text-sm">N/A</div>
-                  {% endif %}
-                </td>
+              <!-- Rent -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Rent</p>
+                <div class="text-gray-800 font-medium">${{ property.rent }}/week</div>
+              </td>
 
-                <!-- Renter -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Renter</p>
-                  <div class="text-gray-800">{{ property.renter }}</div>
-                  <div class="text-sm text-gray-500">{{ property.renter_contact }}</div>
-                </td>
+              <!-- Status -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Status</p>
+                <span
+                  class="{% if property.status == 'occupied' %}text-green-600{% else %}text-red-600{% endif %} font-medium">
+                  {{ property.status|title }}
+                </span>
+              </td>
 
-                <!-- Lease Dates -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Lease Dates</p>
-                  <div class="text-gray-700">{{ property.lease_start }} – {{ property.lease_end }}</div>
-                </td>
-
-                <!-- Rent -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Rent</p>
-                  <div class="text-gray-800 font-medium">${{ property.rent }}/week</div>
-                </td>
-
-                <!-- Status -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Status</p>
-                  <span
-                    class="{% if property.status == 'occupied' %}text-green-600{% else %}text-red-600{% endif %} font-medium">
-                    {{ property.status|title }}
-                  </span>
-                </td>
-
-                <!-- Actions -->
-                <td class="block sm:table-cell sm:px-4 sm:py-3">
-                  <p class="sm:hidden text-xs text-gray-500 mb-1">Actions</p>
-                  <div x-data="{ open: false }" class="relative inline-block text-left">
-                    <button @click="open = !open" @click.away="open = false"
-                      class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring" aria-label="Actions">
-                      <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="5" cy="12" r="2" />
-                        <circle cx="12" cy="12" r="2" />
-                        <circle cx="19" cy="12" r="2" />
-                      </svg>
-                    </button>
-                    <div x-show="open" x-transition
-                      class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-10">
-                      <a href="{% url 'property_view' property.pk %}"
-                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">🔍 View</a>
-                      <a href="{% url 'property_edit' property.pk %}"
-                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">✏ Edit</a>
-                      <form method="post" action="{% url 'property_archive' property.pk %}" class="block">
-                        {% csrf_token %}
-                        <button type="submit"
-                          onclick="return confirm('Are you sure you want to archive this property?')"
-                          class="w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100">📦 Archive</button>
-                      </form>
-                    </div>
+              <!-- Actions -->
+              <td class="block sm:table-cell sm:px-4 sm:py-3">
+                <p class="sm:hidden text-xs text-gray-500 mb-1">Actions</p>
+                <div x-data="{ open: false }" class="relative inline-block text-left">
+                  <button @click="open = !open" @click.away="open = false"
+                    class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring" aria-label="Actions">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <circle cx="5" cy="12" r="2" />
+                      <circle cx="12" cy="12" r="2" />
+                      <circle cx="19" cy="12" r="2" />
+                    </svg>
+                  </button>
+                  <div x-show="open" x-transition
+                    class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-10">
+                    <a href="{% url 'property_view' property.pk %}"
+                      class="block px-4 py-2 text-gray-700 hover:bg-gray-100">🔍 View</a>
+                    <a href="{% url 'property_edit' property.pk %}"
+                      class="block px-4 py-2 text-gray-700 hover:bg-gray-100">✏ Edit</a>
+                    <form method="post" action="{% url 'property_archive' property.pk %}" class="block">
+                      {% csrf_token %}
+                      <button type="submit"
+                        onclick="return confirm('Are you sure you want to archive this property?')"
+                        class="w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100">📦 Archive</button>
+                    </form>
                   </div>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="7" class="text-center py-6 text-gray-500">No properties available.</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-6 text-gray-500">No properties available.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       <!-- Pagination Controls -->
       {% if portfolio_page_obj.has_other_pages %}
         <div class="pagination flex justify-center items-center mt-6 space-x-2">
@@ -358,9 +347,8 @@
           {% endif %}
         </div>
       {% endif %}
-  </div>
-
-{% endif %}
+    </div>
+  {% endif %}
 
   <!-- Added for Renter Report Requests -->
   <section>
@@ -421,32 +409,25 @@
     {% endif %}
   </section>
 
-
-
   <!-- Modal for Renter Request  -->
   <div id="respondModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-96 p-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-4">Respond to Report Request</h3>
-
-    <form method="POST" action="{% url 'home_agent' %}" enctype="multipart/form-data">
+      <form method="POST" action="{% url 'home_agent' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="request_id" id="requestIdInput">
-
         <div class="mb-2">
           <label class="block text-left">Subject</label>
           <input type="text" name="subject" class="w-full border rounded px-3 py-2">
         </div>
-
         <div class="mb-2">
           <label class="block text-left">Message</label>
           <textarea name="message" rows="4" class="w-full border rounded px-3 py-2"></textarea>
         </div>
-
         <div class="mb-2">
           <label class="block text-left">Attachment</label>
           <input type="file" name="attachment" class="w-full border rounded px-3 py-2">
         </div>
-
         <div class="flex justify-end">
           <button type="submit" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
             Send
@@ -456,32 +437,31 @@
     </div>
   </div>
 
-
   <!-- Property Managers Section -->
   {% if request.user.is_authenticated and request.user.agentregister.is_admin %}
-  <section class="mt-10">
-    <h2 class="text-[#293272] font-bold text-xl mb-3">Property Managers</h2>
-    <!-- Add Property Manager Button -->
-    <button
-      data-modal-target="addManagerModal"
-      data-modal-toggle="addManagerModal"
-      class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 mb-4">
-      + Add Property Manager
-    </button>
+    <section class="mt-10">
+      <h2 class="text-[#293272] font-bold text-xl mb-3">Property Managers</h2>
+      <!-- Add Property Manager Button -->
+      <button
+        data-modal-target="addManagerModal"
+        data-modal-toggle="addManagerModal"
+        class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 mb-4">
+        + Add Property Manager
+      </button>
 
-    <!-- Table of Property Managers -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-4 py-2 text-left">Name</th>
-            <th class="px-4 py-2 text-left">Email</th>
-            <th class="px-4 py-2 text-left">Contact</th>
-            <th class="px-4 py-2 text-left">License</th>
-            <th class="px-4 py-2 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      <!-- Table of Property Managers -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Name</th>
+              <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-left">Contact</th>
+              <th class="px-4 py-2 text-left">License</th>
+              <th class="px-4 py-2 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
             {% for manager in property_managers %}
             <tr class="border-t">
               <td>{{ manager.name }}</td>
@@ -490,15 +470,15 @@
               <td>{{ manager.license_number }}</td>
               <td class="text-center">
                 <button type="button"
-                        data-modal-target="editManagerModal-{{ manager.id }}"
-                        data-modal-toggle="editManagerModal-{{ manager.id }}"
-                        class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                  data-modal-target="editManagerModal-{{ manager.id }}"
+                  data-modal-toggle="editManagerModal-{{ manager.id }}"
+                  class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                   Edit
                 </button>
                 <button type="button"
-                        data-modal-target="deleteManagerModal-{{ manager.id }}"
-                        data-modal-toggle="deleteManagerModal-{{ manager.id }}"
-                        class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                  data-modal-target="deleteManagerModal-{{ manager.id }}"
+                  data-modal-toggle="deleteManagerModal-{{ manager.id }}"
+                  class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                   Delete
                 </button>
               </td>
@@ -546,11 +526,12 @@
               <td colspan="5" class="px-4 py-2 text-center text-gray-500">No Property Managers found.</td>
             </tr>
             {% endfor %}
-            </tbody>
-      </table>
-    </div>
-  </section>
-{% endif %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {% endif %}
+
   <!-- Add Manager Modal -->
   <div id="addManagerModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-96 p-6">
@@ -565,22 +546,6 @@
       </form>
     </div>
   </div>
-
-<script>
-document.querySelectorAll('[data-modal-toggle]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = document.getElementById(btn.getAttribute('data-modal-target'));
-    target.classList.toggle('hidden');
-  });
-});
-</script>
-
-  <section>
-    <h2 class="text-[#293272] font-bold text-xl mb-3">New Messages</h2>
-      <div class="border rounded-xl p-6 text-center text-gray-500 bg-gray-50 shadow">
-          No new messages at the moment.
-      </div>
-  </section>
 
   <!-- Calendar -->
   <section>
@@ -600,14 +565,14 @@ document.querySelectorAll('[data-modal-toggle]').forEach(btn => {
           x-init="setTimeout(() => show = false, 4000)"
           x-show="show"
           class="px-4 py-2 rounded shadow-md transition ease-in-out
-                {% if 'error' in message.tags %}
-                  bg-red-500 text-white
-                {% elif 'success' in message.tags %}
-                  bg-green-500 text-white
-                {% else %}
-                  bg-gray-500 text-white
-                {% endif %}"
-        >
+            {% if 'error' in message.tags %}
+              bg-red-500 text-white
+            {% elif 'success' in message.tags %}
+              bg-green-500 text-white
+            {% else %}
+              bg-gray-500 text-white
+            {% endif %}"
+          >
           {{ message }}
         </div>
       {% endfor %}

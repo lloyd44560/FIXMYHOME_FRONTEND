@@ -61,7 +61,6 @@ class AgentEditProfileView(UpdateView):
         return redirect(self.success_url)
 
     def form_invalid(self, form):
-        print("Form is invalid:", form.errors)
         context = self.get_context_data(form=form)
         context['error'] = "There was an error updating your profile."
         return self.render_to_response(context)

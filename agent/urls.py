@@ -7,7 +7,7 @@ from django.contrib.auth.views import LogoutView
 from agent.views import (
     AgentRegistrationCreateView, AgentHomeView, AgentEditProfileView,
     AgentEditSecurityView, PropertyCreateView, PropertyUpdateView,
-    delete_property, archive_property, PropertyDetailView, PropertiesListView,
+    delete_property, archive_property, get_bidding, PropertyDetailView, PropertiesListView,
     RoomCreateView, InviteRenterView, RenterListView, RenterUpdateView,
     AgentJobCreateView, ActiveJobsListView, AgentBidListView, BiddingApprovalView
 )
@@ -21,6 +21,7 @@ urlpatterns = [
     path('home/', AgentHomeView.as_view(), name='home_agent'),
     path('profile-agent/', AgentEditProfileView.as_view(), name='profile_agent'),
     path('profile/security/', AgentEditSecurityView.as_view(), name='agent_edit_security'),
+    path("active-jobs/get-bidding/<int:job_id>/", get_bidding, name="get_bidding"),
 
     path('property/create/', PropertyCreateView.as_view(), name='property_create'),
     path('property/<int:pk>/edit/', PropertyUpdateView.as_view(), name='property_edit'),
