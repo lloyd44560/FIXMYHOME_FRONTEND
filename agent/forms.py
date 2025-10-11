@@ -121,8 +121,8 @@ class AgentCreateJobForm(forms.ModelForm):
                 'rows': 3,
                 'class': 'w-full border border-gray-300 rounded-md p-2'
             }),
-            'scheduled_at': forms.DateTimeInput(attrs={
-                'type': 'datetime-local',
+            'scheduled_at': forms.DateInput(attrs={
+                'type': 'date',
                 'class': 'w-full border border-gray-300 rounded-md p-2'
             }),
             'priority': forms.CheckboxInput(attrs={

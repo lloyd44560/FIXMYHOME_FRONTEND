@@ -79,6 +79,7 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
 
         # ✅ Filter only quoted + open jobs and order DESC by quoted_at or id
         context['jobs_filtered'] = Jobs.objects.filter(
+            trader=trader,
             bid_status='open',
             status='quoted'
         ).order_by('-quoted_at')

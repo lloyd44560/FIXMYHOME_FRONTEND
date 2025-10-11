@@ -55,106 +55,151 @@
     </div>
   </form>
 
-  <div class="space-y-4">
-  <!-- Table layout for larger screens -->
-  <div class="hidden sm:block overflow-x-auto rounded-xl shadow">
-    <table class="min-w-full bg-white border border-gray-200 rounded-xl overflow-hidden">
-      <thead class="bg-blue-50">
-        <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Job Code</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Renter</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Trader</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Status</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Priority</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Bid Status</th> <!-- ✅ Added -->
-          <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider">Scheduled</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {% for job in jobs %}
-        <tr class="border-t border-gray-100 hover:bg-blue-50 transition">
-          <td class="px-4 py-3 whitespace-nowrap">{{ job.job_code }}</td>
-          <td class="px-4 py-3 whitespace-nowrap">{{ job.renter }}</td>
-          <td class="px-4 py-3 whitespace-nowrap">{{ job.trader }}</td>
-          <td class="px-4 py-3 whitespace-nowrap">{{ job.get_status_display }}</td>
-          <td class="px-4 py-3 whitespace-nowrap">
-            {% if job.priority %}
-              <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">High</span>
-            {% else %}
-              <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">Normal</span>
-            {% endif %}
-          </td>
-
-          <!-- ✅ Bid Status Column -->
-          <td class="px-4 py-3 whitespace-nowrap">
-            {% if job.bid_status == 'open' %}
-              <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">Open</span>
-            {% else %}
-              <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">Closed</span>
-            {% endif %}
-          </td>
-
-          <td class="px-4 py-3 whitespace-nowrap">{{ job.scheduled_at|date:"Y-m-d H:i" }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="7" class="text-center py-4">No active jobs found.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination Controls -->
-  {% if page_obj.has_other_pages %}
-    <div class="pagination flex justify-center items-center mt-6 space-x-2">
-      <!-- Previous Button -->
-      {% if page_obj.has_previous %}
-      <a href="{% url 'active_jobs_list' %}?page={{ page_obj.previous_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
-        class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-        onclick="saveScrollPosition()">
-        &laquo; Previous
-      </a>
-      {% else %}
-      <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
-        &laquo; Previous
-      </span>
-      {% endif %}
-
-      <!-- Page Numbers -->
-      {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-          <span class="px-3 py-2 bg-[#EF715C] text-white rounded font-semibold">
-            {{ num }}
-          </span>
-          {% else %}
-          <a href="{% url 'active_jobs_list' %}?page={{ num }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
-            class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-            onclick="saveScrollPosition()">
-            {{ num }}
-          </a>
-        {% endif %}
-      {% endfor %}
-
-      <!-- Next Button -->
-      {% if page_obj.has_next %}
-      <a href="{% url 'active_jobs_list' %}?page={{ page_obj.next_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
-        class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-        onclick="saveScrollPosition()">
-        Next &raquo;
-      </a>
-      {% else %}
-      <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
-        Next &raquo;
-      </span>
-      {% endif %}
+  <div class="space-y-4" 
+    x-data="{ 
+      open: false, job: {},
+      jobBids: [],
+      GetBiddings(job) {
+        this.open = true;
+        this.job = {
+          id: job.id,
+          job_code: job.job_code,
+          renter: job.renter,
+          trader: job.trader,
+          status: job.status,
+          priority: job.priority,
+          bid_status: job.bid_status,
+          scheduled_at: job.scheduled_at,
+        };
+        fetch(`{% url 'get_bidding' 0 %}`.replace('0', job.id), { method: 'GET' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              this.jobBids = data.bids || [];
+            } else {
+              alert('Error: ' + (data.error || 'Failed to fetch bidding.'));
+            }
+          })
+          .catch(err => {
+            alert('Something went wrong while fetching bidding data.');
+          })
+      }
+    }"
+    x-cloak
+  >
+    <!-- Table -->
+    <div class="hidden sm:block overflow-x-auto rounded-xl shadow">
+      <table class="min-w-full bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <thead class="bg-blue-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Job Code</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Renter</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Trader</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Priority</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Bid Status</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Scheduled</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-blue-900 uppercase tracking-wider font-bold">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+            <tr class="border-t border-gray-100 hover:bg-blue-50 transition">
+              <td class="px-4 py-3 whitespace-nowrap">{{ job.job_code }}</td>
+              <td class="px-4 py-3 whitespace-nowrap">{{ job.renter }}</td>
+              <td class="px-4 py-3 whitespace-nowrap">{{ job.trader }}</td>
+              <td class="px-4 py-3 whitespace-nowrap">{{ job.get_status_display }}</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                {% if job.priority %}
+                  <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">High</span>
+                {% else %}
+                  <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">Normal</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                {% if job.bid_status == 'open' %}
+                  <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">Open</span>
+                {% else %}
+                  <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">Closed</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">{{ job.scheduled_at|date:"Y-m-d" }}</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <button 
+                  class="text-[#293272] font-semibold hover:underline"
+                  @click='GetBiddings({
+                    id: "{{ job.id }}",
+                    job_code: "{{ job.job_code }}",
+                    renter: "{{ job.renter }}",
+                    trader: "{{ job.trader }}",
+                    status: "{{ job.get_status_display }}",
+                    priority: "{{ job.priority|yesno:"High,Normal" }}",
+                    bid_status: "{{ job.bid_status }}",
+                    scheduled_at: "{{ job.scheduled_at|date:"Y-m-d" }}"
+                  })'
+                >
+                  View
+                </button>
+              </td>
+            </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center py-4">No active jobs found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-  {% endif %}
 
-  <!-- Mobile Kanban layout -->
-  <div class="sm:hidden space-y-4">
-    {% for job in jobs %}
+    <!-- Pagination Controls -->
+    {% if page_obj.has_other_pages %}
+      <div class="pagination flex justify-center items-center mt-6 space-x-2">
+        <!-- Previous Button -->
+        {% if page_obj.has_previous %}
+        <a href="{% url 'active_jobs_list' %}?page={{ page_obj.previous_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
+          class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          onclick="saveScrollPosition()">
+          &laquo; Previous
+        </a>
+        {% else %}
+        <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
+          &laquo; Previous
+        </span>
+        {% endif %}
+
+        <!-- Page Numbers -->
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="px-3 py-2 bg-[#EF715C] text-white rounded font-semibold">
+              {{ num }}
+            </span>
+            {% else %}
+            <a href="{% url 'active_jobs_list' %}?page={{ num }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
+              class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+              onclick="saveScrollPosition()">
+              {{ num }}
+            </a>
+          {% endif %}
+        {% endfor %}
+
+        <!-- Next Button -->
+        {% if page_obj.has_next %}
+        <a href="{% url 'active_jobs_list' %}?page={{ page_obj.next_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_priority %}&priority={{ filter_priority }}{% endif %}{% if filter_trader %}&trader={{ filter_trader|urlencode }}{% endif %}{% if filter_scheduled_at %}&scheduled_at={{ filter_scheduled_at }}{% endif %}"
+          class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          onclick="saveScrollPosition()">
+          Next &raquo;
+        </a>
+        {% else %}
+        <span class="px-3 py-2 bg-gray-100 text-gray-400 rounded cursor-not-allowed">
+          Next &raquo;
+        </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Mobile Kanban layout -->
+    <div class="sm:hidden space-y-4">
+      {% for job in jobs %}
         <div class="bg-white rounded-xl shadow border border-gray-200 p-4">
           <div class="mb-2">
             <p class="text-xs text-gray-500 font-medium">Job Code</p>
@@ -182,14 +227,88 @@
           </div>
           <div>
             <p class="text-xs text-gray-500 font-medium">Scheduled</p>
-            <p class="text-sm text-gray-800">{{ job.scheduled_at|date:"Y-m-d H:i" }}</p>
+            <p class="text-sm text-gray-800">{{ job.scheduled_at|date:"Y-m-d" }}</p>
           </div>
         </div>
-    {% empty %}
+      {% empty %}
         <div class="text-center text-gray-500 py-6">No active jobs found.</div>
-    {% endfor %}
+      {% endfor %}
+    </div>
+
+    <!-- Modal -->
+    <div 
+      x-show="open" 
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+    >
+      <div 
+        class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6"
+        x-transition
+      >
+        <div class="flex justify-between items-center mb-4 border-b pb-2">
+          <h2 class="text-xl font-bold text-[#293272]">
+            Bidding Requests – <span x-text="job.job_code"></span>
+          </h2>
+          <button 
+            class="text-gray-500 hover:text-gray-700"
+            @click="open = false"
+          >&times;</button>
+        </div>
+
+        <!-- Job Summary -->
+        <div class="grid grid-cols-2 gap-2 text-sm mb-4">
+          <p><span class="font-semibold">Renter:</span> <span x-text="job.renter"></span></p>
+          <p><span class="font-semibold">Trader:</span> <span x-text="job.trader"></span></p>
+          <p><span class="font-semibold">Priority:</span> <span x-text="job.priority"></span></p>
+          <p><span class="font-semibold">Scheduled:</span> <span x-text="job.scheduled_at"></span></p>
+        </div>
+
+        <template x-if="jobBids.length === 0">
+          <div class="text-center text-gray-500 py-4">No bidding requests found.</div>
+        </template>
+
+        <template x-if="jobBids.length > 0">
+          <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="min-w-full text-sm text-left">
+              <thead class="bg-blue-50 text-[#293272] font-semibold uppercase text-xs">
+                <tr>
+                  <th class="px-4 py-2">Trader</th>
+                  <th class="px-4 py-2">Team Member</th>
+                  <th class="px-4 py-2">Created</th>
+                  <th class="px-4 py-2">Status</th>
+                  <th class="px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(bid, index) in jobBids" :key="index">
+                  <tr class="border-t hover:bg-blue-50">
+                    <td class="px-4 py-2" x-text="bid.trader"></td>
+                    <td class="px-4 py-2" x-text="bid.team_member"></td>
+                    <td class="px-4 py-2" x-text="bid.created_at"></td>
+                    <td class="px-4 py-2">
+                      <span 
+                        class="px-2 py-1 text-xs font-semibold rounded"
+                        :class="{
+                          'bg-yellow-100 text-yellow-800': bid.status === 'Quoted',
+                          'bg-green-100 text-green-800': bid.status === 'Approved',
+                          'bg-red-100 text-red-800': bid.status === 'rejected',
+                        }"
+                        x-text="bid.status"
+                      ></span>
+                    </td>
+                    <td class="px-4 py-2">
+                      <a :href="`/agent/bidding/${bid.id}/approve/`" class="text-[#EF715C] hover:underline font-medium">
+                        Review
+                      </a>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </template>
+      </div>
+    </div>
   </div>
-</div>
 </main>
 
 {% include 'components/footerAgent.html' %}

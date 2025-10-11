@@ -28,7 +28,6 @@
     InviteMember(member) {
       member.invited = true;
       setTimeout(() => member.invited = false, 3000);
-      console.log('Inviting member:', member);
       fetch(`team-members/invite/${member.id}/`, { method: 'POST' })
         .then(res => res.json())
         .then(data => {

@@ -6,7 +6,7 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 <div x-data="{ room: false, job: false }" class="max-w-4xl mx-auto p-6 mt-6 bg-white shadow-md rounded-lg w-full">
-  <h2 class="text-2xl font-bold mb-4 text-blue-700">Property Details</h2>
+  <h2 class="text-2xl font-bold mb-4 text-[#293272]">Property Details</h2>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
     <div><strong>Property ID:</strong> {{ property.property_id }}</div>
@@ -44,7 +44,7 @@
 
   <!-- Add Room Button -->
   <div class="flex justify-start mb-4 mt-4 gap-4">
-    <button @click="room = true" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+    <button @click="room = true" class="bg-[#293272] hover:bg-[#162060] text-white font-medium px-4 py-2 rounded-md shadow text-sm">
         + Create Room
     </button>
   </div>
@@ -113,7 +113,7 @@
 
   <hr class="my-6">
   <div class="flex justify-start mb-4 mt-4 gap-4">
-      <button @click="job = true" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+      <button @click="job = true" class="bg-[#293272] hover:bg-[#162060] text-white font-medium px-4 py-2 rounded-md shadow text-sm">
           + Create Maintenance Report
       </button>
   </div>
@@ -252,7 +252,7 @@
               <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-800">Normal</span>
             {% endif %}
           </td>
-          <td class="px-4 py-2 border">{{ job.scheduled_at|date:"Y-m-d H:i" }}</td>
+          <td class="px-4 py-2 border">{{ job.scheduled_at|date:"Y-m-d" }}</td>
           <td class="px-4 py-2 border">{{ job.notes|truncatechars:40 }}</td>
         </tr>
         {% endfor %}
@@ -263,7 +263,7 @@
   {% endif %}
 
   <div class="mt-6">
-    <a href="{% url 'home_agent' %}" class="text-blue-600 hover:underline">← Back to Homepage</a>
+    <a href="{% url 'home_agent' %}" class="text-[#293272] hover:underline">← Back to Homepage</a>
   </div>
 
   {% if messages %}

@@ -3,6 +3,7 @@ from .agentHome import AgentHomeView
 from .agentRegister import AgentRegistrationCreateView
 from .agentSecurity import AgentEditSecurityView
 from .agentUpdate import AgentEditProfileView
+from .agentGetBidding import get_bidding
 # =============== Bidding Views ===============
 from .biddingApproval import BiddingApprovalView
 from .biddingList import AgentBidListView

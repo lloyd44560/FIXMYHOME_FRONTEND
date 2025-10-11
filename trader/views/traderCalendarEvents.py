@@ -25,7 +25,7 @@ def calendar_events(request):
     # Only fetch leaves if user is a team member
     if trader.isTeamMember:
         # 🟧 LEAVE EVENTS
-        leaves = Leaves.objects.filter(team_member__trader=trader)
+        leaves = Leaves.objects.filter(team_member__user_id=request.user)
         for leave in leaves:
             if leave.start_date and leave.end_date:
                 duration = (leave.end_date - leave.start_date).days + 1
