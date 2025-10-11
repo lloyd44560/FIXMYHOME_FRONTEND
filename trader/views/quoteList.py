@@ -20,6 +20,7 @@ class QuoteListView(ListView):
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
 
         if trader:
+            print(f"Trader ID: {trader.id}, Name: {trader.name}")
             queryset = queryset.filter(trader_id=trader)  # show only trader's jobs
         else:
             queryset = queryset.none()  # if no trader, return empty queryset

@@ -39,59 +39,109 @@
         </div>
     </form>
 
-    <table class="min-w-full table-auto">
-        <thead class="bg-[#293272] text-[#FFFF] text-sm">
-            <tr>
-                <th class="px-4 py-2 text-left">Job Code</th>
-                <th class="px-4 py-2 text-left">Member Name</th>
-                <th class="px-4 py-2 text-left">Labor per Hour</th>
-                <th class="px-4 py-2 text-left">Notes</th>
-                <th class="px-4 py-2 text-left">Created at</th>
-                <th class="px-4 py-2 text-left">Priority</th>
-                <th class="px-4 py-2 text-left">Quote Status</th>
-                <th class="px-4 py-2 text-left">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="text-sm text-gray-800">
-            {% for quote in quotes %}
-            <tr class="border-t hover:bg-gray-50">
-                <td class="px-4 py-2">{{ quote.jobs.job_code }}</td>
-                <td class="px-4 py-2 capitalize">{{ quote.team_member.teamName }}</td>
-                <td class="px-4 py-2">{{ quote.labour_per_hour }}</td>
-                <td class="px-4 py-2">{{ quote.notes }}</td>
-                <td class="px-4 py-2">{{ quote.created_at|date:"M d, Y H:i" }}</td>
-                <td class="px-4 py-2">
-                    {% if quote.jobs.priority %}
-                        <span class="text-red-600 font-semibold">Urgent</span>
-                    {% else %}
-                        <span class="text-gray-500">Normal</span>
-                    {% endif %}
-                </td>
-                <td class="px-4 py-2">
-                    {% if quote.is_approved is True %}
-                        <span class="text-green-600 font-semibold">Approved</span>
-                    {% elif quote.is_approved is False %}
-                        <span class="text-red-600 font-semibold">Rejected</span>
-                    {% else %}
-                        <span class="text-gray-500 font-semibold">Pending</span>
-                    {% endif %}
-                </td>
-                <td class="px-4 py-2">
-                    <a href="" class="text-blue-600 hover:underline">View</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center py-4">No quote found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div x-data="{ open: false, selectedQuote: {} }">
+        <table class="min-w-full table-auto">
+            <thead class="bg-[#293272] text-[#FFFF] text-sm">
+                <tr>
+                    <th class="px-4 py-2 text-left">Job Code</th>
+                    <th class="px-4 py-2 text-left">Member Name</th>
+                    <th class="px-4 py-2 text-left">Labor per Hour</th>
+                    <th class="px-4 py-2 text-left">Notes</th>
+                    <th class="px-4 py-2 text-left">Created at</th>
+                    <th class="px-4 py-2 text-left">Priority</th>
+                    <th class="px-4 py-2 text-left">Quote Status</th>
+                    <th class="px-4 py-2 text-left">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody class="text-sm text-gray-800">
+                {% for quote in quotes %}
+                    <tr class="border-t hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ quote.jobs.job_code }}</td>
+                        <td class="px-4 py-2 capitalize">{{ quote.team_member.teamName }}</td>
+                        <td class="px-4 py-2">{{ quote.labour_per_hour }}</td>
+                        <td class="px-4 py-2">{{ quote.notes }}</td>
+                        <td class="px-4 py-2">{{ quote.created_at|date:"M d, Y H:i" }}</td>
+                        <td class="px-4 py-2">
+                        {% if quote.jobs.priority %}
+                            <span class="text-red-600 font-semibold">Urgent</span>
+                        {% else %}
+                            <span class="text-gray-500">Normal</span>
+                        {% endif %}
+                        </td>
+                        <td class="px-4 py-2">
+                        {% if quote.is_approved is True %}
+                            <span class="text-green-600 font-semibold">Approved</span>
+                        {% elif quote.is_approved is False %}
+                            <span class="text-red-600 font-semibold">Rejected</span>
+                        {% else %}
+                            <span class="text-gray-500 font-semibold">Pending</span>
+                        {% endif %}
+                        </td>
+                        <td class="px-4 py-2">
+                        <button 
+                            @click="selectedQuote = {
+                            job_code: '{{ quote.jobs.job_code }}',
+                            member_name: '{{ quote.team_member.teamName }}',
+                            labor: '{{ quote.labour_per_hour }}',
+                            notes: '{{ quote.notes|escapejs }}',
+                            created_at: '{{ quote.created_at|date:"M d, Y H:i" }}',
+                            priority: '{{ quote.jobs.priority|yesno:"Urgent,Normal" }}',
+                            status: `{% if quote.is_approved is True %}Approved{% elif quote.is_approved is False %}Rejected{% else %}Pending{% endif %}`
+                            }; open = true"
+                            class="text-blue-600 hover:underline"
+                        >
+                            View
+                        </button>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">No quote found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- ✅ Modal -->
+        <div 
+            x-show="open"
+            x-cloak
+            class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+            <div 
+            @click.away="open = false"
+            class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative"
+            >
+            <h2 class="text-xl font-bold mb-4 text-[#293272]">Quote Details</h2>
+
+            <div class="space-y-2 text-sm">
+                <p><strong>Job Code:</strong> <span x-text="selectedQuote.job_code"></span></p>
+                <p><strong>Member Name:</strong> <span x-text="selectedQuote.member_name"></span></p>
+                <p><strong>Labor per Hour:</strong> <span x-text="selectedQuote.labor"></span></p>
+                <p><strong>Notes:</strong> <span x-text="selectedQuote.notes"></span></p>
+                <p><strong>Created at:</strong> <span x-text="selectedQuote.created_at"></span></p>
+                <p><strong>Priority:</strong> <span x-text="selectedQuote.priority"></span></p>
+                <p><strong>Status:</strong> <span x-text="selectedQuote.status"></span></p>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button 
+                @click="open = false"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
+                >
+                Close
+                </button>
+            </div>
+            </div>
+        </div>
+        </div>
 </main>
 
 {% include 'components/footerTrader.html' %}
 {% endblock %}
 
 {% block scripts %}
-  <!-- JS Scripts Here -->
+    <!-- Alpine.js for interactivity -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}
