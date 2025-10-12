@@ -179,15 +179,15 @@
                 {% endfor %}
               </select>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>
-              <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="" disabled>-- Select Agent --</option>
-                {% for agent in agents %}
-                <option value="{{ agent.id }}" {% if agent.id == job.agent_id %}selected{% endif %}>{{ agent.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
+            <!--<div>-->
+            <!--  <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>-->
+            <!--  <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">-->
+            <!--    <option value="" disabled>-- Select Agent --</option>-->
+            <!--    {% for agent in agents %}-->
+            <!--    <option value="{{ agent.id }}" {% if agent.id == job.agent_id %}selected{% endif %}>{{ agent.name }}</option>-->
+            <!--    {% endfor %}-->
+            <!--  </select>-->
+            <!--</div>-->
 
 
             <div>
@@ -303,15 +303,15 @@
 
 
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>
-              <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                <option value="" disabled selected>-- Select Agent --</option>
-                {% for agent in agents %}
-                <option value="{{ agent.id }}">{{ agent.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
+            <!--<div>-->
+            <!--  <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>-->
+            <!--  <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>-->
+            <!--    <option value="" disabled selected>-- Select Agent --</option>-->
+            <!--    {% for agent in agents %}-->
+            <!--    <option value="{{ agent.id }}">{{ agent.name }}</option>-->
+            <!--    {% endfor %}-->
+            <!--  </select>-->
+            <!--</div>-->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 5)</label>
 

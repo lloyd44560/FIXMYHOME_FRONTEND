@@ -407,31 +407,47 @@ def list_jobs(request):
 def add_job(request):
     if request.method == 'POST':
         try:
+            #  Get renter from current user
             renter = Renter.objects.get(user=request.user)
-            agent = AgentRegister.objects.get(id=request.POST.get('agent_id'))
 
-            # Get selected service (category) from the dropdown
+            # 2. Get the property tagged to this renter
+            property_obj = Property.objects.filter(renter=renter).first()
+            if not property_obj:
+                messages.error(request, "No property found for this renter.")
+                return redirect('/maintenance/')
+
+            # 3. Get the agent automatically from that property
+            agent = property_obj.agent  # assuming Property has ForeignKey to AgentRegister
+
+            if not agent:
+                messages.error(request, "No agent assigned to this property.")
+                return redirect('/maintenance/')
+
+            # 4. Get selected service (category)
             service_id = request.POST.get('category')
             service = Services.objects.get(id=service_id)
 
-            # Set priority depending on whether the selected service is urgent
-            priority = service.isurgent  # This will be True or False
-            images = request.FILES.getlist('images')
+            # 5. Determine priority (based on service urgency)
+            priority = service.isurgent
+
+            # 6. Create the job
             job = Jobs.objects.create(
-                agent=agent,
+                agent=agent,             # from property
                 renter=renter,
+                property=property_obj,   # linked property
                 notes=request.POST.get('notes'),
-                category=service,        # save the selected category/service
-                priority=priority        # save the computed priority (True/False)
-
+                category=service,
+                priority=priority
             )
-            for img in images:
 
+            #7. Handle image uploads
+            images = request.FILES.getlist('images')
+            for img in images:
                 JobImage.objects.create(job=job, image=img)
 
+            # 8. Success message
             messages.success(request, "Maintenance Request created successfully.")
             return redirect('/maintenance/')
-            # Panu mangyare to sir messages.success(request, "Condition Report created successfully.")
 
         except Exception as e:
             print("Add job error:", e)
@@ -439,7 +455,6 @@ def add_job(request):
             return redirect('/maintenance/')
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
-
 # @csrf_exempt
 # @login_required
 # def edit_job(request, job_id):
