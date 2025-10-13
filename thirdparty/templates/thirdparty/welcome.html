@@ -10,15 +10,52 @@
 {% load static %}
 <body class="bg-gray-50">
 
+  <style>
+    body {
+      font-family: 'Lexend', sans-serif;
+    }
+
+    /* Brand styling */
+    .brand-font {
+      font-family: 'Kolektif', sans-serif;
+      color: #293272;
+    }
+
+    /* Link hover states */
+    #tailwind-navbar a,
+    #tailwind-navbar button {
+      color: #333;
+    }
+
+    #tailwind-navbar a:hover,
+    #tailwind-navbar button:hover {
+      color: #293272;
+      background-color: #f5f5f5;
+    }
+
+    /* Smooth transitions */
+    #tw-menu {
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 767px) {
+      #tw-menu.show {
+        display: block !important;
+      }
+    }
+  </style>
   <!-- Navbar -->
   <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
     <!-- Logo -->
     <h1 class="text-3xl font-bold text-blue-600 flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
-      </svg>
-      <span>FixMyHome</span>
+        <div class="flex items-center space-x-3 flex-shrink-0">
+            <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
+            <span class="text-xl md:text-2xl font-bold brand-font whitespace-nowrap">FixMyHouse</span>
+          </div>
     </h1>
+
+
 
     <!-- Hamburger Button -->
     <button id="menu-btn" class="block md:hidden focus:outline-none">
@@ -50,7 +87,7 @@
         <span>Account</span>
       </a>
 
-      
+
       <form id="logout-form" method="POST" action="{% url 'logout' %}">
           {% csrf_token %}
           <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
@@ -63,15 +100,15 @@
       </form>
     </div>
   </nav>
- 
+
     <!-- Hero Section with Background -->
 
 
 <section class="max-w-7xl mx-auto px-6 py-10">
   <h2 class="text-2xl font-semibold text-gray-800 mb-6">Quick Stats Overview</h2>
-  
+
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    
+
     <!-- Users -->
     <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
       <div class="flex items-center justify-between">
@@ -159,10 +196,10 @@
 
   <!-- Progress Section -->
 
-  
+
 
   <section class="bg-white mx-8 my-16 p-6 rounded-lg shadow">
-  
+
     <p class="text-4xl md:text-5xl font-medium text-gray-800 tracking-wide my-8 px-4">
       Welcome back, {{ user.first_name }}.
     </p>
@@ -180,7 +217,7 @@
 
   <!-- Tab Pages -->
   <div id="tab-properties" class="tab-content">
-      
+
   <!-- Properties Table Section -->
         <section class="mx-8 my-16">
           <h3 class="text-3xl font-bold mb-6 text-gray-800">Properties</h3>
@@ -244,7 +281,7 @@
               <p class="text-gray-600">You don't have any properties listed yet.</p>
           {% endif %}
       </section>
-        
+
   </div>
 
   <div id="tab-renters" class="tab-content hidden">
@@ -315,7 +352,7 @@
   </div>
 
   <div id="tab-agents" class="tab-content hidden">
-    
+
     <section class="mx-8 my-16">
       <h3 class="text-3xl font-bold mb-6 text-gray-800">Agents</h3>
 
@@ -381,7 +418,7 @@
   </div>
 
   <div id="tab-traders" class="tab-content hidden">
-        
+
 
 <section class="mx-8 my-16">
   <h3 class="text-3xl font-bold mb-6 text-gray-800">Traders</h3>
@@ -397,7 +434,7 @@
                       <th class="py-3 px-6 text-left">Address Line</th>
                       <th class="py-3 px-6 text-left">Trader Company Name</th>
                       <th class="py-3 px-6 text-left">Trader Company Address</th>
-        
+
                       <th class="py-3 px-6 text-left">Actions</th>
                   </tr>
               </thead>
