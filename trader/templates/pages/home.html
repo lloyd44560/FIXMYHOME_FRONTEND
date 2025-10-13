@@ -64,12 +64,12 @@
     <!-- To Quote Requests -->
     <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
       <h2 class="font-bold text-[#293272] text-lg mb-2">
-        <a href="{% url 'quote_list' %}">To Quote Requests</a>
+        <a href="{% url 'maintenance_request_list' %}">To Quote Requests</a>
       </h2>
-      <a href="{% url 'quote_list' %}?priority=true">
+      <a href="{% url 'maintenance_request_list' %}?priority=true">
         <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_urgent }} urgent</p>
       </a>
-      <a href="{% url 'quote_list' %}?priority=false">
+      <a href="{% url 'maintenance_request_list' %}?priority=false">
         <p class="text-[#EF7153] text-sm hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
       </a>
     </div>
