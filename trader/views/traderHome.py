@@ -1,10 +1,11 @@
-
+from django.db.models import Q
 from django.utils import timezone
 from django.views.generic import TemplateView
 
 from trader.models import Jobs
 from trader.models import Bidding
 from trader.models import TraderRegistration
+from trader.models import TraderIndustry
 
 # Middleware decorator
 from django.utils.decorators import method_decorator
@@ -19,21 +20,27 @@ class TraderHomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # ✅ Get the trader linked to the logged-in user
+        
+        # Get the trader linked to the logged-in user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
+
+        getIndustry = TraderIndustry.objects.filter(trader_id=trader)
+        # Extract all possible industry names
+        industry_names = getIndustry.values_list('industry', flat=True)
 
         context['is_member'] = trader.isTeamMember
 
-        # Count by status & priority
-        context['to_quote_urgent'] = Bidding.objects.filter(
-            jobs__priority=True,
-            trader_id=trader,
+        # Count by status & priority (with industry filtering)
+        context['to_quote_urgent'] = Jobs.objects.filter(
+            Q(category_id__marketName__in=industry_names) | 
+                Q(category_id__secondaryMarketName__in=industry_names),
+            priority=True,
             is_active=True
         ).count()
-        context['to_quote_non_urgent'] = Bidding.objects.filter(
-            jobs__priority=False,
-            trader_id=trader,
+        context['to_quote_non_urgent'] = Jobs.objects.filter(
+            Q(category_id__marketName__in=industry_names) | 
+                Q(category_id__secondaryMarketName__in=industry_names),
+            priority=False,
             is_active=True
         ).count()
 
