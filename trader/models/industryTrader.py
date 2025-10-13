@@ -7,12 +7,13 @@ class TraderIndustry(models.Model):
         ('cleaning', 'Cleaning'),
         ('electrical', 'Electrical'),
         ('gardening', 'Gardening'),
-        ('general_merchandise', 'General Merchandise'),
+        ('general_maintenance', 'General Maintenance'),
         ('glazing', 'Glazing'),
         ('pest_control', 'Pest Control'),
-        ('plumbing-gas', 'Plumbing / Gas'),
+        ('plumbing_gas', 'Plumbing / Gas'),
         ('tree_cutting', 'Tree Cutting'),
         ('steel_works', 'Steel Works'),
+        ('safety', 'Safety'),
     ]
 
     trader = models.ForeignKey(TraderRegistration, on_delete=models.CASCADE, related_name='industries')

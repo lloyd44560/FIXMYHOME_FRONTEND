@@ -28,12 +28,13 @@ class TraderRegistration(models.Model):
         ('cleaning', 'Cleaning'),
         ('electrical', 'Electrical'),
         ('gardening', 'Gardening'),
-        ('general_merchandise', 'General Merchandise'),
+        ('general_maintenance', 'General Maintenance'),
         ('glazing', 'Glazing'),
         ('pest_control', 'Pest Control'),
-        ('plumbing-gas', 'Plumbing / Gas'),
+        ('plumbing_gas', 'Plumbing / Gas'),
         ('tree_cutting', 'Tree Cutting'),
         ('steel_works', 'Steel Works'),
+        ('safety', 'Safety'),
     ]
 
     company_type = models.CharField(max_length=100, choices=COMPANY_TYPE_CHOICES, default='company')
