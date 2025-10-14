@@ -86,3 +86,14 @@ class BiddingForm(forms.ModelForm):
     class Meta:
         model = Bidding
         exclude = ['trader', 'is_approved', 'approved_at', 'approved_by', 'approval_notes', 'created_at']
+        widgets = {
+            'notes': forms.Textarea(attrs={
+                'rows': 3,
+            }),
+            'start_date': forms.DateInput(attrs={
+                'type': 'date',
+            }),
+            'end_date': forms.DateInput(attrs={
+                'type': 'date',
+            }),
+        }
