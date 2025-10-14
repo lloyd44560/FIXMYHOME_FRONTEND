@@ -2,14 +2,113 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<!-- Top Navigation -->
 {% include 'components/home/navigatorBaseAgent.html' %}
 
-<div class="max-w-2xl mx-auto p-8 bg-white shadow-2xl rounded-2xl mt-12 mb-[5rem] w-full">
+<div class="max-w-3xl mx-auto p-8 bg-white shadow-2xl rounded-2xl mt-12 mb-[5rem] w-full">
   <h2 class="text-3xl font-extrabold text-blue-800 mb-8 text-center tracking-tight">
     Approve or Reject Quote
   </h2>
 
+  <!-- BIDDING DETAILS -->
+  <div class="mb-10 border border-gray-200 rounded-xl p-6 bg-gray-50">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Bidding Details</h3>
+    <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-gray-700 text-sm">
+      <div><strong>Job:</strong> {{ bidding.jobs|default:"—" }}</div>
+      <div><strong>Trader:</strong> {{ bidding.trader }}</div>
+
+      <div><strong>Labour per Hour:</strong> {{ bidding.labour_per_hour|floatformat:2 }}</div>
+      <div><strong>Callout Rate:</strong> {{ bidding.callout_rate|floatformat:2 }}</div>
+
+      <div><strong>Parts Quantity:</strong> {{ bidding.parts_qty }}</div>
+      <div><strong>Parts Unit Price:</strong> {{ bidding.parts_unit_price|floatformat:2 }}</div>
+
+      <div><strong>Hours:</strong> {{ bidding.hours|floatformat:2 }}</div>
+      <div><strong>Appliance Model:</strong> {{ bidding.appliance_model|default:"—" }}</div>
+      <div><strong>Appliance Model Price:</strong> {{ bidding.appliance_model_price|floatformat:2 }}</div>
+
+      <div><strong>Start Date:</strong> {{ bidding.start_date|date:"M d, Y" }}</div>
+      <div><strong>End Date:</strong> {{ bidding.end_date|date:"M d, Y" }}</div>
+
+      <div><strong>Status:</strong>
+        {% if bidding.is_approved == True %}
+          <span class="text-green-600 font-semibold">Approved</span>
+        {% elif bidding.is_approved == False %}
+          <span class="text-red-600 font-semibold">Rejected</span>
+        {% else %}
+          <span class="text-yellow-600 font-semibold">Pending</span>
+        {% endif %}
+      </div>
+
+      <div><strong>Active:</strong> {{ bidding.is_active|yesno:"Yes,No" }}</div>
+      <div><strong>Created At:</strong> {{ bidding.created_at|date:"M d, Y H:i" }}</div>
+      <div><strong>Approved At:</strong> {{ bidding.approved_at|date:"M d, Y"|default:"—" }}</div>
+    </div>
+
+    {% if bidding.notes %}
+      <div class="mt-4">
+        <strong class="block text-gray-800 mb-1">Notes:</strong>
+        <p class="text-gray-600 bg-white border border-gray-200 rounded-md p-3 text-sm">
+          {{ bidding.notes }}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- TEAM MEMBERS -->
+  {% if team_members %}
+  <div class="mb-8">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">Team Members</h3>
+    <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-gray-700 text-sm">
+      <thead class="bg-gray-100 text-left">
+        <tr>
+          <th class="px-4 py-2">#</th>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Position</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in team_members %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ forloop.counter }}</td>
+          <td class="px-4 py-2">{{ member.teamName }}</td>
+          <td class="px-4 py-2">{{ member.position|default:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="px-4 py-2 text-gray-500 text-center">No team members assigned.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- ITEMS NEEDED -->
+  {% if items_needed %}
+  <div class="mb-8">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">Items Needed</h3>
+    <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-gray-700 text-sm">
+      <thead class="bg-gray-100 text-left">
+        <tr>
+          <th class="px-4 py-2">#</th>
+          <th class="px-4 py-2">Item Name</th>
+          <th class="px-4 py-2 text-right">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items_needed %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ forloop.counter }}</td>
+          <td class="px-4 py-2">{{ item.name }}</td>
+          <td class="px-4 py-2 text-right">₱{{ item.price|floatformat:2 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="px-4 py-2 text-gray-500 text-center">No items listed.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- APPROVAL FORM -->
   <form method="post" class="space-y-6">
     {% csrf_token %}
 
@@ -28,7 +127,7 @@
     <!-- Action Buttons -->
     <div class="flex justify-end gap-4 pt-6 border-t">
       <button type="submit"
-        class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 shadow-lg transition">
+        class="bg-[#293272] hover:bg-[#162060] text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg transition">
         Save
       </button>
       <a href="javascript:history.back()" 
@@ -38,32 +137,28 @@
     </div>
   </form>
 
+  <!-- MESSAGES -->
   {% if messages %}
-    <div class="fixed top-6 right-6 z-50 space-y-2">
-      {% for message in messages %}
-        <div
-          x-data="{ show: true }"
-          x-init="setTimeout(() => show = false, 4000)"
-          x-show="show"
-          class="px-4 py-2 rounded shadow-md transition ease-in-out
-            {% if 'error' in message.tags %}
-              bg-red-500 text-white
-            {% elif 'success' in message.tags %}
-              bg-green-500 text-white
-            {% else %}
-              bg-gray-500 text-white
-            {% endif %}"
-          >
-          {{ message }}
-        </div>
-      {% endfor %}
+  <div class="fixed top-6 right-6 z-50 space-y-2">
+    {% for message in messages %}
+    <div
+      x-data="{ show: true }"
+      x-init="setTimeout(() => show = false, 4000)"
+      x-show="show"
+      class="px-4 py-2 rounded shadow-md transition ease-in-out
+        {% if 'error' in message.tags %}
+          bg-red-500 text-white
+        {% elif 'success' in message.tags %}
+          bg-green-500 text-white
+        {% else %}
+          bg-gray-500 text-white
+        {% endif %}">
+      {{ message }}
     </div>
+    {% endfor %}
+  </div>
   {% endif %}
 </div>
 
 {% include 'components/footerAgent.html' %}
-{% endblock %}
-
-{% block scripts %}
-  <!-- JS Scripts Here -->
 {% endblock %}

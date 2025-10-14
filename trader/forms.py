@@ -6,6 +6,7 @@ from .models import TeamMember
 from .models import ContractorLicense
 from .models import Jobs
 from .models import Bidding
+from .models import ItemNeeded
 
 class TeamMemberForm(forms.ModelForm):
     holiday_date = forms.DateField(
@@ -83,17 +84,42 @@ class JobScheduleForm(forms.ModelForm):
         }
 
 class BiddingForm(forms.ModelForm):
+    team_member = forms.ModelMultipleChoiceField(
+        queryset=TeamMember.objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'class': 'w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition rounded-md'
+        })
+    )
+
+    items_needed = forms.ModelMultipleChoiceField(
+        queryset=ItemNeeded.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'id': 'id_items_needed',
+            'class': 'multi-select',
+        })
+    )
+
     class Meta:
         model = Bidding
-        exclude = ['trader', 'is_approved', 'approved_at', 'approved_by', 'approval_notes', 'created_at']
+        exclude = [
+            'trader',
+            'is_approved',
+            'approved_at',
+            'approved_by',
+            'approval_notes',
+            'created_at',
+        ]
         widgets = {
-            'notes': forms.Textarea(attrs={
-                'rows': 3,
-            }),
-            'start_date': forms.DateInput(attrs={
-                'type': 'date',
-            }),
-            'end_date': forms.DateInput(attrs={
-                'type': 'date',
-            }),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        trader = kwargs.pop('trader', None)
+        super().__init__(*args, **kwargs)
+        if trader:
+            # filter only team members under this trader
+            self.fields['team_member'].queryset = TeamMember.objects.filter(trader=trader)

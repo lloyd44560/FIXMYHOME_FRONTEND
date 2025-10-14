@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView
 
 from trader.models import TraderRegistration
-from trader.models import TeamMember
+from trader.models import TeamMember, ItemNeeded
 from trader.models import Bidding, Jobs
 from trader.forms import BiddingForm
 
@@ -50,8 +50,21 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
 
         # Save the bidding first
         bidding.save()
+        form.save_m2m()
 
-        # ✅ Increment job bid count
+        # Save dynamic items
+        item_names = self.request.POST.getlist('item_name[]')
+        item_prices = self.request.POST.getlist('item_price[]')
+
+        for name, price in zip(item_names, item_prices):
+            if name.strip():
+                try:
+                    price_val = float(price) if price else 0.0
+                except ValueError:
+                    price_val = 0.0
+                ItemNeeded.objects.create(bidding=bidding, name=name.strip(), price=price_val)
+
+        # Increment job bid count
         job.bid_count += 1
         job.save()
 
@@ -69,11 +82,11 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Your quotation has been submitted successfully and is now pending agent review.")
         return super().form_valid(form)
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        # Only filter team_member by trader, not jobs
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
-        return form
+        kwargs['trader'] = trader
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

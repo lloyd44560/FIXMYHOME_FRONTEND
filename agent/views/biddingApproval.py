@@ -32,6 +32,14 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         # Only allow agents to approve
         return hasattr(self.request.user, 'agentregister')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        bidding = self.get_object()
+        context['team_members'] = bidding.team_member.all()
+        context['items_needed'] = bidding.items_needed.all()
+
+        return context
+
     def form_valid(self, form):
         agent = AgentRegister.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
