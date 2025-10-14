@@ -27,10 +27,16 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         # Set trader as current user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
-        form.instance.trader = trader
+        bidding = form.save(commit=False)
+
+        if bidding.end_date < bidding.start_date:
+            messages.error(self.request, "End date cannot be earlier than start date.")
+            return self.form_invalid(form)
+
+        bidding.trader = trader
 
         # Use form.instance (not bidding yet)
-        job = form.instance.jobs  
+        job = bidding.jobs  
 
         # Check for duplicates
         if Bidding.objects.filter(trader=trader, jobs=job).exists():
@@ -43,7 +49,7 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
             form.instance.team_member = team_member
 
         # Save the bidding first
-        bidding = form.save()
+        bidding.save()
 
         # ✅ Increment job bid count
         job.bid_count += 1

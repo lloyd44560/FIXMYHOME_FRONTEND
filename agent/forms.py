@@ -137,7 +137,7 @@ class AgentCreateJobForm(forms.ModelForm):
 class BiddingApprovalForm(forms.ModelForm):
     class Meta:
         model = Bidding
-        fields = ['is_approved', 'approval_notes', 'start_date', 'end_date']
+        fields = ['is_approved', 'approval_notes']
         widgets = {
             'approval_notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Approval notes (optional)'}),
             'start_date': forms.DateInput(
@@ -154,17 +154,11 @@ class BiddingApprovalForm(forms.ModelForm):
             ),
         }
 
-
-
 # Renter Request forms
-
-
 class RespondRequestForm(forms.Form):
     subject = forms.CharField(max_length=255)
     message = forms.CharField(widget=forms.Textarea)
     request_id = forms.IntegerField(widget=forms.HiddenInput)
-
-
 
 class PropertyManagerForm(forms.ModelForm):
     class Meta:

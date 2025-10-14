@@ -36,10 +36,6 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         agent = AgentRegister.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
 
-        if bidding.end_date < bidding.start_date:
-            messages.error(self.request, "End date cannot be earlier than start date.")
-            return self.form_invalid(form)
-
         # Example: update related Job status
         job = bidding.jobs
 
