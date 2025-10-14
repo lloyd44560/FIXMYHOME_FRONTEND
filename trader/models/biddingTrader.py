@@ -5,6 +5,7 @@ from agent.models import AgentRegister
 from .registerTrader import TraderRegistration
 from .jobs import Jobs
 from .teamMember import TeamMember
+from .itemNeeded import ItemNeeded
 
 class Bidding(models.Model):
     trader = models.ForeignKey(TraderRegistration, on_delete=models.CASCADE, related_name='bid_trader')
@@ -12,7 +13,7 @@ class Bidding(models.Model):
     jobs = models.ForeignKey(Jobs, on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs_related')
 
     # 👇 Link to your detailed TeamMember
-    team_member = models.ForeignKey(TeamMember, on_delete=models.SET_NULL, null=True, blank=True, related_name='teams_related')
+    team_member = models.ManyToManyField(TeamMember, related_name='biddings_related', blank=True)
 
     # Rates can be auto-filled from the team member
     labour_per_hour = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

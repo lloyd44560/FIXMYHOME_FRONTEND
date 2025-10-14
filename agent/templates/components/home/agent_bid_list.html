@@ -5,7 +5,7 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 
-<main class="max-w-4xl mx-auto p-4 sm:p-6 mb-[8rem] flex-1 w-full">
+<main class="max-w-6xl mx-auto p-4 sm:p-6 mb-[8rem] flex-1 w-full">
   <h2 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-6 text-center tracking-tight">Quotation for Your Job</h2>
   <!-- Filter Form -->
   <form method="GET" class="mb-6">
@@ -54,7 +54,13 @@
             <tr class="border-t border-gray-100 hover:bg-blue-50 transition">
               <td class="px-4 py-3 whitespace-nowrap">{{ bid.jobs }}</td>
               <td class="px-4 py-3 whitespace-nowrap">{{ bid.trader }}</td>
-              <td class="px-4 py-3 whitespace-nowrap">{{ bid.team_member }}</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                {% for member in bid.team_member.all %}
+                  <div>{{ member.teamName }} ({{ member.position }})</div>
+                {% empty %}
+                  <span class="text-gray-400 italic">No team members</span>
+                {% endfor %}
+              </td>
               <td class="px-4 py-3 whitespace-nowrap">{{ bid.created_at|date:"Y-m-d H:i" }}</td>
               <td class="px-4 py-3">
                 {% if bid.is_approved is None %}
@@ -90,7 +96,11 @@
           </div>
           <div class="mb-2">
             <p class="text-sm text-gray-500 font-medium">Team Member</p>
-            <p class="text-base text-gray-800">{{ bid.team_member }}</p>
+            {% for member in bid.team_member.all %}
+              <div>{{ member.teamName }} ({{ member.position }})</div>
+            {% empty %}
+              <span class="text-gray-400 italic">No team members</span>
+            {% endfor %}
           </div>
           <div class="mb-2">
             <p class="text-sm text-gray-500 font-medium">Created</p>
