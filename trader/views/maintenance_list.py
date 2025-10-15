@@ -31,7 +31,9 @@ class MaintenanceListView(ListView):
             # Filter jobs where EITHER marketName OR secondaryMarketName matches
             queryset = queryset.filter(
                 Q(category_id__marketName__in=industry_names) | 
-                Q(category_id__secondaryMarketName__in=industry_names)
+                Q(category_id__secondaryMarketName__in=industry_names),
+                bid_status='open',
+                status='quoted'
             )
         else:
             queryset = queryset.none()  # if no trader, return empty queryset

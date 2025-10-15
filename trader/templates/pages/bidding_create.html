@@ -28,13 +28,13 @@
           class="w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition rounded-md"
           required
         >
-          <option value="" selected disabled>Select a job</option>
+          <option value="" disabled {% if not form.initial.jobs %}selected{% endif %}>Select a job</option>
           {% for job in jobs_filtered %}
-            <option value="{{ job.id }}">
+            <option value="{{ job.id }}" 
+              {% if form.initial.jobs and form.initial.jobs.id == job.id %}selected{% endif %}
+            >
               {{ job.job_code }} - {% if job.priority %}High priority{% else %}Less priority{% endif %}
             </option>
-          {% empty %}
-            <option value="" disabled>No open quoted jobs available</option>
           {% endfor %}
         </select>
       </div>
