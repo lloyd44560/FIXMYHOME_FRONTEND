@@ -9,6 +9,7 @@ from django.views.generic import CreateView
 
 from trader.models import TraderRegistration
 from trader.models import TeamMember, ItemNeeded
+from trader.models import TraderIndustry
 from trader.models import Bidding, Jobs
 from trader.forms import BiddingForm
 
@@ -27,7 +28,11 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         initial = super().get_initial()
         job_id = self.request.GET.get('job_id')
         if job_id:
-            initial['jobs'] = job_id  # pre-select job in the form
+            try:
+                job = Jobs.objects.get(id=job_id)
+                initial['jobs'] = job
+            except Jobs.DoesNotExist:
+                pass
         return initial
 
     def form_valid(self, form):
@@ -97,14 +102,18 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
+        getIndustry = TraderIndustry.objects.filter(trader_id=trader)
+        # Extract all possible industry names
+        industry_names = getIndustry.values_list('industry', flat=True)
+
         val = trader.isDirector or trader.isAdmin if trader else False
         # Add flag for template condition
         context['is_director'] = val
         context['memberName'] = trader.name if trader else ''
-
         # ✅ Filter only quoted + open jobs and order DESC by quoted_at or id
         context['jobs_filtered'] = Jobs.objects.filter(
-            trader=trader,
+            Q(category_id__marketName__in=industry_names) | 
+            Q(category_id__secondaryMarketName__in=industry_names),
             bid_status='open',
             status='quoted'
         ).order_by('-quoted_at')
