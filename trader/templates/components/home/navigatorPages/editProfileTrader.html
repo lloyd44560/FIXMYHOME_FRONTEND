@@ -61,14 +61,13 @@
             {{ form.abn.errors }}
         </div>
         <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">Industry</label>
-            {{ form.industry|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.industry.errors }}
-        </div>
-        <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700">Other Expertise</label>
-            {{ form.other_expertise|add_class:"w-full mt-1 px-3 py-2 border rounded-md shadow-sm" }}
-            {{ form.other_expertise.errors }}
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                Industry Expertise
+            </label>
+            <div class="bg-gray-50 border rounded-md p-3">
+                {{ form.industry_expertise }}
+            </div>
+            {{ form.industry_expertise.errors }}
         </div>
     </div>
 </div>

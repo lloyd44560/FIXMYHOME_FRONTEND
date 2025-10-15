@@ -88,19 +88,17 @@ class TraderProfileView(UpdateView):
         return context
     
     def form_valid(self, form):
-        objectUpdate = self.get_object()
+        trader = self.get_object()
+        form.save()
 
-        # Fields to update
-        fields = [
-            'name', 'email', 'phone', 'company_type', 'company_name', 'company_address',
-            'company_email', 'company_landline', 'abn', 'industry', 'state', 'municipality', 
-            'city', 'postal_code', 'address_line_1', 'address_line_2',
-        ]
+        # ✅ Update industry expertise
+        selected = form.cleaned_data.get('industry_expertise', [])
+        # Delete old ones not in selected
+        TraderIndustry.objects.filter(trader=trader).exclude(industry__in=selected).delete()
+        # Add new ones
+        for exp in selected:
+            TraderIndustry.objects.get_or_create(trader=trader, industry=exp)
 
-        for field in fields:
-            setattr(objectUpdate, field, form.cleaned_data[field])
-
-        objectUpdate.save(update_fields=fields)
         return redirect(self.success_url)
     
     def form_invalid(self, form):

@@ -3,6 +3,7 @@ from django.forms import inlineformset_factory
 
 from .models import TraderRegistration
 from .models import TeamMember
+from .models import TraderIndustry
 from .models import ContractorLicense
 from .models import Jobs
 from .models import Bidding
@@ -61,10 +62,40 @@ class TraderRegistrationForm(forms.ModelForm):
         cleaned_data = super().clean()
 
 class TraderEditProfileForm(forms.ModelForm):
+    # Define industry choices
+    INDUSTRIES_CHOICES = [
+        ('air_conditioning', 'Air Conditioning'),
+        ('cleaning', 'Cleaning'),
+        ('electrical', 'Electrical'),
+        ('gardening', 'Gardening'),
+        ('general_maintenance', 'General Maintenance'),
+        ('glazing', 'Glazing'),
+        ('pest_control', 'Pest Control'),
+        ('plumbing_gas', 'Plumbing / Gas'),
+        ('tree_cutting', 'Tree Cutting'),
+        ('steel_works', 'Steel Works'),
+        ('safety', 'Safety'),
+    ]
+
+    industry_expertise = forms.MultipleChoiceField(
+        choices=INDUSTRIES_CHOICES,
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "space-y-1"}),
+        required=False,
+        label="Industry Expertise"
+    )
+
     class Meta:
         model = TraderRegistration
-        fields = '__all__'
-        widgets = {}
+        exclude = ['user', 'password', 'isAdmin', 'isDirector', 'isTeamMember']
+
+    def __init__(self, *args, **kwargs):
+        trader = kwargs.get('instance')
+        super().__init__(*args, **kwargs)
+
+        if trader:
+            # Preload the trader’s existing industries
+            current = TraderIndustry.objects.filter(trader=trader).values_list('industry', flat=True)
+            self.fields['industry_expertise'].initial = list(current)
 
 class JobScheduleForm(forms.ModelForm):
     class Meta:
