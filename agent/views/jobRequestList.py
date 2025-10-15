@@ -94,9 +94,9 @@ class ActiveJobsListView(ListView):
             service.id: service.description
             for service in Services.objects.all()
         }
-        
+
         for key, label in context['category_options'].items():
             if str(key) == context['filter_category']:
                 print(key, label, 'SELECTED')
-        
+
         return context
