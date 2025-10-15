@@ -75,6 +75,7 @@
                     <!-- View button triggers modal -->
                     <button
                         @click="selectedJob = {
+                            id: '{{ job.id }}',
                             code: '{{ job.job_code }}',
                             status: '{{ job.get_status_display }}',
                             priority: '{{ job.priority|yesno:"Urgent,Normal" }}',
@@ -86,6 +87,15 @@
                     >
                         View
                     </button>
+
+                    {% if job.bid_status == "open" %}
+                        <a href="{% url 'bidding_create' %}?job_id={{ job.id }}"
+                        class="text-green-600 hover:underline ml-3">
+                        Create Bid
+                        </a>
+                    {% else %}
+                        <span class="text-gray-400 ml-3 italic">Closed</span>
+                    {% endif %}
                 </td>
 
 

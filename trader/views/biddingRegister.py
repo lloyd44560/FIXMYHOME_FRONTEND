@@ -17,12 +17,18 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from trader.decorators.traderOnly import trader_required
 
-
 class BiddingCreateView(LoginRequiredMixin, CreateView):
     model = Bidding
     form_class = BiddingForm
     template_name = 'pages/bidding_create.html'
     success_url = reverse_lazy('bidding_create')  # Redirect to job list or bidding list
+
+    def get_initial(self):
+        initial = super().get_initial()
+        job_id = self.request.GET.get('job_id')
+        if job_id:
+            initial['jobs'] = job_id  # pre-select job in the form
+        return initial
 
     def form_valid(self, form):
         # Set trader as current user
