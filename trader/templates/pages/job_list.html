@@ -39,7 +39,7 @@
                 <th class="px-4 py-2 text-left">Priority</th>
                 <th class="px-4 py-2 text-left">Renter</th>
                 <th class="px-4 py-2 text-left">Quoted</th>
-                <th class="px-4 py-2 text-left">Action</th>
+                <th class="px-4 py-2 text-left">Action123</th>
             </tr>
         </thead>
         <tbody class="text-sm text-gray-800">
@@ -58,6 +58,13 @@
                 <td class="px-4 py-2">{{ job.quoted_at|date:"M d" }}</td>
                 <td class="px-4 py-2">
                     <a href="" class="text-blue-600 hover:underline">View</a>
+                </td>
+                <td class="px-4 py-2">
+                    {% if job.images.all %}
+                        <button onclick="openGallery({{ job.id }})" class="text-blue-600 hover:underline">View Images</button>
+                    {% else %}
+                        No images
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}
