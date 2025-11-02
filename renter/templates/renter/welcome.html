@@ -37,6 +37,14 @@
   a:hover {
     text-decoration: none !important;
   }
+  @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .spinner-border {
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
   </style>
 </head>
 
@@ -57,8 +65,64 @@
     </div>
   </section>
 
+    <!--Added the Maintenance Request Here -->
+    <!-- Maintenance Request Tab - Enhanced & Responsive -->
+    <!-- Maintenance Request Tab - Blue Title + Border -->
+    <div class="container mx-auto mt-6 px-4">
+        <div class="tab-pane fade show active" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
 
-  
+            <!-- Header with Blue Title & Bordered Container -->
+            <div class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
+                    <h2 class="text-2xl font-bold flex items-center gap-2" style="color: #006ffd;">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #006ffd;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Report Required Maintenance/Issues
+                    </h2>
+                    <button onclick="location.reload()"
+                            class="text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-full font-medium transition flex items-center gap-1.5 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0L9 13m10.418-2H15m0 0l-4 4"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="maintenance-loading" class="flex flex-col items-center justify-center py-16 text-gray-600">
+                    <div class="spinner-border animate-spin inline-block w-12 h-12 border-4 border-gray-200 border-t-[#006ffd] rounded-full mb-4"></div>
+                    <p class="text-sm font-medium">Loading maintenance requests...</p>
+                </div>
+
+                <!-- Iframe -->
+                <div style="height: calc(100vh - 300px); min-height: 500px;">
+                    <iframe
+                        src="{% url 'maintenance_list' %}"
+                        title="Maintenance Request List"
+                        frameborder="0"
+                        class="w-full h-full rounded-b-lg"
+                        onload="document.getElementById('maintenance-loading').style.display='none';"
+                        style="display: block;">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Mobile Tip -->
+            <div class="mt-3 text-center text-xs text-gray-500 md:hidden">
+                Tip: Rotate to landscape for better view
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+</div>
+
     <div class="container mt-4">
       <h3 class="mb-3">Manage Calendar</h3>
 
@@ -72,7 +136,7 @@
         </div>
       </div>
     </div>
-    
+
 
   <!-- Features Section -->
   <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">

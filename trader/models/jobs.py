@@ -9,7 +9,7 @@ class Jobs(models.Model):
     agent = models.ForeignKey(AgentRegister, on_delete=models.CASCADE, related_name='jobs_agent')
     trader = models.ForeignKey(TraderRegistration, on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs_trader')
     property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, blank=True, related_name='jobs_property')
-    
+
     STATUS_CHOICES = [
         ('quoted', 'Quoted'),
         ('confirmed', 'Confirmed'),
@@ -41,7 +41,7 @@ class Jobs(models.Model):
     def save(self, *args, **kwargs):
         # Always regenerate job_code based on current status
         # prefix = self.status[:3].upper()  # 'QUO', 'APP', etc.
-        
+
         # --- Auto close bid if bid_count >= 3 ---
         if self.bid_count >= 3:
             self.bid_status = "closed"
@@ -63,6 +63,10 @@ class Jobs(models.Model):
 
     def __str__(self):
         return self.job_code
+
+
+
+
 
 # Added for multiple images for maintenance requests
 class JobImage(models.Model):

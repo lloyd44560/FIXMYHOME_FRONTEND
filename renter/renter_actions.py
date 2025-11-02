@@ -23,7 +23,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
 from .forms import JobForm
-from trader.models import Jobs, JobImage
+from trader.models import Jobs, JobImage, Bidding
 from trader.models.servicesTrader import Services
 from trader.models import TraderRegistration
 from agent.models.propertyAgent import Property
@@ -363,7 +363,6 @@ def edit_property(request, id):
     return JsonResponse({"success": False, "message": "Invalid request method"})
 
 ############################################################################################### Renter Maintenance Requests #########################################################################################################
-
 @login_required
 def list_jobs(request):
     user = request.user
@@ -381,10 +380,14 @@ def list_jobs(request):
                 Q(category__description__icontains=search_query)
             )
 
+        # --- Attach all bidding records per job ---
+        for job in jobs:
+            job.bids = Bidding.objects.all()
+
     except Renter.DoesNotExist:
         jobs = Jobs.objects.none()
 
-    # Apply pagination
+    # Pagination
     paginator = Paginator(jobs.order_by('-approved_at'), 5)
     page_number = request.GET.get('page')
     page_jobs = paginator.get_page(page_number)
@@ -392,14 +395,17 @@ def list_jobs(request):
     agents = AgentRegister.objects.all()
     traders = TraderRegistration.objects.all()
     services = Services.objects.filter(is_active=True)
+    all_bids = Bidding.objects.all()
 
     return render(request, 'renter/home/jobs/renter_job_list.html', {
         'jobs': page_jobs,
         'agents': agents,
         'traders': traders,
         'services': services,
+        'bids': all_bids,
         'search_query': search_query,
     })
+
 
 
 @csrf_exempt
@@ -1288,5 +1294,5 @@ def event_list(request):
 
 @login_required
 def renter_chat(request):
-    chat_url = "/chat/chat/general/"  # This points to the chat app
+    chat_url = "/chat/all_jobs/"  # This points to the chat app
     return render(request, 'renter/home/renter_chat.html', {"chat_url": chat_url})

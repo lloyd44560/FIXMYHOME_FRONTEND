@@ -9,6 +9,8 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Select2 for dropdowns -->
@@ -21,7 +23,7 @@
   <main class="flex-grow w-full mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">My Maintenance Requests</h1>
+      <h1 class="text-3xl font-bold text-gray-900">My Requests</h1>
       <!-- Add Maintenance Request Button -->
       <button
         class="bg-[#293272] text-white px-5 py-2.5 rounded-lg hover:bg-[#1f2558] transition-colors duration-200 font-medium"
@@ -62,8 +64,10 @@
               <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-12">#</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600">Job Code</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Status</th>
+
               <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-24">Priority</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600">Issues</th>
+
               <th class="px-6 py-4 text-sm font-medium text-gray-600">Additional Notes</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600">Images</th>
               <th class="px-6 py-4 text-sm font-medium text-gray-600 text-center w-48">Actions</th>
@@ -157,223 +161,361 @@
       </div>
     </div>
   </main>
+{% for job in jobs %}
+<!-- Edit Job Modal - Modern & #006ffd Theme -->
+<div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1" aria-labelledby="editJobModalLabel{{ job.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="{% url 'edit_job' job.id %}" class="modal-content rounded-xl shadow-xl overflow-hidden" enctype="multipart/form-data">
+            {% csrf_token %}
 
-  <!-- Edit Modals -->
-  {% for job in jobs %}
-  <div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1" aria-labelledby="editJobModalLabel{{ job.id }}" aria-hidden="true">
-    <div class="modal-dialog">
-      <form method="POST" action="{% url 'edit_job' job.id %}" class="modal-content" enctype="multipart/form-data" >
-        {% csrf_token %}
-        <div class="modal-header border-b border-gray-200">
-          <h5 class="text-xl font-semibold text-gray-800" id="editJobModalLabel{{ job.id }}">Edit Maintenance Request: {{ job.job_code }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body p-6">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Issues</label>
-              <select name="category" class="edit-category w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-job-id="{{ job.id }}" id="editCategory{{ job.id }}">
-                <option value="" disabled>-- Select Service Category --</option>
-                {% for service in services %}
-                <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}" {% if service.id == job.category.id %}selected{% endif %}>
-                  {{ service.description }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-            <!--<div>-->
-            <!--  <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>-->
-            <!--  <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">-->
-            <!--    <option value="" disabled>-- Select Agent --</option>-->
-            <!--    {% for agent in agents %}-->
-            <!--    <option value="{{ agent.id }}" {% if agent.id == job.agent_id %}selected{% endif %}>{{ agent.name }}</option>-->
-            <!--    {% endfor %}-->
-            <!--  </select>-->
-            <!--</div>-->
-
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">When did the issue occur?</label>
-              <input type="datetime-local" name="issue_found_at"
-                     value="{{ job.issue_found_at|date:'Y-m-d\TH:i' }}"
-                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Renter Availability</label>
-              <input type="datetime-local" name="renter_availability"
-                     value="{{ job.renter_availability|date:'Y-m-d\TH:i' }}"
-                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div class="flex items-center gap-2">
-              <input type="checkbox" name="issue_been_fixed_before" id="issueFixedBefore{{ job.id }}"
-                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                     {% if job.issue_been_fixed_before %}checked{% endif %}>
-              <label for="issueFixedBefore{{ job.id }}" class="text-sm font-medium text-gray-700">Has the issue been fixed before?</label>
-            </div>
-             <!-- Existing images -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Existing Images</label>
-                <div class="flex flex-wrap gap-3">
-                 {% for image in job.images.all %}
-                      <div class="relative border rounded p-1">
-                        <img src="{{ image.image.url }}" class="w-20 h-20 object-cover rounded">
-                        <label class="absolute top-0 right-0 bg-white p-1 rounded">
-                          <input type="checkbox" name="delete_images" value="{{ image.id }}"> ✕
-                        </label>
-                      </div>
-                    {% endfor %}
-                </div>
-              </div>
-
-              <!-- Upload new images -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 5)</label>
-                <div id="edit-image-upload-container-{{ job.id }}">
-                  <input type="file" name="images" accept="image/*"
-                         class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2">
-                </div>
-
-                <button type="button" data-job-id="{{ job.id }}"
-                        class="add-edit-image-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                  + Add another image
+            <!-- WHITE HEADER + BLUE TITLE -->
+            <div class="modal-header bg-white p-5 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold flex items-center gap-2 m-0" id="editJobModalLabel{{ job.id }}" style="color: #006ffd;">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #006ffd;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    Edit Request: {{ job.job_code }}
+                </h5>
+                <button type="button"
+                        class="text-gray-500 hover:text-gray-700 text-2xl font-light transition-colors duration-200 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+                        data-bs-dismiss="modal">
+                    ×
                 </button>
-
-                <p id="edit-image-limit-msg-{{ job.id }}" class="text-red-500 text-sm mt-1 hidden">
-                  You can only upload up to 5 images.
-                </p>
-              </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
-              <textarea name="notes" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional Notes">{{ job.notes }}</textarea>
             </div>
-            <input type="hidden" name="priority" id="editPriority{{ job.id }}" value="{% if job.priority %}true{% else %}false{% endif %}">
-          </div>
-        </div>
-        <div class="modal-footer border-t border-gray-200 p-4">
-          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Save</button>
-          <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
+
+            <!-- Body -->
+            <div class="modal-body p-6 space-y-5 bg-gray-50">
+
+                <!-- Issue Category -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Issue Category</label>
+                    <select name="category" id="editCategory{{ job.id }}"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] transition">
+                        <option value="" disabled>-- Select Service Category --</option>
+                        {% for service in services %}
+                        <option value="{{ service.id }}"
+                                data-isurgent="{{ service.is_urgent|yesno:'true,false' }}"
+                                {% if service.id == job.category.id %}selected{% endif %}>
+                            {{ service.description }}
+                            {% if service.is_urgent %} (Urgent){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Date & Time -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Issue Occurred</label>
+                        <input type="datetime-local" name="issue_found_at"
+                               value="{{ job.issue_found_at|date:'Y-m-d\TH:i' }}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Your Availability</label>
+                        <input type="datetime-local" name="renter_availability"
+                               value="{{ job.renter_availability|date:'Y-m-d\TH:i' }}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+                    </div>
+                </div>
+
+                <!-- Has it been fixed before? -->
+                <div x-data="{ fixed: '{{ job.issue_been_fixed_before|lower }}' }">
+                    <p class="text-sm font-semibold text-gray-800 mb-2">Has this issue been fixed before?</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" @click="fixed = 'yes'"
+                                :class="fixed === 'yes' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'"
+                                class="px-5 py-2 rounded-full text-sm font-medium transition">
+                            YES
+                        </button>
+                        <button type="button" @click="fixed = 'no'"
+                                :class="fixed === 'no' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'"
+                                class="px-5 py-2 rounded-full text-sm font-medium transition">
+                            NO
+                        </button>
+                        <button type="button" @click="fixed = 'unsure'"
+                                :class="fixed === 'unsure' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'"
+                                class="px-5 py-2 rounded-full text-sm font-medium transition">
+                            UNSURE
+                        </button>
+                    </div>
+                    <input type="hidden" name="issue_been_fixed_before" :value="fixed">
+                </div>
+
+                <!-- Existing Images -->
+                {% if job.images.all %}
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-2">Existing Images</label>
+                    <div class="flex flex-wrap gap-3">
+                        {% for image in job.images.all %}
+                        <div class="relative group">
+                            <img src="{{ image.image.url }}" alt="Issue" class="w-24 h-24 object-cover rounded-lg border">
+                            <label class="absolute top-1 right-1 bg-white rounded-full p-1 shadow cursor-pointer opacity-0 group-hover:opacity-100 transition">
+                                <input type="checkbox" name="delete_images" value="{{ image.id }}" class="sr-only">
+                                <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Upload New Images -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Add More Images (max 5 total)</label>
+                    <div id="edit-image-upload-container-{{ job.id }}" class="space-y-2">
+                        <input type="file" name="images" accept="image/*"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+                    </div>
+                    <button type="button" data-job-id="{{ job.id }}" class="add-edit-image-btn mt-2 text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-medium transition flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Another
+                    </button>
+                    <p id="edit-image-limit-msg-{{ job.id }}" class="text-red-600 text-xs mt-1 hidden">
+                        Max 5 images total.
+                    </p>
+                </div>
+
+                <!-- Job Status (Read-only) -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-2">Current Status</label>
+                    <ol class="space-y-2">
+                        {% for code, label in job.STATUS_CHOICES %}
+                        <li class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+                                        {% if job.status == code %}bg-[#006ffd] text-white{% else %}bg-gray-200 text-gray-500{% endif %}">
+                                {{ forloop.counter }}
+                            </div>
+                            <span class="{% if job.status == code %}font-bold text-gray-900{% else %}text-gray-500{% endif %}">
+                                {{ label }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+
+                <!-- Bids Table -->
+                {% if bids %}
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-2">Bids Received</label>
+                    <div class="bg-white rounded-lg border overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-700">Trader</th>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-700">Approved By</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                {% for bid in bids %}
+                                {% if bid.jobs.id == job.id %}
+                                <tr>
+                                    <td class="px-4 py-2">{{ bid.trader.name }}</td>
+                                    <td class="px-4 py-2">{{ bid.approved_by.name|default:"—" }}</td>
+                                </tr>
+                                {% endif %}
+                                {% empty %}
+                                <tr><td colspan="2" class="px-4 py-2 text-center text-gray-500">No bids yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Additional Notes -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Additional Notes</label>
+                    <textarea name="notes" rows="3"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] resize-none"
+                              placeholder="Update notes...">{{ job.notes }}</textarea>
+                </div>
+
+                <input type="hidden" name="priority" id="editPriority{{ job.id }}">
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer bg-white p-5 border-t border-gray-200 flex justify-end gap-3">
+                <button type="submit"
+                        class="px-6 py-2.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-semibold transition shadow-md">
+                    Save Changes
+                </button>
+                <button type="button" data-bs-dismiss="modal"
+                        class="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
+                    Cancel
+                </button>
+            </div>
+        </form>
     </div>
-  </div>
-  {% endfor %}
+</div>
+{% endfor %}
 
-  <!-- Add Job Modal -->
-  <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <form method="POST" action="{% url 'add_job' %}" class="modal-content" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="modal-header border-b border-gray-200">
-          <h5 class="text-xl font-semibold text-gray-800" id="addJobModalLabel">Add New Maintenance Request</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body p-6">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Issues</label>
-              <select name="category" id="categorySelect" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                <option value="" disabled selected>-- Select Service Category --</option>
-                {% for service in services %}
-                <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}">{{ service.description }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">When did the issue occur?</label>
-              <input type="datetime-local" name="issue_found_at"
-                     value="{{ job.issue_found_at|date:'Y-m-d\TH:i' }}"
-                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+ <!-- Add Job Modal - Modern & Blue Theme -->
+<div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="{% url 'add_job' %}" class="modal-content rounded-xl shadow-xl overflow-hidden" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- CLEAN WHITE HEADER - NO BACKGROUND -->
+            <div class="modal-header bg-white p-5 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold flex items-center gap-2 m-0" id="addJobModalLabel" style="color: #006ffd;">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #006ffd;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add New Maintenance Request
+                </h5>
+                <button type="button"
+                        class="text-gray-500 hover:text-gray-700 text-2xl font-light transition-colors duration-200 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+                        data-bs-dismiss="modal">
+                    &times;
+                </button>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Renter Availability</label>
-              <input type="datetime-local" name="renter_availability"
-                     value="{{ job.renter_availability|date:'Y-m-d\TH:i' }}"
-                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <!-- Body -->
+            <div class="modal-body p-6 space-y-5 bg-gray-50">
+                <!-- Service Category -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Issue Category *</label>
+                    <select name="category" id="categorySelect"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] transition"
+                            required>
+                        <option value="" disabled selected>-- Select Service Category --</option>
+                        {% for service in services %}
+                        <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}">
+                            {{ service.description }}
+                            {% if service.is_urgent %}<span class="text-red-600 font-medium"> (Urgent)</span>{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Additional Notes -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Additional Notes</label>
+                    <textarea name="notes" rows="3"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] resize-none"
+                              placeholder="Describe the issue in detail..."></textarea>
+                </div>
+
+                <!-- Date & Time Inputs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1.5">When did the issue occur?</label>
+                        <input type="datetime-local" name="issue_found_at"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Your Availability</label>
+                        <input type="datetime-local" name="renter_availability"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+                    </div>
+                </div>
+
+                <!-- Has it been fixed before? -->
+                <div x-data="{ fixed: 'no' }">
+                    <p class="text-sm font-semibold text-gray-800 mb-2">Has this issue been fixed before?</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" @click="fixed = 'yes'"
+                                :class="fixed === 'yes' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'"
+                                class="px-5 py-2 rounded-full text-sm font-medium transition">
+                            YES
+                        </button>
+                        <button type="button" @click="fixed = 'no'"
+                                :class="fixed === 'no' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'"
+                                class="px-5 py-2 rounded-full text-sm font-medium transition">
+                            NO
+                        </button>
+                        <button type="button" @click="fixed = 'unsure'"
+                                :class="fixed === 'unsure' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'"
+                                class="px-5 py-2 rounded-full text-sm font-medium transition">
+                            UNSURE
+                        </button>
+                    </div>
+                    <input type="hidden" name="issue_been_fixed_before" :value="fixed">
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Upload Images (max 5)</label>
+                    <div id="image-upload-container" class="space-y-2">
+                        <input type="file" name="images" accept="image/*"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+                    </div>
+                    <button type="button" id="add-image-btn"
+                            class="mt-2 text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-medium transition flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Another Image
+                    </button>
+                    <p id="image-limit-msg" class="text-red-600 text-xs mt-1 hidden">
+                        Maximum 5 images allowed.
+                    </p>
+                </div>
+
+                <input type="hidden" name="priority" id="prioritySelect">
             </div>
 
-            <div class="flex items-center gap-2">
-              <input type="checkbox" name="issue_been_fixed_before" id="issueFixedBefore{{ job.id }}"
-                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                     {% if job.issue_been_fixed_before %}checked{% endif %}>
-              <label for="issueFixedBefore{{ job.id }}" class="text-sm font-medium text-gray-700">Has the issue been fixed before?</label>
+            <!-- Footer -->
+            <div class="modal-footer bg-white p-5 border-t border-gray-200 flex justify-end gap-3">
+                <button type="submit"
+                        class="px-6 py-2.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-semibold transition shadow-md">
+                    Submit Request
+                </button>
+                <button type="button" data-bs-dismiss="modal"
+                        class="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
+                    Cancel
+                </button>
             </div>
-
-
-            </div>
-            <!--<div>-->
-            <!--  <label class="block text-sm font-medium text-gray-700 mb-1">Agent</label>-->
-            <!--  <select name="agent_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>-->
-            <!--    <option value="" disabled selected>-- Select Agent --</option>-->
-            <!--    {% for agent in agents %}-->
-            <!--    <option value="{{ agent.id }}">{{ agent.name }}</option>-->
-            <!--    {% endfor %}-->
-            <!--  </select>-->
-            <!--</div>-->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 5)</label>
-
-              <div id="image-upload-container">
-                <input type="file" name="images" accept="image/*"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2">
-              </div>
-
-              <button type="button" id="add-image-btn"
-                      class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                + Add another image
-              </button>
-
-              <p id="image-limit-msg" class="text-red-500 text-sm mt-1 hidden">
-                You can only upload up to 5 images.
-              </p>
-            </div>
-
-            <script>
-              const container = document.getElementById("image-upload-container");
-              const addBtn = document.getElementById("add-image-btn");
-              const limitMsg = document.getElementById("image-limit-msg");
-
-              addBtn.addEventListener("click", () => {
-                const inputs = container.querySelectorAll("input[type='file']");
-                if (inputs.length >= 5) {
-                  limitMsg.classList.remove("hidden");
-                  return;
-                }
-
-                const newInput = document.createElement("input");
-                newInput.type = "file";
-                newInput.name = "images";  // multiple inputs with same name → Django will receive a list
-                newInput.accept = "image/*";
-                newInput.className = "w-full border border-gray-300 rounded-lg px-4 py-2 mb-2";
-
-                container.appendChild(newInput);
-
-                if (container.querySelectorAll("input[type='file']").length >= 5) {
-                  addBtn.disabled = true;
-                  addBtn.classList.add("opacity-50", "cursor-not-allowed");
-                }
-              });
-            </script>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
-              <textarea name="notes" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional Notes"></textarea>
-            </div>
-            <input type="hidden" name="priority" id="prioritySelect">
-          </div>
-        </div>
-        <div class="modal-footer border-t border-gray-200 p-4">
-          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">Post Request</button>
-          <button type="button" class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium" data-bs-dismiss="modal">Close</button>
-        </div>
-      </form>
+        </form>
     </div>
-  </div>
+</div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("image-upload-container");
+        const addBtn = document.getElementById("add-image-btn");
+        const limitMsg = document.getElementById("image-limit-msg");
 
+        addBtn.addEventListener("click", () => {
+            const inputs = container.querySelectorAll("input[type='file']");
+            if (inputs.length >= 5) {
+                limitMsg.classList.remove("hidden");
+                addBtn.disabled = true;
+                addBtn.classList.add("opacity-50", "cursor-not-allowed");
+                return;
+            }
+            limitMsg.classList.add("hidden");
+
+            const newInput = document.createElement("input");
+            newInput.type = "file";
+            newInput.name = "images";
+            newInput.accept = "image/*";
+            newInput.className = "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]";
+            container.appendChild(newInput);
+
+            if (inputs.length + 1 >= 5) {
+                addBtn.disabled = true;
+                addBtn.classList.add("opacity-50", "cursor-not-allowed");
+            }
+        });
+    });
+</script>
+
+<script>
+    document.getElementById('categorySelect')?.addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        const isUrgent = selected.dataset.isurgent === 'true';
+        document.getElementById('prioritySelect').value = isUrgent ? 'urgent' : 'normal';
+    });
+</script>
   <!-- Image Viewer Modal -->
 <div class="modal fade" id="imageViewerModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">

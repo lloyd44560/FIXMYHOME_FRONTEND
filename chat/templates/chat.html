@@ -2,225 +2,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ room_user.username }}</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-
-<body class="bg-gray-100">
-<div class="flex h-screen">
-
-  <!-- Sidebar -->
-  <div id="sidebar"
-       class="w-72 bg-gray-900 text-white flex flex-col absolute md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50">
-
-    <!-- Header -->
-    <div class="flex justify-between items-center p-4 border-b border-gray-700">
-      <h2 class="font-bold text-xl">Chats</h2>
-      <button id="closeSidebar" class="text-gray-400 md:hidden text-2xl">&times;</button>
-    </div>
-
-    <!-- Search + Filter -->
-    <div class="p-3 border-b border-gray-700 space-y-2">
-      <input type="text" id="userSearch"
-             placeholder="Search user..."
-             class="w-full px-3 py-2 rounded bg-gray-800 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-      <!-- Sort dropdown -->
-      <select id="sortOrder"
-              class="w-full px-3 py-2 rounded bg-gray-800 text-gray-200 text-sm focus:ring-2 focus:ring-blue-500">
-        <option value="latest">Sort: Latest → Oldest</option>
-        <option value="oldest">Sort: Oldest → Latest</option>
-      </select>
-    </div>
-
-    <!-- User List -->
-    <div class="flex-1 overflow-y-auto" id="userList">
-      {% for item in user_last_messages %}
-      <a href="{% url 'chat' item.slug %}"
-         class="user-item block px-4 py-3 border-b border-gray-800 hover:bg-gray-700 transition flex items-center gap-3
-                {% if item.user.username == room_user.username %}bg-gray-700 font-semibold{% endif %}"
-         data-timestamp="{{ item.last_message.timestamp|date:'U' }}">
-          
-          <!-- Avatar (placeholder or use item.user.profile.avatar if available) -->
-          <div class="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-lg font-bold">
-            {{ item.user.username|slice:":1"|upper }}
-          </div>
-
-          <!-- User info -->
-          <div class="flex-1">
-            <div class="flex justify-between items-center">
-              <span class="username">{{ item.user.username }}</span>
-              {% if item.last_message %}
-                <span class="text-xs text-gray-400">{{ item.last_message.timestamp|date:"H:i" }}</span>
-              {% endif %}
-            </div>
-            {% if item.last_message %}
-              <div class="text-sm text-gray-400 truncate">{{ item.last_message.content|truncatewords:5 }}</div>
-            {% else %}
-              <div class="text-sm text-gray-500 italic">No messages yet</div>
-            {% endif %}
-          </div>
-      </a>
-      {% endfor %}
-      <div id="noUsersFound" class="hidden text-center text-gray-400 py-3">No users found</div>
-    </div>
-
-    <!-- Pagination -->
-    {% if page_obj.paginator.num_pages > 1 %}
-    <div class="pagination text-center my-3 border-t border-gray-700 pt-2">
-      {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">Previous</a>
-      {% endif %}
-      <span class="mx-2 text-gray-400">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-      </span>
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">Next</a>
-      {% endif %}
-    </div>
-    {% endif %}
-  </div>
-  <!-- End Sidebar -->
-
-  <!-- Chat Area -->
-  <div class="flex-1 flex flex-col">
-
-    <!-- Chat Header -->
-    <div class="p-4 bg-white border-b flex items-center justify-between shadow-sm">
-      <div class="flex items-center gap-3">
-        <button id="openSidebar" class="md:hidden text-2xl text-gray-700">&#9776;</button>
-        <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
-        <div>
-          <h3 class="font-semibold text-lg">{{ room_user.username }}</h3>
-          <p class="text-xs text-gray-500">Active now</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chat Messages -->
-    <div class="flex-1 p-4 overflow-y-auto bg-gray-50" id="chatbox">
-      {% for message in chats %}
-      <div class="mb-4 {% if message.sender == request.user %}text-right{% else %}text-left{% endif %}">
-        <div class="inline-block px-4 py-2 rounded-2xl shadow
-          {% if message.sender == request.user %}
-            bg-blue-500 text-white rounded-br-none
-          {% else %}
-            bg-gray-200 text-gray-800 rounded-bl-none
-          {% endif %}">
-          {{ message.content }}
-        </div>
-        <div class="text-xs text-gray-400 mt-1">{{ message.timestamp|date:"H:i" }}</div>
-      </div>
-      {% endfor %}
-    </div>
-
-    <!-- Input Area -->
-    <div class="p-4 bg-white border-t flex items-center gap-2">
-      <input type="text" id="my_input" placeholder="Type a message..."
-             class="flex-1 px-4 py-2 border rounded-full focus:ring focus:ring-blue-300">
-      <button id="submit_button"
-              class="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium">
-        Send
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- JS -->
-<script>
-$(document).ready(function() {
-    const roomSlug = "{{ room_slug }}";
-
-    function fetchMessages() {
-        $.ajax({
-            url: "{% url 'fetch_messages' room_slug %}",
-            type: "GET",
-            success: function(data) {
-                const chatbox = $("#chatbox");
-                chatbox.empty();
-                data.messages.forEach(msg => {
-                    const align = msg.sender === "{{ request.user.username }}" ? "text-right" : "text-left";
-                    const bubble = msg.sender === "{{ request.user.username }}"
-                      ? "bg-blue-500 text-white rounded-br-none"
-                      : "bg-gray-200 text-gray-800 rounded-bl-none";
-
-                    chatbox.append(`
-                      <div class="mb-4 ${align}">
-                        <div class="inline-block px-4 py-2 rounded-2xl shadow ${bubble}">
-                          ${msg.content}
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1">${msg.timestamp}</div>
-                      </div>
-                    `);
-                });
-                chatbox.scrollTop(chatbox[0].scrollHeight);
-            }
-        });
-    }
-
-    $("#submit_button").click(function() {
-        const msg = $("#my_input").val().trim();
-        if (!msg) return;
-        $.ajax({
-            url: "{% url 'send_message' room_slug %}",
-            type: "POST",
-            headers: {'X-CSRFToken': '{{ csrf_token }}'},
-            data: JSON.stringify({message: msg}),
-            contentType: "application/json",
-            success: function() {
-                $("#my_input").val("");
-                fetchMessages();
-            }
-        });
-    });
-
-    $("#my_input").keypress(function(e){
-        if(e.which == 13){
-            $("#submit_button").click();
-            return false;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ room_user.username }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Custom clean look */
+        .chat-bubble {
+            max-width: 70%;
+            word-wrap: break-word;
         }
-    });
+        .user-item:hover {
+            background-color: #f3f4f6 !important;
+        }
+        .active-chat {
+            background-color: #e5e7eb !important;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-white text-black font-sans">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-72 bg-white border-r border-gray-200 flex flex-col absolute md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50">
+            <!-- Header -->
+            <center>
+            <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                <h2 class="font-bold text-xl">Chats</h2>
+                <button id="closeSidebar" class="text-gray-500 hover:text-black md:hidden text-2xl">×</button>
+            </div>
+            </center>
+            <!-- Search + Sort -->
+            <div class="p-3 border-b border-gray-200 space-y-2">
+                <input type="text" id="userSearch" placeholder="Search user..." class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm">
+                <select id="sortOrder" class="w-full px-3 py-2 rounded border border-gray-300 text-sm focus:ring-2 focus:ring-gray-400">
+                    <option value="latest">Latest → Oldest</option>
+                    <option value="oldest">Oldest → Latest</option>
+                </select>
+            </div>
 
-    // Auto-refresh
-    setInterval(fetchMessages, 3000);
-    fetchMessages();
+            <!-- User List -->
+            <div class="flex-1 overflow-y-auto" id="userList">
+                {% for item in user_last_messages %}
+                <a href="{% url 'chat' item.slug %}" class="user-item block px-4 py-3 border-b border-gray-200 hover:bg-gray-100 transition flex items-center gap-3 {% if item.user.username == room_user.username %}active-chat{% endif %}" data-timestamp="{{ item.last_message.timestamp|date:'U' }}">
+                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-sm font-bold">
+                        {{ item.user.username|slice:":1"|upper }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-black truncate">{{ item.user.username }}</span>
+                            {% if item.last_message %}
+                            <span class="text-xs text-gray-500">{{ item.last_message.timestamp|date:"H:i" }}</span>
+                            {% endif %}
+                        </div>
+                        {% if item.last_message %}
+                        <div class="text-sm text-gray-600 truncate">{{ item.last_message.content|truncatewords:5 }}</div>
+                        {% else %}
+                        <div class="text-sm text-gray-400 italic">No messages yet</div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+                <div id="noUsersFound" class="hidden text-center text-gray-400 py-3">No users found</div>
+            </div>
 
-    // Search filter
-    $("#userSearch").on("keyup", function() {
-        const query = this.value.toLowerCase();
-        let visible = 0;
-        $(".user-item").each(function() {
-            const name = $(this).find(".username").text().toLowerCase();
-            const match = name.includes(query);
-            $(this).toggle(match);
-            if (match) visible++;
+            <!-- Pagination -->
+            {% if page_obj.paginator.num_pages > 1 %}
+            <div class="pagination text-center my-3 border-t border-gray-200 pt-2 text-sm">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200 transition">Previous</a>
+                {% endif %}
+                <span class="mx-2 text-gray-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200 transition">Next</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <!-- End Sidebar -->
+
+        <!-- Chat Area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Chat Header -->
+            <div class="p-4 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <button id="openSidebar" class="md:hidden text-2xl text-gray-700">☰</button>
+                    <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+                    <div>
+                        <h3 class="font-bold text-lg">{{ room_user.username }}</h3>
+                        <p class="text-xs text-gray-500">Active now</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 p-4 overflow-y-auto bg-gray-50" id="chatbox">
+                {% for message in chats %}
+                <div class="mb-4 {% if message.sender == request.user %}text-right{% else %}text-left{% endif %}">
+                    <div class="chat-bubble inline-block px-4 py-2 rounded-2xl bg-gray-200 text-gray-800 shadow-sm {% if message.sender == request.user %}rounded-br-none{% else %}rounded-bl-none{% endif %}">
+                        {{ message.content }}
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">{{ message.timestamp|date:"H:i" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 bg-white border-t border-gray-200 flex items-center gap-2">
+                <input type="text" id="my_input" placeholder="Type a message..." class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm">
+                <button id="submit_button" class="px-5 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        $(document).ready(function() {
+            const roomSlug = "{{ room_slug }}";
+
+            function fetchMessages() {
+                $.ajax({
+                    url: "{% url 'fetch_messages' room_slug %}",
+                    type: "GET",
+                    success: function(data) {
+                        const chatbox = $("#chatbox");
+                        const wasAtBottom = chatbox.scrollTop() + chatbox.innerHeight() >= chatbox[0].scrollHeight - 50;
+
+                        chatbox.empty();
+                        data.messages.forEach(msg => {
+                            const isSender = msg.sender === "{{ request.user.username }}";
+                            const align = isSender ? "text-right" : "text-left";
+                            const bubbleClass = isSender ? "rounded-br-none" : "rounded-bl-none";
+
+                            chatbox.append(
+                                `<div class="mb-4 ${align}">
+                                    <div class="chat-bubble inline-block px-4 py-2 rounded-2xl bg-gray-200 text-gray-800 shadow-sm ${bubbleClass}">
+                                        ${msg.content}
+                                    </div>
+                                    <div class="text-xs text-gray-500 mt-1">${msg.timestamp}</div>
+                                </div>`
+                            );
+                        });
+
+                        if (wasAtBottom) {
+                            chatbox.scrollTop(chatbox[0].scrollHeight);
+                        }
+                    }
+                });
+            }
+
+            $("#submit_button").click(function() {
+                const msg = $("#my_input").val().trim();
+                if (!msg) return;
+
+                $.ajax({
+                    url: "{% url 'send_message' room_slug %}",
+                    type: "POST",
+                    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    data: JSON.stringify({message: msg}),
+                    contentType: "application/json",
+                    success: function() {
+                        $("#my_input").val("");
+                        fetchMessages();
+                    }
+                });
+            });
+
+            $("#my_input").keypress(function(e) {
+                if (e.which == 13) {
+                    $("#submit_button").click();
+                    return false;
+                }
+            });
+
+            // Auto-refresh every 3 seconds
+            setInterval(fetchMessages, 3000);
+            fetchMessages();
+
+            // Search
+            $("#userSearch").on("keyup", function() {
+                const query = this.value.toLowerCase();
+                let visible = 0;
+                $(".user-item").each(function() {
+                    const name = $(this).find("span.font-bold").text().toLowerCase();
+                    const match = name.includes(query);
+                    $(this).toggle(match);
+                    if (match) visible++;
+                });
+                $("#noUsersFound").toggleClass("hidden", visible > 0);
+            });
+
+            // Sort
+            $("#sortOrder").on("change", function() {
+                const order = $(this).val();
+                const items = $(".user-item").get();
+                items.sort((a, b) => {
+                    const at = parseInt($(a).data("timestamp") || 0);
+                    const bt = parseInt($(b).data("timestamp") || 0);
+                    return order === "latest" ? bt - at : at - bt;
+                });
+                $("#userList").append(items);
+            });
+
+            // Sidebar toggle
+            $("#openSidebar").click(() => $("#sidebar").removeClass("-translate-x-full"));
+            $("#closeSidebar").click(() => $("#sidebar").addClass("-translate-x-full"));
         });
-        $("#noUsersFound").toggleClass("hidden", visible > 0);
-    });
-
-    // Sorting
-    $("#sortOrder").on("change", function() {
-        const order = $(this).val();
-        const items = $(".user-item").get();
-
-        items.sort((a, b) => {
-            const at = parseInt($(a).data("timestamp") || 0);
-            const bt = parseInt($(b).data("timestamp") || 0);
-            return order === "latest" ? bt - at : at - bt;
-        });
-
-        $("#userList").append(items);
-    });
-
-    // Sidebar toggle
-    const sidebar = $("#sidebar");
-    $("#openSidebar").click(() => sidebar.removeClass("-translate-x-full"));
-    $("#closeSidebar").click(() => sidebar.addClass("-translate-x-full"));
-});
-</script>
-
+    </script>
 </body>
 </html>
