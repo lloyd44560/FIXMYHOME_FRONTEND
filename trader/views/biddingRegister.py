@@ -76,6 +76,7 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
                 ItemNeeded.objects.create(bidding=bidding, name=name.strip(), price=price_val)
 
         # Increment job bid count
+        print(job, '<<<<<<<<<<< current bid count')
         job.bid_count += 1
         job.save()
 
@@ -121,6 +122,13 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Filter team members by trader if director
         if trader.isDirector:
             team_member_val = TeamMember.objects.filter(trader_id=trader)
-        context['team_member_filtered'] = team_member_val or TeamMember.objects.none()
+        context['team_members'] = team_member_val or TeamMember.objects.none()
 
         return context
+
+    def form_invalid(self, form):
+        context = self.get_context_data(form=form)
+        context['error'] = "There was an error updating your profile."
+        messages.error(self.request, "There was an error updating your profile.")
+        print(form.errors, '=================>>')
+        return self.render_to_response(context)

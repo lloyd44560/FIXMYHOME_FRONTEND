@@ -1,235 +1,238 @@
 {% extends "baseTrader.html" %}
+{% load static %}
 
 {% block content %}
 {% include 'components/home/navigatorBase.html' %}
 
-<main x-data="{ openModal: false, selectedJob: {} }"
-    class="max-w-7xl mx-auto px-6 py-8 space-y-10 flex-1 w-full">
+<div x-data="{ showFilters: false, openModal: false, selectedJob: {} }" class="px-4 md:px-8 py-4">
 
-    <!-- Filter Form -->
-    <form method="get" class="w-full px-6 py-1 flex flex-wrap gap-6 items-end">
-        <div class="flex flex-col w-48">
-            <label for="status" class="mb-1 text-xs font-semibold text-gray-600">Status</label>
-            <select name="status" id="status" onchange="this.form.submit()"
-                class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm px-3 py-2 shadow-sm">
-                <option value="">All</option>
-                {% for key, label in status_options.items %}
-                    <option value="{{ key }}" {% if key == selected_status %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
+  <!-- Header Section -->
+  <div class="flex items-center justify-between border-b pb-2">
+    <h2 class="text-lg font-semibold" style="color: #293272;">To Quote Requests</h2>
+
+    <!-- Filter Dropdown -->
+    <div class="relative">
+      <button @click="showFilters = !showFilters" style="color: #293272;" class="hover:opacity-80">
+        <!-- Filter icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-.293.707L15 13.414V19a1 1 0 0 1-1.447.894l-4-2A1 1 0 0 1 9 17v-3.586L3.293 6.707A1 1 0 0 1 3 6V4z" />
+        </svg>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div x-show="showFilters" @click.away="showFilters = false"
+           x-transition
+           class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 z-50 p-4">
+        <form method="GET" action="" id="filterForm" class="space-y-3">
+          <!-- Status -->
+          <div>
+            <label for="status" class="block text-sm font-medium text-gray-600 mb-1">Status</label>
+            <select name="status" id="status"
+                    class="w-full rounded-lg border-gray-300 text-sm focus:ring-2 focus:ring-[#293272] focus:border-[#293272]">
+              <option value="">All</option>
+              <option value="open" {% if request.GET.status == 'open' %}selected{% endif %}>Open</option>
+              <option value="closed" {% if request.GET.status == 'closed' %}selected{% endif %}>Closed</option>
             </select>
-        </div>
+          </div>
 
-        <div class="flex flex-col w-48">
-            <label for="priority" class="mb-1 text-xs font-semibold text-gray-600">Priority</label>
-            <select name="priority" id="priority" onchange="this.form.submit()"
-                class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm px-3 py-2 shadow-sm">
-                <option value="">All</option>
-                <option value="true" {% if selected_priority == 'true' %}selected{% endif %}>Urgent</option>
-                <option value="false" {% if selected_priority == 'false' %}selected{% endif %}>Normal</option>
+          <!-- Priority -->
+          <div>
+            <label for="priority" class="block text-sm font-medium text-gray-600 mb-1">Priority</label>
+            <select name="priority" id="priority"
+                    class="w-full rounded-lg border-gray-300 text-sm focus:ring-2 focus:ring-[#293272] focus:border-[#293272]">
+              <option value="">All</option>
+              <option value="urgent" {% if request.GET.priority == 'urgent' %}selected{% endif %}>Urgent</option>
+              <option value="normal" {% if request.GET.priority == 'normal' %}selected{% endif %}>Normal</option>
             </select>
-        </div>
-    </form>
+          </div>
 
-    <!-- Job Table -->
-    <table class="min-w-full table-auto">
-        <thead class="bg-[#293272] text-[#FFFF] text-sm">
-            <tr>
-                <th class="px-4 py-2 text-left">Job Code</th>
-                <th class="px-4 py-2 text-left">Status</th>
-                <th class="px-4 py-2 text-left">Priority</th>
-                <th class="px-4 py-2 text-left">Renter</th>
-                <th class="px-4 py-2 text-left">Quoted</th>
-                <th class="px-4 py-2 text-left">Images</th>
-                <th class="px-4 py-2 text-left">Action</th>
-            </tr>
-        </thead>
-        <tbody class="text-sm text-gray-800">
-            {% for job in jobs %}
-            <tr class="border-t hover:bg-gray-50">
-                <td class="px-4 py-2">{{ job.job_code }}</td>
-                <td class="px-4 py-2 capitalize">{{ job.get_status_display }}</td>
-                <td class="px-4 py-2">
-                    {% if job.priority %}
-                        <span class="text-red-600 font-semibold">Urgent</span>
-                    {% else %}
-                        <span class="text-gray-500">Normal</span>
-                    {% endif %}
-                </td>
-                <td class="px-4 py-2">{{ job.renter }}</td>
-                <td class="px-4 py-2">{{ job.quoted_at|date:"M d" }}</td>
-                 <td class="px-4 py-2 flex gap-2">
-                    {% if job.images.all %}
-                        {% for img in job.images.all %}
-                            <img src="{{ img.image.url }}"
-                                 class="w-12 h-12 object-cover rounded cursor-pointer border border-gray-200"
-                                 onclick="openGallery({{ job.id }}, {{ forloop.counter0 }})"
-                                 alt="Job Image">
-                        {% endfor %}
-                    {% else %}
-                        No images
-                    {% endif %}
-                </td>
-
-
-                <td class="px-4 py-2">
-                    <!-- View button triggers modal -->
-                    <button
-                        @click="selectedJob = {
-                            id: '{{ job.id }}',
-                            code: '{{ job.job_code }}',
-                            status: '{{ job.get_status_display }}',
-                            priority: '{{ job.priority|yesno:"Urgent,Normal" }}',
-                            renter: '{{ job.renter }}',
-                            quoted: '{{ job.quoted_at|date:"M d, Y" }}',
-                            notes: '{{ job.notes|escapejs }}'
-                        }; openModal = true;"
-                        class="text-blue-600 hover:underline"
-                    >
-                        View
-                    </button>
-
-                    {% if job.bid_status == "open" %}
-                        <a href="{% url 'bidding_create' %}?job_id={{ job.id }}" class="text-green-600 hover:underline ml-3">
-                            Create Bid
-                        </a>
-                    {% else %}
-                        <span class="text-gray-400 ml-3 italic">Closed</span>
-                    {% endif %}
-                </td>
-
-
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center py-4">No jobs found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!--View Images of jobs-->
-    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50">
-        <div class="relative bg-white rounded-lg overflow-hidden max-w-xl w-full p-4">
-            <button onclick="closeGallery()" class="absolute top-2 right-2 text-gray-600 text-2xl">&times;</button>
-            <img id="modalImage" src="" class="w-full h-96 object-contain mb-4">
-            <div id="thumbnailContainer" class="flex gap-2 justify-center overflow-x-auto mb-2"></div>
-            <div class="flex justify-between">
-                <button onclick="prevImage()" class="px-4 py-2 bg-gray-200 rounded">Prev</button>
-                <button onclick="nextImage()" class="px-4 py-2 bg-gray-200 rounded">Next</button>
-            </div>
-        </div>
+          <button type="submit"
+                  class="w-full mt-2 text-white text-sm font-medium rounded-lg py-1.5 transition"
+                  style="background-color: #293272;">
+            Apply Filters
+          </button>
+        </form>
+      </div>
     </div>
-</div>
+  </div>
 
+  <!-- Job Request Cards -->
+  <div class="mt-4 space-y-4 mb-[2.5rem]">
+    {% for job in jobs %}
+    <div class="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
 
-</div>
-    <!-- Modal -->
-    <div
-        x-show="openModal"
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-        x-cloak>
-        <div class="bg-white rounded-xl shadow-lg w-96 p-6">
-            <h2 class="text-lg font-semibold mb-4 text-gray-800">Job Details</h2>
-
-            <div class="space-y-2 text-sm text-gray-700">
-                <p><strong>Job Code:</strong> <span x-text="selectedJob.code"></span></p>
-                <p><strong>Status:</strong> <span x-text="selectedJob.status"></span></p>
-                <p><strong>Priority:</strong> <span x-text="selectedJob.priority"></span></p>
-                <p><strong>Renter:</strong> <span x-text="selectedJob.renter"></span></p>
-                <p><strong>Quoted At:</strong> <span x-text="selectedJob.quoted"></span></p>
-                <p><strong>Notes:</strong> <span x-text="selectedJob.notes"></span></p>
-            </div>
-
-            <div class="mt-6 flex justify-end">
-                <button
-                    @click="openModal = false"
-                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">
-                    Close
-                </button>
-            </div>
+      <!-- Avatar -->
+      {% if job.images.first %}
+        <img src="{{ job.images.first.image.url }}"
+             class="w-12 h-12 rounded-full object-cover border border-gray-200 cursor-pointer"
+             onclick="openGallery({{ job.id }}, 0)" alt="Job Image">
+      {% else %}
+        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+          N/A
         </div>
+      {% endif %}
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <p class="font-medium text-gray-900 truncate">Quote Request #{{ job.job_code }}</p>
+        <p class="text-gray-500 text-sm">
+          {% if job.expiration %}
+            Expires {{ job.expiration }}
+          {% else %}
+            Expires soon
+          {% endif %}
+        </p>
+
+        <!-- Actions -->
+        <div class="flex gap-3 mt-2">
+          <!-- <button
+            @click="selectedJob = {
+                id: '{{ job.id }}',
+                code: '{{ job.job_code }}',
+                status: '{{ job.get_status_display }}',
+                priority: '{{ job.priority|yesno:"Urgent,Normal" }}',
+                renter: '{{ job.renter }}',
+                quoted: '{{ job.quoted_at|date:"M d, Y" }}',
+                notes: '{{ job.notes|escapejs }}'
+            }; openModal = true;"
+            class="text-sm font-medium hover:underline"
+            style="color: #293272;">
+            View
+          </button> -->
+          <a href="{% url 'maintenance_detail' %}" class="text-sm font-medium hover:underline">
+            View
+          </a>
+
+          {% if job.bid_status == "open" %}
+            <a href="{% url 'bidding_create' %}?job_id={{ job.id }}"
+               class="text-green-600 text-sm font-medium hover:underline">
+              Create Bid
+            </a>
+          {% else %}
+            <span class="text-gray-400 italic text-sm">Closed</span>
+          {% endif %}
+        </div>
+      </div>
     </div>
-</main>
-
-<script>
-let jobImages = {};  // store images per job
-let currentJobId = null;
-let currentIndex = 0;
-
-{% for job in jobs %}
-jobImages[{{ job.id }}] = [
-    {% for img in job.images.all %}
-        "{{ img.image.url }}",
+    {% empty %}
+      <p class="text-center text-gray-500 py-6">No quote requests found.</p>
     {% endfor %}
-];
-{% endfor %}
+  </div>
 
-function openGallery(jobId, index=0) {
-    currentJobId = jobId;
-    currentIndex = index;
-    const images = jobImages[jobId];
-    if(images.length > 0){
-        document.getElementById('modalImage').src = images[currentIndex];
+  <!-- 🖼️ Image Modal -->
+  <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50">
+    <div class="relative bg-white rounded-lg overflow-hidden max-w-xl w-full p-4">
+      <button onclick="closeGallery()" class="absolute top-2 right-2 text-gray-600 text-2xl">&times;</button>
+      <img id="modalImage" src="" class="w-full h-96 object-contain mb-4">
+      <div id="thumbnailContainer" class="flex gap-2 justify-center overflow-x-auto mb-2"></div>
+      <div class="flex justify-between">
+        <button onclick="prevImage()" class="px-4 py-2 bg-gray-200 rounded">Prev</button>
+        <button onclick="nextImage()" class="px-4 py-2 bg-gray-200 rounded">Next</button>
+      </div>
+    </div>
+  </div>
 
-        // Show modal
-        const modal = document.getElementById('imageModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+  <!-- 🪟 Job Details Modal -->
+  <div x-show="openModal" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white rounded-xl shadow-lg w-96 p-6">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">Job Details</h2>
 
-        // Render thumbnails
-        const container = document.getElementById('thumbnailContainer');
-        container.innerHTML = ''; // clear previous
-        images.forEach((src, idx) => {
-            const thumb = document.createElement('img');
-            thumb.src = src;
-            thumb.className = 'w-16 h-16 object-cover rounded cursor-pointer border-2 border-gray-200';
-            if(idx === currentIndex) thumb.classList.add('border-blue-500');
-            thumb.onclick = () => selectImage(idx);
-            container.appendChild(thumb);
-        });
-    }
-}
+      <div class="space-y-2 text-sm text-gray-700">
+        <p><strong>Job Code:</strong> <span x-text="selectedJob.code"></span></p>
+        <p><strong>Status:</strong> <span x-text="selectedJob.status"></span></p>
+        <p><strong>Priority:</strong> <span x-text="selectedJob.priority"></span></p>
+        <p><strong>Renter:</strong> <span x-text="selectedJob.renter"></span></p>
+        <p><strong>Quoted At:</strong> <span x-text="selectedJob.quoted"></span></p>
+        <p><strong>Notes:</strong> <span x-text="selectedJob.notes"></span></p>
+      </div>
 
-function closeGallery() {
-    document.getElementById('imageModal').classList.remove('flex');
-    document.getElementById('imageModal').classList.add('hidden');
-}
-
-function updateModalImage() {
-    const images = jobImages[currentJobId];
-    document.getElementById('modalImage').src = images[currentIndex];
-
-    const thumbs = document.getElementById('thumbnailContainer').children;
-    for(let i=0;i<thumbs.length;i++){
-        thumbs[i].classList.remove('border-blue-500');
-    }
-    thumbs[currentIndex].classList.add('border-blue-500');
-}
-
-function nextImage() {
-    const images = jobImages[currentJobId];
-    currentIndex = (currentIndex + 1) % images.length;
-    updateModalImage();
-}
-
-function prevImage() {
-    const images = jobImages[currentJobId];
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    updateModalImage();
-}
-
-function selectImage(index){
-    currentIndex = index;
-    updateModalImage();
-}
-</script>
-
-
-
+      <div class="mt-6 flex justify-end">
+        <button @click="openModal = false"
+                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% include 'components/footerTrader.html' %}
 {% endblock %}
 
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        let jobImages = {};  // store images per job
+        let currentJobId = null;
+        let currentIndex = 0;
+
+        {% for job in jobs %}
+        jobImages[{{ job.id }}] = [
+            {% for img in job.images.all %}
+                "{{ img.image.url }}",
+            {% endfor %}
+        ];
+        {% endfor %}
+
+        function openGallery(jobId, index=0) {
+            currentJobId = jobId;
+            currentIndex = index;
+            const images = jobImages[jobId];
+            if(images.length > 0){
+                document.getElementById('modalImage').src = images[currentIndex];
+
+                // Show modal
+                const modal = document.getElementById('imageModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+
+                // Render thumbnails
+                const container = document.getElementById('thumbnailContainer');
+                container.innerHTML = ''; // clear previous
+                images.forEach((src, idx) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = src;
+                    thumb.className = 'w-16 h-16 object-cover rounded cursor-pointer border-2 border-gray-200';
+                    if(idx === currentIndex) thumb.classList.add('border-blue-500');
+                    thumb.onclick = () => selectImage(idx);
+                    container.appendChild(thumb);
+                });
+            }
+        }
+
+        function closeGallery() {
+            document.getElementById('imageModal').classList.remove('flex');
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function updateModalImage() {
+            const images = jobImages[currentJobId];
+            document.getElementById('modalImage').src = images[currentIndex];
+
+            const thumbs = document.getElementById('thumbnailContainer').children;
+            for(let i=0;i<thumbs.length;i++){
+                thumbs[i].classList.remove('border-blue-500');
+            }
+            thumbs[currentIndex].classList.add('border-blue-500');
+        }
+
+        function nextImage() {
+            const images = jobImages[currentJobId];
+            currentIndex = (currentIndex + 1) % images.length;
+            updateModalImage();
+        }
+
+        function prevImage() {
+            const images = jobImages[currentJobId];
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateModalImage();
+        }
+
+        function selectImage(index){
+            currentIndex = index;
+            updateModalImage();
+        }
+    </script>
 {% endblock %}

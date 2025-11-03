@@ -1,84 +1,245 @@
 {% extends "baseTrader.html" %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block content %}
-<!-- Top Navigation -->
 {% include 'components/home/navigatorBase.html' %}
 
-<div class="max-w-3xl mx-auto p-8 sm:p-10 bg-white shadow-lg rounded-2xl mt-10 mb-20 border border-gray-200">
-  <!-- Header -->
-  <div class="text-center mb-8">
-    <h2 class="text-3xl font-bold text-[#293272]">Create Quotation</h2>
-    <p class="text-gray-500 mt-2 text-sm">
-      Please provide complete details for your quotation. The agent will review your submission.
-    </p>
-  </div>
+<form method="POST">
+  {% csrf_token %}
+  <div class="max-w-lg mx-auto px-4 py-6 space-y-6 bg-white">
 
-  <!-- Form -->
-  <form method="post" class="space-y-8">
-    {% csrf_token %}
+    <!-- Header -->
+    <div class="text-center mb-2">
+      <h2 class="text-xl font-semibold text-gray-900">Quote - {{ form.initial.jobs.job_code }}</h2>
+    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <!-- Job -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Job</label>
-        <select 
-          name="jobs" 
-          id="id_jobs" 
-          class="w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition rounded-md"
-          required
-        >
-          <option value="" disabled {% if not form.initial.jobs %}selected{% endif %}>Select a job</option>
-          {% for job in jobs_filtered %}
-            <option value="{{ job.id }}" 
-              {% if form.initial.jobs and form.initial.jobs.id == job.id %}selected{% endif %}
-            >
-              {{ job.job_code }} - {% if job.priority %}High priority{% else %}Less priority{% endif %}
-            </option>
-          {% endfor %}
-        </select>
+    <!-- ===================== -->
+    <!-- TEAM MEMBERS SECTION -->
+    <!-- ===================== -->
+    <div x-data="teamMembers()" class="p-4">
+
+      <!-- TEAM MEMBERS CARD -->
+      <div class="border border-[#293272] rounded-2xl p-4 bg-white shadow-sm">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <h2 class="font-semibold text-lg text-gray-900">Team Members</h2>
+            <template x-for="member in selectedMembers" :key="member.id">
+              <p class="text-gray-500 text-sm" x-text="member.name + ' - ' + member.role"></p>
+            </template>
+          </div>
+          <div class="flex space-x-2">
+            <button type="button" class="text-[#293272] hover:text-[#1e255e]" @click="editMembers()">
+              <i class="fa-solid fa-pen text-lg"></i>
+            </button>
+            <button type="button" class="text-red-500 hover:text-red-600" @click="clearMembers()">
+              <i class="fa-solid fa-trash text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-center mt-3">
+          <button type="button" @click="showChooseMember = true"
+                  class="text-[#293272] font-semibold text-sm hover:underline">
+            Allocate team member
+          </button>
+        </div>
       </div>
 
-      <!-- Labour per Hour -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Labour per Hour</label>
-        {{ form.labour_per_hour|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+      <!-- ========================= -->
+      <!-- CHOOSE TEAM MEMBER MODAL -->
+      <!-- ========================= -->
+      <div x-show="showChooseMember"
+          x-cloak
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div class="bg-white rounded-2xl p-6 w-96 shadow-lg">
+          <h2 class="text-lg font-semibold text-gray-800 mb-1">Choose Team Member</h2>
+          <p class="text-gray-500 text-sm mb-4">
+            Choose a team member to add to this Job.
+          </p>
+
+          <select x-model="selectedMemberId"
+                  class="w-full border rounded-xl py-2 px-3 text-gray-700 focus:ring-[#293272] focus:border-[#293272]">
+            <option value="">Choose team member</option>
+            {% for member in team_members %}
+              <option value="{{ member.id }}">{{ member.teamName }} - {{ member.position }}</option>
+            {% endfor %}
+          </select>
+
+          <div class="mt-6 text-center">
+            <button type="button" @click="confirmMember()"
+                    class="bg-[#293272] hover:bg-[#1e255e] text-white rounded-xl w-full py-2 font-semibold">
+              Confirm
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Callout Rate -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Callout Rate</label>
-        {{ form.callout_rate|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+      <!-- ====================== -->
+      <!-- MEMBER DETAILS MODAL -->
+      <!-- ====================== -->
+      <div x-show="showMemberDetails"
+          x-cloak
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div class="bg-white rounded-2xl p-6 w-96 shadow-lg overflow-y-auto max-h-[90vh]">
+          <template x-if="currentMember">
+            <div>
+              <div class="flex items-center space-x-3 mb-4">
+                <img :src="currentMember.image" class="w-12 h-12 rounded-full" alt="">
+                <div>
+                  <p class="font-semibold text-gray-800"
+                    x-text="currentMember.name + ' - ' + currentMember.role"></p>
+                  <div class="flex text-yellow-400 mt-1">
+                    <template x-for="star in 5">
+                      <i class="fa-solid fa-star"></i>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="font-semibold text-gray-800 mb-1">Availability</h3>
+              <p class="text-sm text-gray-500 mb-4" x-text="currentMember.availability"></p>
+
+              <h3 class="font-semibold text-gray-800 mb-1">Current workload</h3>
+              <div class="border rounded-xl p-3 mb-4 text-sm text-gray-600">
+                <p x-text="currentMember.current_job"></p>
+                <span class="text-gray-400" x-text="currentMember.job_date"></span>
+              </div>
+
+              <h3 class="font-semibold text-gray-800 mb-2">Rates</h3>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Labour per hour</span>
+                <span class="font-medium" x-text="`$${currentMember.labour_rate}`"></span>
+              </div>
+              <div class="flex justify-between text-sm mb-4">
+                <span>Callout</span>
+                <span class="font-medium" x-text="`$${currentMember.callout_rate}`"></span>
+              </div>
+
+              <button type="button" @click="closeMemberDetails()"
+                      class="bg-[#293272] hover:bg-[#1e255e] text-white rounded-xl w-full py-2 font-semibold">
+                Close
+              </button>
+            </div>
+          </template>
+        </div>
       </div>
 
-      <!-- Parts Qty -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Parts Quantity</label>
-        {{ form.parts_qty|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
-      </div>
+      <!-- ========================== -->
+      <!-- HIDDEN INPUTS FOR DJANGO -->
+      <!-- ========================== -->
+      <template x-for="id in selectedMemberIds" :key="id">
+        <input type="hidden" name="team_member" :value="id">
+      </template>
 
-      <!-- Parts Unit Price -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Parts Unit Price</label>
-        {{ form.parts_unit_price|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+      <!-- Keep original Django form field (hidden for validation) -->
+      <div class="hidden">
+        {{ form.team_member }}
       </div>
+    </div>
 
-      <!-- Hours -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Hours</label>
-        {{ form.hours|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+    <!-- Job -->
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Job</label>
+      <select 
+        name="jobs" 
+        id="id_jobs" 
+        class="w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition rounded-md"
+        required
+      >
+        <option value="" disabled {% if not form.initial.jobs %}selected{% endif %}>Select a job</option>
+        {% for job in jobs_filtered %}
+          <option value="{{ job.id }}" 
+            {% if form.initial.jobs and form.initial.jobs.id == job.id %}selected{% endif %}
+          >
+            {{ job.job_code }} - {% if job.priority %}High priority{% else %}Less priority{% endif %}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Labour -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Labour (per hour)</label>
+      <p class="text-gray-400 text-xs mb-1">Your labour rate per hour</p>
+      {{ form.labour_per_hour|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600" }}
+    </div>
+
+    <!-- Callout -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Callout rate</label>
+      <p class="text-gray-400 text-xs mb-1">Your travel and logistics expenses</p>
+      {{ form.callout_rate|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600" }}
+    </div>
+
+    <!-- View location -->
+    <button type="button" class="w-full bg-gray-100 text-gray-700 font-medium py-3 rounded-xl">View Renter location</button>
+
+    <!-- Parts -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Parts</label>
+      <p class="text-gray-400 text-xs mb-1">Expenses on parts and items needed</p>
+      {{ form.parts_unit_price|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600 mt-1" }}
+      <div class="flex justify-center gap-4 mt-3">
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">−</button>
+        <span class="font-medium text-gray-700">1</span>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">+</button>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold ml-4">−</button>
+        <span class="font-medium text-gray-700">10</span>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">+</button>
       </div>
+    </div>
 
-      <!-- Appliance Model -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Appliance Model</label>
-        {{ form.appliance_model|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+    <!-- Parts Qty -->
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Parts Quantity</label>
+      {{ form.parts_qty|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+    </div>
+
+    <!-- Hours -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Hours</label>
+      <p class="text-gray-400 text-xs mb-1">How much time you’ll spend working</p>
+      {{ form.hours|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600" }}
+      <div class="flex justify-center gap-4 mt-3">
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">−</button>
+        <span class="font-medium text-gray-700">½</span>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">+</button>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold ml-4">−</button>
+        <span class="font-medium text-gray-700">1</span>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">+</button>
       </div>
+    </div>
 
-      <!-- Appliance Model Price -->
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Appliance Model Price</label>
-        {{ form.appliance_model_price|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+    <!-- Appliance Model Price -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Appliance Model Price</label>
+      <p class="text-gray-400 text-xs mb-1">Expenses on parts and items needed</p>
+      {{ form.appliance_model_price|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600 mt-1" }}
+      <div class="flex justify-center gap-4 mt-3">
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">−</button>
+        <span class="font-medium text-gray-700">1</span>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">+</button>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold ml-4">−</button>
+        <span class="font-medium text-gray-700">10</span>
+        <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">+</button>
+      </div>
+    </div>
+
+    <!-- Appliance Model -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Appliance Model</label>
+      <select class="w-full border rounded-xl px-3 py-2 bg-gray-50 text-gray-600">
+        <option>General Electric, Daikin, etc.</option>
+      </select>
+    </div>
+
+    <!-- Search -->
+    <div>
+      <label class="text-gray-700 font-semibold text-sm">Search for appliance parts by model...</label>
+      <div class="relative mt-1">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+        <input type="text" class="w-full border rounded-xl pl-10 py-2 focus:ring-2 focus:ring-[#293272]" placeholder="Search...">
       </div>
     </div>
 
@@ -94,87 +255,38 @@
       </div>
     </div>
 
-    <!-- Team Members -->
-    {% if is_director %}
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Team Members</label>
-        {{ form.team_member }}
-      </div>
-    {% else %}
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Team Member</label>
-        <input type="text" class="w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" value="{{ memberName }}" disabled>
-      </div>
-    {% endif %}
-
-    <div x-data="itemManager()" class="space-y-4">
-      <label class="block text-sm font-semibold text-gray-700">Items Needed</label>
-
-      <!-- Add item form -->
-      <div class="flex gap-2">
-        <input type="text" x-model="newItem.name" placeholder="Enter item name"
-          class="flex-1 border border-gray-300 px-3 py-2 rounded-md focus:ring focus:ring-blue-300">
-
-        <input type="number" step="0.01" x-model="newItem.price" placeholder="Price"
-          class="w-32 border border-gray-300 px-3 py-2 rounded-md focus:ring focus:ring-blue-300 text-right">
-
-        <button type="button" @click="addItem"
-          class="bg-[#293272] hover:bg-[#162060] text-white px-4 py-2 rounded-md">Add</button>
-      </div>
-
-      <!-- Items Table -->
-      <table class="min-w-full border border-gray-300 rounded-md">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-4 py-2 text-left">#</th>
-            <th class="px-4 py-2 text-left">Item Name</th>
-            <th class="px-4 py-2 text-right">Price</th>
-            <th class="px-4 py-2 text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template x-for="(item, index) in items" :key="index">
-            <tr class="border-t">
-              <td class="px-4 py-2" x-text="index + 1"></td>
-              <td class="px-4 py-2" x-text="item.name"></td>
-              <td class="px-4 py-2 text-right" x-text="item.price"></td>
-              <td class="px-4 py-2 text-center">
-                <button type="button" @click="removeItem(index)"
-                  class="text-red-500 hover:text-red-700">Remove</button>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-
-      <!-- Hidden inputs -->
-      <template x-for="item in items" :key="item.name + item.price">
-        <div>
-          <input type="hidden" name="item_name[]" :value="item.name">
-          <input type="hidden" name="item_price[]" :value="item.price">
-        </div>
-      </template>
-    </div>
 
     <!-- Notes -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
-      {{ form.notes|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+      <label class="text-gray-700 font-semibold text-sm">Notes</label>
+      {{ form.notes|add_class:"w-full border rounded-xl px-3 py-2 mt-1" }}
     </div>
 
-    <!-- Actions -->
-    <div class="flex flex-col sm:flex-row justify-end gap-4 pt-6">
-      <a href="javascript:history.back()" 
-         class="px-6 py-3 text-gray-700 border border-gray-300 font-medium hover:bg-gray-100 transition text-center">
-        Cancel
-      </a>
-      <button type="submit" 
-              class="bg-[#293272] hover:bg-[#162060] text-white px-6 py-3 font-semibold shadow-md transition">
-        Submit Quotation
-      </button>
+    <!-- Propose -->
+    <button class="w-full bg-gray-100 text-gray-800 font-medium py-3 rounded-xl">
+      Propose alternative solution
+    </button>
+
+    <!-- Totals -->
+    <div class="space-y-2 text-sm text-gray-700 border-t pt-3">
+      <div class="flex justify-between"><span>Labour</span><span>$12.00</span></div>
+      <div class="flex justify-between"><span>Callout</span><span>$12.00</span></div>
+      <div class="flex justify-between"><span>Parts</span><span>$12.00</span></div>
+      <div class="flex justify-between"><span>Hours</span><span>12</span></div>
+      <div class="flex justify-between font-medium"><span>Subtotal</span><span>$168.00</span></div>
+      <div class="flex justify-between text-gray-500 text-xs"><span>General service tax (GST) 10%</span><span>$16.80</span></div>
+      <div class="flex justify-between font-bold text-lg text-gray-900 border-t pt-2">
+        <span>Total</span><span>$184.80</span>
+      </div>
     </div>
-  </form>
-</div>
+
+    <!-- Submit -->
+    <button type="submit" class="w-full bg-[#293272] text-white font-semibold py-3 rounded-xl mt-2">
+      Submit quote
+    </button>
+
+  </div>
+</form>
 
 <!-- Flash Messages -->
 {% if messages %}
@@ -202,36 +314,65 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const el = document.querySelector('#id_team_member');
-    if (el) {
-      new Choices(el, {
-        removeItemButton: true,  // allows removing selected tags
-        placeholderValue: 'Select team members',
-        searchPlaceholderValue: 'Type to search...',
-        shouldSort: false,
-      });
-    }
-  });
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  function itemManager() {
+  <script>
+  function teamMembers() {
     return {
-      newItem: { name: '', price: '' },
-      items: [],
-      addItem() {
-        if (this.newItem.name.trim() !== '' && this.newItem.price !== '') {
-          this.items.push({
-            name: this.newItem.name.trim(),
-            price: parseFloat(this.newItem.price).toFixed(2),
-          });
-          this.newItem = { name: '', price: '' };
+      showChooseMember: false,
+      showMemberDetails: false,
+      selectedMemberId: "",
+      selectedMembers: [],
+      selectedMemberIds: [],
+      currentMember: null,
+
+      confirmMember() {
+        if (!this.selectedMemberId) return;
+        const member = this.getMemberData(this.selectedMemberId);
+        if (!this.selectedMemberIds.includes(member.id)) {
+          this.selectedMembers.push(member);
+          this.selectedMemberIds.push(member.id);
         }
+        this.showMemberDetails = true;
+        this.currentMember = member;
+        this.selectedMemberId = "";
+        this.showChooseMember = false;
       },
-      removeItem(index) {
-        this.items.splice(index, 1);
+
+      closeMemberDetails() {
+        this.showMemberDetails = false;
+        this.currentMember = null;
+      },
+
+      clearMembers() {
+        this.selectedMembers = [];
+        this.selectedMemberIds = [];
+      },
+
+      editMembers() {
+        this.showChooseMember = true;
+      },
+
+      getMemberData(id) {
+        const members = [
+          {% for member in team_members %}
+          {
+            id: {{ member.id }},
+            name: "{{ member.teamName|escapejs }}",
+            image: "{{ member.image_url|default:'https://randomuser.me/api/portraits/men/32.jpg' }}",
+            role: "{{ member.position|escapejs }}",
+            availability: "Available soon",
+            current_job: "Ongoing: Building Maintenance",
+            job_date: "Nov 2, 2025",
+            labour_rate: "25",
+            callout_rate: "50",
+          },
+          {% endfor %}
+        ];
+        return members.find(m => m.id == id);
       }
-    }
+    };
   }
   </script>
 {% endblock %}
