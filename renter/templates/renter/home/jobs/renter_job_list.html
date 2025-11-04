@@ -62,83 +62,83 @@
             {% endif %}
 
 
-    <!-- Desktop Table + Mobile Cards Container -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Desktop Table + Mobile Cards Container -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
-  <!-- DESKTOP: Full Table (Hidden on Mobile) -->
-  <div class="overflow-x-auto hidden sm:block">
-    <table class="min-w-full text-left border-collapse">
-      <thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
-        <tr>
-          <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">#</th>
-          <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Job Code</th>
-          <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">Status</th>
-          <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">Priority</th>
-          <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Issues</th>
-          <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Additional Notes</th>
-          <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Images</th>
-          <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-100">
-        {% for job in jobs %}
-        <tr class="hover:bg-gray-50 transition-all duration-150">
-          <td class="px-3 py-4 text-center text-sm text-gray-600">{{ forloop.counter }}</td>
-          <td class="px-3 py-4 font-mono text-sm font-bold text-gray-900">{{ job.job_code }}</td>
-          <td class="px-3 py-4 text-center">
-            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold
-              {% if job.status == 'Pending' %}bg-yellow-100 text-yellow-800
-              {% elif job.status == 'In Progress' %}bg-blue-100 text-blue-800
-              {% elif job.status == 'Completed' %}bg-green-100 text-green-800
-              {% else %}bg-red-100 text-red-800{% endif %}">
-              <i class="bi bi-circle-fill text-[10px] mr-1"></i> {{ job.status }}
-            </span>
-          </td>
-          <td class="px-3 py-4 text-center">
-            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold
-              {% if job.priority %}bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-sm
-              {% else %}bg-gray-200 text-gray-700{% endif %}">
-              {% if job.priority %}Urgent{% else %}Non-urgent{% endif %}
-            </span>
-          </td>
-          <td class="px-3 py-4 text-sm text-gray-700">{{ job.category.description }}</td>
-          <td class="px-3 py-4 text-sm text-gray-600 hidden lg:table-cell">{{ job.notes|truncatechars:60 }}</td>
-          <td class="px-3 py-4 text-center">
-            <div class="flex justify-center gap-1">
-              {% for img in job.images.all %}
-              <img src="{{ img.image.url }}"
-                   class="h-10 w-10 rounded-lg object-cover cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
-                   onclick="openImageModal('{{ job.id }}', {{ forloop.counter0 }})">
-              {% endfor %}
-            </div>
-          </td>
-          <td class="px-3 py-4 text-center">
-            <div class="flex justify-center gap-2 text-sm">
-              <button class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 text-xs font-medium"
-                      data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
-                <i class="bi bi-pencil"></i> Edit
-              </button>
-              <a href="{% url 'delete_job' job.id %}"
-                 class="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 text-xs font-medium"
-                 onclick="return confirm('Delete this job?')">
-                <i class="bi bi-trash"></i> Delete
-              </a>
-            </div>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="8" class="text-center py-12">
-            <div class="flex flex-col items-center gap-3 text-gray-500">
-              <i class="bi bi-tools text-5xl"></i>
-              <p class="text-lg font-medium">No maintenance requests available</p>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+          <!-- DESKTOP: Full Table (Hidden on Mobile) -->
+          <div class="overflow-x-auto hidden sm:block">
+            <table class="min-w-full text-left border-collapse">
+              <thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
+                <tr>
+                  <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">#</th>
+                  <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Job Code</th>
+                  <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">Status</th>
+                  <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">Priority</th>
+                  <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Issues</th>
+                  <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Additional Notes</th>
+                  <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Images</th>
+                  <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                {% for job in jobs %}
+                <tr class="hover:bg-gray-50 transition-all duration-150">
+                  <td class="px-3 py-4 text-center text-sm text-gray-600">{{ forloop.counter }}</td>
+                  <td class="px-3 py-4 font-mono text-sm font-bold text-gray-900">{{ job.job_code }}</td>
+                  <td class="px-3 py-4 text-center">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold
+                      {% if job.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                      {% elif job.status == 'In Progress' %}bg-blue-100 text-blue-800
+                      {% elif job.status == 'Completed' %}bg-green-100 text-green-800
+                      {% else %}bg-red-100 text-red-800{% endif %}">
+                      <i class="bi bi-circle-fill text-[10px] mr-1"></i> {{ job.status }}
+                    </span>
+                  </td>
+                  <td class="px-3 py-4 text-center">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold
+                      {% if job.priority %}bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-sm
+                      {% else %}bg-gray-200 text-gray-700{% endif %}">
+                      {% if job.priority %}Urgent{% else %}Non-urgent{% endif %}
+                    </span>
+                  </td>
+                  <td class="px-3 py-4 text-sm text-gray-700">{{ job.category.description }}</td>
+                  <td class="px-3 py-4 text-sm text-gray-600 hidden lg:table-cell">{{ job.notes|truncatechars:60 }}</td>
+                  <td class="px-3 py-4 text-center">
+                    <div class="flex justify-center gap-1">
+                      {% for img in job.images.all %}
+                      <img src="{{ img.image.url }}"
+                           class="h-10 w-10 rounded-lg object-cover cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+                           onclick="openImageModal('{{ job.id }}', {{ forloop.counter0 }})">
+                      {% endfor %}
+                    </div>
+                  </td>
+                  <td class="px-3 py-4 text-center">
+                    <div class="flex justify-center gap-2 text-sm">
+                      <button class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 text-xs font-medium"
+                              data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">
+                        <i class="bi bi-pencil"></i> Edit
+                      </button>
+                      <a href="{% url 'delete_job' job.id %}"
+                         class="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 text-xs font-medium"
+                         onclick="return confirm('Delete this job?')">
+                        <i class="bi bi-trash"></i> Delete
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="8" class="text-center py-12">
+                    <div class="flex flex-col items-center gap-3 text-gray-500">
+                      <i class="bi bi-tools text-5xl"></i>
+                      <p class="text-lg font-medium">No maintenance requests available</p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
       <!-- MOBILE: Card View (Hidden on Desktop) -->
       <div class="sm:hidden">
@@ -352,23 +352,83 @@
                 </div>
                 {% endif %}
 
-                <!-- Upload New Images -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-800 mb-1.5">Add More Images (max 5 total)</label>
-                    <div id="edit-image-upload-container-{{ job.id }}" class="space-y-2">
-                        <input type="file" name="images" accept="image/*"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
-                    </div>
-                    <button type="button" data-job-id="{{ job.id }}" class="add-edit-image-btn mt-2 text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-medium transition flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Add Another
-                    </button>
-                    <p id="edit-image-limit-msg-{{ job.id }}" class="text-red-600 text-xs mt-1 hidden">
-                        Max 5 images total.
-                    </p>
-                </div>
+         <!-- Container for new image uploads -->
+<div id="edit-image-upload-container-{{ job.id }}" class="space-y-2"></div>
+<div id="edit-image-preview-{{ job.id }}" class="flex flex-wrap gap-2 mt-2"></div>
+
+<button type="button" data-job-id="{{ job.id }}" class="add-edit-image-btn mt-2 text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-medium transition flex items-center gap-1">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+    </svg>
+    Add Another
+</button>
+
+<button type="button" data-job-id="{{ job.id }}" class="clear-edit-images-btn mt-2 text-sm px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition">
+    Clear All
+</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const maxImages = 5;
+
+    document.querySelectorAll(".add-edit-image-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const jobId = btn.dataset.jobId;
+            const container = document.getElementById("edit-image-upload-container-" + jobId);
+            const previewContainer = document.getElementById("edit-image-preview-" + jobId);
+            const inputs = container.querySelectorAll("input[type='file']");
+            if (inputs.length >= maxImages) return;
+
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.name = "images";
+            fileInput.accept = "image/*";
+            fileInput.className = "hidden";
+
+            container.appendChild(fileInput);
+
+            fileInput.click(); // Open file selector
+
+            fileInput.addEventListener("change", () => {
+                if (!fileInput.files[0]) return;
+
+                const imgWrapper = document.createElement("div");
+                imgWrapper.className = "relative";
+
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(fileInput.files[0]);
+                img.className = "w-24 h-24 object-cover rounded border";
+                img.onload = () => URL.revokeObjectURL(img.src);
+
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.innerHTML = "&times;";
+                removeBtn.className = "absolute top-0 right-0 bg-white rounded-full p-1 text-red-600 shadow";
+                removeBtn.addEventListener("click", () => {
+                    imgWrapper.remove();
+                    fileInput.remove();
+                });
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(removeBtn);
+                previewContainer.appendChild(imgWrapper);
+            });
+        });
+    });
+
+    // Clear all new uploads
+    document.querySelectorAll(".clear-edit-images-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const jobId = btn.dataset.jobId;
+            const container = document.getElementById("edit-image-upload-container-" + jobId);
+            const previewContainer = document.getElementById("edit-image-preview-" + jobId);
+
+            container.innerHTML = ""; // Remove all file inputs
+            previewContainer.innerHTML = ""; // Remove all previews
+        });
+    });
+});
+</script>
 
                 <!-- Job Status (Read-only) -->
                 <div>
@@ -505,6 +565,58 @@
                         <input type="datetime-local" name="renter_availability"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
                     </div>
+
+
+
+                    <div x-data="{
+                        days: [],
+                        times: [],
+                        toggleDay(day) {
+                            this.days.includes(day)
+                                ? this.days = this.days.filter(d => d !== day)
+                                : this.days.push(day);
+                        },
+                        toggleTime(time) {
+                            this.times.includes(time)
+                                ? this.times = this.times.filter(t => t !== time)
+                                : this.times.push(time);
+                        }
+                    }" class="space-y-3 mt-3">
+                        <label class="block text-sm font-semibold text-gray-800">Your Availability</label>
+
+                        <!-- Day Buttons -->
+                        <div class="flex flex-wrap gap-2 justify-start">
+                            <template x-for="day in ['MON','TUE','WED','THU','FRI','SAT','SUN']" :key="day">
+                                <button type="button"
+                                    @click="toggleDay(day)"
+                                    :class="days.includes(day)
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                    class="px-4 py-2 rounded-full text-sm font-medium transition">
+                                    <span x-text="day"></span>
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- Time Buttons -->
+                        <div class="flex flex-wrap gap-2 justify-start">
+                            <template x-for="time in ['MORNING','AFTERNOON','EVENING']" :key="time">
+                                <button type="button"
+                                    @click="toggleTime(time)"
+                                    :class="times.includes(time)
+                                        ? (time === 'MORNING' ? 'bg-teal-500 text-white' : 'bg-blue-600 text-white')
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                    class="px-4 py-2 rounded-full text-sm font-medium transition">
+                                    <span x-text="time"></span>
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- Hidden JSON Input -->
+                        <input type="hidden" name="renter_availability_schedule"
+                               :value="JSON.stringify({days: days, times: times})">
+                    </div>
+
                 </div>
 
                 <!-- Has it been fixed before? -->
@@ -533,10 +645,94 @@
                 <!-- Image Upload -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-800 mb-1.5">Upload Images (max 5)</label>
-                    <div id="image-upload-container" class="space-y-2">
-                        <input type="file" name="images" accept="image/*"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
-                    </div>
+                   <div id="image-upload-container" class="space-y-2">
+    <input type="file" name="images" accept="image/*"
+           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+</div>
+
+<!-- Clear All & Previews -->
+<div class="flex items-center gap-2 mt-2">
+    <button type="button" id="clear-images-btn"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition">
+        Clear All
+    </button>
+</div>
+
+<div id="image-preview" class="flex flex-wrap gap-2 mt-2"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const imageContainer = document.getElementById('image-upload-container');
+    const imagePreview = document.getElementById('image-preview');
+    const addImageBtn = document.getElementById('add-image-btn');
+    const clearBtn = document.getElementById('clear-images-btn');
+    const maxImages = 5;
+
+    function createFileInput() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.name = 'images';
+        input.accept = 'image/*';
+        input.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]';
+        return input;
+    }
+
+    function updatePreviews() {
+        imagePreview.innerHTML = '';
+        const files = imageContainer.querySelectorAll('input[type="file"]');
+        let totalFiles = 0;
+
+        files.forEach(input => {
+            if (input.files && input.files[0]) {
+                totalFiles++;
+                const file = input.files[0];
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'w-24 h-24 object-cover rounded border';
+                img.onload = () => URL.revokeObjectURL(img.src);
+                imagePreview.appendChild(img);
+            }
+        });
+
+        const limitMsg = document.getElementById('image-limit-msg');
+        if (totalFiles > maxImages) {
+            limitMsg.classList.remove('hidden');
+        } else {
+            limitMsg.classList.add('hidden');
+        }
+    }
+
+    // Initial input
+    imageContainer.querySelector('input[type="file"]').addEventListener('change', updatePreviews);
+
+    // Add new file input
+    addImageBtn.addEventListener('click', () => {
+        const currentInputs = imageContainer.querySelectorAll('input[type="file"]').length;
+        if (currentInputs >= maxImages) return;
+
+        const newInput = createFileInput();
+        newInput.addEventListener('change', updatePreviews);
+        imageContainer.appendChild(newInput);
+    });
+
+    // Clear all files and previews
+    clearBtn.addEventListener('click', () => {
+        // Remove all inputs
+        imageContainer.innerHTML = '';
+        // Add a fresh input
+        const newInput = createFileInput();
+        newInput.addEventListener('change', updatePreviews);
+        imageContainer.appendChild(newInput);
+
+        // Clear previews
+        imagePreview.innerHTML = '';
+        // Hide limit message if visible
+        const limitMsg = document.getElementById('image-limit-msg');
+        limitMsg.classList.add('hidden');
+    });
+});
+</script>
+
                     <button type="button" id="add-image-btn"
                             class="mt-2 text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-medium transition flex items-center gap-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

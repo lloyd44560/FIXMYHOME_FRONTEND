@@ -436,6 +436,11 @@ def add_job(request):
             # 5. Determine priority (based on service urgency)
             priority = service.isurgent
 
+             # Parse availability JSON safely
+            availability_data = request.POST.get('renter_availability_schedule')
+            availability_json = json.loads(availability_data) if availability_data else {}
+
+
             # 6. Create the job
             job = Jobs.objects.create(
                 agent=agent,             # from property
@@ -443,7 +448,8 @@ def add_job(request):
                 property=property_obj,   # linked property
                 notes=request.POST.get('notes'),
                 category=service,
-                priority=priority
+                priority=priority,
+                renter_availability_schedule=availability_json
             )
 
             #7. Handle image uploads

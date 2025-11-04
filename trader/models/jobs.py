@@ -37,6 +37,8 @@ class Jobs(models.Model):
     issue_found_at = models.DateField(null=True, blank=True)
     renter_availability = models.DateField(null=True, blank=True)
     issue_been_fixed_before = models.BooleanField(default=False)
+    issue_been_fixed_by_fmh_before = models.BooleanField(default=False)
+    renter_availability_schedule = models.JSONField(null=True, blank=True, default=dict)
 
     def save(self, *args, **kwargs):
         # Always regenerate job_code based on current status
