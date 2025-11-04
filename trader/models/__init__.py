@@ -7,3 +7,4 @@ from .industryTrader import TraderIndustry
 from .traderNotification import TraderNotification
 from .leaveHolidayReq import Leaves
 from .itemNeeded import ItemNeeded
+from .servicesTrader import Services

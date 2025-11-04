@@ -51,12 +51,12 @@ class Jobs(models.Model):
         # --- Generate job_code only if not set (to avoid regenerating on every save) ---
         if not self.job_code:
             count = 1
-            base_code = f"QUO-{count:05d}"
+            base_code = f"JOB{count:05d}"
 
             # Increment until unique
             while Jobs.objects.filter(job_code=base_code).exists():
                 count += 1
-                base_code = f"QUO-{count:05d}"
+                base_code = f"JOB{count:05d}"
 
             self.job_code = base_code
         super().save(*args, **kwargs)

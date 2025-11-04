@@ -15,6 +15,10 @@ class Bidding(models.Model):
     # 👇 Link to your detailed TeamMember
     team_member = models.ManyToManyField(TeamMember, related_name='biddings_related', blank=True)
 
+    # Auto-generated code for the bid
+    quote_code = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    code = models.CharField(max_length=100, blank=True, null=True)
+    
     # Rates can be auto-filled from the team member
     labour_per_hour = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     callout_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -37,6 +41,15 @@ class Bidding(models.Model):
     approved_by = models.ForeignKey(AgentRegister, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_bids')
     approval_notes = models.TextField(blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if not self.quote_code:
+            last_bid = Bidding.objects.order_by('-id').first()
+            next_number = 1
+            if last_bid and last_bid.quote_code and last_bid.quote_code[3:].isdigit():
+                next_number = int(last_bid.quote_code[3:]) + 1
+            self.quote_code = f"QUO{next_number:05d}"
+        super().save(*args, **kwargs)
+    
     def subtotal(self):
         return (
             (self.labour_per_hour or 0) * (self.hours or 0)
@@ -52,7 +65,7 @@ class Bidding(models.Model):
         return self.subtotal() + self.gst()
 
     def __str__(self):
-        return f"Bidding for {self.jobs.job_code} - TeamMember: {self.team_member}"
+        return self.code
 
 
 
