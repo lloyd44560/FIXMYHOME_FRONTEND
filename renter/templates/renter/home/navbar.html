@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>FixMyHouse Navbar</title>
 
   <!-- Bootstrap CSS -->
@@ -18,6 +19,8 @@
   <style>
     body {
       font-family: 'Lexend', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
     }
 
     /* Brand styling */
@@ -26,89 +29,105 @@
       color: #293272;
     }
 
-    /* Link hover states */
-    #tailwind-navbar a,
-    #tailwind-navbar button {
-      color: #333;
-    }
-
-    #tailwind-navbar a:hover,
-    #tailwind-navbar button:hover {
-      color: #293272;
-      background-color: #f5f5f5;
-    }
-
     /* Smooth transitions */
     #tw-menu {
       transition: all 0.3s ease-in-out;
     }
 
-    /* Mobile tweaks */
+    /* Fix sticky position for iPhone Safari */
+    nav {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    /* Menu button better touch size */
+    #tw-menu-btn {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    /* Mobile dropdown animation */
+    #tw-menu {
+      transform-origin: top;
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    #tw-menu.show {
+      display: block !important;
+      transform: scaleY(1);
+      opacity: 1;
+    }
+
+    /* Prevent layout jump */
     @media (max-width: 767px) {
-      #tw-menu.show {
-        display: block !important;
+      #tw-menu {
+        overflow-y: auto;
+        max-height: calc(100vh - 64px);
+        background-color: #fff;
+        border-radius: 0 0 1rem 1rem;
       }
     }
   </style>
 </head>
+
 <body class="bg-gray-50">
 
-  <!-- Tailwind Navbar Wrapper -->
+  <!-- Navbar -->
   <div id="tailwind-navbar" class="relative z-50">
-    <nav class="bg-white shadow-md border-b border-gray-200 sticky top-0">
+    <nav class="bg-white shadow-md border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
 
-          <!-- Logo Section -->
+          <!-- Logo -->
           <div class="flex items-center space-x-3 flex-shrink-0">
             <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
             <span class="text-xl md:text-2xl font-bold brand-font whitespace-nowrap">FixMyHouse</span>
           </div>
 
-          <!-- Desktop Navigation -->
+          <!-- Desktop Menu -->
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-4">
 
-              <a href="/welcome/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200">
+              <a href="/welcome/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
                 <i class="bi bi-house text-lg mr-2"></i>
                 <span>Home</span>
               </a>
 
-              <a href="/properties/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200">
+              <a href="/properties/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
                 <i class="bi bi-building text-lg mr-2"></i>
                 <span>My Home</span>
               </a>
 
-              <a href="/report/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200">
+              <a href="/report/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
                 <i class="bi bi-list-check text-lg mr-2"></i>
                 <span>Reports</span>
               </a>
 
-                <a href="/chat/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200">
-                  <i class="bi bi-envelope-paper text-lg mr-2"></i>
-                  <span>Messages</span>
-                </a>
+              <a href="/chat/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+                <i class="bi bi-envelope-paper text-lg mr-2"></i>
+                <span>Messages</span>
+              </a>
 
-                <a href="/account/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200">
-                  <i class="bi bi-person-circle text-lg mr-2"></i>
-                  <span>Profile</span>
-                </a>
-
+              <a href="/account/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+                <i class="bi bi-person-circle text-lg mr-2"></i>
+                <span>Profile</span>
+              </a>
 
               <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200">
+                <button type="submit" class="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100">
                   <i class="bi bi-box-arrow-right text-lg mr-2"></i>
                   <span>Logout</span>
                 </button>
               </form>
-
             </div>
           </div>
 
           <!-- Mobile Menu Button -->
           <div class="md:hidden">
-            <button id="tw-menu-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-[#293272] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#293272] transition duration-200">
+            <button id="tw-menu-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-[#293272] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#293272] transition duration-200">
               <span class="sr-only">Open main menu</span>
               <svg id="menu-icon-open" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -120,46 +139,44 @@
           </div>
         </div>
 
-        <!-- Mobile Navigation Menu -->
+        <!-- Mobile Menu -->
         <div id="tw-menu" class="hidden md:hidden">
           <div class="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-b-lg">
 
-            <a href="/welcome/" class="flex items-center px-3 py-3 text-base font-medium rounded-md transition duration-200 border-b border-gray-100 hover:text-[#293272]">
+            <a href="/welcome/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
               <i class="bi bi-house text-lg mr-3 text-[#293272]"></i>
               <span>Home</span>
             </a>
 
-            <a href="/properties/" class="flex items-center px-3 py-3 text-base font-medium rounded-md transition duration-200 border-b border-gray-100 hover:text-[#293272]">
+            <a href="/properties/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
               <i class="bi bi-building text-lg mr-3 text-[#293272]"></i>
               <span>My Home</span>
             </a>
 
-            <a href="/report/" class="flex items-center px-3 py-3 text-base font-medium rounded-md transition duration-200 border-b border-gray-100 hover:text-[#293272]">
-               <i class="bi bi-list-check text-lg mr-2"></i>
+            <a href="/report/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
+              <i class="bi bi-list-check text-lg mr-3 text-[#293272]"></i>
               <span>Reports</span>
             </a>
 
-            <a href="/chat/" class="flex items-center px-3 py-3 text-base font-medium rounded-md transition duration-200 border-b border-gray-100 hover:text-[#293272]">
-              <i class="bi bi-envelope-paper text-lg mr-2"></i>
+            <a href="/chat/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
+              <i class="bi bi-envelope-paper text-lg mr-3 text-[#293272]"></i>
               <span>Messages</span>
             </a>
 
-            <a href="/account/" class="flex items-center px-3 py-3 text-base font-medium rounded-md transition duration-200 border-b border-gray-100 hover:text-[#293272]">
-               <i class="bi bi-person-circle text-lg mr-2"></i>
+            <a href="/account/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
+              <i class="bi bi-person-circle text-lg mr-3 text-[#293272]"></i>
               <span>Profile</span>
             </a>
 
-            <!-- Logout -->
-            <form id="logout-form" method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
-                  <i class="bi bi-box-arrow-right mr-2"></i>
-                  Logout
-                </button>
+            <form method="POST" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition w-full px-3 py-3">
+                <i class="bi bi-box-arrow-right mr-2"></i>
+                Logout
+              </button>
             </form>
           </div>
         </div>
-
       </div>
     </nav>
   </div>
@@ -167,14 +184,13 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Custom JavaScript -->
+  <!-- Toggle Script -->
   <script>
     const twMenuBtn = document.getElementById('tw-menu-btn');
     const twMenu = document.getElementById('tw-menu');
     const menuIconOpen = document.getElementById('menu-icon-open');
     const menuIconClose = document.getElementById('menu-icon-close');
 
-    // Toggle mobile menu
     twMenuBtn.addEventListener('click', () => {
       const isHidden = twMenu.classList.contains('hidden');
       if (isHidden) {
@@ -182,31 +198,35 @@
         twMenu.classList.add('show');
         menuIconOpen.classList.add('hidden');
         menuIconClose.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // prevent scroll behind menu
       } else {
         twMenu.classList.add('hidden');
         twMenu.classList.remove('show');
         menuIconOpen.classList.remove('hidden');
         menuIconClose.classList.add('hidden');
+        document.body.style.overflow = '';
       }
     });
 
-    // Close mobile menu when clicking outside
+    // Close when clicking outside
     document.addEventListener('click', (e) => {
       if (!twMenuBtn.contains(e.target) && !twMenu.contains(e.target)) {
         twMenu.classList.add('hidden');
         twMenu.classList.remove('show');
         menuIconOpen.classList.remove('hidden');
         menuIconClose.classList.add('hidden');
+        document.body.style.overflow = '';
       }
     });
 
-    // Auto-close on resize
+    // Reset when resizing back to desktop
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 768) {
         twMenu.classList.add('hidden');
         twMenu.classList.remove('show');
         menuIconOpen.classList.remove('hidden');
         menuIconClose.classList.add('hidden');
+        document.body.style.overflow = '';
       }
     });
   </script>

@@ -46,6 +46,10 @@ class Renter(models.Model):
     house_state = models.CharField(max_length=100, blank=True, null=True)
     house_city = models.CharField(max_length=100, blank=True, null=True)
     house_zip = models.CharField(max_length=20, blank=True, null=True)
+    # Profile picture
+    profile_picture = models.ImageField(
+        upload_to='profile_pics/', blank=True, null=True
+    )
 
 
     def __str__(self):

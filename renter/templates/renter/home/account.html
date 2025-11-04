@@ -46,11 +46,19 @@
 
                 <!-- Sidebar -->
                 <div class="md:w-1/4 bg-gray-50 p-6 flex flex-col items-center text-center border-r">
-                    <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
-                        </svg>
+                    <div class="w-32 h-32 rounded-full overflow-hidden mb-4 border">
+                        <div class="w-32 h-32 rounded-full overflow-hidden mb-4 border">
+                            <img id="profilePreview"
+                                 src="{% if renter.profile_picture %}{{ renter.profile_picture.url }}{% else %}/static/img/avatar_placeholder.png{% endif %}"
+                                 class="w-full h-full object-cover" />
+                        </div>
                     </div>
+                    <form method="POST" action="{% url 'renter_account' %}" class="space-y-4" enctype="multipart/form-data" >
+                    <div>
+                        <label class="block text-gray-700 mb-1">Change Profile Picture</label>
+                        <input type="file" name="profile_picture" accept="image/*" onchange="previewImage(event)" class="w-full border rounded px-3 py-2" />
+                    </div>
+
                     <h2 class="text-xl font-semibold mb-2">{{ user.last_name }}, {{ user.first_name }}</h2>
                     <span class="text-blue-600 text-xs bg-blue-100 px-3 py-1 rounded-full">{{ user.email }}</span>
                 </div>
@@ -105,7 +113,7 @@
                             <section id="personalInfo" class="account-section">
                             <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Personal Information</h3>
 
-                            <form method="POST" action="{% url 'renter_account' %}" class="space-y-4">
+
                                 {% csrf_token %}
 
                                 <div>
@@ -264,6 +272,14 @@
                 document.getElementById(item.getAttribute('data-section')).classList.remove('hidden');
             });
         });
+    </script>
+    <script>
+    function previewImage(event) {
+        const [file] = event.target.files;
+        if (file) {
+            document.getElementById('profilePreview').src = URL.createObjectURL(file);
+        }
+    }
     </script>
 
 </body>

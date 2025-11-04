@@ -1206,11 +1206,14 @@ def renter_account(request):
         name = request.POST.get('name', '').strip()
         phone = request.POST.get('phone', '')
         email = request.POST.get('email', '')
-        pin = request.POST.get('pin', '')
         gender = request.POST.get('gender', '')
         dob = request.POST.get('dob', '')
         address_line1 = request.POST.get('address_line1', '')
         address_line2 = request.POST.get('address_line2', '')
+
+        # Handle profile picture
+        if 'profile_picture' in request.FILES:
+            renter.profile_picture = request.FILES['profile_picture']
 
         # Update user fields
         if name:
@@ -1229,12 +1232,6 @@ def renter_account(request):
         renter.address_line2 = address_line2
         renter.save()
 
-        # #  Update related Property records
-        # Property.objects.filter(renter=renter).update(
-        #     address_line1=address_line1,
-        #     address_line2=address_line2
-        # )
-
         messages.success(request, 'Account updated successfully.')
         return redirect('renter_account')
 
@@ -1242,7 +1239,6 @@ def renter_account(request):
         'user': user,
         'renter': renter
     })
-
 
 def chat_demo(request, job_id):
     return render(request, 'chat_demo.html', {'job_id': job_id})

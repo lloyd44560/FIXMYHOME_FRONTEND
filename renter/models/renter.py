@@ -48,6 +48,10 @@ class Renter(models.Model):
     house_state = models.CharField(max_length=100, blank=True, null=True)
     house_city = models.CharField(max_length=100, blank=True, null=True)
     house_zip = models.CharField(max_length=20, blank=True, null=True)
+       # Profile picture
+    profile_picture = models.ImageField(
+        upload_to='profile_pics/', blank=True, null=True
+    )
 
 
     def __str__(self):
@@ -58,7 +62,7 @@ class FailedLoginAttempt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     attempts = models.IntegerField(default=0)
     is_locked = models.BooleanField(default=False)
-    locked_until = models.DateTimeField(null=True, blank=True) 
+    locked_until = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.email} - {self.attempts} attempts"

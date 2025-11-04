@@ -58,8 +58,11 @@
               data-timestamp="{% if job_info.last_timestamp %}{{ job_info.last_timestamp|date:'U' }}{% else %}0{% endif %}">
         
         <!-- Avatar -->
-        <img src="{{ job_info.job.trader.user.profile_image.url|default:'/static/img/avatar_placeholder.png' }}" 
-             class="w-10 h-10 rounded-full mr-3 object-cover" alt="Profile">
+        <img src="{% if job_info.job.trader.user.profile_image %}
+            {{ job_info.job.trader.user.profile_image.url }}
+         {% else %}
+            {% static 'renter/images/avatar_placeholder' %} 
+         {% endif %}" />
 
         <!-- Chat info -->
         <div class="flex-1 overflow-hidden">
