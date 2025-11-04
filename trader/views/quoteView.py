@@ -13,16 +13,16 @@ from trader.decorators.traderOnly import trader_required
 from django.shortcuts import render, redirect, get_object_or_404
 
 @method_decorator([login_required, trader_required], name='dispatch')
-class MaintenanceView(TemplateView):
-    template_name = 'pages/maintenance_view.html'
+class QuoteView(TemplateView):
+    template_name = 'pages/quote_view.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        job_id = self.request.GET.get('job_id')
-        job = get_object_or_404(Jobs, id=job_id)
-        service = Services.objects.filter(id=job.category_id).first()
+        quote_id = self.request.GET.get('quote_id')
+        quote = get_object_or_404(Bidding, id=quote_id)
+        job = get_object_or_404(Jobs, id=quote.jobs_id)
 
+        context['quote'] = quote
         context['job'] = job
-        context['job_description'] = service
 
         return context

@@ -46,7 +46,7 @@
     <div class="bg-white p-6 rounded-t-3xl shadow-md -mt-4 relative z-10">
 
         <!-- Quote Info -->
-        <h2 class="text-xl font-semibold text-gray-800">Job Code {{ job.job_code }}</h2>
+        <h2 class="text-xl font-semibold text-gray-800">Quote Request #{{ quote.quote_code | default:"QUOXXXXX" }}</h2>
         <p class="text-sm text-gray-500 mt-1">
             <span class="font-semibold text-gray-700">Created</span> {{ job.quoted_at|date:"M d, Y" }}
         </p>
