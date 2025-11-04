@@ -11,6 +11,7 @@ from .traderRequestLeave import request_leave
 #  ============ Bidding Views ============
 from .maintenance_list import MaintenanceListView
 from .quoteList import QuoteListView
+from .maintenance_view import MaintenanceView
 from .biddingRegister import BiddingCreateView
 # ============ Job Views ============
 from .jobList import JobListView
