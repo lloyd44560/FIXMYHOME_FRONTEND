@@ -60,7 +60,10 @@
         </div>
       </div>
 
-      <button @click="showModal = true" class="mt-8 bg-[#293272] hover:bg-[#162060] text-white px-6 py-3 rounded-full font-semibold transition w-full md:w-auto">Edit Profile</button>
+      <button @click="showModal = true" 
+        class="mt-8 bg-[#EF7153] hover:bg-[#d35032] text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 w-full md:w-auto">
+        Edit Profile
+      </button>
     </div>
   </div>
 
@@ -83,9 +86,9 @@
           <!-- Form Fields -->
           {% include 'components/home/navigatorPages/editProfileAgent.html' %}
 
-          <div class="text-right">
+          <div class="mt-6 flex flex-col space-y-3">
             <button type="submit"
-              class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+              class="w-full text-center py-3 rounded-2xl bg-[#EF7153] text-white font-semibold hover:bg-[#d35032] transition-all duration-200 shadow-md hover:shadow-lg">
               Save Profile
             </button>
           </div>

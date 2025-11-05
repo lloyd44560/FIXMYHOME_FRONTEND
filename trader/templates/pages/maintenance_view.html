@@ -5,142 +5,142 @@
 {% block content %}
 {% include 'components/home/navigatorBase.html' %}
 
-    <!-- Carousel Header -->
-    <div 
-        x-data="{
-            active: 0,
-            images: [
-                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
-                'https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
-                'https://images.unsplash.com/photo-1588854337236-6889d631faa8?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
-            ],
-            next() { this.active = (this.active + 1) % this.images.length },
-            prev() { this.active = (this.active - 1 + this.images.length) % this.images.length }
-        }"
-        x-init="setInterval(() => next(), 4000)"
-        class="relative w-full h-64 overflow-hidden rounded-xl shadow-md"
-    >
-        <template x-for="(image, index) in images" :key="index">
-            <div 
-                x-show="active === index"
-                x-transition
-                class="absolute inset-0"
-            >
-                <img :src="image" alt="Carousel image" class="w-full h-full object-cover">
-            </div>
-        </template>
-
-        <!-- Dots -->
-        <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            <template x-for="(image, index) in images" :key="index">
-                <button 
-                    @click="active = index"
-                    class="w-3 h-3 rounded-full border"
-                    :class="active === index ? 'bg-blue-600 border-blue-600' : 'bg-gray-300 border-gray-300'">
-                </button>
-            </template>
+<!-- Carousel Header -->
+<div 
+    x-data="{
+        active: 0,
+        images: [
+            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
+            'https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60',
+            'https://images.unsplash.com/photo-1588854337236-6889d631faa8?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=60'
+        ],
+        next() { this.active = (this.active + 1) % this.images.length },
+        prev() { this.active = (this.active - 1 + this.images.length) % this.images.length }
+    }"
+    x-init="setInterval(() => next(), 4000)"
+    class="relative w-full h-64 overflow-hidden rounded-xl shadow-md"
+>
+    <template x-for="(image, index) in images" :key="index">
+        <div 
+            x-show="active === index"
+            x-transition
+            class="absolute inset-0"
+        >
+            <img :src="image" alt="Carousel image" class="w-full h-full object-cover">
         </div>
+    </template>
+
+    <!-- Dots -->
+    <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <template x-for="(image, index) in images" :key="index">
+            <button 
+                @click="active = index"
+                class="w-3 h-3 rounded-full border"
+                :class="active === index ? 'bg-blue-600 border-blue-600' : 'bg-gray-300 border-gray-300'">
+            </button>
+        </template>
     </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="bg-white p-6 rounded-t-3xl shadow-md -mt-4 relative z-10">
+<!-- Main Content -->
+<div class="bg-white p-6 rounded-t-3xl shadow-md -mt-4 relative z-10">
 
-        <!-- Quote Info -->
-        <h2 class="text-xl font-semibold text-gray-800">Job Code {{ job.job_code }}</h2>
-        <p class="text-sm text-gray-500 mt-1">
-            <span class="font-semibold text-gray-700">Created</span> {{ job.quoted_at|date:"M d, Y" }}
-        </p>
-        <p class="text-gray-400 text-xs mb-4">Expires in 5 minutes</p>
+    <!-- Quote Info -->
+    <h2 class="text-xl font-semibold text-gray-800">Job Code {{ job.job_code }}</h2>
+    <p class="text-sm text-gray-500 mt-1">
+        <span class="font-semibold text-gray-700">Created</span> {{ job.quoted_at|date:"M d, Y" }}
+    </p>
+    <p class="text-gray-400 text-xs mb-4">Expires in 5 minutes</p>
 
-        <!-- Contact Section -->
-        <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center space-x-3">
-                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Renter" class="w-10 h-10 rounded-full border">
-                <div>
-                    <p class="font-semibold text-gray-800">{{ job.renter }}</p>
-                    <div class="flex text-yellow-400 text-sm">
-                        <span>★★★★★</span>
-                    </div>
+    <!-- Contact Section -->
+    <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center space-x-3">
+            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Renter" class="w-10 h-10 rounded-full border">
+            <div>
+                <p class="font-semibold text-gray-800">{{ job.renter }}</p>
+                <div class="flex text-yellow-400 text-sm">
+                    <span>★★★★★</span>
                 </div>
             </div>
-
-            <!-- Contact Buttons -->
-            <div class="flex space-x-3">
-                <!-- Envelope Icon -->
-                <a href="#" class="p-2 bg-[#293272] rounded-xl hover:opacity-90 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v16H4z M4 4l8 8 8-8" />
-                </svg>
-                </a>
-
-                <!-- Phone Icon -->
-                <a href="#" class="p-2 bg-[#293272] rounded-xl hover:opacity-90 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3l2 5-2 2a12 12 0 005 5l2-2 5 2v3a2 2 0 01-2 2h-1a17 17 0 01-15-15V5z" />
-                </svg>
-                </a>
-            </div>
         </div>
 
-        <!-- Property Information -->
-        <div class="space-y-3">
-            <div>
-                <h3 class="font-semibold text-gray-800">Address</h3>
-                <p class="text-gray-600">{{ job.address | default:"No address provided" }}</p>
-            </div>
+        <!-- Contact Buttons -->
+        <div class="flex space-x-3">
+            <!-- Envelope Icon -->
+            <a href="#" class="p-2 bg-[#293272] rounded-xl hover:opacity-90 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v16H4z M4 4l8 8 8-8" />
+            </svg>
+            </a>
 
-            <div>
-                <h3 class="font-semibold text-gray-800">Description</h3>
-                <p class="text-gray-600">{{ job_description | default:"No description provided"  }}</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-gray-800">Additional Information</h3>
-                <p class="text-gray-600">Cracked filter</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-gray-800">When did the issue occur?</h3>
-                <p class="text-gray-600">{{ job.issue_found_at | timesince | default:"Not Sure" }}</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-gray-800">Has the issue been fixed before?</h3>
-                <p class="text-gray-600">{{ job.issue_been_fixed_before | yesno:"Yes,No" }}</p>
-            </div>
-        </div>
-
-        <!-- Availability Section -->
-        <div class="mt-5">
-            <h3 class="font-semibold text-gray-800">Renter Availability</h3>
-            <div class="flex flex-wrap gap-2 mt-2">
-                <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Mon</span>
-                <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Tue</span>
-                <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Wed</span>
-                <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Thu</span>
-                <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Fri</span>
-                <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Sat</span>
-                <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Sun</span>
-            </div>
-
-            <div class="flex gap-2 mt-3">
-                <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Morning</span>
-                <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Afternoon</span>
-                <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Evening</span>
-            </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="mt-6 flex flex-col space-y-3">
-            <button class="w-full py-3 bg-gray-100 rounded-2xl font-semibold text-gray-700 hover:bg-gray-200">
-                View Property Reports
-            </button>
-            <a href="{% url 'bidding_create' %}?job_id={{ job.id }}"
-                class="block w-full text-center py-3 rounded-2xl bg-[#EF7153] text-white font-semibold hover:bg-[#d35032] transition-all duration-200 shadow-md hover:shadow-lg">
-                + Quote
+            <!-- Phone Icon -->
+            <a href="#" class="p-2 bg-[#293272] rounded-xl hover:opacity-90 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3l2 5-2 2a12 12 0 005 5l2-2 5 2v3a2 2 0 01-2 2h-1a17 17 0 01-15-15V5z" />
+            </svg>
             </a>
         </div>
     </div>
+
+    <!-- Property Information -->
+    <div class="space-y-3">
+        <div>
+            <h3 class="font-semibold text-gray-800">Address</h3>
+            <p class="text-gray-600">{{ job.address | default:"No address provided" }}</p>
+        </div>
+
+        <div>
+            <h3 class="font-semibold text-gray-800">Description</h3>
+            <p class="text-gray-600">{{ job_description | default:"No description provided"  }}</p>
+        </div>
+
+        <div>
+            <h3 class="font-semibold text-gray-800">Additional Information</h3>
+            <p class="text-gray-600">Cracked filter</p>
+        </div>
+
+        <div>
+            <h3 class="font-semibold text-gray-800">When did the issue occur?</h3>
+            <p class="text-gray-600">{{ job.issue_found_at | timesince | default:"Not Sure" }}</p>
+        </div>
+
+        <div>
+            <h3 class="font-semibold text-gray-800">Has the issue been fixed before?</h3>
+            <p class="text-gray-600">{{ job.issue_been_fixed_before | yesno:"Yes,No" }}</p>
+        </div>
+    </div>
+
+    <!-- Availability Section -->
+    <div class="mt-5">
+        <h3 class="font-semibold text-gray-800">Renter Availability</h3>
+        <div class="flex flex-wrap gap-2 mt-2">
+            <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Mon</span>
+            <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Tue</span>
+            <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Wed</span>
+            <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Thu</span>
+            <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Fri</span>
+            <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Sat</span>
+            <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Sun</span>
+        </div>
+
+        <div class="flex gap-2 mt-3">
+            <span class="px-3 py-1 bg-[#EF7153] text-white rounded-full text-sm">Morning</span>
+            <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Afternoon</span>
+            <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">Evening</span>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-6 flex flex-col space-y-3">
+        <button class="w-full py-3 bg-gray-100 rounded-2xl font-semibold text-gray-700 hover:bg-gray-200">
+            View Property Reports
+        </button>
+        <a href="{% url 'bidding_create' %}?job_id={{ job.id }}"
+            class="block w-full text-center py-3 rounded-2xl bg-[#EF7153] text-white font-semibold hover:bg-[#d35032] transition-all duration-200 shadow-md hover:shadow-lg">
+            + Quote
+        </a>
+    </div>
+</div>
 
 {% include 'components/footerTrader.html' %}
 {% endblock %}

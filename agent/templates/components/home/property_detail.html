@@ -219,8 +219,13 @@
         <!--</div>-->
 
         <button type="submit"
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full mt-2">
+            class="text-white rounded-2xl font-semibold transition-all duration-200 shadow-md px-4 py-2 rounded bg-[#EF7153] hover:bg-[#d35032] w-full mt-2">
             Submit Job
+        </button>
+        <button type="button"
+          x-on:click="job = false"
+          class="text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-2xl font-semibold transition-all duration-200 shadow-md px-4 py-2 w-full mt-2">
+          Cancel
         </button>
       </form>
     </div>

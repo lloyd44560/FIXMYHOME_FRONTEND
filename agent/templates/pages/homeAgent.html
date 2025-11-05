@@ -6,66 +6,91 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 <!-- Page Content -->
-<main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+<main class="max-w-7xl mx-auto px-6 py-8 space-y-10 w-full">
+
   <!-- Dashboard Cards -->
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Quote Requests</h2>
-        <p class="text-sm">View and respond to service quote requests.<br/></p>
-        <a href="{% url 'agent_bid_list' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Quotes</a>
+  <section class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6 mt-4">
+
+    <!-- Quote Requests -->
+    <div class="flex flex-col text-center border border-gray-200 bg-white rounded-2xl p-6 shadow hover:shadow-md transition">
+      <h2 class="font-bold text-lg mb-2 text-[#293272]">
+        <a href="{% url 'maintenance_request_list' %}">Quote Requests</a>
+      </h2>
+      <p class="text-sm text-gray-600 mb-4">View and respond to service quote requests.</p>
+      <a href="{% url 'agent_bid_list' %}" 
+        class="mt-auto w-full bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium py-2 rounded-md transition">
+        Open List
+      </a>
     </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Properties</h2>
-        <p class="text-sm">Manage all listed rental properties and their details.</p>
-        <a href="{% url 'manage_properties' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Properties</a>
+
+    <!-- Properties -->
+    <div class="flex flex-col text-center border border-gray-200 bg-white rounded-2xl p-6 shadow hover:shadow-md transition">
+      <h2 class="font-bold text-lg mb-2 text-[#293272]">
+        <a href="{% url 'quote_list' %}?status=pending">Properties</a>
+      </h2>
+      <p class="text-sm text-gray-600 mb-4">Manage all listed rental properties and their details.</p>
+      <a href="{% url 'manage_properties' %}" 
+        class="mt-auto w-full bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium py-2 rounded-md transition">
+        Open List
+      </a>
     </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Renters</h2>
-        <p class="text-sm">View and manage tenant profiles.<br/><br/></p>
-        <a href="{% url 'manage_renters' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Renters</a>
+
+    <!-- Renters -->
+    <div class="flex flex-col text-center border border-gray-200 bg-white rounded-2xl p-6 shadow hover:shadow-md transition">
+      <h2 class="font-bold text-lg mb-2 text-[#293272]">
+        <a href="{% url 'job_list' %}?status=scheduled">Renters</a>
+      </h2>
+      <p class="text-sm text-gray-600 mb-4">View and manage tenant profiles.</p>
+      <a href="{% url 'manage_renters' %}" 
+        class="mt-auto w-full bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium py-2 rounded-md transition">
+        Open List
+      </a>
     </div>
-    <div class="border rounded-xl p-6 text-center shadow hover:shadow-md transition relative">
-        <!-- <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">2</div> -->
-        <h2 class="font-bold text-[#293272] text-lg mb-2">Maintenance Report</h2>
-        <p class="text-sm">Track and reported maintenance issues.<br/></p>
-        <a href="{% url 'active_jobs_list' %}" class="mt-4 inline-block bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium px-3 py-1 rounded transition">View Maintenance</a>
+
+    <!-- Maintenance Report -->
+    <div class="flex flex-col text-center border border-gray-200 bg-white rounded-2xl p-6 shadow hover:shadow-md transition">
+      <h2 class="font-bold text-lg mb-2 text-[#293272]">
+        <a href="{% url 'job_list' %}?status=approved">Maintenance Report</a>
+      </h2>
+      <p class="text-sm text-gray-600 mb-4">Track and reported maintenance issues.</p>
+      <a href="{% url 'active_jobs_list' %}"
+        class="mt-auto w-full bg-[#EF715C] hover:bg-[#c4503e] text-white font-medium py-2 rounded-md transition">
+        Open List
+      </a>
     </div>
+
   </section>
+  
+  <!-- Properties Table Section -->
+  <div class="max-w-7xl mx-auto px-6 py-8 overflow-x-auto">
+      <h2 class="text-2xl font-bold mb-4 text-[#293272]">Properties</h2>
 
-  <!-- Hide if property manager  -->
-    <!-- Properties Table Section -->
-    <div class="max-w-7xl mx-auto px-6 py-8 overflow-x-auto">
-        <h2 class="text-2xl font-bold mb-4 text-[#293272]">Properties</h2>
+      <div class="flex justify-start mb-4 gap-4">
+          <a href="{% url 'property_create' %}"
+            class="bg-[#293272] hover:bg-[#162060] text-white font-medium px-4 py-2 rounded-md shadow text-sm">
+            + Create Property
+          </a>
+      </div>
 
-        <div class="flex justify-start mb-4 gap-4">
-            <a href="{% url 'property_create' %}"
-              class="bg-[#293272] hover:bg-[#162060] text-white font-medium px-4 py-2 rounded-md shadow text-sm">
-              + Create Property
-            </a>
-        </div>
+      <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible relative">
+        <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
+          <thead class="bg-[#293272] text-white hidden sm:table-header-group">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Renter</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Lease Dates</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Rent</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Status</th>
+              <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
+            </tr>
+          </thead>
 
-        <div class="bg-white shadow-md rounded-lg overflow-x-auto sm:overflow-visible">
-          <table class="min-w-full table-auto sm:table divide-y divide-gray-200">
-            <thead class="bg-[#293272] text-white hidden sm:table-header-group">
-              <tr>
-                <th class="px-4 py-3 text-left text-sm font-medium">Property</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Image</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Renter</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Lease Dates</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Rent</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Status</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody class="sm:divide-y sm:divide-gray-200">
-              {% for property in properties %}
+          <tbody class="sm:divide-y sm:divide-gray-200">
+            {% for property in properties %}
               <!-- Kanban-style row for mobile -->
               <tr
-                class="block sm:table-row bg-white border border-gray-200 sm:border-0 rounded-xl sm:rounded-none shadow-sm sm:shadow-none my-4 sm:my-0 px-4 py-4 sm:px-0 sm:py-0">
+                class="block relative sm:table-row bg-white border border-gray-200 sm:border-0 rounded-xl sm:rounded-none shadow-sm sm:shadow-none my-4 sm:my-0 px-4 py-4 sm:px-0 sm:py-0">
                 <!-- Property -->
                 <td class="block sm:table-cell sm:px-4 sm:py-3 mb-3 sm:mb-0">
                   <p class="sm:hidden text-xs text-gray-500 mb-1">Property</p>
@@ -141,14 +166,14 @@
                   </div>
                 </td>
               </tr>
-              {% empty %}
+            {% empty %}
               <tr>
                 <td colspan="7" class="text-center py-6 text-gray-500">No properties available.</td>
               </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       <!-- Pagination Controls -->
       {% if page_obj.has_other_pages %}
         <div class="pagination flex justify-center items-center mt-6 space-x-2">
@@ -266,30 +291,42 @@
                 </span>
               </td>
 
-              <!-- Actions -->
               <td class="block sm:table-cell sm:px-4 sm:py-3">
                 <p class="sm:hidden text-xs text-gray-500 mb-1">Actions</p>
-                <div x-data="{ open: false }" class="relative inline-block text-left">
-                  <button @click="open = !open" @click.away="open = false"
-                    class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring" aria-label="Actions">
+
+                <div x-data="{ open: false }" class="relative flex justify-center">
+                  <button @click="open = !open"
+                    class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring"
+                    aria-label="Actions">
                     <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <circle cx="5" cy="12" r="2" />
                       <circle cx="12" cy="12" r="2" />
                       <circle cx="19" cy="12" r="2" />
                     </svg>
                   </button>
-                  <div x-show="open" x-transition
-                    class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-10">
+
+                  <!-- Centered Dropdown -->
+                  <div
+                    x-show="open"
+                    @click.away="open = false"
+                    x-transition.opacity
+                    class="absolute left-1/2 top-10 -translate-x-1/2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
+
                     <a href="{% url 'property_view' property.pk %}"
-                      class="block px-4 py-2 text-gray-700 hover:bg-gray-100">🔍 View</a>
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">🔍 View</a>
+
                     <a href="{% url 'property_edit' property.pk %}"
-                      class="block px-4 py-2 text-gray-700 hover:bg-gray-100">✏ Edit</a>
-                    <form method="post" action="{% url 'property_archive' property.pk %}" class="block">
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">✏ Edit</a>
+
+                    <form method="post" action="{% url 'property_archive' property.pk %}">
                       {% csrf_token %}
                       <button type="submit"
-                        onclick="return confirm('Are you sure you want to archive this property?')"
-                        class="w-full text-left px-4 py-2 text-yellow-600 hover:bg-gray-100">📦 Archive</button>
+                        class="w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-gray-100"
+                        onclick="return confirm('Are you sure you want to archive this property?')">
+                        📦 Archive
+                      </button>
                     </form>
+
                   </div>
                 </div>
               </td>

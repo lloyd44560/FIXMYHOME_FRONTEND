@@ -4,59 +4,139 @@
 {% block content %}
 {% include 'components/home/navigatorBaseAgent.html' %}
 
-<div class="max-w-3xl mx-auto p-8 bg-white shadow-2xl rounded-2xl mt-12 mb-[5rem] w-full">
+<div class="max-w-3xl mx-auto p-1 bg-white shadow-2xl rounded-2xl mt-[10px] mb-[5rem] w-full">
   <h2 class="text-3xl font-extrabold text-blue-800 mb-8 text-center tracking-tight">
     Approve or Reject Quote
   </h2>
 
-  <!-- BIDDING DETAILS -->
-  <div class="mb-10 border border-gray-200 rounded-xl p-6 bg-gray-50">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Bidding Details</h3>
-    <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-gray-700 text-sm">
-      <div><strong>Job:</strong> {{ bidding.jobs|default:"—" }}</div>
-      <div><strong>Trader:</strong> {{ bidding.trader }}</div>
+  <!-- Main Content -->
+  <div class="bg-white p-6 rounded-t-3xl shadow-md -mt-4 relative z-10">
 
-      <div><strong>Labour per Hour:</strong> {{ bidding.labour_per_hour|floatformat:2 }}</div>
-      <div><strong>Callout Rate:</strong> {{ bidding.callout_rate|floatformat:2 }}</div>
+      <!-- Quote Info -->
+      <h2 class="text-xl font-semibold text-gray-800">Quote Request #{{ bidding.quote_code|default:"QUOXXXXX" }}</h2>
+      <p class="text-sm text-gray-500 mt-1">
+          <span class="font-semibold text-gray-700">Created at</span> {{ bidding.created_at|date:"M d, Y"|default:"No date provided" }}
+          <span class="font-semibold text-gray-700">Approved at</span> {{ bidding.approved_at|date:"M d, Y"|default:"No date provided" }}
+      </p>
+      <p class="text-gray-400 text-xs mb-4">Expires in 5 minutes</p>
 
-      <div><strong>Parts Quantity:</strong> {{ bidding.parts_qty }}</div>
-      <div><strong>Parts Unit Price:</strong> {{ bidding.parts_unit_price|floatformat:2 }}</div>
+      <!-- Contact Section -->
+      <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center space-x-3">
+              <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Renter" class="w-10 h-10 rounded-full border">
+              <div>
+                  <p class="font-semibold text-gray-800">{{ bidding.trader|default:"No trader assigned" }}</p>
+                  <div class="flex text-yellow-400 text-sm">
+                      <span>★★★★★</span>
+                  </div>
+              </div>
+          </div>
 
-      <div><strong>Hours:</strong> {{ bidding.hours|floatformat:2 }}</div>
-      <div><strong>Appliance Model:</strong> {{ bidding.appliance_model|default:"—" }}</div>
-      <div><strong>Appliance Model Price:</strong> {{ bidding.appliance_model_price|floatformat:2 }}</div>
+          <!-- Contact Buttons -->
+          <div class="flex space-x-3">
+              <!-- Envelope Icon -->
+              <a href="#" class="p-2 bg-[#293272] rounded-xl hover:opacity-90 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v16H4z M4 4l8 8 8-8" />
+              </svg>
+              </a>
 
-      <div><strong>Start Date:</strong> {{ bidding.start_date|date:"M d, Y" }}</div>
-      <div><strong>End Date:</strong> {{ bidding.end_date|date:"M d, Y" }}</div>
-
-      <div><strong>Status:</strong>
-        {% if bidding.is_approved == True %}
-          <span class="text-green-600 font-semibold">Approved</span>
-        {% elif bidding.is_approved == False %}
-          <span class="text-red-600 font-semibold">Rejected</span>
-        {% else %}
-          <span class="text-yellow-600 font-semibold">Pending</span>
-        {% endif %}
+              <!-- Phone Icon -->
+              <a href="#" class="p-2 bg-[#293272] rounded-xl hover:opacity-90 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3l2 5-2 2a12 12 0 005 5l2-2 5 2v3a2 2 0 01-2 2h-1a17 17 0 01-15-15V5z" />
+              </svg>
+              </a>
+          </div>
       </div>
 
-      <div><strong>Active:</strong> {{ bidding.is_active|yesno:"Yes,No" }}</div>
-      <div><strong>Created At:</strong> {{ bidding.created_at|date:"M d, Y H:i" }}</div>
-      <div><strong>Approved At:</strong> {{ bidding.approved_at|date:"M d, Y"|default:"—" }}</div>
-    </div>
-
-    {% if bidding.notes %}
-      <div class="mt-4">
-        <strong class="block text-gray-800 mb-1">Notes:</strong>
-        <p class="text-gray-600 bg-white border border-gray-200 rounded-md p-3 text-sm">
-          {{ bidding.notes }}
-        </p>
+      <!-- Bidding Details -->
+      <div class="grid grid-cols-2 gap-x-8 gap-y-4 mt-6">
+        <div>
+            <h3 class="font-semibold text-gray-800">Job Code</h3>
+            <p class="text-gray-600">{{ bidding.jobs|default:"No reference ID provided" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Labour per Hour</h3>
+            <p class="text-gray-600">{{ bidding.labour_per_hour|floatformat:2|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Callout Rate</h3>
+            <p class="text-gray-600">{{ bidding.callout_rate|floatformat:2|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Parts Quantity</h3>
+            <p class="text-gray-600">{{ bidding.parts_qty|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Parts Unit Price</h3>
+            <p class="text-gray-600">{{ bidding.parts_unit_price|floatformat:2|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Hours</h3>
+            <p class="text-gray-600">{{ bidding.hours|floatformat:2|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Appliance Model</h3>
+            <p class="text-gray-600">{{ bidding.appliance_model|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Appliance Model Price</h3>
+            <p class="text-gray-600">{{ bidding.appliance_model_price|floatformat:2|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Start Date</h3>
+            <p class="text-gray-600">{{ bidding.start_date|date:"M d, Y"|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">End Date</h3>
+            <p class="text-gray-600">{{ bidding.end_date|date:"M d, Y"|default:"N/A" }}</p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Status</h3>
+            <p class="text-gray-600">
+                {% if bid.is_approved is None %}Pending{% elif bid.is_approved %}Approved{% else %}Rejected{% endif %}
+            </p>
+        </div>
+        <div>
+            <h3 class="font-semibold text-gray-800">Notes</h3>
+            <p class="text-gray-600">
+                {{ bidding.notes|default:"No notes provided" }}
+            </p>
+        </div>
       </div>
-    {% endif %}
+
+      <!-- Availability Section -->
+      <div class="mt-5">
+          <h3 class="font-semibold text-gray-800">Approval Form</h3>
+          <form id="approval_form" method="post" class="gap-2 mt-2">
+            {% csrf_token %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              {{ form.is_approved|add_class:"w-full border border-gray-300 rounded-xl px-4 py-2 text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
+            </div>
+            <div class="mt-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Approval Notes</label>
+              {{ form.approval_notes|add_class:"w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-32 resize-none" }}
+            </div>
+          </form>
+      </div>
+
+      <!-- Buttons -->
+      <div class="mt-6 flex flex-col space-y-3">
+        <button form="approval_form" type="submit"
+            class="w-full text-center py-3 rounded-2xl bg-[#EF7153] text-white font-semibold hover:bg-[#d35032] transition-all duration-200 shadow-md hover:shadow-lg">
+            Save Approval
+        </button>
+        <a href="javascript:history.back()" 
+          class="block text-center py-3 bg-gray-100 rounded-2xl font-semibold text-gray-700 hover:bg-gray-200">
+          Cancel
+        </a>
+      </div>
   </div>
 
   <!-- TEAM MEMBERS -->
-  {% if team_members %}
-  <div class="mb-8">
+  <div class="hidden mb-8">
     <h3 class="text-lg font-semibold text-gray-800 mb-3">Team Members</h3>
     <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-gray-700 text-sm">
       <thead class="bg-gray-100 text-left">
@@ -79,11 +159,9 @@
       </tbody>
     </table>
   </div>
-  {% endif %}
 
   <!-- ITEMS NEEDED -->
-  {% if items_needed %}
-  <div class="mb-8">
+  <div class="hidden mb-8">
     <h3 class="text-lg font-semibold text-gray-800 mb-3">Items Needed</h3>
     <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-gray-700 text-sm">
       <thead class="bg-gray-100 text-left">
@@ -106,36 +184,6 @@
       </tbody>
     </table>
   </div>
-  {% endif %}
-
-  <!-- APPROVAL FORM -->
-  <form method="post" class="space-y-6">
-    {% csrf_token %}
-
-    <!-- Status -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-      {{ form.is_approved|add_class:"w-full border border-gray-300 rounded-xl px-4 py-2 text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
-    </div>
-
-    <!-- Approval Notes -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Approval Notes</label>
-      {{ form.approval_notes|add_class:"w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-32 resize-none" }}
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="flex justify-end gap-4 pt-6 border-t">
-      <button type="submit"
-        class="bg-[#293272] hover:bg-[#162060] text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg transition">
-        Save
-      </button>
-      <a href="javascript:history.back()" 
-         class="px-6 py-2.5 rounded-xl font-semibold border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
-        Cancel
-      </a>
-    </div>
-  </form>
 
   <!-- MESSAGES -->
   {% if messages %}

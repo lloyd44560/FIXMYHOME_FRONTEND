@@ -6,7 +6,7 @@
 {% include 'components/home/navigatorBaseAgent.html' %}
 
 <div class="max-w-2xl mx-auto mt-10 bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full">
-  <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">
+  <h2 class="text-3xl font-bold text-center text-[#293272] mb-8">
     {% if form.instance.pk %}Edit Property{% else %}Create Property{% endif %}
   </h2>
 
@@ -43,9 +43,14 @@
         {% endif %}
       </div>
          <div class="flex sm:justify-start justify-end">
-            <a href="{% if form.instance.id %}{% url 'renter_invitation' %}?name={{ form.renter_name.value|urlencode }}&email={{ form.renter_contact.value|urlencode }}&property_id={{ form.instance.id|urlencode }}&property_name={{ form.name.value|urlencode }}&property_address={{ form.address.value|urlencode }}&property_lease_start={{ form.lease_start.value|date:'m/d/Y'|urlencode }}&property_lease_end={{ form.lease_end.value|date:'m/d/Y'|urlencode }}&property_rent={{ form.rent.value|urlencode }}&property_status={{ form.status.value|urlencode }}{% else %}#{% endif %}"
-               class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition shadow {% if not form.renter_name.value or not form.renter_contact.value or not form.instance.id %}opacity-50 pointer-events-none{% endif %}">
-                Send Invitation
+            <a href="{% if form.instance.id %}{% url 'renter_invitation' %}?name={{ form.renter_name.value|urlencode }}
+              &email={{ form.renter_contact.value|urlencode }}&property_id={{ form.instance.id|urlencode }}&property_name={{ form.name.value|urlencode }}
+              &property_address={{ form.address.value|urlencode }}&property_lease_start={{ form.lease_start.value|date:'m/d/Y'|urlencode }}
+              &property_lease_end={{ form.lease_end.value|date:'m/d/Y'|urlencode }}&property_rent={{ form.rent.value|urlencode }}
+              &property_status={{ form.status.value|urlencode }}{% else %}#{% endif %}"
+              class="bg-[#EF7153] hover:bg-[#d35032] text-white px-4 py-2 rounded-lg text-sm transition shadow 
+              {% if not form.renter_name.value or not form.renter_contact.value or not form.instance.id %}opacity-50 pointer-events-none{% endif %}">
+              Send Invitation
             </a>
         </div>
     </div>
@@ -58,12 +63,41 @@
     </div>
     {% endif %}
 
-    <div>
+    <div x-data="{ imageUrl: '', showZoom: false }"
+      {% if form.instance.property_photo %}
+        x-init="imageUrl='{{ form.instance.property_photo.url|escapejs }}'"
+      {% endif %}>
       <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Upload Photo</label>
-      {{ form.property_photo|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
+
+      <!-- Modern Upload Box -->
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50 transition">
+          <input type="file" name="property_photo" id="id_property_photo"
+                @change="
+                    const file = $event.target.files[0];
+                    if(file) imageUrl = URL.createObjectURL(file);
+                "
+                class="hidden">
+          <label for="id_property_photo" class="cursor-pointer text-[#293272] font-medium hover:underline">
+              Click to upload or replace image
+          </label>
+      </div>
+
       <!-- Image Preview -->
-      <img id="previewImage" src="#" alt="Preview" style="display:none; max-width: 200px; margin-top: 10px;" />
+      <template x-if="imageUrl">
+          <div class="mt-4">
+            <img :src="imageUrl" @click="showZoom = true"
+                class="w-full max-h-[5rem] object-cover rounded-lg shadow cursor-zoom-in hover:opacity-90 transition" />
+          </div>
+      </template>
+
+      <!-- Zoom Modal -->
+      <div x-show="showZoom" x-transition
+          class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
+          @click="showZoom = false">
+          <img :src="imageUrl" class="max-w-full max-h-full rounded-lg shadow-lg cursor-zoom-out">
+      </div>
     </div>
+    
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Renter Contact</label>
       {{ form.renter_contact|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
@@ -74,6 +108,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">Lease Start</label>
         {{ form.lease_start|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
       </div>
+
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lease End</label>
         {{ form.lease_end|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
@@ -85,17 +120,20 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">Rent</label>
         {{ form.rent|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
       </div>
+
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
         {{ form.status|add_class:"w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" }}
       </div>
     </div>
 
-    <div class="flex justify-end gap-3 pt-4">
-      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition shadow">
+    <div class="mt-6 flex flex-col space-y-3">
+      <button type="submit"
+        class="w-full text-center text-lg py-3 rounded-2xl bg-[#EF7153] hover:bg-[#d35032] text-white font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
         Save
       </button>
-      <a href="javascript:history.back()" class="text-gray-600 hover:text-blue-700 px-4 py-2 text-sm">
+      <a href="javascript:history.back()" 
+        class="block text-center py-3 bg-gray-100 rounded-2xl font-semibold text-gray-700 hover:bg-gray-200">
         Cancel
       </a>
     </div>
@@ -106,20 +144,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<script>
-    const photoInput = document.getElementById('id_property_photo');
-    const preview = document.getElementById('previewImage');
-
-    photoInput.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file && file.type.startsWith('image/')) {
-            preview.src = URL.createObjectURL(file);
-            preview.style.display = 'block';
-        } else {
-            preview.src = '';
-            preview.style.display = 'none';
-        }
-    });
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}

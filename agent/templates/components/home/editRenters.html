@@ -69,10 +69,15 @@
             {{ form.zip_code|add_class:"w-full border border-gray-300 rounded-md p-2" }}
         </div>
 
-        <!-- Submit -->
-        <div class="flex justify-end gap-3 mt-6">
-            <a href="{% url 'manage_renters' %}" class="text-gray-500 hover:underline text-sm">Cancel</a>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Save Changes</button>
+        <div class="mt-6 flex flex-col space-y-3">
+            <button form="approval_form" type="submit"
+                class="w-full text-center py-3 rounded-2xl bg-[#EF7153] text-white font-semibold hover:bg-[#d35032] transition-all duration-200 shadow-md hover:shadow-lg">
+                Save Changes
+            </button>
+            <a href="{% url 'manage_renters' %}" 
+                class="block text-center py-3 bg-gray-100 rounded-2xl font-semibold text-gray-700 hover:bg-gray-200">
+                Cancel
+            </a>
         </div>
     </form>
 </div>
