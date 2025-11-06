@@ -39,6 +39,8 @@ class Jobs(models.Model):
     issue_been_fixed_before = models.BooleanField(default=False)
     issue_been_fixed_by_fmh_before = models.BooleanField(default=False)
     renter_availability_schedule = models.JSONField(null=True, blank=True, default=dict)
+    renter_issue_date = models.JSONField(blank=True, null=True, default=dict)
+
 
     def save(self, *args, **kwargs):
         # Always regenerate job_code based on current status
@@ -53,12 +55,12 @@ class Jobs(models.Model):
         # --- Generate job_code only if not set (to avoid regenerating on every save) ---
         if not self.job_code:
             count = 1
-            base_code = f"JOB{count:05d}"
+            base_code = f"QUO-{count:05d}"
 
             # Increment until unique
             while Jobs.objects.filter(job_code=base_code).exists():
                 count += 1
-                base_code = f"JOB{count:05d}"
+                base_code = f"QUO-{count:05d}"
 
             self.job_code = base_code
         super().save(*args, **kwargs)

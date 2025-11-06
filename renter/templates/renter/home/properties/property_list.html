@@ -150,55 +150,97 @@
 
       <!-- Profile Completion Section -->
       <section class="py-12 px-4 sm:px-6 lg:px-8 bg-white mt-8">
-        <div class="max-w-7xl mx-auto">
-          <h3 class="text-3xl font-bold text-center text-gray-900 mb-6">Complete Your Profile</h3>
-          <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">A fully completed profile helps you connect with traders and agents faster, ensuring compliance with Australian property standards.</p>
-          <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
+    <div class="max-w-7xl mx-auto">
+        <h3 class="text-3xl font-bold text-center text-gray-900 mb-6">Complete Your Profile</h3>
+        <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+            A fully completed profile helps you connect with traders and agents faster, ensuring compliance with Australian property standards.
+        </p>
+        <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
             <div class="bg-blue-600 h-4 rounded-full" style="width: 75%;"></div>
-          </div>
-          <div class="grid md:grid-cols-2 gap-4">
-            <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
-              <span class="text-green-500 text-2xl mr-3">✓</span>
-              <span class="text-gray-700">Add your personal details</span>
-            </div>
-            <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
-              <span class="text-green-500 text-2xl mr-3">✓</span>
-              <span class="text-gray-700">Add your agent details</span>
-            </div>
-            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
-              <div class="flex items-center">
-                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-                <span class="text-gray-700">Complete Condition Report</span>
-              </div>
-              <a href="/condition-reports/" class="text-blue-600 hover:underline font-medium">→</a>
-            </div>
-            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
-              <div class="flex items-center">
-                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-                <span class="text-gray-700">Add Maintenance Requests</span>
-              </div>
-              <a href="/jobs/" class="text-blue-600 hover:underline font-medium">→</a>
-            </div>
-            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
-              <div class="flex items-center">
-                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-                <span class="text-gray-700">Add Appliance Reports</span>
-              </div>
-              <a href="/appliance-reports/" class="text-blue-600 hover:underline font-medium">→</a>
-            </div>
-            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
-              <div class="flex items-center">
-                <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
-                <span class="text-gray-700">Add Minimum Standard Reports</span>
-              </div>
-              <a href="/standard-reports/" class="text-blue-600 hover:underline font-medium">→</a>
-            </div>
-          </div>
-          <div class="mt-6 text-center">
-            <a href="/profile/" class="text-blue-600 font-semibold hover:underline">View All Tasks →</a>
-          </div>
         </div>
-      </section>
+
+        <div class="grid md:grid-cols-2 gap-4">
+
+            <!-- Personal Details -->
+            <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                {% if tasks_status.personal_details %}
+                    <span class="text-green-500 text-2xl mr-3">✓</span>
+                {% else %}
+                    <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                {% endif %}
+                <span class="text-gray-700">Add your personal details</span>
+            </div>
+
+            <!-- Agent Details -->
+            <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                {% if tasks_status.agent_details %}
+                    <span class="text-green-500 text-2xl mr-3">✓</span>
+                {% else %}
+                    <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                {% endif %}
+                <span class="text-gray-700">Add your agent details</span>
+            </div>
+
+            <!-- Condition Report -->
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center">
+                    {% if tasks_status.condition_report %}
+                        <span class="text-green-500 text-2xl mr-3">✓</span>
+                    {% else %}
+                        <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                    {% endif %}
+                    <span class="text-gray-700">Complete Condition Report</span>
+                </div>
+                <a href="/condition-reports/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+
+            <!-- Maintenance Requests -->
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center">
+                    {% if tasks_status.maintenance_requests %}
+                        <span class="text-green-500 text-2xl mr-3">✓</span>
+                    {% else %}
+                        <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                    {% endif %}
+                    <span class="text-gray-700">Add Maintenance Requests</span>
+                </div>
+                <a href="/report/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+
+            <!-- Appliance Reports -->
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center">
+                    {% if tasks_status.appliance_reports %}
+                        <span class="text-green-500 text-2xl mr-3">✓</span>
+                    {% else %}
+                        <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                    {% endif %}
+                    <span class="text-gray-700">Add Appliance Reports</span>
+                </div>
+                <a href="/report/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+
+            <!-- Minimum Standard Reports -->
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center">
+                    {% if tasks_status.minimum_standard_reports %}
+                        <span class="text-green-500 text-2xl mr-3">✓</span>
+                    {% else %}
+                        <span class="text-blue-500 text-2xl mr-3">ℹ️</span>
+                    {% endif %}
+                    <span class="text-gray-700">Add Minimum Standard Reports</span>
+                </div>
+                <a href="/report/" class="text-blue-600 hover:underline font-medium">→</a>
+            </div>
+
+        </div>
+
+        <div class="mt-6 text-center">
+            <a href="#" class="text-blue-600 font-semibold hover:underline">View All Tasks →</a>
+        </div>
+    </div>
+</section>
+
     </div>
 
     <!-- Add Property Modal -->

@@ -174,7 +174,6 @@ def delete_property(request, id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
-
 @method_decorator(login_required, name='dispatch')
 class PropertyListView(ListView):
     model = Property
@@ -201,8 +200,22 @@ class PropertyListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        renter = Renter.objects.filter(user=user).first()
+
+        # Tasks Status
+        tasks_status = {
+            "personal_details": bool(renter),
+            "agent_details": Property.objects.filter(renter=renter).exists() if renter else False,
+            "condition_report": MainConditionReport.objects.filter(renter=renter).exists() if renter else False,
+            "appliance_reports": RoomApplianceReport.objects.filter(renter=renter).exists() if renter else False,
+            "maintenance_requests": Jobs.objects.filter(renter=renter).exists() if renter else False,
+            "minimum_standard_reports": MinimumStandardReport.objects.filter(renter=renter).exists() if renter else False,
+        }
+
         context['agents'] = AgentRegister.objects.all()
         context['search_query'] = self.request.GET.get('q', '')
+        context['tasks_status'] = tasks_status  # Add dynamic tasks info
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -439,6 +452,12 @@ def add_job(request):
              # Parse availability JSON safely
             availability_data = request.POST.get('renter_availability_schedule')
             availability_json = json.loads(availability_data) if availability_data else {}
+              # 7. Parse renter issue date JSON safely
+            renter_issue_date_raw = request.POST.get("renter_issue_date")
+            try:
+                renter_issue_date_json = json.loads(renter_issue_date_raw) if renter_issue_date_raw else {}
+            except json.JSONDecodeError:
+                renter_issue_date_json = {"value": renter_issue_date_raw} if renter_issue_date_raw else {}
 
 
             # 6. Create the job
@@ -449,7 +468,8 @@ def add_job(request):
                 notes=request.POST.get('notes'),
                 category=service,
                 priority=priority,
-                renter_availability_schedule=availability_json
+                renter_availability_schedule=availability_json,
+                renter_issue_date=renter_issue_date_json,
             )
 
             #7. Handle image uploads
@@ -522,6 +542,14 @@ def edit_job(request, job_id):
             job.issue_found_at = request.POST.get("issue_found_at") or None
             job.renter_availability = request.POST.get("renter_availability") or None
             job.issue_been_fixed_before = "issue_been_fixed_before" in request.POST
+              # --- Handle Availability Schedule (JSON) ---
+            schedule_json = request.POST.get("renter_availability_schedule")
+            if schedule_json:
+                try:
+                    job.renter_availability_schedule = json.loads(schedule_json)
+                except json.JSONDecodeError:
+                    print("Invalid renter_availability_schedule JSON:", schedule_json)
+                    job.renter_availability_schedule = {"days": [], "times": []}
 
             job.save()
 

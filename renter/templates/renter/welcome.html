@@ -122,6 +122,96 @@
 
     </div>
 </div>
+{% if tasks_status %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 bg-white rounded-xl shadow-sm mt-6">
+  <div class="max-w-6xl mx-auto">
+    <h3 class="text-2xl font-bold text-center text-gray-900 mb-4">Complete Your Profile</h3>
+    <p class="text-center text-gray-600 mb-8">By completing all profile details, you have a better chance of getting more Traders to work for you.</p>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Personal Details -->
+      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          {% if tasks_status.personal_details %}
+            <span class="text-green-500 text-xl">✓</span>
+          {% else %}
+            <span class="text-blue-500 text-xl">ℹ️</span>
+          {% endif %}
+          <span class="text-gray-800 font-medium">Add your personal details</span>
+        </div>
+        <a href="/renter_account/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+      </div>
+
+      <!-- Agent Details -->
+      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          {% if tasks_status.agent_details %}
+            <span class="text-green-500 text-xl">✓</span>
+          {% else %}
+            <span class="text-blue-500 text-xl">ℹ️</span>
+          {% endif %}
+          <span class="text-gray-800 font-medium">Add your agent details</span>
+        </div>
+        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+      </div>
+
+      <!-- Condition Report -->
+      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          {% if tasks_status.condition_report %}
+            <span class="text-green-500 text-xl">✓</span>
+          {% else %}
+            <span class="text-blue-500 text-xl">ℹ️</span>
+          {% endif %}
+          <span class="text-gray-800 font-medium">Complete Condition Report</span>
+        </div>
+        <a href="/condition-reports/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+      </div>
+
+      <!-- Maintenance Requests -->
+      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          {% if tasks_status.maintenance_requests %}
+            <span class="text-green-500 text-xl">✓</span>
+          {% else %}
+            <span class="text-blue-500 text-xl">ℹ️</span>
+          {% endif %}
+          <span class="text-gray-800 font-medium">Add Maintenance Requests</span>
+        </div>
+        <a href="/jobs/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+      </div>
+
+      <!-- Appliance Reports -->
+      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          {% if tasks_status.appliance_reports %}
+            <span class="text-green-500 text-xl">✓</span>
+          {% else %}
+            <span class="text-blue-500 text-xl">ℹ️</span>
+          {% endif %}
+          <span class="text-gray-800 font-medium">Add Appliance Reports</span>
+        </div>
+        <a href="/appliance-reports/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+      </div>
+
+      <!-- Minimum Standard Reports -->
+      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          {% if tasks_status.minimum_standard_reports %}
+            <span class="text-green-500 text-xl">✓</span>
+          {% else %}
+            <span class="text-blue-500 text-xl">ℹ️</span>
+          {% endif %}
+          <span class="text-gray-800 font-medium">Add Minimum Standard Reports</span>
+        </div>
+        <a href="/standard-reports/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endif %}
 
     <div class="container mt-4">
       <h3 class="mb-3">Manage Calendar</h3>
@@ -139,82 +229,82 @@
 
 
   <!-- Features Section -->
-  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-    <div class="max-w-7xl mx-auto">
-      <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Why Choose FixMyHouse?</h3>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
-          <i class="bi bi-house-door-fill text-[#293272] text-4xl mb-4"></i>
-          <h4 class="text-xl font-semibold text-gray-800 mb-3">Streamlined Property Management</h4>
-          <p class="text-gray-600 mb-4">Easily manage your rental properties, track tenancy agreements, and ensure compliance with Australian tenancy laws.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
-          <i class="bi bi-tools text-[#EF7153] text-4xl mb-4"></i>
-          <h4 class="text-xl font-semibold text-gray-800 mb-3">Fast Maintenance Requests</h4>
-          <p class="text-gray-600 mb-4">Report issues quickly and connect with trusted traders for prompt repairs, keeping your property in top condition.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
-          <i class="bi bi-person-check-fill text-[#293272] text-4xl mb-4"></i>
-          <h4 class="text-xl font-semibold text-gray-800 mb-3">Trusted Agent Connections</h4>
-          <p class="text-gray-600 mb-4">Work with licensed property agents to handle leasing, inspections, and compliance with ease.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!--<section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">-->
+  <!--  <div class="max-w-7xl mx-auto">-->
+  <!--    <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Why Choose FixMyHouse?</h3>-->
+  <!--    <div class="grid md:grid-cols-3 gap-8">-->
+  <!--      <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">-->
+  <!--        <i class="bi bi-house-door-fill text-[#293272] text-4xl mb-4"></i>-->
+  <!--        <h4 class="text-xl font-semibold text-gray-800 mb-3">Streamlined Property Management</h4>-->
+  <!--        <p class="text-gray-600 mb-4">Easily manage your rental properties, track tenancy agreements, and ensure compliance with Australian tenancy laws.</p>-->
+  <!--      </div>-->
+  <!--      <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">-->
+  <!--        <i class="bi bi-tools text-[#EF7153] text-4xl mb-4"></i>-->
+  <!--        <h4 class="text-xl font-semibold text-gray-800 mb-3">Fast Maintenance Requests</h4>-->
+  <!--        <p class="text-gray-600 mb-4">Report issues quickly and connect with trusted traders for prompt repairs, keeping your property in top condition.</p>-->
+  <!--      </div>-->
+  <!--      <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">-->
+  <!--        <i class="bi bi-person-check-fill text-[#293272] text-4xl mb-4"></i>-->
+  <!--        <h4 class="text-xl font-semibold text-gray-800 mb-3">Trusted Agent Connections</h4>-->
+  <!--        <p class="text-gray-600 mb-4">Work with licensed property agents to handle leasing, inspections, and compliance with ease.</p>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</section>-->
 
   <!-- How It Works Section -->
-  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
-    <div class="max-w-7xl mx-auto">
-      <h3 class="text-4xl font-extrabold text-center text-gray-900 mb-16 tracking-tight">How FixMyHouse Works</h3>
-      <div class="space-y-16">
+  <!--<section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">-->
+  <!--  <div class="max-w-7xl mx-auto">-->
+  <!--    <h3 class="text-4xl font-extrabold text-center text-gray-900 mb-16 tracking-tight">How FixMyHouse Works</h3>-->
+  <!--    <div class="space-y-16">-->
         <!-- Renter -->
-        <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">
-          <div class="md:w-1/2">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Renter" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
-          </div>
-          <div class="md:w-1/2">
-            <h4 class="text-2xl font-semibold text-gray-800 mb-4">Renters: Your Home, Your Control</h4>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              As a renter, FixMyHouse empowers you to report maintenance issues quickly, track repairs, and communicate with your property agent.
-            </p>
-            <a href="/properties/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">
-              Start Managing Your Rental
-            </a>
-          </div>
-        </div>
+  <!--      <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Renter" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">-->
+  <!--        </div>-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Renters: Your Home, Your Control</h4>-->
+  <!--          <p class="text-gray-600 mb-6 leading-relaxed">-->
+  <!--            As a renter, FixMyHouse empowers you to report maintenance issues quickly, track repairs, and communicate with your property agent.-->
+  <!--          </p>-->
+  <!--          <a href="/properties/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">-->
+  <!--            Start Managing Your Rental-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
         <!-- Trader -->
-        <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">
-          <div class="md:w-1/2">
-            <img src="https://images.unsplash.com/photo-1581091215367-59ab6b52d2a9?auto=format&fit=crop&w=800&q=80" alt="Trader" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
-          </div>
-          <div class="md:w-1/2">
-            <h4 class="text-2xl font-semibold text-gray-800 mb-4">Traders: Reliable Repairs, Fast</h4>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              Traders on FixMyHouse are licensed professionals who handle maintenance requests efficiently.
-            </p>
-            <a href="/jobs/" class="inline-block btn-accent py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">
-              View Maintenance Jobs
-            </a>
-          </div>
-        </div>
+  <!--      <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <img src="https://images.unsplash.com/photo-1581091215367-59ab6b52d2a9?auto=format&fit=crop&w=800&q=80" alt="Trader" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">-->
+  <!--        </div>-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Traders: Reliable Repairs, Fast</h4>-->
+  <!--          <p class="text-gray-600 mb-6 leading-relaxed">-->
+  <!--            Traders on FixMyHouse are licensed professionals who handle maintenance requests efficiently.-->
+  <!--          </p>-->
+  <!--          <a href="/jobs/" class="inline-block btn-accent py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">-->
+  <!--            View Maintenance Jobs-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
         <!-- Agent -->
-        <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">
-          <div class="md:w-1/2">
-            <img src="https://images.unsplash.com/photo-1596079890680-7b1d9ffb2a6d?auto=format&fit=crop&w=800&q=80" alt="Agent" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
-          </div>
-          <div class="md:w-1/2">
-            <h4 class="text-2xl font-semibold text-gray-800 mb-4">Agents: Seamless Property Management</h4>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              Property agents act as the bridge between renters and property owners, handling lease agreements, routine inspections, and maintenance coordination.
-            </p>
-            <a href="/agents/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">
-              Manage Your Properties
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!--      <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <img src="https://images.unsplash.com/photo-1596079890680-7b1d9ffb2a6d?auto=format&fit=crop&w=800&q=80" alt="Agent" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">-->
+  <!--        </div>-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Agents: Seamless Property Management</h4>-->
+  <!--          <p class="text-gray-600 mb-6 leading-relaxed">-->
+  <!--            Property agents act as the bridge between renters and property owners, handling lease agreements, routine inspections, and maintenance coordination.-->
+  <!--          </p>-->
+  <!--          <a href="/agents/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">-->
+  <!--            Manage Your Properties-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</section>-->
 
   <!-- Testimonials -->
   <section class="py-16 px-4 sm:px-6 lg:px-8 bg-blue-50">
