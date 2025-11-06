@@ -120,8 +120,7 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         ).order_by('-quoted_at')
         
         # Filter team members by trader if director
-        if trader.isDirector:
-            team_member_val = TeamMember.objects.filter(trader_id=trader)
+        team_member_val = TeamMember.objects.filter(trader_id=trader)
         context['team_members'] = team_member_val or TeamMember.objects.none()
 
         return context

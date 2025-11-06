@@ -36,7 +36,7 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         bidding = self.get_object()
         context['team_members'] = bidding.team_member.all()
-        context['items_needed'] = bidding.items_needed.all()
+        # context['items_needed'] = bidding.items_needed.all()
 
         return context
 
