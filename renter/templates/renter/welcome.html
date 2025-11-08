@@ -75,23 +75,25 @@
             <div class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden">
 
                 <!-- Header -->
-                <div class="flex items-center justify-between p-4 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
-                    <h2 class="text-2xl font-bold flex items-center gap-2" style="color: #006ffd;">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #006ffd;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Report Required Maintenance/Issues
-                    </h2>
-                    <button onclick="location.reload()"
-                            class="text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-full font-medium transition flex items-center gap-1.5 shadow-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0L9 13m10.418-2H15m0 0l-4 4"></path>
-                        </svg>
-                        Refresh
-                    </button>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
+                  <h2 class="text-2xl font-bold flex items-center gap-2 mb-3 sm:mb-0" style="color: #006ffd;">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #006ffd;">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Report Required Maintenance/Issues
+                  </h2>
+
+                  <button onclick="location.reload()"
+                          class="text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-full font-medium transition flex items-center gap-1.5 shadow-sm w-fit">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0L9 13m10.418-2H15m0 0l-4 4"></path>
+                    </svg>
+                    Refresh
+                  </button>
                 </div>
+
 
                 <!-- Loading State -->
                 <div id="maintenance-loading" class="flex flex-col items-center justify-center py-16 text-gray-600">
@@ -128,81 +130,102 @@
     <h3 class="text-2xl font-bold text-center text-gray-900 mb-4">Complete Your Profile</h3>
     <p class="text-center text-gray-600 mb-8">By completing all profile details, you have a better chance of getting more Traders to work for you.</p>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <!-- ✅ Progress Bar with Percentage -->
+    <div class="mb-8 flex items-center gap-3">
+      <div class="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div id="progress-bar" class="bg-[#293272] h-3 rounded-full transition-all duration-700 ease-in-out" style="width: 0%;"></div>
+      </div>
+      <span id="progress-percent" class="font-semibold text-[#293272] text-sm w-10 text-right">0%</span>
+    </div>
+
+    <!-- Task Grid -->
+    <div id="task-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
       <!-- Personal Details -->
-      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
         <div class="flex items-center gap-3">
-          {% if tasks_status.personal_details %}
-            <span class="text-green-500 text-xl">✓</span>
-          {% else %}
-            <span class="text-blue-500 text-xl">ℹ️</span>
-          {% endif %}
+          <span class="status text-xl">
+            {% if tasks_status.personal_details %}
+              ✓
+            {% else %}
+              ℹ️
+            {% endif %}
+          </span>
           <span class="text-gray-800 font-medium">Add your personal details</span>
         </div>
         <a href="/renter_account/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
       </div>
 
       <!-- Agent Details -->
-      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
         <div class="flex items-center gap-3">
-          {% if tasks_status.agent_details %}
-            <span class="text-green-500 text-xl">✓</span>
-          {% else %}
-            <span class="text-blue-500 text-xl">ℹ️</span>
-          {% endif %}
+          <span class="status text-xl">
+            {% if tasks_status.agent_details %}
+              ✓
+            {% else %}
+              ℹ️
+            {% endif %}
+          </span>
           <span class="text-gray-800 font-medium">Add your agent details</span>
         </div>
         <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
       </div>
 
       <!-- Condition Report -->
-      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
         <div class="flex items-center gap-3">
-          {% if tasks_status.condition_report %}
-            <span class="text-green-500 text-xl">✓</span>
-          {% else %}
-            <span class="text-blue-500 text-xl">ℹ️</span>
-          {% endif %}
+          <span class="status text-xl">
+            {% if tasks_status.condition_report %}
+              ✓
+            {% else %}
+              ℹ️
+            {% endif %}
+          </span>
           <span class="text-gray-800 font-medium">Complete Condition Report</span>
         </div>
         <a href="/condition-reports/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
       </div>
 
       <!-- Maintenance Requests -->
-      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
         <div class="flex items-center gap-3">
-          {% if tasks_status.maintenance_requests %}
-            <span class="text-green-500 text-xl">✓</span>
-          {% else %}
-            <span class="text-blue-500 text-xl">ℹ️</span>
-          {% endif %}
+          <span class="status text-xl">
+            {% if tasks_status.maintenance_requests %}
+              ✓
+            {% else %}
+              ℹ️
+            {% endif %}
+          </span>
           <span class="text-gray-800 font-medium">Add Maintenance Requests</span>
         </div>
         <a href="/jobs/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
       </div>
 
       <!-- Appliance Reports -->
-      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
         <div class="flex items-center gap-3">
-          {% if tasks_status.appliance_reports %}
-            <span class="text-green-500 text-xl">✓</span>
-          {% else %}
-            <span class="text-blue-500 text-xl">ℹ️</span>
-          {% endif %}
+          <span class="status text-xl">
+            {% if tasks_status.appliance_reports %}
+              ✓
+            {% else %}
+              ℹ️
+            {% endif %}
+          </span>
           <span class="text-gray-800 font-medium">Add Appliance Reports</span>
         </div>
         <a href="/appliance-reports/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
       </div>
 
       <!-- Minimum Standard Reports -->
-      <div class="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
         <div class="flex items-center gap-3">
-          {% if tasks_status.minimum_standard_reports %}
-            <span class="text-green-500 text-xl">✓</span>
-          {% else %}
-            <span class="text-blue-500 text-xl">ℹ️</span>
-          {% endif %}
+          <span class="status text-xl">
+            {% if tasks_status.minimum_standard_reports %}
+              ✓
+            {% else %}
+              ℹ️
+            {% endif %}
+          </span>
           <span class="text-gray-800 font-medium">Add Minimum Standard Reports</span>
         </div>
         <a href="/standard-reports/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
@@ -211,6 +234,25 @@
     </div>
   </div>
 </section>
+
+<!-- ✅ JS Progress Bar Logic -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tasks = document.querySelectorAll("#task-grid .task-item .status");
+  const total = tasks.length;
+  const completed = Array.from(tasks).filter(el => el.textContent.trim() === "✓").length;
+  const progress = Math.round((completed / total) * 100);
+
+  const progressBar = document.getElementById("progress-bar");
+  const percentText = document.getElementById("progress-percent");
+
+  // Animate the bar and percentage
+  setTimeout(() => {
+    progressBar.style.width = progress + "%";
+    percentText.textContent = progress + "%";
+  }, 200);
+});
+</script>
 {% endif %}
 
     <div class="container mt-4">

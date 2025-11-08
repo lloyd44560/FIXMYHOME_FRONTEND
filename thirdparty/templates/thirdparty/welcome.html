@@ -1,524 +1,485 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome Home - FixMyHome</title>
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-{% load static %}
-<body class="bg-gray-50">
-
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Kolektif:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Lexend', sans-serif;
     }
-
-    /* Brand styling */
     .brand-font {
       font-family: 'Kolektif', sans-serif;
       color: #293272;
     }
-
-    /* Link hover states */
-    #tailwind-navbar a,
-    #tailwind-navbar button {
-      color: #333;
-    }
-
-    #tailwind-navbar a:hover,
-    #tailwind-navbar button:hover {
-      color: #293272;
-      background-color: #f5f5f5;
-    }
-
     /* Smooth transitions */
-    #tw-menu {
+    #mobile-menu, #mobile-tabs {
       transition: all 0.3s ease-in-out;
     }
-
-    /* Mobile tweaks */
-    @media (max-width: 767px) {
-      #tw-menu.show {
-        display: block !important;
-      }
+    /* Horizontal scroll indicator */
+    .scroll-x::-webkit-scrollbar {
+      height: 6px;
+    }
+    .scroll-x::-webkit-scrollbar-thumb {
+      background-color: #293272;
+      border-radius: 3px;
     }
   </style>
+</head>
+{% load static %}
+<body class="bg-gray-50">
+
   <!-- Navbar -->
-  <nav class="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
+  <nav class="flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-md sticky top-0 z-50">
     <!-- Logo -->
-    <h1 class="text-3xl font-bold text-blue-600 flex items-center gap-2">
-        <div class="flex items-center space-x-3 flex-shrink-0">
-            <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
-            <span class="text-xl md:text-2xl font-bold brand-font whitespace-nowrap">FixMyHouse</span>
-          </div>
-    </h1>
+    <div class="flex items-center space-x-2 flex-shrink-0">
+      <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
+      <span class="text-lg sm:text-xl md:text-2xl font-bold brand-font whitespace-nowrap">FixMyHouse</span>
+    </div>
 
-
-
-    <!-- Hamburger Button -->
-    <button id="menu-btn" class="block md:hidden focus:outline-none">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- Hamburger Button (Mobile) -->
+    <button id="menu-btn" class="block md:hidden focus:outline-none p-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
 
     <!-- Nav Links -->
-    <div id="menu" class="hidden md:flex flex-col md:flex-row md:items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 shadow md:shadow-none z-50 space-y-4 md:space-y-0 md:space-x-8">
-      <a href="#" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
-        </svg>
-        <span>Home</span>
+    <div id="mobile-menu" class="hidden md:flex flex-col md:flex-row md:items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 shadow-lg md:shadow-none z-40 space-y-3 md:space-y-0 md:space-x-6 text-sm sm:text-base">
+      <a href="#" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2 py-2">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" /></svg>
+        Home
       </a>
-
-      <!-- <a href="/chat/" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 4h.01M4 6h16v12H4z" />
-        </svg>
-        <span>Messages</span>
-      </a> -->
-
-      <a href="/third_party/account/" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span>Account</span>
+      <a href="/third_party/account/" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2 py-2">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        Account
       </a>
-
-
       <form id="logout-form" method="POST" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition">
-              <!-- Logout Icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-              </svg>
-              Logout
-          </button>
+        {% csrf_token %}
+        <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition py-2">
+          <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" /></svg>
+          Logout
+        </button>
       </form>
     </div>
   </nav>
 
-    <!-- Hero Section with Background -->
-
-
-<section class="max-w-7xl mx-auto px-6 py-10">
-  <h2 class="text-2xl font-semibold text-gray-800 mb-6">Quick Stats Overview</h2>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-    <!-- Users -->
-    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm text-gray-500">Users</h3>
-          <p class="text-2xl font-bold text-blue-600 mt-1">{{ users_count }}</p>
+  <!-- Quick Stats -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-5">Quick Stats Overview</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <!-- Users -->
+      <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition text-center sm:text-left">
+        <div class="flex items-center justify-between sm:justify-start gap-3">
+          <div>
+            <h3 class="text-xs text-gray-500">Users</h3>
+            <p class="text-lg sm:text-2xl font-bold text-blue-600">{{ users_count }}</p>
+          </div>
+          <div class="bg-blue-100 p-2 rounded-full">
+            <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 diverg 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" /></svg>
+          </div>
         </div>
-        <div class="bg-blue-100 p-2 rounded-full">
-          <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
-          </svg>
+      </div>
+      <!-- Repeat similar structure for others with responsive text -->
+      <!-- Agents -->
+      <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition text-center sm:text-left">
+        <div class="flex items-center justify-between sm:justify-start gap-3">
+          <div>
+            <h3 class="text-xs text-gray-500">Agents</h3>
+            <p class="text-lg sm:text-2xl font-bold text-green-600">{{ agents_count }}</p>
+          </div>
+          <div class="bg-green-100 p-2 rounded-full">
+            <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </div>
+        </div>
+      </div>
+      <!-- Traders -->
+      <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition text-center sm:text-left">
+        <div class="flex items-center justify-between sm:justify-start gap-3">
+          <div>
+            <h3 class="text-xs text-gray-500">Traders</h3>
+            <p class="text-lg sm:text-2xl font-bold text-yellow-600">{{ traders_count }}</p>
+          </div>
+          <div class="bg-yellow-100 p-2 rounded-full">
+            <svg class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5-6h3m-6 3H5" /></svg>
+          </div>
+        </div>
+      </div>
+      <!-- Properties -->
+      <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition text-center sm:text-left">
+        <div class="flex items-center justify-between sm:justify-start gap-3">
+          <div>
+            <h3 class="text-xs text-gray-500">Properties</h3>
+            <p class="text-lg sm:text-2xl font-bold text-purple-600">{{ properties_count }}</p>
+          </div>
+          <div class="bg-purple-100 p-2 rounded-full">
+            <svg class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.553-1.553A2 2 0 015.764 8h12.472a2 2 0 011.21.447L21 10m-9 10V14m-4 0v6m8-6v6" /></svg>
+          </div>
+        </div>
+      </div>
+      <!-- Reports -->
+      <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-4 hover:shadow-md transition text-center sm:text-left">
+        <div class="flex items-center justify-between sm:justify-start gap-3">
+          <div>
+            <h3 class="text-xs text-gray-500">Reports</h3>
+            <p class="text-lg sm:text-2xl font-bold text-red-600">{{ reports_count }}</p>
+          </div>
+          <div class="bg-red-100 p-2 rounded-full">
+            <svg class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h6v6m2 4H7a2 2 0 01-2-2V7a2 2 0 012-2h3l2-2h2l2 2h3a2 2 0 012 2v12a2 2 0 01-2 2z" /></svg>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Agents -->
-    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm text-gray-500">Agents</h3>
-          <p class="text-2xl font-bold text-green-600 mt-1">{{ agents_count }}</p>
-        </div>
-        <div class="bg-green-100 p-2 rounded-full">
-          <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M5.121 17.804A11.963 11.963 0 0112 15c2.45 0 4.71.748 6.879 2.026M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Traders -->
-    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm text-gray-500">Traders</h3>
-          <p class="text-2xl font-bold text-yellow-600 mt-1">{{ traders_count }}</p>
-        </div>
-        <div class="bg-yellow-100 p-2 rounded-full">
-          <svg class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8 9l3 3-3 3m5-6h3m-6 3H5" />
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Properties -->
-    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm text-gray-500">Properties</h3>
-          <p class="text-2xl font-bold text-purple-600 mt-1">{{ properties_count }}</p>
-        </div>
-        <div class="bg-purple-100 p-2 rounded-full">
-          <svg class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 10l1.553-1.553A2 2 0 015.764 8h12.472a2 2 0 011.21.447L21 10m-9 10V14m-4 0v6m8-6v6" />
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Reports -->
-    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-6 hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm text-gray-500">Condition Reports</h3>
-          <p class="text-2xl font-bold text-red-600 mt-1">{{ reports_count }}</p>
-        </div>
-        <div class="bg-red-100 p-2 rounded-full">
-          <svg class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 17v-6h6v6m2 4H7a2 2 0 01-2-2V7a2 2 0 012-2h3l2-2h2l2 2h3a2 2 0 012 2v12a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
-
-  <!-- Progress Section -->
-
-
-
-  <section class="bg-white mx-8 my-16 p-6 rounded-lg shadow">
-
-    <p class="text-4xl md:text-5xl font-medium text-gray-800 tracking-wide my-8 px-4">
+  <!-- Progress Section with Tabs -->
+  <section class="bg-white mx-4 sm:mx-8 my-12 p-5 sm:p-6 rounded-lg shadow">
+    <p class="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-800 mb-6 px-2">
       Welcome back, {{ user.first_name }}.
     </p>
 
+    <!-- Mobile Tab Toggle Button -->
+    <div class="md:hidden flex justify-between items-center border-b pb-3 mb-4">
+      <span class="font-semibold text-gray-700">View:</span>
+      <button id="tab-toggle" class="flex items-center gap-2 text-blue-600 font-medium">
+        <span id="current-tab">Properties</span>
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+      </button>
+    </div>
 
-<!-- Notebook Layout Container -->
-<div class="max-w-7xl mx-auto px-4">
-  <!-- Tab Buttons (Notebook Pages) -->
-  <div class="flex space-x-4 border-b mb-6">
-    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 active-tab border-b-2 border-blue-600" data-tab="properties">Properties</button>
-    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="renters">Renters</button>
-    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="agents">Agents</button>
-    <button class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="traders">Traders</button>
-  </div>
+    <!-- Mobile Tab Dropdown Menu -->
+    <div id="mobile-tabs" class="hidden md:hidden flex-col space-y-1 mb-4 border-b pb-3">
+      <button class="tab-btn-mobile text-left py-2 px-3 rounded hover:bg-gray-100" data-tab="properties">Properties</button>
+      <button class="tab-btn-mobile text-left py-2 px-3 rounded hover:bg-gray-100" data-tab="renters">Renters</button>
+      <button class="tab-btn-mobile text-left py-2 px-3 rounded hover:bg-gray-100" data-tab="agents">Agents</button>
+      <button class="tab-btn-mobile text-left py-2 px-3 rounded hover:bg-gray-100" data-tab="traders">Traders</button>
+    </div>
 
-  <!-- Tab Pages -->
-  <div id="tab-properties" class="tab-content">
+    <!-- Desktop Tabs -->
+    <div class="hidden md:flex space-x-1 sm:space-x-4 border-b mb-6 overflow-x-auto whitespace-nowrap">
+      <button class="tab-btn px-3 sm:px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 active-tab border-b-2 border-blue-600" data-tab="properties">Properties</button>
+      <button class="tab-btn px-3 sm:px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="renters">Renters</button>
+      <button class="tab-btn px-3 sm:px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="agents">Agents</button>
+      <button class="tab-btn px-3 sm:px-4 py-2 text-sm font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent" data-tab="traders">Traders</button>
+    </div>
 
-  <!-- Properties Table Section -->
-        <section class="mx-8 my-16">
-          <h3 class="text-3xl font-bold mb-6 text-gray-800">Properties</h3>
-
-          {% if properties %}
-              <div class="overflow-x-auto">
-                  <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-                      <thead class="bg-blue-600 text-white">
-                          <tr>
-                              <th class="py-3 px-6 text-left">Image</th> <!-- Add this -->
-                              <th class="py-3 px-6 text-left">Property Name</th>
-                              <th class="py-3 px-6 text-left">Floor Count</th>
-                              <th class="py-3 px-6 text-left">Address Line 1</th>
-                              <th class="py-3 px-6 text-left">Address Line 2</th>
-                              <th class="py-3 px-6 text-left">State</th>
-                              <th class="py-3 px-6 text-left">Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {% for property in properties %}
-                              <tr class="border-b hover:bg-gray-100">
-                                  <!-- Display image -->
-                                  <td class="py-3 px-6">
-                                      <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
-                                  </td>
-                                  <td class="py-3 px-6">{{ property.property_name }}</td>
-                                  <td class="py-3 px-6">{{ property.floor_count }}</td>
-                                  <td class="py-3 px-6">{{ property.address_line1 }}</td>
-                                  <td class="py-3 px-6">{{ property.address_line2 }}</td>
-                                  <td class="py-3 px-6">{{ property.state }}</td>
-                                  <td class="py-3 px-6 flex space-x-4">
-                                    <!-- View Icon -->
-                                    <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    </a>
-
-                                    <!-- Edit Icon -->
-                                    <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
-                                        </svg>
-                                    </a> -->
-
-                                    <!-- Delete Icon -->
-                                    <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
-                                        </svg>
-                                    </a> -->
-                                </td>
-
-                              </tr>
-                          {% endfor %}
-                      </tbody>
-                  </table>
-              </div>
-          {% else %}
-              <p class="text-gray-600">You don't have any properties listed yet.</p>
-          {% endif %}
-      </section>
-
-  </div>
-
-  <div id="tab-renters" class="tab-content hidden">
-       <section class="mx-8 my-16">
-    <h3 class="text-3xl font-bold mb-6 text-gray-800">Renters</h3>
-
-    {% if renters %}
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-                <thead class="bg-blue-600 text-white">
-                    <tr>
-                        <!-- <th class="py-3 px-6 text-left">Image</th>  -->
-                        <th class="py-3 px-6 text-left">Renter Name</th>
-                        <th class="py-3 px-6 text-left">Renter Email</th>
-                        <th class="py-3 px-6 text-left">Phone</th>
-                        <th class="py-3 px-6 text-left">Company Name</th>
-                        <th class="py-3 px-6 text-left">Address Line</th>
-                        <th class="py-3 px-6 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for rent in renters %}
-                        <tr class="border-b hover:bg-gray-100">
-                            <!-- Display image -->
-                            <!-- <td class="py-3 px-6">
-                                <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
-                            </td> -->
-                            <td class="py-3 px-6">{{ rent.name }}</td>
-                            <td class="py-3 px-6">{{ rent.email }}</td>
-                            <td class="py-3 px-6">{{ rent.phone }}</td>
-                            <td class="py-3 px-6">{{ rent.company_name }}</td>
-                            <td class="py-3 px-6">{{ rent.address_line }}</td>
-                            <td class="py-3 px-6 flex space-x-4">
-                              <!-- View Icon -->
-                              <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                  </svg>
-                              </a>
-
-                              <!-- Edit Icon -->
-                              <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
-                                  </svg>
-                              </a> -->
-
-                              <!-- Delete Icon -->
-                              <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
-                                  </svg>
-                              </a> -->
-                          </td>
-
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p class="text-gray-600">You don't have any renters listed yet.</p>
-    {% endif %}
-  </section>
+    <!-- Tab Contents -->
+    <!-- Properties -->
+    <div id="tab-properties" class="tab-content">
+      {% if properties %}
+        <div class="overflow-x-auto scroll-x rounded-lg border">
+          <table class="min-w-full bg-white text-xs sm:text-sm">
+            <thead class="bg-blue-600 text-white text-left">
+              <tr>
+                <th class="py-2 px-3 sm:py-3 sm:px-6">Image</th>
+                <th class="py-2 px-3 sm:py-3 sm:px-6">Name</th>
+                <th class="py-2 px-3 sm:py-3 sm:px-6">Floors</th>
+                <th class="py-2 px-3 sm:py-3 sm:px-6">Address </th>
+             
+                <th class="py-2 px-3 sm:py-3 sm:px-6">State</th>
+                <th class="py-2 px-3 sm:py-3 sm:px-6">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for property in properties %}
+                <tr class="border-b hover:bg-gray-50">
+                 <td class="py-2 px-3 sm:py-3 sm:px-6">
+                  {% if property.property_photo %}
+                    <img src="{{ property.property_photo.url }}" alt="Property Image"
+                         class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded cursor-pointer"
+                         onclick="openImageModal('{{ property.id }}')">
+                  {% else %}
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                      No Image
+                    </div>
+                  {% endif %}
+                </td>
 
 
-  </div>
-
-  <div id="tab-agents" class="tab-content hidden">
-
-    <section class="mx-8 my-16">
-      <h3 class="text-3xl font-bold mb-6 text-gray-800">Agents</h3>
-
-      {% if agents %}
-          <div class="overflow-x-auto">
-              <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-                  <thead class="bg-blue-600 text-white">
-                      <tr>
-                          <!-- <th class="py-3 px-6 text-left">Image</th>  -->
-                          <th class="py-3 px-6 text-left">Agent Name</th>
-                          <th class="py-3 px-6 text-left">Agent Email</th>
-                          <th class="py-3 px-6 text-left">Agent Phone Number</th>
-                          <th class="py-3 px-6 text-left">Agent Company Name</th>
-                          <th class="py-3 px-6 text-left">Agent Company Email</th>
-                          <th class="py-3 px-6 text-left">Actions</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for agent in agents %}
-                          <tr class="border-b hover:bg-gray-100">
-                              <!-- Display image -->
-                              <!-- <td class="py-3 px-6">
-                                  <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
-                              </td> -->
-                              <td class="py-3 px-6">{{ agent.name }}</td>
-                              <td class="py-3 px-6">{{ agent.email }}</td>
-                              <td class="py-3 px-6">{{ agent.phone }}</td>
-                              <td class="py-3 px-6">{{ agent.company_name }}</td>
-                              <td class="py-3 px-6">{{  agent.company_email }}</td>
-                              <td class="py-3 px-6 flex space-x-4">
-                                <!-- View Icon -->
-                                <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </a>
-
-                                <!-- Edit Icon -->
-                                <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
-                                    </svg>
-                                </a> -->
-
-                                <!-- Delete Icon -->
-                                <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
-                                    </svg>
-                                </a> -->
-                            </td>
-
-                          </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      {% else %}
-          <p class="text-gray-600">You don't have any properties listed yet.</p>
-      {% endif %}
-    </section>
-  </div>
-
-  <div id="tab-traders" class="tab-content hidden">
-
-
-<section class="mx-8 my-16">
-  <h3 class="text-3xl font-bold mb-6 text-gray-800">Traders</h3>
-
-  {% if traders %}
-      <div class="overflow-x-auto">
-          <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-              <thead class="bg-blue-600 text-white">
-                  <tr>
-                      <!-- <th class="py-3 px-6 text-left">Image</th> -->
-                      <th class="py-3 px-6 text-left">Trader Name</th>
-                      <th class="py-3 px-6 text-left">Trader Email</th>
-                      <th class="py-3 px-6 text-left">Address Line</th>
-                      <th class="py-3 px-6 text-left">Trader Company Name</th>
-                      <th class="py-3 px-6 text-left">Trader Company Address</th>
-
-                      <th class="py-3 px-6 text-left">Actions</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {% for trader in traders %}
-                      <tr class="border-b hover:bg-gray-100">
-                          <!-- Display image -->
-                          <!-- <td class="py-3 px-6">
-                              <img src="{{ property.property_photo.url }}" alt="Property Image" class="w-24 h-24 object-cover rounded-lg" />
-                          </td> -->
-                          <td class="py-3 px-6">{{ trader.name }}</td>
-                          <td class="py-3 px-6">{{ trader.email }}</td>
-                          <td class="py-3 px-6">{{ trader.address_line_1 }}</td>
-                          <td class="py-3 px-6">{{ trader.company_name }}</td>
-                          <td class="py-3 px-6">{{ trader.company_address }}</td>
-                          <td class="py-3 px-6 flex space-x-4">
-                            <!-- View Icon -->
-                            <a href="#" class="text-blue-600 hover:text-blue-800" title="View">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </a>
-
-                            <!-- Edit Icon -->
-                            <!-- <a href="#" class="text-green-600 hover:text-green-800" title="Edit">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.414 2.586a2 2 0 112.828 2.828L11.414 15H9v-2.414L18.414 2.586z" />
-                                </svg>
-                            </a> -->
-
-                            <!-- Delete Icon -->
-                            <!-- <a href="#" class="text-red-600 hover:text-red-800" title="Delete">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 012 2v0a2 2 0 01-2 2H7a2 2 0 01-2-2v0a2 2 0 012-2h10z" />
-                                </svg>
-                            </a> -->
-                        </td>
-
-                      </tr>
-                  {% endfor %}
-              </tbody>
+                    <td class="py-2 px-3 sm:py-3 sm:px-6 font-medium">{{ property.name }}</td>
+                  <td class="py-2 px-3 sm:py-3 sm:px-6">{{ property.floor_count }}</td>
+                  <td class="py-2 px-3 sm:py-3 sm:px-6">{{ property.address }}</td>
+                 
+                  <td class="py-2 px-3 sm:py-3 sm:px-6">{{ property.state }}</td>
+                  <td class="py-2 px-3 sm:py-3 sm:px-6">
+                    <a href="#" class="text-blue-600 hover:text-blue-800"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
           </table>
+        </div>
+      {% else %}
+        <p class="text-gray-600 py-4">No properties listed yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Renters (Card on Mobile, Table on Desktop) -->
+    <div id="tab-renters" class="tab-content hidden">
+      <div class="block md:hidden space-y-4">
+        {% for rent in renters %}
+          <div class="bg-gray-50 rounded-lg p-4 border">
+            <h4 class="font-semibold text-gray-800">{{ rent.name }}</h4>
+            <p class="text-sm text-gray-600">{{ rent.email }}</p>
+            <p class="text-sm">{{ rent.phone }}</p>
+            <p class="text-sm"><strong>Company:</strong> {{ rent.company_name }}</p>
+            <p class="text-sm"><strong>Address:</strong> {{ rent.address_line }}</p>
+            <div class="mt-3">
+              <a href="#" class="text-blue-600 text-sm font-medium">View →</a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-gray-600">No renters yet.</p>
+        {% endfor %}
       </div>
-  {% else %}
-      <p class="text-gray-600">You don't have any properties listed yet.</p>
-  {% endif %}
-</section>
+
+      <!-- Desktop Table -->
+      <div class="hidden md:block overflow-x-auto scroll-x rounded-lg border">
+        <table class="min-w-full bg-white text-sm">
+          <thead class="bg-blue-600 text-white">
+            <tr>
+              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">Email</th>
+              <th class="py-3 px-6 text-left">Phone</th>
+              <th class="py-3 px-6 text-left">Company</th>
+              <th class="py-3 px-6 text-left">Address</th>
+              <th class="py-3 px-6 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rent in renters %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-6">{{ rent.name }}</td>
+                <td class="py-3 px-6">{{ rent.email }}</td>
+                <td class="py-3 px-6">{{ rent.phone }}</td>
+                <td class="py-3 px-6">{{ rent.company_name }}</td>
+                <td class="py-3 px-6">{{ rent.address_line }}</td>
+                <td class="py-3 px-6">
+                  <a href="#" class="text-blue-600 hover:text-blue-800"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center py-4 text-gray-600">No renters listed.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Agents (Card on Mobile) -->
+    <div id="tab-agents" class="tab-content hidden">
+      <div class="block md:hidden space-y-4">
+        {% for agent in agents %}
+          <div class="bg-gray-50 rounded-lg p-4 border">
+            <h4 class="font-semibold text-gray-800">{{ agent.name }}</h4>
+            <p class="text-sm text-gray-600">{{ agent.email }}</p>
+            <p class="text-sm">{{ agent.phone }}</p>
+            <p class="text-sm"><strong>Company:</strong> {{ agent.company_name }}</p>
+            <p class="text-sm"><strong>Email:</strong> {{ agent.company_email }}</p>
+            <div class="mt-3">
+              <a href="#" class="text-blue-600 text-sm font-medium">View →</a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-gray-600">No agents yet.</p>
+        {% endfor %}
+      </div>
+
+      <!-- Desktop Table -->
+      <div class="hidden md:block overflow-x-auto scroll-x rounded-lg border">
+        <table class="min-w-full bg-white text-sm">
+          <thead class="bg-blue-600 text-white">
+            <tr>
+              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">Email</th>
+              <th class="py-3 px-6 text-left">Phone</th>
+              <th class="py-3 px-6 text-left">Company</th>
+              <th class="py-3 px-6 text-left">Company Email</th>
+              <th class="py-3 px-6 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for agent in agents %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-6">{{ agent.name }}</td>
+                <td class="py-3 px-6">{{ agent.email }}</td>
+                <td class="py-3 px-6">{{ agent.phone }}</td>
+                <td class="py-3 px-6">{{ agent.company_name }}</td>
+                <td class="py-3 px-6">{{ agent.company_email }}</td>
+                <td class="py-3 px-6">
+                  <a href="#" class="text-blue-600 hover:text-blue-800"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center py-4 text-gray-600">No agents listed.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Traders (Card on Mobile) -->
+    <div id="tab-traders" class="tab-content hidden">
+      <div class="block md:hidden space-y-4">
+        {% for trader in traders %}
+          <div class="bg-gray-50 rounded-lg p-4 border">
+            <h4 class="font-semibold text-gray-800">{{ trader.name }}</h4>
+            <p class="text-sm text-gray-600">{{ trader.email }}</p>
+            <p class="text-sm"><strong>Address:</strong> {{ trader.address_line_1 }}</p>
+            <p class="text-sm"><strong>Company:</strong> {{ trader.company_name }}</p>
+            <p class="text-sm"><strong>Co. Address:</strong> {{ trader.company_address }}</p>
+            <div class="mt-3">
+              <a href="#" class="text-blue-600 text-sm font-medium">View →</a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-gray-600">No traders yet.</p>
+        {% endfor %}
+      </div>
+
+      <!-- Desktop Table -->
+      <div class="hidden md:block overflow-x-auto scroll-x rounded-lg border">
+        <table class="min-w-full bg-white text-sm">
+          <thead class="bg-blue-600 text-white">
+            <tr>
+              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">Email</th>
+              <th class="py-3 px-6 text-left">Address</th>
+              <th class="py-3 px-6 text-left">Company</th>
+              <th class="py-3 px-6 text-left">Co. Address</th>
+              <th class="py-3 px-6 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for trader in traders %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-6">{{ trader.name }}</td>
+                <td class="py-3 px-6">{{ trader.email }}</td>
+                <td class="py-3 px-6">{{ trader.address_line_1 }}</td>
+                <td class="py-3 px-6">{{ trader.company_name }}</td>
+                <td class="py-3 px-6">{{ trader.company_address }}</td>
+                <td class="py-3 px-6">
+                  <a href="#" class="text-blue-600 hover:text-blue-800"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center py-4 text-gray-600">No traders listed.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Image Preview Modal -->
+<div id="image-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+  <div class="relative w-full max-w-lg mx-auto">
+    <button id="close-modal" class="absolute top-2 right-2 text-white text-2xl font-bold">&times;</button>
+    <img id="modal-img" src="" alt="Preview" class="w-full h-auto rounded-lg">
+    <div class="flex justify-between mt-2">
+      <button id="prev-btn" class="bg-white px-3 py-1 rounded shadow hover:bg-gray-100">Prev</button>
+      <button id="next-btn" class="bg-white px-3 py-1 rounded shadow hover:bg-gray-100">Next</button>
+    </div>
   </div>
 </div>
 
+
   </section>
 
-    <div class="mt-6 text-right">
-      <a href="#" class="text-blue-600 font-semibold hover:underline">View all tasks</a>
-    </div>
-  </section>
-
-  <script>
-    const menuBtn = document.getElementById('menu-btn');
-    const menu = document.getElementById('menu');
-    menuBtn.addEventListener('click', () => {
-      menu.classList.toggle('hidden');
-    });
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('border-blue-600', 'text-blue-600', 'active-tab');
-        b.classList.add('border-transparent');
-      });
-      btn.classList.add('border-blue-600', 'text-blue-600', 'active-tab');
-
-      const tab = btn.getAttribute('data-tab');
-      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
-      document.getElementById(`tab-${tab}`).classList.remove('hidden');
-    });
-  });
-  </script>
   <!-- Footer -->
   {% include 'renter/home/footer.html' %}
 
+  <!-- Scripts -->
+  <script>
+    // Mobile Menu Toggle
+    document.getElementById('menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // Mobile Tab Toggle
+    const tabToggle = document.getElementById('tab-toggle');
+    const mobileTabs = document.getElementById('mobile-tabs');
+    const currentTabText = document.getElementById('current-tab');
+
+    tabToggle.addEventListener('click', () => {
+      mobileTabs.classList.toggle('hidden');
+    });
+
+    // Tab Switching (Desktop + Mobile)
+    document.querySelectorAll('.tab-btn, .tab-btn-mobile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+
+        // Update active tab button
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('border-blue-600', 'text-blue-600');
+          b.classList.add('border-transparent', 'text-gray-600');
+        });
+        document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.add('border-blue-600', 'text-blue-600');
+        document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.classList.remove('border-transparent', 'text-gray-600');
+
+        // Update mobile active
+        btn.classList.add('bg-blue-50', 'text-blue-600');
+
+        // Update current tab text
+        if (window.innerWidth < 768) {
+          currentTabText.textContent = btn.textContent.trim();
+          mobileTabs.classList.add('hidden');
+        }
+
+        // Show content
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
+        document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      });
+    });
+
+    // Set initial active tab
+    document.querySelector('.tab-btn[data-tab="properties"]')?.classList.add('border-blue-600', 'text-blue-600');
+  </script>
+  
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('image-modal');
+  const modalImg = document.getElementById('modal-img');
+  const closeBtn = document.getElementById('close-modal');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  let currentImages = [];
+  let currentIndex = 0;
+
+  document.querySelectorAll('.property-thumb').forEach(img => {
+    img.addEventListener('click', () => {
+      currentImages = JSON.parse(document.getElementById('prop-' + img.dataset.images).textContent);
+      currentIndex = 0;
+      modalImg.src = currentImages[currentIndex];
+      modal.classList.remove('hidden');
+    });
+  });
+
+  closeBtn.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  prevBtn.addEventListener('click', () => {
+    if (currentImages.length === 0) return;
+    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+    modalImg.src = currentImages[currentIndex];
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentImages.length === 0) return;
+    currentIndex = (currentIndex + 1) % currentImages.length;
+    modalImg.src = currentImages[currentIndex];
+  });
+
+  // Optional: Close modal on background click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.add('hidden');
+  });
+});
+</script>
 
 
 </body>
-
 </html>
