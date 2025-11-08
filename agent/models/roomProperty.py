@@ -10,6 +10,7 @@ class Rooms(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='property_rooms')
 
     room_name = models.CharField(max_length=100)
+    room_photo = models.ImageField(upload_to='rooms/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
