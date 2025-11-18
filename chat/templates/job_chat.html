@@ -2,152 +2,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Live Job Chat</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar { width: 5px; }
+    .overflow-y-auto::-webkit-scrollbar-thumb { background: rgba(156,163,175,0.5); border-radius: 3px; }
+
+    /* Ensure smooth layout switching on small devices */
+    @media (max-width: 768px) {
+      #chat-header {
+        font-size: 0.9rem;
+      }
+      #chat-box {
+        padding: 0.75rem !important;
+      }
+      #message-input {
+        font-size: 0.85rem;
+      }
+      #toggle-filters {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+      }
+      .job-item img {
+        width: 2.25rem;
+        height: 2.25rem;
+      }
+      .job-item p {
+        font-size: 0.85rem;
+      }
+    }
+
+    /* When sidebar is hidden on mobile */
+    #sidebar.hidden {
+      display: none;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-100 font-sans h-full">
 
-<div class="max-w-6xl mx-auto flex h-screen bg-white shadow rounded-lg overflow-hidden mt-6">
+<div class="w-full h-full flex flex-col md:flex-row bg-white shadow-lg md:rounded-lg overflow-hidden">
 
-  <!-- Sidebar: Job threads -->
-  <div class="w-1/3 border-r border-gray-200 overflow-y-auto bg-gray-50">
-    <h2 class="text-lg font-bold p-4 border-b">Chats</h2>
-    
+  <!-- Sidebar: Job Threads -->
+  <div id="sidebar" class="w-full md:w-80 lg:w-96 border-r border-gray-200 flex flex-col bg-gray-50 md:flex md:static absolute z-20 h-full md:h-auto transition-all duration-300 ease-in-out">
+
+    <!-- Header -->
+    <div class="p-3 md:p-4 border-b bg-white sticky top-0 z-10 flex justify-between items-center shadow-sm">
+      <h2 class="text-base md:text-lg font-bold text-gray-800">Chats</h2>
+      <div class="flex items-center gap-2">
+        <button id="toggle-filters" class="px-3 py-1 bg-blue-600 text-white rounded-full text-xs md:text-sm font-medium">
+          Filter
+        </button>
+        <button id="close-sidebar" class="md:hidden px-2 py-1 text-gray-600 text-sm font-semibold border rounded-md hover:bg-gray-100">
+          ✕
+        </button>
+      </div>
+    </div>
+
     <!-- Filters -->
-    <!-- Toggle button -->
-    <div class="p-4 border-b flex justify-between items-center">
-         <p class="font-bold mb-2">Filter Options</p>
-      <button id="toggle-filters" class="px-3 py-1 bg-blue-600 text-white rounded-full text-sm">Show/Hide</button>
-    </div>
-    
-    <!-- Filters container -->
-    <div id="filters-container" class="p-4 border-b">
-    
-      <div class="flex space-x-2 mb-4">
-        <button id="filter-urgent" class="px-6 py-1 rounded-full font-medium text-white-600 border border-blue-600">Urgent</button>
-        <button id="filter-nonurgent" class="px-6 py-1 rounded-full font-medium text-white-600 border border-blue-600">Non-Urgent</button>
+    <div id="filters-container" class="p-3 md:p-4 border-b bg-gray-50 hidden space-y-3 text-sm">
+      <div class="flex flex-wrap gap-2">
+        <button id="filter-urgent" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Urgent</button>
+        <button id="filter-nonurgent" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Non-Urgent</button>
       </div>
-    
-      <p class="font-bold mb-2">Sort by Time</p>
-      <div class="flex space-x-2">
-        <button id="sort-newest" class="px-6 py-1 rounded-full font-medium text-white-600 border border-blue-600">Newest First</button>
-        <button id="sort-oldest" class="px-6 py-1 rounded-full font-medium text-white-600 border border-blue-600">Oldest First</button>
+      <p class="font-bold text-xs md:text-sm">Sort by Time</p>
+      <div class="flex flex-wrap gap-2">
+        <button id="sort-newest" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Newest</button>
+        <button id="sort-oldest" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Oldest</button>
       </div>
     </div>
-    
-    <script>
-      const toggleBtn = document.getElementById('toggle-filters');
-      const filtersContainer = document.getElementById('filters-container');
-    
-      toggleBtn.addEventListener('click', () => {
-        filtersContainer.classList.toggle('hidden'); // hide/show
-      });
-    </script>
 
+    <!-- Job List -->
+<!-- Job List -->
+<div class="flex-1 overflow-y-auto job-list-container bg-white">
+  {% for job_info in job_previews %}
+  <button
+    onclick="openJobChat('{{ job_info.job.job_code }}')"
+    class="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 active:bg-blue-100 transition job-item border-b text-left"
+    data-priority="{% if job_info.job.priority == 1 %}urgent{% else %}nonurgent{% endif %}"
+    data-timestamp="{% if job_info.last_timestamp %}{{ job_info.last_timestamp|date:'U' }}{% else %}0{% endif %}"
+  >
 
+    <!-- Avatar -->
+    <div class="flex-shrink-0 relative">
+      {% if job_info.job.trader.user.profile_image %}
+        <img src="{{ job_info.job.trader.user.profile_image.url }}"
+             class="w-12 h-12 rounded-full object-cover border border-gray-300 shadow-sm">
+      {% else %}
+        <img src="{% static 'renter/images/avatar_placeholder.png' %}"
+             class="w-12 h-12 rounded-full object-cover border border-gray-300">
+      {% endif %}
+    </div>
 
-    <!-- Job list -->
-    <div class="job-list-container">
-      {% for job_info in job_previews %}
-      <button onclick="openJobChat('{{ job_info.job.job_code }}')" 
-              class="w-full flex items-left px-4 py-3 hover:bg-gray-100 border-b job-item"
-              data-priority="{% if job_info.job.priority == 1 %}urgent{% else %}nonurgent{% endif %}"
-              data-timestamp="{% if job_info.last_timestamp %}{{ job_info.last_timestamp|date:'U' }}{% else %}0{% endif %}">
-        
-        <!-- Avatar -->
-        <img src="{% if job_info.job.trader.user.profile_image %}
-            {{ job_info.job.trader.user.profile_image.url }}
-         {% else %}
-            {% static 'renter/images/avatar_placeholder' %} 
-         {% endif %}" />
-
-        <!-- Chat info -->
-        <div class="flex-1 overflow-hidden">
-          <p class="font-medium text-gray-800 truncate">Job #{{ job_info.job.job_code }}</p>
-          {% if job_info.last_message %}
-          <p class="text-sm text-gray-500 truncate">{{ job_info.last_message }}</p>
-          {% endif %}
-        </div>
-
-        <!-- Time -->
+    <!-- Text Content -->
+    <div class="flex-1 min-w-0">
+      <div class="flex justify-between items-center">
+        <p class="text-sm md:text-base font-semibold text-gray-900 truncate">
+          Job #{{ job_info.job.job_code }}
+        </p>
         {% if job_info.last_timestamp %}
-        <div class="text-xs text-gray-400 ml-2 whitespace-nowrap">
-          {{ job_info.last_timestamp|timesince }} ago
-        </div>
+        <span class="text-[11px] text-gray-400 whitespace-nowrap ml-2">
+          {{ job_info.last_timestamp|date:"M d, H:i" }}
+        </span>
         {% endif %}
-      </button>
-      {% empty %}
-      <p class="p-4 text-gray-400">No job chats available.</p>
-      {% endfor %}
+      </div>
+
+      <p class="text-xs md:text-sm text-gray-500 truncate mt-0.5">
+        {% if job_info.last_message %}
+          {{ job_info.last_message }}
+        {% else %}
+          <span class="italic text-gray-400">No messages yet</span>
+        {% endif %}
+      </p>
     </div>
+
+  </button>
+  {% empty %}
+    <p class="p-4 text-center text-gray-400">No job chats available.</p>
+  {% endfor %}
+</div>
   </div>
 
-  <!-- Chat area -->
-  <div class="flex-1 flex flex-col">
-    <div id="chat-header" class="p-4 bg-gray-50 font-semibold text-gray-700 border-b">
+  <!-- Chat Area -->
+  <div class="flex-1 flex flex-col min-h-0 relative">
+
+    <!-- Mobile Header -->
+    <div class="md:hidden bg-white border-b flex items-center justify-between p-3 sticky top-0 z-10">
+      <button id="open-sidebar" class="text-blue-600 font-semibold text-sm border px-3 py-1 rounded-md">☰ Chats</button>
+      <p id="chat-header-mobile" class="font-semibold text-gray-700 truncate">Select a job</p>
+    </div>
+
+    <!-- Chat Header -->
+    <div id="chat-header" class="hidden md:block p-3 md:p-4 bg-gray-50 font-semibold text-gray-700 border-b text-sm md:text-base truncate">
       Select a job to start chatting
     </div>
-    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
 
-    <form id="message-form" class="border-t flex p-3 bg-gray-50 hidden" onsubmit="sendMessage(event)">
+    <!-- Chat Messages -->
+    <div id="chat-box" class="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 bg-gray-50"></div>
+
+    <!-- Message Form -->
+    <form id="message-form" class="border-t flex p-2 md:p-3 bg-white hidden" onsubmit="sendMessage(event)">
       {% csrf_token %}
-      <input id="message-input" name="message" class="flex-1 p-2 border rounded-lg focus:outline-none" placeholder="Type a message..." autocomplete="off" />
-      <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg">Send</button>
+      <input id="message-input" name="message" class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Type a message..." autocomplete="off" />
+   <button type="submit"
+  class="ml-2 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex items-center justify-center shadow-sm">
+  <i data-lucide="send" class="w-5 h-5"></i>
+</button>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+
     </form>
   </div>
 </div>
 
 <script>
   let activeJobCode = null;
-  let currentPriorityFilter = null; // "urgent" or "nonurgent" or null
-  let currentTimeSort = "newest"; // "newest" or "oldest"
+  let currentPriorityFilter = null;
+  let currentTimeSort = "newest";
 
-  // Open chat
+  // Mobile Sidebar Toggle
+  $("#open-sidebar").click(() => $("#sidebar").removeClass("hidden"));
+  $("#close-sidebar").click(() => $("#sidebar").addClass("hidden"));
+
+  $("#toggle-filters").click(() => $("#filters-container").toggleClass("hidden"));
+
   function openJobChat(jobCode) {
     activeJobCode = jobCode;
-    $("#chat-header").text("Job: " + jobCode);
+    $("#chat-header, #chat-header-mobile").text("Job: " + jobCode);
     $("#message-form").removeClass("hidden");
+    $("#chat-box").empty();
     loadMessages();
+
+    if (window.innerWidth < 768) {
+      $("#sidebar").addClass("hidden");
+      window.scrollTo(0, 0);
+    }
   }
 
-  // Load messages for a job
   function loadMessages() {
     if (!activeJobCode) return;
-
     const fetchURL = "{% url 'fetch_job_messages' 'JOB_CODE_PLACEHOLDER' %}".replace('JOB_CODE_PLACEHOLDER', activeJobCode);
-
     $.get(fetchURL, function(data) {
       const box = $("#chat-box");
       box.empty();
 
-      // Update chat header with priority
-      $("#chat-header").text("Job: " + data.job_code + " (" + data.job_priority + ")");
-
       data.messages.forEach(msg => {
-        const alignment = msg.sender === "{{ request.user.username }}" ? "text-right" : "text-left";
-        const bubbleColor = msg.sender === "{{ request.user.username }}" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800";
+        const isMe = msg.sender === "{{ request.user.username }}";
+        const align = isMe ? "justify-end" : "justify-start";
+        const bg = isMe ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800";
         box.append(`
-          <div class="${alignment}">
-            <span class="inline-block px-3 py-2 rounded-lg ${bubbleColor} mb-1">
-              <strong>${msg.sender}</strong><br>${msg.content}
-            </span>
-            <div class="text-xs text-gray-400">${msg.timestamp}</div>
+          <div class="flex ${align}">
+            <div class="max-w-[80%] px-3 py-2 rounded-lg ${bg} shadow-sm break-words">
+              <p class="text-xs font-semibold opacity-90">${msg.sender}</p>
+              <p class="text-sm">${msg.content}</p>
+              <span class="block text-[10px] opacity-70 mt-1">${msg.timestamp}</span>
+            </div>
           </div>
         `);
       });
-
       box.scrollTop(box[0].scrollHeight);
     });
   }
 
-  // Send message
   function sendMessage(event) {
     event.preventDefault();
     if (!activeJobCode) return;
-
     const message = $("#message-input").val().trim();
     if (!message) return;
 
@@ -156,75 +224,70 @@
     $.ajax({
       url: sendURL,
       method: "POST",
-      headers: {'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()},
+      headers: { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() },
       data: JSON.stringify({ message }),
       contentType: "application/json",
-      success: function() {
+      success: () => {
         $("#message-input").val("");
         loadMessages();
-      },
-      error: function(err) {
-        console.error("Message send failed", err);
       }
     });
   }
 
-  // Highlight filter buttons
-    // Highlight filter buttons consistently
-    function updateFilterButtons() {
-        // Reset all filter buttons
-        $("#filter-urgent, #filter-nonurgent, #sort-newest, #sort-oldest")
-            .removeClass("bg-blue-600 text-white border-blue-600")
-            .addClass("bg-white text-white-600 border border-blue-600");
-    
-        // Highlight priority filters
-        if(currentPriorityFilter === "urgent") $("#filter-urgent").addClass("bg-blue-600 text-white");
-        if(currentPriorityFilter === "nonurgent") $("#filter-nonurgent").addClass("bg-blue-600 text-white");
-    
-        // Highlight time sort buttons
-        if(currentTimeSort === "newest") $("#sort-newest").addClass("bg-blue-600 text-white");
-        if(currentTimeSort === "oldest") $("#sort-oldest").addClass("bg-blue-600 text-white");
-    }
-
-
-  // Filter and sort jobs
-  function filterJobList() {
-    $(".job-item").each(function() {
-      const priority = $(this).data("priority"); // "urgent" or "nonurgent"
-      $(this).toggle(currentPriorityFilter ? priority === currentPriorityFilter : true);
-    });
-
-    // Sort by timestamp
-    const jobsContainer = $(".job-list-container");
-    const jobs = $(".job-item").get();
-    jobs.sort((a, b) => {
-      const t1 = $(a).data("timestamp");
-      const t2 = $(b).data("timestamp");
-      return currentTimeSort === "newest" ? t2 - t1 : t1 - t2;
-    });
-    $.each(jobs, (idx, itm) => jobsContainer.append(itm));
+  // Filter Buttons
+  function updateFilterButtons() {
+    const base = "bg-white text-blue-600 border border-blue-600";
+    const active = "bg-blue-600 text-white";
+    $("#filter-urgent, #filter-nonurgent, #sort-newest, #sort-oldest").removeClass(active).addClass(base);
+    if (currentPriorityFilter === "urgent") $("#filter-urgent").removeClass(base).addClass(active);
+    if (currentPriorityFilter === "nonurgent") $("#filter-nonurgent").removeClass(base).addClass(active);
+    if (currentTimeSort === "newest") $("#sort-newest").removeClass(base).addClass(active);
+    if (currentTimeSort === "oldest") $("#sort-oldest").removeClass(base).addClass(active);
   }
 
-  // Filter button clicks
-  $("#filter-urgent").click(function() {
-    currentPriorityFilter = (currentPriorityFilter === "urgent") ? null : "urgent";
-    updateFilterButtons();
-    filterJobList();
-  });
-  $("#filter-nonurgent").click(function() {
-    currentPriorityFilter = (currentPriorityFilter === "nonurgent") ? null : "nonurgent";
-    updateFilterButtons();
-    filterJobList();
-  });
+  function filterJobList() {
+    $(".job-item").each(function() {
+      const priority = $(this).data("priority");
+      const show = !currentPriorityFilter || priority === currentPriorityFilter;
+      $(this).toggle(show);
+    });
+  }
 
-  // Time sort button clicks
-  $("#sort-newest").click(function() { currentTimeSort = "newest"; updateFilterButtons(); filterJobList(); });
-  $("#sort-oldest").click(function() { currentTimeSort = "oldest"; updateFilterButtons(); filterJobList(); });
+  $("#filter-urgent").click(() => { currentPriorityFilter = currentPriorityFilter === "urgent" ? null : "urgent"; updateFilterButtons(); filterJobList(); });
+  $("#filter-nonurgent").click(() => { currentPriorityFilter = currentPriorityFilter === "nonurgent" ? null : "nonurgent"; updateFilterButtons(); filterJobList(); });
+  $("#sort-newest").click(() => { currentTimeSort = "newest"; updateFilterButtons(); filterJobList(); });
+  $("#sort-oldest").click(() => { currentTimeSort = "oldest"; updateFilterButtons(); filterJobList(); });
 
-  // Initialize filters
   updateFilterButtons();
-  setInterval(loadMessages, 3000);
+  setInterval(() => { if (activeJobCode) loadMessages(); }, 3000);
 </script>
-
 </body>
+
+<style>
+  /* Mobile chat list styling */
+  @media (max-width: 768px) {
+    .job-item {
+      padding-top: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+    }
+
+    .job-item img {
+      width: 3rem !important;
+      height: 3rem !important;
+    }
+
+    .job-item p {
+      font-size: 0.9rem;
+    }
+
+    .job-item span {
+      font-size: 0.75rem;
+    }
+
+    .job-list-container {
+      background-color: #fff;
+    }
+  }
+</style>
+
 </html>

@@ -1,0 +1,363 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Maintenance Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Tailwind + Alpine -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Select2 -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    html,body{margin:0;padding:0;height:100%;font-family:'Lexend',sans-serif;background:#f9fafb;}
+    .fullscreen-modal .modal-dialog{max-width:100vw;margin:0;height:100vh;}
+    .fullscreen-modal .modal-content{height:100vh;border:none;border-radius:0;display:flex;flex-direction:column;}
+    .fullscreen-modal .modal-header{flex-shrink:0;padding:1rem 1.5rem;background:white;border-bottom:1px solid #e5e7eb;}
+    .fullscreen-modal .modal-body{flex:1;overflow-y:auto;padding:1.5rem;background:#f9fafb;-webkit-overflow-scrolling:touch;}
+    .fullscreen-modal .modal-footer{flex-shrink:0;padding:1rem 1.5rem;background:white;border-top:1px solid #e5e7eb;}
+    .select2-container .select2-selection--single{height:48px !important;border:1px solid #d1d5db !important;border-radius:0.5rem !important;padding:0.5rem 1rem !important;}
+    .select2-container--default .select2-selection--single .select2-selection__rendered{line-height:28px !important;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{height:48px !important;}
+    .btn-submit{background-color:#006ffd;transition:background-color .2s;}
+    .btn-submit:hover{background-color:#005edc;}
+    .issue-btn{@apply px-4 py-2 rounded-full border border-gray-300 text-center text-sm font-medium transition;}
+    .issue-btn.active{@apply bg-blue-600 text-white border-blue-600;}
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- ====================== ADD JOB MODAL ====================== -->
+  <div class="modal fade fullscreen-modal" id="addJobModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <form method="POST" action="{% url 'add_job_save' %}" class="modal-content" enctype="multipart/form-data" id="addJobForm">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="text-xl font-bold flex items-center gap-2 m-0" style="color:#006ffd;">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Add New Maintenance Request
+          </h5>
+        </div>
+
+        <div class="modal-body space-y-6">
+          <!-- Category -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Describe your Issue *</label>
+            <select name="category" id="categorySelect" class="w-full" required>
+              <option value="" disabled selected>-- Select Service Category --</option>
+              {% for service in services %}
+                <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}">
+                  {{ service.description }} {% if service.is_urgent %}<span class="text-red-600 font-medium">(Urgent)</span>{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Additional Information</label>
+            <textarea name="notes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] resize-none" placeholder="Describe the issue in detail..."></textarea>
+          </div>
+
+        <div class="space-y-3">
+          <!-- Label -->
+          <label class="block text-sm font-semibold text-gray-800">
+            When did the issue occur? <span class="text-red-500">*</span>
+          </label>
+        
+          <!-- Responsive Grid: 2 cols mobile, 4 cols tablet+ -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <!-- YESTERDAY -->
+            <button type="button"
+                    class="issue-option-btn px-4 py-3 rounded-full border-2 border-gray-300 bg-white text-gray-700 font-medium text-sm transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    data-value="YESTERDAY">
+              YESTERDAY
+            </button>
+        
+            <!-- TODAY -->
+            <button type="button"
+                    class="issue-option-btn px-4 py-3 rounded-full border-2 border-gray-300 bg-white text-gray-700 font-medium text-sm transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    data-value="TODAY">
+              TODAY
+            </button>
+        
+            <!-- ONGOING -->
+            <button type="button"
+                    class="issue-option-btn px-4 py-3 rounded-full border-2 border-gray-300 bg-white text-gray-700 font-medium text-sm transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    data-value="ONGOING">
+              ONGOING
+            </button>
+        
+            <!-- UNSURE -->
+            <button type="button"
+                    class="issue-option-btn px-4 py-3 rounded-full border-2 border-gray-300 bg-white text-gray-700 font-medium text-sm transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    data-value="UNSURE">
+              UNSURE
+            </button>
+          </div>
+        
+          <!-- Hidden Input -->
+          <input type="hidden" name="renter_issue_date" id="renter_issue_date" required>
+        </div>
+          <!-- Availability -->
+          <div x-data="{ days: [], times: [], toggleDay(day){ this.days.includes(day) ? this.days = this.days.filter(d=>d!==day) : this.days.push(day); }, toggleTime(time){ this.times.includes(time) ? this.times = this.times.filter(t=>t!==time) : this.times.push(time); } }">
+            <label class="block text-sm font-semibold text-gray-800">Your Availability</label>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <template x-for="day in ['MON','TUE','WED','THU','FRI','SAT','SUN']" :key="day">
+                <button type="button" @click="toggleDay(day)" :class="days.includes(day) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-3 py-1.5 rounded-full text-xs font-medium transition"><span x-text="day"></span></button>
+              </template>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <template x-for="time in ['MORNING','AFTERNOON','EVENING']" :key="time">
+                <button type="button" @click="toggleTime(time)" :class="times.includes(time) ? (time==='MORNING' ? 'bg-teal-500 text-white' : 'bg-blue-600 text-white') : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-3 py-1.5 rounded-full text-xs font-medium transition"><span x-text="time"></span></button>
+              </template>
+            </div>
+            <input type="hidden" name="renter_availability_schedule" :value="JSON.stringify({days:days,times:times})">
+          </div>
+
+          <!-- Fixed Before -->
+          <div x-data="{ fixed: 'no' }">
+            <p class="text-sm font-semibold text-gray-800 mb-2">Has this issue been fixed before?</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" @click="fixed='yes'" :class="fixed==='yes' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'" class="px-5 py-2 rounded-full text-sm font-medium transition">YES</button>
+              <button type="button" @click="fixed='no'" :class="fixed==='no' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'" class="px-5 py-2 rounded-full text-sm font-medium transition">NO</button>
+              <button type="button" @click="fixed='unsure'" :class="fixed==='unsure' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'" class="px-5 py-2 rounded-full text-sm font-medium transition">UNSURE</button>
+            </div>
+            <input type="hidden" name="issue_been_fixed_before" :value="fixed">
+          </div>
+
+          <!-- Image Upload -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Upload Media (max 5)</label>
+            <div id="image-upload-container" class="space-y-2">
+              <input type="file" name="images" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">
+            </div>
+            <div class="flex gap-2 mt-2">
+              <button type="button" id="add-image-btn" class="text-xs px-3 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-medium transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Add Another
+              </button>
+              <button type="button" id="clear-images-btn" class="text-xs px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition">Clear All</button>
+            </div>
+            <div id="image-preview" class="flex flex-wrap gap-2 mt-2"></div>
+            <p id="image-limit-msg" class="text-red-600 text-xs mt-1 hidden">Maximum 5 images allowed.</p>
+          </div>
+
+          <input type="hidden" name="priority" id="prioritySelect">
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="px-6 py-2.5 btn-submit text-white rounded-lg font-semibold shadow-md w-full">
+            Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================== SUCCESS MODAL ====================== -->
+  <div class="modal fade" id="confirmSubmissionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-xl shadow-xl">
+        <div class="modal-body p-6 text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800">Request Submitted!</h3>
+          <p class="text-gray-600 mt-2">Your maintenance request has been sent successfully.</p>
+        </div>
+        <div class="modal-footer border-t-0 p-4">
+          <button type="button" id="confirmOkBtn" class="w-full px-6 py-2.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-semibold transition">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== NO‑PROPERTY ERROR MODAL ====================== -->
+  <div class="modal fade" id="noPropertyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-xl shadow-xl">
+        <div class="modal-body p-6 text-center">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800">Property Required</h3>
+          <p class="text-gray-600 mt-2">
+            You must have an assigned property before creating a maintenance request.
+          </p>
+        </div>
+        <div class="modal-footer border-t-0 p-4">
+          <button type="button" id="noPropertyOkBtn"
+                  class="w-full px-6 py-2.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-semibold transition">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== SCRIPTS ====================== -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // ---------- Modals ----------
+    const addModal      = new bootstrap.Modal(document.getElementById('addJobModal'));
+    const confirmModal  = new bootstrap.Modal(document.getElementById('confirmSubmissionModal'));
+    const noPropModal   = new bootstrap.Modal(document.getElementById('noPropertyModal'));
+
+    addModal.show();   // auto‑open
+
+    // ---------- Select2 ----------
+    $('#categorySelect').select2({
+      placeholder: "-- Select Service Category --",
+      width: '100%',
+      dropdownParent: $('#addJobModal')
+    });
+    $('#categorySelect').on('select2:select', function () {
+      const isUrgent = $(this).find(':selected').data('isurgent');
+      $('#prioritySelect').val(isUrgent ? 'true' : 'false');
+    });
+
+    // ---------- Issue Date Buttons ----------
+    const issueButtons = document.querySelectorAll('.issue-btn');
+    const hiddenIssue  = document.getElementById('renter_issue_date');
+    issueButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        issueButtons.forEach(b => b.classList.remove('bg-blue-600','text-white','border-blue-600'));
+        btn.classList.add('bg-blue-600','text-white','border-blue-600');
+        hiddenIssue.value = btn.dataset.value;
+      });
+    });
+
+    // ---------- Image Upload ----------
+    const container   = document.getElementById('image-upload-container');
+    const preview     = document.getElementById('image-preview');
+    const addBtn      = document.getElementById('add-image-btn');
+    const clearBtn    = document.getElementById('clear-images-btn');
+    const limitMsg    = document.getElementById('image-limit-msg');
+
+    addBtn.onclick = () => {
+      if (container.querySelectorAll('input[type=file]').length >= 5) {
+        limitMsg.classList.remove('hidden');
+        return;
+      }
+      limitMsg.classList.add('hidden');
+      const input = document.createElement('input');
+      input.type = 'file'; input.name = 'images'; input.accept = 'image/*';
+      input.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] mt-2';
+      container.appendChild(input);
+
+      input.onchange = () => {
+        if (!input.files[0]) return;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative mt-2';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(input.files[0]);
+        img.className = 'w-20 h-20 object-cover rounded-lg border';
+        img.onload = () => URL.revokeObjectURL(img.src);
+        const remove = document.createElement('button');
+        remove.type = 'button'; remove.innerHTML = '×';
+        remove.className = 'absolute top-0 right-0 bg-white rounded-full w-5 h-5 text-red-600 shadow text-xs';
+        remove.onclick = () => { wrapper.remove(); input.remove(); };
+        wrapper.append(img, remove);
+        preview.appendChild(wrapper);
+      };
+    };
+
+    clearBtn.onclick = () => {
+      container.innerHTML = '<input type="file" name="images" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd]">';
+      preview.innerHTML = '';
+      limitMsg.classList.add('hidden');
+    };
+
+    // ---------- Form Submit ----------
+    const form = document.getElementById('addJobForm');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const original  = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+
+      const fd = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          addModal.hide();
+          confirmModal.show();
+        } else if (data.no_property) {
+          addModal.hide();
+          noPropModal.show();
+        } else {
+          alert(data.error || 'An error occurred. Please try again.');
+        }
+      })
+      .catch(() => alert('Network error. Please check your connection.'))
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = original;
+      });
+    });
+
+    // ---------- Confirmation OK ----------
+    document.getElementById('confirmOkBtn').addEventListener('click', () => {
+      confirmModal.hide();
+      location.reload();
+    });
+
+    // ---------- No‑Property OK ----------
+    document.getElementById('noPropertyOkBtn').addEventListener('click', () => {
+      noPropModal.hide();
+      addModal.show();   // back to the form
+    });
+  });
+  </script>
+  
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const buttons = document.querySelectorAll('.issue-option-btn');
+  const hiddenInput = document.getElementById('renter_issue_date');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      // Reset all
+      buttons.forEach(b => {
+        b.classList.remove('border-blue-600', 'bg-blue-600', 'text-white');
+        b.classList.add('border-gray-300', 'bg-white', 'text-gray-700');
+      });
+
+      // Activate clicked
+      this.classList.remove('border-gray-300', 'bg-white', 'text-gray-700');
+      this.classList.add('border-blue-600', 'bg-blue-600', 'text-white');
+
+      // Save value
+      hiddenInput.value = this.dataset.value;
+    });
+  });
+});
+</script>
+</body>
+</html>

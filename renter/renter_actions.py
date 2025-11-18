@@ -420,6 +420,93 @@ def list_jobs(request):
     })
 
 
+@login_required
+def add_job_modal(request):
+    user = request.user
+    search_query = request.GET.get('q', '')
+
+    try:
+        renter = Renter.objects.get(user=user)
+        jobs = Jobs.objects.filter(renter=renter)
+
+        if search_query:
+            jobs = jobs.filter(
+                Q(job_code__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(notes__icontains=search_query) |
+                Q(category__description__icontains=search_query)
+            )
+
+        # --- Attach all bidding records per job ---
+        for job in jobs:
+            job.bids = Bidding.objects.all()
+
+    except Renter.DoesNotExist:
+        jobs = Jobs.objects.none()
+
+    # Pagination
+    paginator = Paginator(jobs.order_by('-approved_at'), 5)
+    page_number = request.GET.get('page')
+    page_jobs = paginator.get_page(page_number)
+
+    agents = AgentRegister.objects.all()
+    traders = TraderRegistration.objects.all()
+    services = Services.objects.filter(is_active=True)
+    all_bids = Bidding.objects.all()
+
+    return render(request, 'renter/home/jobs/add_job_modal.html', {
+        'jobs': page_jobs,
+        'agents': agents,
+        'traders': traders,
+        'services': services,
+        'bids': all_bids,
+        'search_query': search_query,
+    })
+
+
+
+@login_required
+def list_job_modal(request):
+    user = request.user
+    search_query = request.GET.get('q', '')
+
+    try:
+        renter = Renter.objects.get(user=user)
+        jobs = Jobs.objects.filter(renter=renter)
+
+        if search_query:
+            jobs = jobs.filter(
+                Q(job_code__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(notes__icontains=search_query) |
+                Q(category__description__icontains=search_query)
+            )
+
+        # --- Attach all bidding records per job ---
+        for job in jobs:
+            job.bids = Bidding.objects.all()
+
+    except Renter.DoesNotExist:
+        jobs = Jobs.objects.none()
+
+    # Pagination
+    paginator = Paginator(jobs.order_by('-approved_at'), 5)
+    page_number = request.GET.get('page')
+    page_jobs = paginator.get_page(page_number)
+
+    agents = AgentRegister.objects.all()
+    traders = TraderRegistration.objects.all()
+    services = Services.objects.filter(is_active=True)
+    all_bids = Bidding.objects.all()
+
+    return render(request, 'renter/home/jobs/view_job_modal.html', {
+        'jobs': page_jobs,
+        'agents': agents,
+        'traders': traders,
+        'services': services,
+        'bids': all_bids,
+        'search_query': search_query,
+    })
 
 @csrf_exempt
 @login_required
@@ -487,6 +574,74 @@ def add_job(request):
             return redirect('/maintenance/')
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+@login_required
+def add_job_save(request):
+    if request.method != 'POST':
+        return JsonResponse(
+            {'success': False, 'error': 'Invalid request method'}, status=405
+        )
+
+    try:
+        renter = Renter.objects.get(user=request.user)
+        property_obj = Property.objects.filter(renter=renter).first()
+
+        # -------------------------------------------------
+        # No property → dedicated JSON flag
+        # -------------------------------------------------
+        if not property_obj:
+            return JsonResponse({
+                'success': False,
+                'no_property': True,
+                'error': "No property assigned to your account."
+            })
+
+        agent = property_obj.agent
+        if not agent:
+            return JsonResponse({
+                'success': False,
+                'error': "No agent assigned to this property."
+            })
+
+        service_id = request.POST.get('category')
+        service = Services.objects.get(id=service_id)
+        priority = service.isurgent
+
+        # ----- Availability -----
+        availability_data = request.POST.get('renter_availability_schedule')
+        availability_json = json.loads(availability_data) if availability_data else {}
+
+        # ----- Issue date -----
+        renter_issue_date_raw = request.POST.get("renter_issue_date")
+        try:
+            renter_issue_date_json = json.loads(renter_issue_date_raw) if renter_issue_date_raw else {}
+        except json.JSONDecodeError:
+            renter_issue_date_json = {"value": renter_issue_date_raw} if renter_issue_date_raw else {}
+
+        # ----- Create Job -----
+        job = Jobs.objects.create(
+            agent=agent,
+            renter=renter,
+            property=property_obj,
+            notes=request.POST.get('notes'),
+            category=service,
+            priority=priority,
+            renter_availability_schedule=availability_json,
+            renter_issue_date=renter_issue_date_json,
+        )
+
+        # ----- Images -----
+        images = request.FILES.getlist('images')
+        for img in images:
+            JobImage.objects.create(job=job, image=img)
+
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        print("Add job error:", e)
+        return JsonResponse({'success': False, 'error': str(e)})
+
 # @csrf_exempt
 # @login_required
 # def edit_job(request, job_id):
