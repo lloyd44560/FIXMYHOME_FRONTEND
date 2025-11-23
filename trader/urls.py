@@ -17,6 +17,7 @@ from trader.views import (
     edit_team_member,
     invite_team_member,
     request_leave,
+    get_member_data,
 )
 
 urlpatterns = [
@@ -40,4 +41,5 @@ urlpatterns = [
     path('jobs/', JobListView.as_view(), name='job_list'),
     path('bidding/create/', BiddingCreateView.as_view(), name='bidding_create'),
     path('chat/', TraderHomeView.trader_chat, name='trader_chat'),
+    path("get-member/<int:member_id>/", get_member_data, name="get_member_data"),
 ]

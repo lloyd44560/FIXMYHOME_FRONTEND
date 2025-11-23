@@ -109,7 +109,7 @@
               <h3 class="font-semibold text-gray-800 mb-2">Rates</h3>
               <div class="flex justify-between text-sm mb-1">
                 <span>Labour per hour</span>
-                <span class="font-medium" x-text="`$${currentMember.labour_rate}`"></span>
+                <span class="font-medium" x-text="`$${currentMember.labour_per_hour}`"></span>
               </div>
               <div class="flex justify-between text-sm mb-4">
                 <span>Callout</span>
@@ -326,53 +326,75 @@
       selectedMembers: [],
       selectedMemberIds: [],
       currentMember: null,
+      labour_per_hour: 0,
+      callout_rate: 0,
+      parts_unit_price: 0,
+      hours: 0,
+      subtotal: 0,
+      gst: 0,
+      total: 0,
 
-      confirmMember() {
+      async confirmMember() {
         if (!this.selectedMemberId) return;
-        const member = this.getMemberData(this.selectedMemberId);
+
+        const response = await fetch(`/trader/get-member/${this.selectedMemberId}/`);
+        if (!response.ok) {
+          alert("Failed to load member details");
+          return;
+        }
+
+        const member = await response.json();
+
+        // Only add if not already included
         if (!this.selectedMemberIds.includes(member.id)) {
           this.selectedMembers.push(member);
           this.selectedMemberIds.push(member.id);
         }
+
         this.showMemberDetails = true;
         this.currentMember = member;
-        this.selectedMemberId = "";
-        this.showChooseMember = false;
-      },
 
-      closeMemberDetails() {
-        this.showMemberDetails = false;
-        this.currentMember = null;
-      },
+        // Auto-fill rates
+        this.labour_per_hour = parseFloat(member.labour_rate_per_hour);
+        this.callout_rate = parseFloat(member.callout_rate);
 
-      clearMembers() {
-        this.selectedMembers = [];
-        this.selectedMemberIds = [];
-      },
+      this.calculateTotals();
 
-      editMembers() {
-        this.showChooseMember = true;
-      },
+      this.selectedMemberId = "";
+      this.showChooseMember = false;
+    },
 
-      getMemberData(id) {
-        const members = [
-          {% for member in team_members %}
-          {
-            id: {{ member.id }},
-            name: "{{ member.teamName|escapejs }}",
-            image: "{{ member.image_url|default:'https://randomuser.me/api/portraits/men/32.jpg' }}",
-            role: "{{ member.position|escapejs }}",
-            availability: "Available soon",
-            current_job: "Ongoing: Building Maintenance",
-            job_date: "Nov 2, 2025",
-            labour_rate: "25",
-            callout_rate: "50",
-          },
-          {% endfor %}
-        ];
-        return members.find(m => m.id == id);
-      }
-    };
-  }
-  </script>
+    calculateTotals() {
+      const labourTotal = this.labour_per_hour * this.hours;
+      const partsTotal = this.parts_unit_price || 0;
+      const calloutTotal = this.callout_rate || 0;
+      this.subtotal = labourTotal + partsTotal + calloutTotal;
+      this.gst = this.subtotal * 0.10;
+      this.total = this.subtotal + this.gst;
+    },
+
+    updateField(field, value) {
+      this[field] = parseFloat(value) || 0;
+      this.calculateTotals();
+    },
+
+    closeMemberDetails() {
+      this.showMemberDetails = false;
+      this.currentMember = null;
+    },
+
+    clearMembers() {
+      this.selectedMembers = [];
+      this.selectedMemberIds = [];
+      this.labour_per_hour = 0;
+      this.callout_rate = 0;
+      this.calculateTotals();
+    },
+
+    editMembers() {
+      this.showChooseMember = true;
+    },
+  };
+}
+</script>
 {% endblock %}

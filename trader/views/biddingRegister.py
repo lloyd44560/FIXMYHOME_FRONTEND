@@ -76,7 +76,6 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
                 ItemNeeded.objects.create(bidding=bidding, name=name.strip(), price=price_val)
 
         # Increment job bid count
-        print(job, '<<<<<<<<<<< current bid count')
         job.bid_count += 1
         job.save()
 
