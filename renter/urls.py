@@ -88,7 +88,8 @@ urlpatterns = [
     path('maintenance_list/', renter_actions.list_job_modal, name='maintenance_listing_modal'),
     path('jobs/add/', renter_actions.add_job, name='add_job'),
     path('jobs/add_save/', renter_actions.add_job_save, name='add_job_save'),
-
+    path('maintenance/success/', renter_actions.maintenance_success, name='maintenance_success'),
+    path('maintenance/view/<int:job_id>/', renter_actions.view_maintenance_request, name='view_maintenance_request'),
 
     path('jobs/edit/<int:job_id>/', renter_actions.edit_job, name='edit_job'),
     path('jobs/delete/<int:id>/', renter_actions.delete_job, name='delete_job'),

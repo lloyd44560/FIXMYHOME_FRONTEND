@@ -89,6 +89,9 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
                         "I’ll be in touch soon to coordinate further details. Thank you!"
                     )
 
+                    # Include in the message the job ID as link to make it clickable
+                    #
+
                     Message.objects.create(
                         sender=trader_user,
                         receiver=renter_obj.user,

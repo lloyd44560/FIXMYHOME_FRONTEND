@@ -55,30 +55,49 @@
   <div id="sidebar" class="w-full md:w-80 lg:w-96 border-r border-gray-200 flex flex-col bg-gray-50 md:flex md:static absolute z-20 h-full md:h-auto transition-all duration-300 ease-in-out">
 
     <!-- Header -->
-    <div class="p-3 md:p-4 border-b bg-white sticky top-0 z-10 flex justify-between items-center shadow-sm">
-      <h2 class="text-base md:text-lg font-bold text-gray-800">Chats</h2>
-      <div class="flex items-center gap-2">
-        <button id="toggle-filters" class="px-3 py-1 bg-blue-600 text-white rounded-full text-xs md:text-sm font-medium">
-          Filter
-        </button>
-        <button id="close-sidebar" class="md:hidden px-2 py-1 text-gray-600 text-sm font-semibold border rounded-md hover:bg-gray-100">
-          ✕
-        </button>
-      </div>
-    </div>
+   <!-- Header -->
+<div class="p-3 md:p-4 border-b bg-white sticky top-0 z-10 flex justify-between items-center shadow-sm">
+  <h1 class="text-base md:text-lg font-bold text-gray-800">Most Recent</h1>
+  <div class="flex items-center gap-2">
+    <button id="toggle-filters" class="px-3 py-1 bg-blue-600 text-white rounded-full text-xs md:text-sm font-medium">
+      Filter
+    </button>
+    <button id="close-sidebar" class="md:hidden px-2 py-1 text-gray-600 text-sm font-semibold border rounded-md hover:bg-gray-100">
+      ✕
+    </button>
+  </div>
+</div>
 
-    <!-- Filters -->
-    <div id="filters-container" class="p-3 md:p-4 border-b bg-gray-50 hidden space-y-3 text-sm">
-      <div class="flex flex-wrap gap-2">
-        <button id="filter-urgent" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Urgent</button>
-        <button id="filter-nonurgent" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Non-Urgent</button>
-      </div>
-      <p class="font-bold text-xs md:text-sm">Sort by Time</p>
-      <div class="flex flex-wrap gap-2">
-        <button id="sort-newest" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Newest</button>
-        <button id="sort-oldest" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">Oldest</button>
-      </div>
+<!-- Filters -->
+<div id="filters-container" class="p-3 md:p-4 border-b bg-gray-50 hidden space-y-4 text-sm">
+  <h2 class="text-base md:text-lg font-bold text-gray-800">Filter Options</h2>
+
+  <div>
+    <p class="font-bold text-xs md:text-sm mb-2">Urgency</p>
+    <div class="flex flex-wrap gap-2">
+      <button id="filter-urgent" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">
+        Urgent
+      </button>
+      <button id="filter-nonurgent" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">
+        Non-Urgent
+      </button>
     </div>
+  </div>
+
+  <div>
+    <p class="font-bold text-xs md:text-sm mb-2">Time</p>
+    <div class="flex flex-wrap gap-2">
+      <!-- Newest: Default selected -->
+      <button id="sort-newest" class="px-3 py-1.5 rounded-full font-medium bg-blue-600 text-white text-xs md:text-sm">
+        Newest
+      </button>
+      <!-- Oldest: Not selected -->
+      <button id="sort-oldest" class="px-3 py-1.5 rounded-full font-medium bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition text-xs md:text-sm">
+        Oldest
+      </button>
+    </div>
+  </div>
+</div>
 
     <!-- Job List -->
 <!-- Job List -->
@@ -146,7 +165,7 @@
     </div>
 
     <!-- Chat Messages -->
-    <div id="chat-box" class="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 bg-gray-50"></div>
+ <div id="chat-box" class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100 flex flex-col gap-4"></div>
 
     <!-- Message Form -->
     <form id="message-form" class="border-t flex p-2 md:p-3 bg-white hidden" onsubmit="sendMessage(event)">
@@ -202,9 +221,8 @@
         box.append(`
           <div class="flex ${align}">
             <div class="max-w-[80%] px-3 py-2 rounded-lg ${bg} shadow-sm break-words">
-              <p class="text-xs font-semibold opacity-90">${msg.sender}</p>
               <p class="text-sm">${msg.content}</p>
-              <span class="block text-[10px] opacity-70 mt-1">${msg.timestamp}</span>
+
             </div>
           </div>
         `);
@@ -212,6 +230,7 @@
       box.scrollTop(box[0].scrollHeight);
     });
   }
+
 
   function sendMessage(event) {
     event.preventDefault();

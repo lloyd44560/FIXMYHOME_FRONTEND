@@ -566,6 +566,8 @@ def add_job(request):
 
             # 8. Success message
             messages.success(request, "Maintenance Request created successfully.")
+
+            # Redirect to the page of the maintenance
             return redirect('/maintenance/')
 
         except Exception as e:
@@ -582,7 +584,6 @@ def add_job_save(request):
         return JsonResponse(
             {'success': False, 'error': 'Invalid request method'}, status=405
         )
-
     try:
         renter = Renter.objects.get(user=request.user)
         property_obj = Property.objects.filter(renter=renter).first()
@@ -636,6 +637,9 @@ def add_job_save(request):
         for img in images:
             JobImage.objects.create(job=job, image=img)
 
+        # Store job ID in session to pass to success page
+        request.session['new_job_id'] = job.id
+
         return JsonResponse({'success': True})
 
     except Exception as e:
@@ -675,29 +679,40 @@ def add_job_save(request):
 @csrf_exempt
 @login_required
 def edit_job(request, job_id):
-    renter = get_object_or_404(Renter, user=request.user)  # or username/email if that's how linked
+    renter = get_object_or_404(Renter, user=request.user)
     job = get_object_or_404(Jobs, id=job_id, renter=renter)
+
     if request.method == "POST":
         try:
-            # Update foreign keys
-            agent_id = request.POST.get("agent_id")
+            # Update category
             category_id = request.POST.get("category")
-
-            if agent_id:
-                job.agent = AgentRegister.objects.get(id=agent_id)
             if category_id:
-                job.category = Services.objects.get(id=category_id)
-
-            # Priority logic
-            service = job.category
-            job.priority = service.isurgent
+                service = Services.objects.get(id=category_id)
+                job.category = service
+                # Update priority based on category
+                # job.priority = service.is_urgent
 
             # Update simple fields
             job.notes = request.POST.get("notes", "")
-            job.issue_found_at = request.POST.get("issue_found_at") or None
-            job.renter_availability = request.POST.get("renter_availability") or None
-            job.issue_been_fixed_before = "issue_been_fixed_before" in request.POST
-              # --- Handle Availability Schedule (JSON) ---
+
+            # Handle issue_been_fixed_before
+            fixed_before = request.POST.get("issue_been_fixed_before", "no")
+            # if fixed_before == "yes":
+            #     job.issue_been_fixed_before = True
+            # elif fixed_before == "no":
+            #     job.issue_been_fixed_before = False
+            # else:  # unsure
+            #     job.issue_been_fixed_before = None
+
+            # Handle renter_issue_date (JSON)
+            issue_date_raw = request.POST.get("renter_issue_date")
+            if issue_date_raw:
+                try:
+                    job.renter_issue_date = json.loads(issue_date_raw) if issue_date_raw else {}
+                except json.JSONDecodeError:
+                    job.renter_issue_date = {"value": issue_date_raw}
+
+            # Handle Availability Schedule (JSON)
             schedule_json = request.POST.get("renter_availability_schedule")
             if schedule_json:
                 try:
@@ -717,16 +732,21 @@ def edit_job(request, job_id):
             images = request.FILES.getlist("images")
             for img in images:
                 JobImage.objects.create(job=job, image=img)
-            messages.success(request, "Maintenance Request updated successfully.")
-            return redirect("/maintenance/")
+
+            # Return JSON success for modal handling
+            return JsonResponse({
+                'success': True,
+                'message': 'Maintenance Request updated successfully.'
+            })
+
         except Exception as e:
             print("Edit job error:", e)
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
-            messages.error(request, f"Error updating Maintenance Request: {e}")
-            return redirect("/maintenance/")
+            return JsonResponse({
+                'success': False,
+                'message': f"Error updating Maintenance Request: {str(e)}"
+            }, status=500)
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=405)
-
 
 
 @login_required
@@ -740,6 +760,99 @@ def delete_job(request, id):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
         messages.error(request, f"Maintenance Request deleted: {e}")
 
+
+
+# I need a page here that will be the only purpose is to be the redirect page of the maintenance request
+
+
+# It will have a button that is redirect
+
+# Description
+
+# Display the description here
+
+# Add an abilty to message the trader or call -  This can be turned as
+
+
+
+
+@csrf_exempt
+@login_required
+def maintenance_success(request):
+    """
+    Success page after maintenance request submission
+    Displays the newly created job details
+    """
+    # Get the job ID from session
+    job_id = request.session.get('new_job_id')
+
+    if not job_id:
+        # If no job ID in session, redirect to maintenance page
+        return redirect('/maintenance/')
+
+    try:
+        # Fetch the job
+        job = Jobs.objects.select_related('category', 'agent', 'property').get(id=job_id)
+
+        # Clear the session variable
+        del request.session['new_job_id']
+
+        context = {
+            'job': job,
+            'service_name': job.category.description,
+            'request_number': f"#0000{job.id}",
+            'description': job.notes or "No additional details provided",
+            'agent': job.agent,
+        }
+
+        return render(request, 'renter/home/jobs/maintenance_success.html', context)
+
+    except Jobs.DoesNotExist:
+        return redirect('/maintenance/')
+
+
+@csrf_exempt
+@login_required
+def view_maintenance_request(request, job_id):
+    """
+    Detailed view of a specific maintenance request
+    """
+    try:
+        # Simple fetch lang
+        job = Jobs.objects.get(id=job_id)
+
+        # Get images
+        images = JobImage.objects.filter(job=job)
+
+        # Parse availability schedule
+        availability = job.renter_availability_schedule or {}
+        availability_days = availability.get('days', [])
+        availability_times = availability.get('times', [])
+
+        # Parse issue date
+        issue_date = job.renter_issue_date or {}
+        if isinstance(issue_date, dict):
+            issue_date_value = issue_date.get('value', 'Not specified')
+        else:
+            issue_date_value = issue_date
+
+        context = {
+            'job': job,
+            'service_name': job.category.description if job.category else 'N/A',
+            'request_number': f"#0000{job.id}",
+            'description': job.notes or "No additional details provided",
+            'agent': job.agent,
+            'availability_days': availability_days,
+            'availability_times': availability_times,
+            'issue_date': issue_date_value,
+            'images': images,
+        }
+
+        return render(request, 'renter/home/jobs/view_maintenance_request.html', context)
+
+    except Jobs.DoesNotExist:
+        messages.error(request, "Maintenance request not found.")
+        return redirect('/maintenance/')
 
 ##################################################################################################################### Renter Min. Standard Report ########################################################################################################
 @login_required

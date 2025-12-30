@@ -1,28 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Kolektif:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Lexend', sans-serif; }
+        .brand-font { font-family: 'Kolektif', sans-serif; color: #293272; }
+        .bottom-nav-active { color: #293272 !important; }
+        .bottom-nav-active span { font-weight: 600; }
+    </style>
     {% load static %}
 </head>
+<body class="flex flex-col min-h-screen bg-blue-50 pb-24 md:pb-0"> <!-- IMPORTANT: pb-24 para safe sa bottom nav -->
 
-<body class="flex flex-col min-h-screen bg-blue-50">
+    <!-- ===================== DESKTOP TOP NAVBAR (hidden sa mobile) ===================== -->
+    <nav class="hidden md:flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-md sticky top-0 z-50">
+        <div class="flex items-center space-x-2 flex-shrink-0">
+            <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
+            <span class="text-lg sm:text-xl md:text-2xl font-bold brand-font whitespace-nowrap">FixMyHouse</span>
+        </div>
+        <div class="flex items-center space-x-8 text-base">
+            <a href="/" class="flex items-center text-gray-700 hover:text-blue-600 transition gap-2 py-2">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
+                </svg>
+                Home
+            </a>
+            <a href="/third_party/account/" class="flex items-center text-blue-600 font-bold transition gap-2 py-2">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Account
+            </a>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition gap-2 py-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                </button>
+            </form>
+        </div>
+    </nav>
 
-    <!-- Navbar -->
-    {% include 'thirdparty/home/navbar.html' %}
+    <!-- ===================== MOBILE BOTTOM NAVBAR (fixed sa baba) ===================== -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 z-50 md:hidden shadow-2xl">
+        <div class="flex justify-around items-center py-3">
+            <!-- Home -->
+            <a href="/" class="bottom-nav-item flex flex-col items-center px-4 py-2 text-gray-600 hover:text-[#293272] transition-all">
+                <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 4.5l9 5.25v9a2.25 2.25 0 01-2.25 2.25h-3.75V15h-4.5v6H5.25A2.25 2.25 0 013 18.75v-9z" />
+                </svg>
+                <span class="text-xs mt-1">Home</span>
+            </a>
 
-    <!-- Main Content -->
+            <!-- Account (ACTIVE sa page na 'to) -->
+            <a href="/third_party/account/" class="bottom-nav-item flex flex-col items-center px-4 py-2 text-[#293272] bottom-nav-active transition-all">
+                <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-xs mt-1">Account</span>
+            </a>
+
+            <!-- Logout -->
+            <form method="POST" action="{% url 'logout' %}" class="contents">
+                {% csrf_token %}
+                <button type="submit" class="bottom-nav-item flex flex-col items-center px-4 py-2 text-gray-600 hover:text-red-600 transition-all">
+                    <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span class="text-xs mt-1">Logout</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
     <div class="flex-grow bg-blue-50">
-        <div class="flex-1 flex justify-center items-start p-4">
+        <div class="flex-1 flex justify-center items-start p-4 pt-8 md:pt-4">
             <div class="bg-white shadow-lg rounded-lg w-full flex flex-col md:flex-row lg:px-32">
 
-                <!-- Sidebar -->
+                <!-- Sidebar (Profile) -->
                 <div class="md:w-1/4 bg-gray-50 p-6 flex flex-col items-center text-center border-r">
-                    <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                    <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4 overflow-hidden border-4 border-white shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
                         </svg>
                     </div>
@@ -33,175 +98,82 @@
                 <!-- Content Area -->
                 <div class="flex-1 p-6">
                     <div class="md:flex">
-                        <!-- Sidebar Nav -->
+                        <!-- Sidebar Navigation -->
                         <nav class="md:w-1/3 lg:w-1/4 mb-6 md:mb-0">
                             <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Your Account</h3>
                             <ul id="accountNav" class="space-y-4 text-gray-700">
-                                <li data-section="personalInfo" class="cursor-pointer hover:text-blue-600">Personal Information</li>
-                                <!-- <li data-section="cards" class="cursor-pointer hover:text-blue-600">Cards and Accounts</li> -->
+                                <li data-section="personalInfo" class="cursor-pointer hover:text-blue-600 font-medium">Personal Information</li>
                                 <li data-section="addresses" class="cursor-pointer hover:text-blue-600">Saved Addresses</li>
                                 <li data-section="notifications" class="cursor-pointer hover:text-blue-600">Notifications</li>
-                                <!-- <li data-section="business" class="cursor-pointer hover:text-blue-600">Manage Business Profile</li> -->
-                                <!-- <li data-section="benefits" class="cursor-pointer hover:text-blue-600">Benefits</li> -->
 
-                                <!-- <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Benefits</h3>
-                                    <ul class="text-gray-700 space-y-2">
-                                        <li class="hover:text-blue-600 cursor-pointer">Properties for Sale</li>
-                                        <li class="hover:text-blue-600 cursor-pointer">FMH Lottery</li>
-                                        <li class="hover:text-blue-600 cursor-pointer">FMH Local Businesses</li>
-                                    </ul>
-
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Support</h3>
-                            
-                                    <ul class="text-gray-700 space-y-2">
-                                        <li class="hover:text-blue-600 cursor-pointer">Help / FAQs</li>
-                                        <li class="hover:text-blue-600 cursor-pointer">Become a Trader</li>
-                                        <li class="hover:text-blue-600 cursor-pointer">Rate the App</li>
-                                    </ul>
-                                 -->
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Preferences</h3>
-                                    <ul class="text-gray-700 space-y-2">
-                                        <li class="hover:text-blue-600 cursor-pointer">Language</li>
-                                        <li class="hover:text-blue-600 cursor-pointer">City / State</li>
-                                        
-                                    </ul>
-                                
-                                 <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2"></h3>
-                                    <ul class="text-gray-700 space-y-2">
-                                        <li class="hover:text-blue-600 cursor-pointer">Settings</li>
-                                        <!-- <li class="hover:text-blue-600 cursor-pointer">City / State</li> -->
-                                        
-                                    </ul>
-       
+                                <h3 class="font-semibold text-gray-800 mt-8 mb-4 text-xl border-b pb-2">Preferences</h3>
+                                <ul class="text-gray-700 space-y-3">
+                                    <li class="hover:text-blue-600 cursor-pointer">Language</li>
+                                    <li class="hover:text-blue-600 cursor-pointer">City / State</li>
+                                    <li class="hover:text-blue-600 cursor-pointer">Settings</li>
+                                </ul>
                             </ul>
                         </nav>
 
-                        <!-- Dynamic Sections -->
+                        <!-- Dynamic Content -->
                         <div class="md:w-2/3 lg:w-3/4" id="accountContent">
                             <!-- Personal Information -->
                             <section id="personalInfo" class="account-section">
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Personal Information</h3>
-                                <form method="POST" action="" class="space-y-4">
+                                <h3 class="font-semibold text-gray-800 mb-6 text-2xl border-b pb-3">Personal Information</h3>
+                                <form method="POST" action="" class="space-y-5">
                                     {% csrf_token %}
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Name</label>
-                                        <input type="text" name="name" value="{{ user.first_name }} {{ user.last_name }}" class="w-full border rounded px-3 py-2" />
+                                        <label class="block text-gray-700 mb-2 font-medium">Full Name</label>
+                                        <input type="text" name="name" value="{{ user.first_name }} {{ user.last_name }}" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Email</label>
-                                       <input type="email" name="contact_email" value="{{ thirdparty.contact_email }}" class="w-full border rounded px-3 py-2" />
+                                        <label class="block text-gray-700 mb-2 font-medium">Email Address</label>
+                                        <input type="email" name="contact_email" value="{{ thirdparty.contact_email }}" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" />
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Phone Number</label>
-
-                                        <input type="tel" name="phone" value="{{ thirdparty.phone }}" class="w-full border rounded px-3 py-2" />
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-gray-700 mb-1">PIN</label>
-                                        <input type="password" name="pin" placeholder="Enter PIN" class="w-full border rounded px-3 py-2" />
+                                        <label class="block text-gray-700 mb-2 font-medium">Phone Number</label>
+                                        <input type="tel" name="phone" value="{{ thirdparty.phone }}" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" />
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Gender</label>
-                                        <select name="gender" class="w-full border rounded px-3 py-2">
+                                        <label class="block text-gray-700 mb-2 font-medium">Gender</label>
+                                        <select name="gender" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">
                                             <option value="Male" {% if thirdparty.gender == "Male" %}selected{% endif %}>Male</option>
                                             <option value="Female" {% if thirdparty.gender == "Female" %}selected{% endif %}>Female</option>
                                             <option value="Other" {% if thirdparty.gender == "Other" %}selected{% endif %}>Other</option>
                                         </select>
-
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 mb-1">Date of Birth</label>
-                                        <!-- DOB from ThirdParty model -->
-                                        <input type="date" name="dob" value="{{ thirdparty.dob|date:'Y-m-d' }}" class="w-full border rounded px-3 py-2" />
+                                        <label class="block text-gray-700 mb-2 font-medium">Date of Birth</label>
+                                        <input type="date" name="dob" value="{{ thirdparty.dob|date:'Y-m-d' }}" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" />
                                     </div>
-                                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
+                                    <button type="submit" class="bg-[#293272] hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-lg transition shadow-md">
+                                        Save Changes
+                                    </button>
                                 </form>
                             </section>
 
-                            <!-- Cards and Accounts -->
-                            <section id="cards" class="account-section hidden">
-                                <!-- Wallet Header -->
-                                <div class="bg-blue-600 text-white p-6 rounded-lg mb-6 text-center">
-                                  <p class="text-sm">Wallet balance</p>
-                                  <h2 class="text-3xl font-bold mt-1 mb-4">AUD 0.00</h2>
-                                  <div class="flex justify-center gap-4">
-                                    <button class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition">Add funds</button>
-                                    <button class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition">Withdraw funds</button>
-                                  </div>
-                                </div>
-
-                                <!-- Cards Section -->
-                                <div class="mb-6">
-                                  <h3 class="font-semibold text-gray-800 mb-2">Cards</h3>
-                                  <div class="border border-gray-300 rounded-lg p-6 text-center text-gray-500 mb-2">
-                                    No cards added at the moment.
-                                  </div>
-                                  <button class="w-full border border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-50 transition">Add a card</button>
-                                </div>
-
-                                <!-- Bank Accounts Section -->
-                                <div class="mb-6">
-                                  <h3 class="font-semibold text-gray-800 mb-2">Bank accounts</h3>
-                                  <div class="border border-gray-300 rounded-lg p-6 text-center text-gray-500 mb-2">
-                                    No accounts added at the moment.
-                                  </div>
-                                  <button class="w-full border border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-50 transition">Add an account</button>
-                                </div>
-
-                                <!-- View Statements -->
-                                <div class="mb-6">
-                                  <h3 class="font-semibold text-gray-800 mb-2">View statements</h3>
-                                  <div class="border border-gray-300 rounded-lg p-6 text-center text-gray-500">
-                                    Nothing to show at the moment.
-                                  </div>
-                                </div>
-                            </section>
-
-                            <!-- Saved Addresses -->
+                            <!-- Other Sections (addresses, notifications, etc.) -->
                             <section id="addresses" class="account-section hidden">
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Saved Addresses</h3>
-                                <div class="flex flex-col items-center text-center text-gray-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-1a4 4 0 00-4-4H5a4 4 0 014-4h.17a4 4 0 013.92-3.13A4 4 0 0117 8h1a4 4 0 010 8h-1a4 4 0 00-4 4v1" />
+                                <h3 class="font-semibold text-gray-800 mb-6 text-2xl border-b pb-3">Saved Addresses</h3>
+                                <div class="text-center py-12 text-gray-500">
+                                    <svg class="mx-auto h-24 w-24 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <p class="mb-4">Sorry, there's nothing here.</p>
-                                    <button class="bg-blue-600 text-white px-4 py-2 rounded">Add New Address</button>
+                                    <p class="text-lg mb-6">No saved addresses yet.</p>
+                                    <button class="bg-[#293272] text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition">+ Add New Address</button>
                                 </div>
                             </section>
 
-                            <!-- Notifications -->
                             <section id="notifications" class="account-section hidden">
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Notifications</h3>
-                                <div class="text-center text-gray-500">No Notifications at the moment.</div>
+                                <h3 class="font-semibold text-gray-800 mb-6 text-2xl border-b pb-3">Notifications</h3>
+                                <div class="text-center py-12 text-gray-500">
+                                    <p class="text-lg">You're all caught up! No new notifications.</p>
+                                </div>
                             </section>
-
-                            <!-- Manage Business Profile -->
-                            <section id="business" class="account-section hidden">
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Manage Business Profile</h3>
-                                <p class="text-gray-500">Business profile management will be added here.</p>
-                            </section>
-
-                            <!-- Benefits -->
-                            <section id="benefits" class="account-section hidden">
-                                <h3 class="font-semibold text-gray-800 mb-4 text-xl border-b pb-2">Benefits</h3>
-                                <ul class="text-gray-700 space-y-2">
-                                    <li class="hover:text-blue-600 cursor-pointer">Properties for Rent</li>
-                                    <li class="hover:text-blue-600 cursor-pointer">Properties for Sale</li>
-                                    <li class="hover:text-blue-600 cursor-pointer">FMH Lottery</li>
-                                    <li class="hover:text-blue-600 cursor-pointer">FMH Local Businesses</li>
-                                </ul>
-                            </section>
-
-                            <!-- Support -->
-
-
-                        
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -209,18 +181,29 @@
     <!-- Footer -->
     {% include 'renter/home/footer.html' %}
 
+    <!-- Script for Sidebar Navigation -->
     <script>
-        const navItems = document.querySelectorAll('#accountNav li');
-        const sections = document.querySelectorAll('.account-section');
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('#accountNav li[data-section]');
+            const sections = document.querySelectorAll('.account-section');
 
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                sections.forEach(section => section.classList.add('hidden'));
-                document.getElementById(item.getAttribute('data-section')).classList.remove('hidden');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const target = item.getAttribute('data-section');
+                    
+                    // Update active state
+                    navItems.forEach(nav => nav.classList.remove('text-blue-600', 'font-bold'));
+                    item.classList.add('text-blue-600', 'font-bold');
+
+                    // Show section
+                    sections.forEach(section => section.classList.add('hidden'));
+                    document.getElementById(target).classList.remove('hidden');
+                });
             });
+
+            // Auto-open Personal Info on load
+            document.querySelector('[data-section="personalInfo"]').classList.add('text-blue-600', 'font-bold');
         });
     </script>
-
 </body>
-
 </html>
