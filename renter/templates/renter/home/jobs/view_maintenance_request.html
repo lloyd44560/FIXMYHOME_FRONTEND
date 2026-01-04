@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lexend', sans-serif;
+      background: white;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #000000;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+    .field-value {
+      font-size: 14px;
+      color: #666666;
+      font-weight: 400;
+      line-height: 1.5;
+      background: #F5F5F5;
+      padding: 12px 16px;
+      border-radius: 8px;
+    }
+    .yes-badge {
+      display: inline-block;
+      background: #d4e6ff;
+      color: #3b90fe;
+      padding: 4px 16px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .availability-badge {
+      display: inline-block;
+      background: #00BFA5;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-right: 8px;
+    }
+    .photo-container {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .photo-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .return-btn {
+      background: #007AFF;
+      color: white;
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .return-btn:hover {
+      background: #0056CC;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="px-4 py-4 flex items-center gap-3 border-b border-gray-100">
+    <button onclick="window.history.back()" class="text-blue-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+    <div>
+      <h1 class="text-sm font-semibold text-gray-900">Maintenance request</h1>
+      <p class="text-xs text-gray-500">Request #{{ job.id|stringformat:"08d" }}</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="px-4 py-6 space-y-6">
+
+    <!-- Title -->
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 leading-tight mb-1">
+        {{ job.category.description }}
+      </h2>
+    </div>
+
+    <!-- Heating/Cooling Brand -->
+    <div>
+      <p class="section-title">Heating/Cooling brand</p>
+      <div class="field-value">
+        {{ job.heating_cooling_brand|default:"American Home" }}
+      </div>
+    </div>
+
+    <!-- Heating/Cooling Serial/Model Number -->
+    <div>
+      <p class="section-title">Heating/Cooling serial/model number</p>
+      <div class="field-value">
+        {{ job.serial_model_number|default:"AHACMINY1023EHW" }}
+      </div>
+    </div>
+
+    <!-- Location in Room -->
+    <div>
+      <p class="section-title">Location in room</p>
+      <div class="field-value">
+        {{ job.location_in_room|default:"Garage" }}
+      </div>
+    </div>
+
+    <!-- Comments -->
+    <div>
+      <p class="section-title">Comments on Lounge Room - Heating/Cooling</p>
+      <div class="field-value">
+        {{ job.notes|default:"Multifunctional furniture is a gift in small spaces. Storage ottomans that double up as extra seating are ideal, especially those set.." }}
+      </div>
+    </div>
+
+    <!-- When did the issue occur? -->
+    <div>
+      <p class="section-title">When did the issue occur?</p>
+      <div class="mt-2">
+        <span class="yes-badge">
+          {% if job.renter_issue_date.value %}
+            {{ job.renter_issue_date.value }}
+          {% elif job.renter_issue_date %}
+            {{ job.renter_issue_date }}
+          {% else %}
+            YESTERDAY
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- Has the issue been fixed before? -->
+    <div>
+      <p class="section-title">Has the issue been fixed before?</p>
+      <div class="mt-2">
+        <span class="yes-badge">{{ job.issue_fixed_before|default:"YES" }}</span>
+      </div>
+    </div>
+
+    <!-- Has this issue been fixed by FMH before? -->
+    <div>
+      <p class="section-title">Has this issue been fixed by FMH before?</p>
+      <div class="mt-2">
+        <span class="yes-badge">{{ job.fixed_by_fmh_before|default:"YES" }}</span>
+      </div>
+    </div>
+
+    <!-- Provide additional details of previous fix -->
+    <div>
+      <p class="section-title">Provide additional details of previous fix.</p>
+      <div class="field-value">
+        {{ job.previous_fix_details|default:"The previous job was fixed by Arvin from VIC with LIC. 1234566" }}
+      </div>
+    </div>
+
+    <!-- Availability -->
+    <div>
+      <p class="section-title">Availability</p>
+      <div class="mt-2 flex flex-wrap gap-2">
+        {% if job.renter_availability_schedule.days %}
+          {% for day in job.renter_availability_schedule.days %}
+            <span class="availability-badge">{{ day }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="availability-badge">MON</span>
+        {% endif %}
+
+        {% if job.renter_availability_schedule.times %}
+          {% for time in job.renter_availability_schedule.times %}
+            <span class="availability-badge">{{ time }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="availability-badge">AFTERNOON</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Photos of Cooling Area -->
+    <div>
+      <p class="section-title">Photos of Cooling Area</p>
+      {% if job.jobimage_set.all %}
+        {% for image in job.jobimage_set.all %}
+          <div class="photo-container">
+            <img src="{{ image.image.url }}" alt="Issue Photo" onclick="viewImage('{{ image.image.url }}')">
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="photo-container">
+          <img src="{% static 'images/placeholder-ac.jpg' %}" alt="Cooling Area Photo">
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Set as Urgent Request Fix? -->
+    <div>
+      <p class="section-title">Set as Urgent Request Fix?</p>
+      <div class="mt-2">
+        <span class="yes-badge">
+          {% if job.priority %}YES{% else %}NO{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- Return Home Button -->
+    <div class="pt-4 pb-8">
+      <button onclick="window.location.reload()" class="return-btn">
+        Return Home
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Image Viewer Modal -->
+  <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4" onclick="closeImageModal()">
+    <button class="absolute top-4 right-4 text-white text-3xl font-bold w-10 h-10 flex items-center justify-center">&times;</button>
+    <img id="modalImage" src="" alt="Full Size" class="max-w-full max-h-full object-contain" onclick="event.stopPropagation()">
+  </div>
+
+  <script>
+    function viewImage(url) {
+      document.getElementById('modalImage').src = url;
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+  </script>
+
+</body>
+</html>

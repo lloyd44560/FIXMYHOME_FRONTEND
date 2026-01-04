@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.utils import timezone
+from datetime import timedelta
 from django.views.generic import CreateView
 
 from trader.models import TraderRegistration
@@ -17,6 +18,8 @@ from trader.forms import BiddingForm
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from trader.decorators.traderOnly import trader_required
+
+
 
 class BiddingCreateView(LoginRequiredMixin, CreateView):
     model = Bidding
@@ -39,25 +42,22 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Set trader as current user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
-        
+
         if bidding.start_date and bidding.end_date:
             if bidding.end_date < bidding.start_date:
                 messages.error(self.request, "End date cannot be earlier than start date.")
                 return self.form_invalid(form)
-        else:
-            messages.error(self.request, "Please provide both start and end dates.")
-            return self.form_invalid(form)
 
         bidding.trader = trader
 
         # Use form.instance (not bidding yet)
-        job = bidding.jobs  
+        job = bidding.jobs
 
         # Check for duplicates
         if Bidding.objects.filter(trader=trader, jobs=job).exists():
             messages.error(self.request, "You have already submitted a quotation for this job.")
             return self.form_invalid(form)
-        
+
         # Auto-assign team member
         if trader.isTeamMember:
             team_member = TeamMember.objects.filter(user=self.request.user).first()
@@ -93,7 +93,7 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
             recipient_list=[bidding.jobs.agent.user.email or bidding.jobs.agent.email],  # email to agent
             fail_silently=False,
         )
-        
+
         messages.success(self.request, "Your quotation has been submitted successfully and is now pending agent review.")
         return super().form_valid(form)
 
@@ -116,12 +116,12 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         context['memberName'] = trader.name if trader else ''
         # ✅ Filter only quoted + open jobs and order DESC by quoted_at or id
         context['jobs_filtered'] = Jobs.objects.filter(
-            Q(category_id__marketName__in=industry_names) | 
+            Q(category_id__marketName__in=industry_names) |
             Q(category_id__secondaryMarketName__in=industry_names),
             bid_status='open',
             status='quoted'
         ).order_by('-quoted_at')
-        
+
         # Filter team members by trader if director
         team_member_val = TeamMember.objects.filter(trader_id=trader)
         context['team_members'] = team_member_val or TeamMember.objects.none()

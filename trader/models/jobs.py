@@ -39,6 +39,8 @@ class Jobs(models.Model):
     issue_been_fixed_before = models.BooleanField(default=False)
     issue_been_fixed_by_fmh_before = models.BooleanField(default=False)
     renter_availability_schedule = models.JSONField(null=True, blank=True, default=dict)
+    renter_issue_date = models.JSONField(blank=True, null=True, default=dict)
+
 
     def save(self, *args, **kwargs):
         # Auto-close bid if bid_count >= 3

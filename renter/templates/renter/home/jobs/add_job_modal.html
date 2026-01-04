@@ -1,0 +1,481 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Maintenance Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Tailwind + Alpine -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Select2 -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    html,body{margin:0;padding:0;height:100%;font-family:'Lexend',sans-serif;background:#f9fafb;}
+    .fullscreen-modal .modal-dialog{max-width:100vw;margin:0;height:100vh;}
+    .fullscreen-modal .modal-content{height:100vh;border:none;border-radius:0;display:flex;flex-direction:column;}
+    .fullscreen-modal .modal-header{flex-shrink:0;padding:1rem 1.5rem;background:white;border-bottom:1px solid #e5e7eb;}
+    .fullscreen-modal .modal-body{flex:1;overflow-y:auto;padding:1.5rem;background:#f9fafb;-webkit-overflow-scrolling:touch;}
+    .fullscreen-modal .modal-footer{flex-shrink:0;padding:1rem 1.5rem;background:white;border-top:1px solid #e5e7eb;}
+    .select2-container .select2-selection--single{height:48px !important;border:1px solid #d1d5db !important;border-radius:0.5rem !important;padding:0.5rem 1rem !important;}
+    .select2-container--default .select2-selection--single .select2-selection__rendered{line-height:28px !important;font-size:14px !important;color:#1f2937 !important;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{height:48px !important;}
+    .btn-submit{background-color:#006ffd;transition:background-color .2s;font-size:16px;font-weight:600;}
+    .btn-submit:hover{background-color:#005edc;}
+    
+    /* Default / Unselected state */
+    .issue-option-btn {
+      background-color: #eaf2ff;
+      color: #777777;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Hover state */
+    .issue-option-btn:hover {
+      background-color: #e0f7fa;
+      color: #006064;
+    }
+
+    /* Selected state */
+    .issue-option-btn.selected {
+      background-color: #4CE4C2;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 191, 165, 0.3);
+    }
+
+    /* Focus accessibility */
+    .issue-option-btn:focus {
+      outline: none;
+      ring: 0 0 0 3px rgba(0, 191, 165, 0.3);
+    }
+    
+    /* Consistent label styling */
+    label.form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    /* Consistent button styling */
+    .availability-btn {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* Image upload buttons */
+    .image-control-btn {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- ====================== ADD JOB MODAL ====================== -->
+  <div class="modal fade fullscreen-modal" id="addJobModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <form method="POST" action="{% url 'add_job_save' %}" class="modal-content" enctype="multipart/form-data" id="addJobForm">
+        {% csrf_token %}
+        <div class="modal-header">
+            <!--Add a back button here just plain back icon with no arrow-->
+        </div>
+
+        <div class="modal-body space-y-6">
+          <!-- Category -->
+          <div>
+            <label class="block form-label mb-1.5">Describe your Issue *</label>
+            <select name="category" id="categorySelect" class="w-full" required>
+              <option value="" disabled selected>-- Select Service Category --</option>
+              {% for service in services %}
+                <option value="{{ service.id }}" data-isurgent="{{ service.is_urgent|yesno:'true,false' }}">
+                  {{ service.description }} {% if service.is_urgent %}<span class="text-red-600 font-medium">(Urgent)</span>{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label class="block form-label mb-1.5">Additional Information</label>
+            <textarea name="notes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006ffd] focus:border-[#006ffd] resize-none text-sm text-gray-700" placeholder="Describe the issue in detail..."></textarea>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Label -->
+            <label class="block form-label">
+              When did the issue occur? <span class="text-red-500">*</span>
+            </label>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+              <!-- YESTERDAY (default selected) -->
+              <button type="button"
+                      class="issue-option-btn px-6 py-3 rounded-full border-2 transition-all duration-200 shadow-sm"
+                      data-value="YESTERDAY">
+                YESTERDAY
+              </button>
+
+              <!-- TODAY -->
+              <button type="button"
+                      class="issue-option-btn px-6 py-3 rounded-full border-2 transition-all duration-200 shadow-sm"
+                      data-value="TODAY">
+                TODAY
+              </button>
+
+              <!-- ONGOING -->
+              <button type="button"
+                      class="issue-option-btn px-6 py-3 rounded-full border-2 transition-all duration-200 shadow-sm"
+                      data-value="ONGOING">
+                ONGOING
+              </button>
+
+              <!-- UNSURE -->
+              <button type="button"
+                      class="issue-option-btn px-6 py-3 rounded-full border-2 transition-all duration-200 shadow-sm"
+                      data-value="UNSURE">
+                UNSURE
+              </button>
+            </div>
+
+            <!-- Has the Issue been Fixed Before Section  -->
+            <div x-data="{ fixed: 'no' }">
+              <p class="form-label mb-2">Has this issue been fixed before?</p>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" @click="fixed='yes'" :class="fixed==='yes' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'" class="px-5 py-2 rounded-full text-sm font-medium transition">YES</button>
+                <button type="button" @click="fixed='no'" :class="fixed==='no' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'" class="px-5 py-2 rounded-full text-sm font-medium transition">NO</button>
+                <button type="button" @click="fixed='unsure'" :class="fixed==='unsure' ? 'bg-[#006ffd] text-white' : 'bg-white border border-[#006ffd] text-[#006ffd] hover:bg-[#006ffd]/10'" class="px-5 py-2 rounded-full text-sm font-medium transition">UNSURE</button>
+              </div>
+              <input type="hidden" name="issue_been_fixed_before" :value="fixed">
+            </div>
+
+            <!-- Hidden Input -->
+            <input type="hidden" name="renter_issue_date" id="renter_issue_date" value="YESTERDAY" required>
+          </div>
+
+          <!-- Availability -->
+          <div x-data="{ days: [], times: [], toggleDay(day){ this.days.includes(day) ? this.days = this.days.filter(d=>d!==day) : this.days.push(day); }, toggleTime(time){ this.times.includes(time) ? this.times = this.times.filter(t=>t!==time) : this.times.push(time); } }">
+            <label class="block form-label">Your Availability</label>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <template x-for="day in ['MON','TUE','WED','THU','FRI','SAT','SUN']" :key="day">
+                <button type="button" @click="toggleDay(day)" :class="days.includes(day) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-3 py-1.5 rounded-full availability-btn transition"><span x-text="day"></span></button>
+              </template>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <template x-for="time in ['MORNING','AFTERNOON','EVENING']" :key="time">
+                <button type="button" @click="toggleTime(time)" :class="times.includes(time) ? (time==='MORNING' ? 'bg-teal-500 text-white' : 'bg-blue-600 text-white') : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-3 py-1.5 rounded-full availability-btn transition"><span x-text="time"></span></button>
+              </template>
+            </div>
+            <input type="hidden" name="renter_availability_schedule" :value="JSON.stringify({days:days,times:times})">
+          </div>
+
+          <!-- Image Upload - IMPROVED UI -->
+          <div>
+            <label class="block form-label mb-1.5">Upload Media of issue.... (max 5)</label>
+            
+            <!-- Hidden file input -->
+            <input type="file" id="imageUploadInput" accept="image/*" multiple class="hidden">
+            
+            <!-- Add Image Button -->
+            <button type="button" id="add-image-btn" class="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition flex items-center justify-center gap-2 text-gray-600 hover:text-blue-600 font-medium text-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+              Add Image
+            </button>
+            
+            <!-- Image Preview Area -->
+            <div id="image-preview" class="flex flex-wrap gap-2 mt-3"></div>
+            
+            <!-- Controls -->
+            <div class="flex justify-between items-center mt-2">
+              <p id="image-count" class="text-xs text-gray-500">0 / 5 images</p>
+              <button type="button" id="clear-images-btn" class="image-control-btn px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition hidden">Clear All</button>
+            </div>
+            
+            <p id="image-limit-msg" class="text-red-600 text-xs mt-1 hidden">Maximum 5 images reached.</p>
+          </div>
+
+          <input type="hidden" name="priority" id="prioritySelect">
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="px-6 py-2.5 btn-submit text-white rounded-lg shadow-md w-full">
+            Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================== SUCCESS MODAL ====================== -->
+  <div class="modal fade" id="confirmSubmissionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-xl shadow-xl">
+        <div class="modal-body p-6 text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800">Request Submitted!</h3>
+          <p class="text-gray-600 mt-2 text-sm">Your maintenance request has been sent successfully.</p>
+        </div>
+        <div class="modal-footer border-t-0 p-4">
+          <button type="button" id="confirmOkBtn" class="w-full px-6 py-2.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-semibold transition text-sm">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== NO‑PROPERTY ERROR MODAL ====================== -->
+  <div class="modal fade" id="noPropertyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-xl shadow-xl">
+        <div class="modal-body p-6 text-center">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800">Property Required</h3>
+          <p class="text-gray-600 mt-2 text-sm">
+            You must have an assigned property before creating a maintenance request.
+          </p>
+        </div>
+        <div class="modal-footer border-t-0 p-4">
+          <button type="button" id="noPropertyOkBtn"
+                  class="w-full px-6 py-2.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-lg font-semibold transition text-sm">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== SCRIPTS ====================== -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // ========== MODALS ==========
+  const addModal = new bootstrap.Modal(document.getElementById('addJobModal'));
+  const confirmModal = new bootstrap.Modal(document.getElementById('confirmSubmissionModal'));
+  const noPropModal = new bootstrap.Modal(document.getElementById('noPropertyModal'));
+  addModal.show();
+
+  // ========== SELECT2 ==========
+  $('#categorySelect').select2({
+    placeholder: "-- Select Service Category --",
+    width: '100%',
+    dropdownParent: $('#addJobModal')
+  });
+  $('#categorySelect').on('select2:select', function () {
+    const isUrgent = $(this).find(':selected').data('isurgent');
+    $('#prioritySelect').val(isUrgent ? 'true' : 'false');
+  });
+
+  // ========== ISSUE DATE BUTTONS ==========
+  const issueButtons = document.querySelectorAll('.issue-option-btn');
+  const hiddenIssueDate = document.getElementById('renter_issue_date');
+
+  // Set default: YESTERDAY selected
+  const yesterdayBtn = document.querySelector('.issue-option-btn[data-value="YESTERDAY"]');
+  if (yesterdayBtn) {
+    yesterdayBtn.classList.add('selected');
+    hiddenIssueDate.value = 'YESTERDAY';
+  }
+
+  issueButtons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      issueButtons.forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+      hiddenIssueDate.value = this.dataset.value;
+    });
+  });
+
+  // ========== IMAGE UPLOAD - IMPROVED UI ==========
+  const imageInput = document.getElementById('imageUploadInput');
+  const addImageBtn = document.getElementById('add-image-btn');
+  const preview = document.getElementById('image-preview');
+  const clearBtn = document.getElementById('clear-images-btn');
+  const limitMsg = document.getElementById('image-limit-msg');
+  const imageCount = document.getElementById('image-count');
+  
+  let selectedFiles = []; // Array to store File objects
+  const MAX_IMAGES = 5;
+
+  // Click "Add Image" button to trigger file input
+  addImageBtn.addEventListener('click', function() {
+    if (selectedFiles.length >= MAX_IMAGES) {
+      limitMsg.classList.remove('hidden');
+      return;
+    }
+    imageInput.click();
+  });
+
+  // Handle file input change
+  imageInput.addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    
+    // Check if adding these files would exceed limit
+    if (selectedFiles.length + files.length > MAX_IMAGES) {
+      limitMsg.classList.remove('hidden');
+      const remainingSlots = MAX_IMAGES - selectedFiles.length;
+      if (remainingSlots > 0) {
+        // Only add files up to the limit
+        selectedFiles.push(...files.slice(0, remainingSlots));
+      }
+    } else {
+      limitMsg.classList.add('hidden');
+      selectedFiles.push(...files);
+    }
+    
+    updatePreview();
+    updateFileInput();
+    updateUI();
+    
+    // Reset input to allow selecting same files again
+    imageInput.value = '';
+  });
+
+  // Clear all images
+  clearBtn.addEventListener('click', function() {
+    selectedFiles = [];
+    limitMsg.classList.add('hidden');
+    updatePreview();
+    updateFileInput();
+    updateUI();
+  });
+
+  // Update preview display
+  function updatePreview() {
+    preview.innerHTML = '';
+    
+    selectedFiles.forEach((file, index) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'relative inline-block';
+
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.className = 'w-24 h-24 object-cover rounded-lg border border-gray-300 shadow-sm';
+      img.onload = () => URL.revokeObjectURL(img.src);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.className = 'absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 text-sm flex items-center justify-center shadow-lg hover:bg-red-700 transition';
+      removeBtn.onclick = () => removeImage(index);
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(removeBtn);
+      preview.appendChild(wrapper);
+    });
+  }
+
+  // Remove specific image
+  function removeImage(index) {
+    selectedFiles.splice(index, 1);
+    limitMsg.classList.add('hidden');
+    updatePreview();
+    updateFileInput();
+    updateUI();
+  }
+
+  // Update the actual file input with current selection
+  function updateFileInput() {
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    imageInput.files = dt.files;
+  }
+
+  // Update UI elements (counter, buttons visibility)
+  function updateUI() {
+    // Update counter
+    imageCount.textContent = `${selectedFiles.length} / ${MAX_IMAGES} images`;
+    
+    // Show/hide clear button
+    if (selectedFiles.length > 0) {
+      clearBtn.classList.remove('hidden');
+    } else {
+      clearBtn.classList.add('hidden');
+    }
+    
+    // Disable/enable add button at limit
+    if (selectedFiles.length >= MAX_IMAGES) {
+      addImageBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      addImageBtn.disabled = true;
+    } else {
+      addImageBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      addImageBtn.disabled = false;
+    }
+  }
+
+  // ========== FORM SUBMIT ==========
+  const form = document.getElementById('addJobForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const original = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+
+    const fd = new FormData(form);
+    
+    // Manually add all selected images
+    fd.delete('images'); // Remove any existing
+    selectedFiles.forEach(file => {
+      fd.append('images', file);
+    });
+
+    fetch(form.action, {
+      method: 'POST',
+      body: fd,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        addModal.hide();
+        confirmModal.show();
+      } else if (data.no_property) {
+        addModal.hide();
+        noPropModal.show();
+      } else {
+        alert(data.error || 'An error occurred.');
+      }
+    })
+    .catch(() => alert('Network error.'))
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = original;
+    });
+  });
+
+  // ========== OK BUTTONS - UPDATED TO REDIRECT ==========
+  document.getElementById('confirmOkBtn').addEventListener('click', () => {
+    confirmModal.hide();
+    // Redirect to your target page (change URL as needed)
+    window.location.href = '/maintenance/success/'; // Change this to your desired URL
+  });
+
+  document.getElementById('noPropertyOkBtn').addEventListener('click', () => {
+    noPropModal.hide();
+    addModal.show();
+  });
+});
+</script>
+
+</body>
+</html>

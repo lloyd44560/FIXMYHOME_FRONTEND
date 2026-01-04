@@ -20,7 +20,7 @@ class TraderHomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Get the trader linked to the logged-in user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
 
@@ -32,13 +32,13 @@ class TraderHomeView(TemplateView):
 
         # Count by status & priority (with industry filtering)
         context['to_quote_urgent'] = Jobs.objects.filter(
-            Q(category_id__marketName__in=industry_names) | 
+            Q(category_id__marketName__in=industry_names) |
                 Q(category_id__secondaryMarketName__in=industry_names),
             priority=True,
             is_active=True
         ).count()
         context['to_quote_non_urgent'] = Jobs.objects.filter(
-            Q(category_id__marketName__in=industry_names) | 
+            Q(category_id__marketName__in=industry_names) |
                 Q(category_id__secondaryMarketName__in=industry_names),
             priority=False,
             is_active=True
@@ -85,7 +85,7 @@ class TraderHomeView(TemplateView):
 
     @login_required
     def trader_chat(request):
-        chat_url = "/chat/chat/general/"  # This points to the chat app
+        chat_url = "/chat/all_jobs/"  # This points to the chat app
         return render(request, 'pages/trader_chat.html', {"chat_url": chat_url})
 
 

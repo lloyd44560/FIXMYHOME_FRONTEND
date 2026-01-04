@@ -174,7 +174,6 @@ def delete_property(request, id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
-
 @method_decorator(login_required, name='dispatch')
 class PropertyListView(ListView):
     model = Property
@@ -201,8 +200,22 @@ class PropertyListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        renter = Renter.objects.filter(user=user).first()
+
+        # Tasks Status
+        tasks_status = {
+            "personal_details": bool(renter),
+            "agent_details": Property.objects.filter(renter=renter).exists() if renter else False,
+            "condition_report": MainConditionReport.objects.filter(renter=renter).exists() if renter else False,
+            "appliance_reports": RoomApplianceReport.objects.filter(renter=renter).exists() if renter else False,
+            "maintenance_requests": Jobs.objects.filter(renter=renter).exists() if renter else False,
+            "minimum_standard_reports": MinimumStandardReport.objects.filter(renter=renter).exists() if renter else False,
+        }
+
         context['agents'] = AgentRegister.objects.all()
         context['search_query'] = self.request.GET.get('q', '')
+        context['tasks_status'] = tasks_status  # Add dynamic tasks info
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -407,6 +420,93 @@ def list_jobs(request):
     })
 
 
+@login_required
+def add_job_modal(request):
+    user = request.user
+    search_query = request.GET.get('q', '')
+
+    try:
+        renter = Renter.objects.get(user=user)
+        jobs = Jobs.objects.filter(renter=renter)
+
+        if search_query:
+            jobs = jobs.filter(
+                Q(job_code__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(notes__icontains=search_query) |
+                Q(category__description__icontains=search_query)
+            )
+
+        # --- Attach all bidding records per job ---
+        for job in jobs:
+            job.bids = Bidding.objects.all()
+
+    except Renter.DoesNotExist:
+        jobs = Jobs.objects.none()
+
+    # Pagination
+    paginator = Paginator(jobs.order_by('-approved_at'), 5)
+    page_number = request.GET.get('page')
+    page_jobs = paginator.get_page(page_number)
+
+    agents = AgentRegister.objects.all()
+    traders = TraderRegistration.objects.all()
+    services = Services.objects.filter(is_active=True)
+    all_bids = Bidding.objects.all()
+
+    return render(request, 'renter/home/jobs/add_job_modal.html', {
+        'jobs': page_jobs,
+        'agents': agents,
+        'traders': traders,
+        'services': services,
+        'bids': all_bids,
+        'search_query': search_query,
+    })
+
+
+
+@login_required
+def list_job_modal(request):
+    user = request.user
+    search_query = request.GET.get('q', '')
+
+    try:
+        renter = Renter.objects.get(user=user)
+        jobs = Jobs.objects.filter(renter=renter)
+
+        if search_query:
+            jobs = jobs.filter(
+                Q(job_code__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(notes__icontains=search_query) |
+                Q(category__description__icontains=search_query)
+            )
+
+        # --- Attach all bidding records per job ---
+        for job in jobs:
+            job.bids = Bidding.objects.all()
+
+    except Renter.DoesNotExist:
+        jobs = Jobs.objects.none()
+
+    # Pagination
+    paginator = Paginator(jobs.order_by('-approved_at'), 5)
+    page_number = request.GET.get('page')
+    page_jobs = paginator.get_page(page_number)
+
+    agents = AgentRegister.objects.all()
+    traders = TraderRegistration.objects.all()
+    services = Services.objects.filter(is_active=True)
+    all_bids = Bidding.objects.all()
+
+    return render(request, 'renter/home/jobs/view_job_modal.html', {
+        'jobs': page_jobs,
+        'agents': agents,
+        'traders': traders,
+        'services': services,
+        'bids': all_bids,
+        'search_query': search_query,
+    })
 
 @csrf_exempt
 @login_required
@@ -439,6 +539,12 @@ def add_job(request):
              # Parse availability JSON safely
             availability_data = request.POST.get('renter_availability_schedule')
             availability_json = json.loads(availability_data) if availability_data else {}
+              # 7. Parse renter issue date JSON safely
+            renter_issue_date_raw = request.POST.get("renter_issue_date")
+            try:
+                renter_issue_date_json = json.loads(renter_issue_date_raw) if renter_issue_date_raw else {}
+            except json.JSONDecodeError:
+                renter_issue_date_json = {"value": renter_issue_date_raw} if renter_issue_date_raw else {}
 
 
             # 6. Create the job
@@ -449,7 +555,8 @@ def add_job(request):
                 notes=request.POST.get('notes'),
                 category=service,
                 priority=priority,
-                renter_availability_schedule=availability_json
+                renter_availability_schedule=availability_json,
+                renter_issue_date=renter_issue_date_json,
             )
 
             #7. Handle image uploads
@@ -459,6 +566,8 @@ def add_job(request):
 
             # 8. Success message
             messages.success(request, "Maintenance Request created successfully.")
+
+            # Redirect to the page of the maintenance
             return redirect('/maintenance/')
 
         except Exception as e:
@@ -467,6 +576,91 @@ def add_job(request):
             return redirect('/maintenance/')
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+
+
+
+@login_required
+def view_maintenance_request_chat(request, job_code):
+    """
+    View to display detailed maintenance request information
+    """
+    job = get_object_or_404(Jobs, job_code=job_code)
+
+    context = {
+        'job': job,
+    }
+
+    return render(request, 'renter/home/jobs/view_job.html', context)
+
+@csrf_exempt
+@login_required
+def add_job_save(request):
+    if request.method != 'POST':
+        return JsonResponse(
+            {'success': False, 'error': 'Invalid request method'}, status=405
+        )
+    try:
+        renter = Renter.objects.get(user=request.user)
+        property_obj = Property.objects.filter(renter=renter).first()
+
+        # -------------------------------------------------
+        # No property → dedicated JSON flag
+        # -------------------------------------------------
+        if not property_obj:
+            return JsonResponse({
+                'success': False,
+                'no_property': True,
+                'error': "No property assigned to your account."
+            })
+
+        agent = property_obj.agent
+        if not agent:
+            return JsonResponse({
+                'success': False,
+                'error': "No agent assigned to this property."
+            })
+
+        service_id = request.POST.get('category')
+        service = Services.objects.get(id=service_id)
+        priority = service.isurgent
+
+        # ----- Availability -----
+        availability_data = request.POST.get('renter_availability_schedule')
+        availability_json = json.loads(availability_data) if availability_data else {}
+
+        # ----- Issue date -----
+        renter_issue_date_raw = request.POST.get("renter_issue_date")
+        try:
+            renter_issue_date_json = json.loads(renter_issue_date_raw) if renter_issue_date_raw else {}
+        except json.JSONDecodeError:
+            renter_issue_date_json = {"value": renter_issue_date_raw} if renter_issue_date_raw else {}
+
+        # ----- Create Job -----
+        job = Jobs.objects.create(
+            agent=agent,
+            renter=renter,
+            property=property_obj,
+            notes=request.POST.get('notes'),
+            category=service,
+            priority=priority,
+            renter_availability_schedule=availability_json,
+            renter_issue_date=renter_issue_date_json,
+        )
+
+        # ----- Images -----
+        images = request.FILES.getlist('images')
+        for img in images:
+            JobImage.objects.create(job=job, image=img)
+
+        # Store job ID in session to pass to success page
+        request.session['new_job_id'] = job.id
+
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        print("Add job error:", e)
+        return JsonResponse({'success': False, 'error': str(e)})
+
 # @csrf_exempt
 # @login_required
 # def edit_job(request, job_id):
@@ -500,28 +694,47 @@ def add_job(request):
 @csrf_exempt
 @login_required
 def edit_job(request, job_id):
-    renter = get_object_or_404(Renter, user=request.user)  # or username/email if that's how linked
+    renter = get_object_or_404(Renter, user=request.user)
     job = get_object_or_404(Jobs, id=job_id, renter=renter)
+
     if request.method == "POST":
         try:
-            # Update foreign keys
-            agent_id = request.POST.get("agent_id")
+            # Update category
             category_id = request.POST.get("category")
-
-            if agent_id:
-                job.agent = AgentRegister.objects.get(id=agent_id)
             if category_id:
-                job.category = Services.objects.get(id=category_id)
-
-            # Priority logic
-            service = job.category
-            job.priority = service.isurgent
+                service = Services.objects.get(id=category_id)
+                job.category = service
+                # Update priority based on category
+                # job.priority = service.is_urgent
 
             # Update simple fields
             job.notes = request.POST.get("notes", "")
-            job.issue_found_at = request.POST.get("issue_found_at") or None
-            job.renter_availability = request.POST.get("renter_availability") or None
-            job.issue_been_fixed_before = "issue_been_fixed_before" in request.POST
+
+            # Handle issue_been_fixed_before
+            fixed_before = request.POST.get("issue_been_fixed_before", "no")
+            # if fixed_before == "yes":
+            #     job.issue_been_fixed_before = True
+            # elif fixed_before == "no":
+            #     job.issue_been_fixed_before = False
+            # else:  # unsure
+            #     job.issue_been_fixed_before = None
+
+            # Handle renter_issue_date (JSON)
+            issue_date_raw = request.POST.get("renter_issue_date")
+            if issue_date_raw:
+                try:
+                    job.renter_issue_date = json.loads(issue_date_raw) if issue_date_raw else {}
+                except json.JSONDecodeError:
+                    job.renter_issue_date = {"value": issue_date_raw}
+
+            # Handle Availability Schedule (JSON)
+            schedule_json = request.POST.get("renter_availability_schedule")
+            if schedule_json:
+                try:
+                    job.renter_availability_schedule = json.loads(schedule_json)
+                except json.JSONDecodeError:
+                    print("Invalid renter_availability_schedule JSON:", schedule_json)
+                    job.renter_availability_schedule = {"days": [], "times": []}
 
             job.save()
 
@@ -534,16 +747,21 @@ def edit_job(request, job_id):
             images = request.FILES.getlist("images")
             for img in images:
                 JobImage.objects.create(job=job, image=img)
-            messages.success(request, "Maintenance Request updated successfully.")
-            return redirect("/maintenance/")
+
+            # Return JSON success for modal handling
+            return JsonResponse({
+                'success': True,
+                'message': 'Maintenance Request updated successfully.'
+            })
+
         except Exception as e:
             print("Edit job error:", e)
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
-            messages.error(request, f"Error updating Maintenance Request: {e}")
-            return redirect("/maintenance/")
+            return JsonResponse({
+                'success': False,
+                'message': f"Error updating Maintenance Request: {str(e)}"
+            }, status=500)
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=405)
-
 
 
 @login_required
@@ -557,6 +775,99 @@ def delete_job(request, id):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
         messages.error(request, f"Maintenance Request deleted: {e}")
 
+
+
+# I need a page here that will be the only purpose is to be the redirect page of the maintenance request
+
+
+# It will have a button that is redirect
+
+# Description
+
+# Display the description here
+
+# Add an abilty to message the trader or call -  This can be turned as
+
+
+
+
+@csrf_exempt
+@login_required
+def maintenance_success(request):
+    """
+    Success page after maintenance request submission
+    Displays the newly created job details
+    """
+    # Get the job ID from session
+    job_id = request.session.get('new_job_id')
+
+    if not job_id:
+        # If no job ID in session, redirect to maintenance page
+        return redirect('/maintenance/')
+
+    try:
+        # Fetch the job
+        job = Jobs.objects.select_related('category', 'agent', 'property').get(id=job_id)
+
+        # Clear the session variable
+        del request.session['new_job_id']
+
+        context = {
+            'job': job,
+            'service_name': job.category.description,
+            'request_number': f"#0000{job.id}",
+            'description': job.notes or "No additional details provided",
+            'agent': job.agent,
+        }
+
+        return render(request, 'renter/home/jobs/maintenance_success.html', context)
+
+    except Jobs.DoesNotExist:
+        return redirect('/maintenance/')
+
+
+@csrf_exempt
+@login_required
+def view_maintenance_request(request, job_id):
+    """
+    Detailed view of a specific maintenance request
+    """
+    try:
+        # Simple fetch lang
+        job = Jobs.objects.get(id=job_id)
+
+        # Get images
+        images = JobImage.objects.filter(job=job)
+
+        # Parse availability schedule
+        availability = job.renter_availability_schedule or {}
+        availability_days = availability.get('days', [])
+        availability_times = availability.get('times', [])
+
+        # Parse issue date
+        issue_date = job.renter_issue_date or {}
+        if isinstance(issue_date, dict):
+            issue_date_value = issue_date.get('value', 'Not specified')
+        else:
+            issue_date_value = issue_date
+
+        context = {
+            'job': job,
+            'service_name': job.category.description if job.category else 'N/A',
+            'request_number': f"#0000{job.id}",
+            'description': job.notes or "No additional details provided",
+            'agent': job.agent,
+            'availability_days': availability_days,
+            'availability_times': availability_times,
+            'issue_date': issue_date_value,
+            'images': images,
+        }
+
+        return render(request, 'renter/home/jobs/view_maintenance_request.html', context)
+
+    except Jobs.DoesNotExist:
+        messages.error(request, "Maintenance request not found.")
+        return redirect('/maintenance/')
 
 ##################################################################################################################### Renter Min. Standard Report ########################################################################################################
 @login_required

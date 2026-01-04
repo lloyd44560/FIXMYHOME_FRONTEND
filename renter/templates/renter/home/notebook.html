@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Renter Reports</title>
+  <meta charset="UTF-8">
+  <title>Renter Reports</title>
 
-     {% include 'renter/home/navbar.html' %}
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .tab-pane iframe {
-            width: 100%;
-            height: 80vh; /* Responsive height based on viewport */
-            border: none;
-            display: block;
-        }
-        .tab-content {
-            border: 1px solid #dee2e6;
-            border-top: none;
-            padding: 10px;
-        }
-        .spinner-border {
-            display: block;
-            margin: 20px auto;
-        }
-
+  {% include 'renter/home/navbar.html' %}
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .tab-pane iframe {
+      width: 100%;
+      height: 80vh; /* Responsive height based on viewport */
+      border: none;
+      display: block;
+    }
+    .tab-content {
+      border: 1px solid #dee2e6;
+      border-top: none;
+      padding: 10px;
+    }
+    .spinner-border {
+      display: block;
+      margin: 20px auto;
+    }
 
     .property-img {
       width: 96px;
@@ -31,7 +30,7 @@
       object-fit: cover;
       border: 1px solid #e5e7eb;
     }
-     body {
+    body {
       font-family: 'Lexend', sans-serif;
     }
     .btn-primary {
@@ -49,55 +48,82 @@
       background-color: #d75f44;
     }
     a {
-    text-decoration: none !important;
+      text-decoration: none !important;
     }
     a:hover {
       text-decoration: none !important;
     }
   </style>
-
 </head>
 <body>
-    <div class="container mt-4">
-        <h2>Reports List </h2>
-        <ul class="nav nav-tabs" id="notebookTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" type="button" role="tab">Maintenance Request</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="condition-reports-tab" data-bs-toggle="tab" data-bs-target="#condition-reports" type="button" role="tab">Condition Reports</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="appliance-reports-tab" data-bs-toggle="tab" data-bs-target="#appliance-reports" type="button" role="tab">Appliance Reports</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="standard-reports-tab" data-bs-toggle="tab" data-bs-target="#standard-reports" type="button" role="tab">Minimum Standard Reports</button>
-            </li>
-        </ul>
-        <div class="tab-content" id="notebookTabContent">
-            <div class="tab-pane fade show active" id="maintenance" role="tabpanel">
-                <div class="spinner-border" role="status" id="maintenance-loading"></div>
-                <iframe src="{% url 'maintenance_list' %}" title="Maintenance Request" frameborder="0" onload="document.getElementById('maintenance-loading').style.display='none';"></iframe>
-            </div>
-            <div class="tab-pane fade" id="condition-reports" role="tabpanel">
-                <div class="spinner-border" role="status" id="condition-reports-loading"></div>
-                <iframe src="{% url 'condition_report_list' %}" title="Condition Reports" frameborder="0" onload="document.getElementById('condition-reports-loading').style.display='none';"></iframe>
-            </div>
-            <div class="tab-pane fade" id="appliance-reports" role="tabpanel">
-                <div class="spinner-border" role="status" id="appliance-reports-loading"></div>
-                <iframe src="{% url 'appliance_report_list' %}" title="Appliance Reports" frameborder="0" onload="document.getElementById('appliance-reports-loading').style.display='none';"></iframe>
-            </div>
-            <div class="tab-pane fade" id="standard-reports" role="tabpanel">
-                <div class="spinner-border" role="status" id="standard-reports-loading"></div>
-                <iframe src="{% url 'standard_report_list' %}" title="Minimum Standard Reports" frameborder="0" onload="document.getElementById('standard-reports-loading').style.display='none';"></iframe>
-            </div>
-        </div>
+  <div class="container mt-4">
+    <h2>Reports List</h2>
+
+    <ul class="nav nav-tabs" id="notebookTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if request.GET.tab == 'maintenance' or not request.GET.tab %}active{% endif %}"
+                id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" type="button" role="tab">
+          Maintenance Request
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if request.GET.tab == 'condition' %}active{% endif %}"
+                id="condition-reports-tab" data-bs-toggle="tab" data-bs-target="#condition-reports" type="button" role="tab">
+          Condition Reports
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if request.GET.tab == 'appliance' %}active{% endif %}"
+                id="appliance-reports-tab" data-bs-toggle="tab" data-bs-target="#appliance-reports" type="button" role="tab">
+          Appliance Reports
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if request.GET.tab == 'standard' %}active{% endif %}"
+                id="standard-reports-tab" data-bs-toggle="tab" data-bs-target="#standard-reports" type="button" role="tab">
+          Minimum Standard Reports
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="notebookTabContent">
+
+      <!-- Maintenance -->
+      <div class="tab-pane fade {% if request.GET.tab == 'maintenance' or not request.GET.tab %}show active{% endif %}" id="maintenance" role="tabpanel">
+        <div class="spinner-border" role="status" id="maintenance-loading"></div>
+        <iframe src="{% url 'maintenance_list' %}" title="Maintenance Request" frameborder="0"
+                onload="document.getElementById('maintenance-loading').style.display='none';"></iframe>
+      </div>
+
+      <!-- Condition Reports -->
+      <div class="tab-pane fade {% if request.GET.tab == 'condition' %}show active{% endif %}" id="condition-reports" role="tabpanel">
+        <div class="spinner-border" role="status" id="condition-reports-loading"></div>
+        <iframe src="{% url 'condition_report_list' %}" title="Condition Reports" frameborder="0"
+                onload="document.getElementById('condition-reports-loading').style.display='none';"></iframe>
+      </div>
+
+      <!-- Appliance Reports -->
+      <div class="tab-pane fade {% if request.GET.tab == 'appliance' %}show active{% endif %}" id="appliance-reports" role="tabpanel">
+        <div class="spinner-border" role="status" id="appliance-reports-loading"></div>
+        <iframe src="{% url 'appliance_report_list' %}" title="Appliance Reports" frameborder="0"
+                onload="document.getElementById('appliance-reports-loading').style.display='none';"></iframe>
+      </div>
+
+      <!-- Minimum Standard Reports -->
+      <div class="tab-pane fade {% if request.GET.tab == 'standard' %}show active{% endif %}" id="standard-reports" role="tabpanel">
+        <div class="spinner-border" role="status" id="standard-reports-loading"></div>
+        <iframe src="{% url 'standard_report_list' %}" title="Minimum Standard Reports" frameborder="0"
+                onload="document.getElementById('standard-reports-loading').style.display='none';"></iframe>
+      </div>
     </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-      <!-- Footer -->
-      <footer class="bg-white text-center text-sm py-4 border-t mt-8">
-        {% include 'renter/home/footer.html' %}
-      </footer>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Footer -->
+  <footer class="bg-white text-center text-sm py-4 border-t mt-8">
+    {% include 'renter/home/footer.html' %}
+  </footer>
 </body>
 </html>

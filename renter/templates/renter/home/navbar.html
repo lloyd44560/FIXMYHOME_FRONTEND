@@ -4,51 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>FixMyHouse Navbar</title>
-
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/kolektif" rel="stylesheet">
-
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     body {
       font-family: 'Lexend', sans-serif;
       -webkit-tap-highlight-color: transparent;
       overflow-x: hidden;
     }
-
-    /* Brand styling */
     .brand-font {
       font-family: 'Kolektif', sans-serif;
       color: #293272;
     }
-
-    /* Smooth transitions */
     #tw-menu {
       transition: all 0.3s ease-in-out;
     }
-
-    /* Fix sticky position for iPhone Safari */
     nav {
       position: -webkit-sticky;
       position: sticky;
       top: 0;
       z-index: 50;
     }
-
-    /* Menu button better touch size */
     #tw-menu-btn {
       min-width: 44px;
       min-height: 44px;
     }
-
-    /* Mobile dropdown animation */
     #tw-menu {
       transform-origin: top;
       transform: scaleY(0);
@@ -59,8 +45,6 @@
       transform: scaleY(1);
       opacity: 1;
     }
-
-    /* Prevent layout jump */
     @media (max-width: 767px) {
       #tw-menu {
         overflow-y: auto;
@@ -68,167 +52,105 @@
         background-color: #fff;
         border-radius: 0 0 1rem 1rem;
       }
+      body {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom));
+      }
+      /* Hide FixMyHouse text on mobile */
+      .brand-text-mobile {
+        display: none !important;
+      }
     }
   </style>
 </head>
-
 <body class="bg-gray-50">
 
-  <!-- Navbar -->
-  <div id="tailwind-navbar" class="relative z-50">
-    <nav class="bg-white shadow-md border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-
-          <!-- Logo -->
-          <div class="flex items-center space-x-3 flex-shrink-0">
-            <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
-            <span class="text-xl md:text-2xl font-bold brand-font whitespace-nowrap">FixMyHouse</span>
-          </div>
-
-          <!-- Desktop Menu -->
-          <div class="hidden md:block">
-            <div class="ml-10 flex items-baseline space-x-4">
-
-              <a href="/welcome/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
-                <i class="bi bi-house text-lg mr-2"></i>
-                <span>Home</span>
-              </a>
-
-              <a href="/properties/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
-                <i class="bi bi-building text-lg mr-2"></i>
-                <span>My Home</span>
-              </a>
-
-              <a href="/report/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
-                <i class="bi bi-list-check text-lg mr-2"></i>
-                <span>Reports</span>
-              </a>
-
-              <a href="/chat/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
-                <i class="bi bi-envelope-paper text-lg mr-2"></i>
-                <span>Messages</span>
-              </a>
-
-              <a href="/account/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
-                <i class="bi bi-person-circle text-lg mr-2"></i>
-                <span>Profile</span>
-              </a>
-
-              <form method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100">
-                  <i class="bi bi-box-arrow-right text-lg mr-2"></i>
-                  <span>Logout</span>
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <!-- Mobile Menu Button -->
-          <div class="md:hidden">
-            <button id="tw-menu-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-[#293272] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#293272] transition duration-200">
-              <span class="sr-only">Open main menu</span>
-              <svg id="menu-icon-open" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              <svg id="menu-icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+  <!-- Top Navbar -->
+  <!-- Top Navbar - Visible lang sa desktop/tablet (md and up), hidden sa mobile -->
+<div id="tailwind-navbar" class="relative z-50 hidden md:block">
+  <nav class="bg-white shadow-md border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 flex-shrink-0">
+          <img src="/static/renter/images/FMH_NEW_LOGO.png" alt="FixMyHouse Logo" class="h-8 w-8 object-contain" />
+          <span class="text-xl md:text-2xl font-bold brand-font whitespace-nowrap">
+            FixMyHouse
+          </span>
         </div>
-
-        <!-- Mobile Menu -->
-        <div id="tw-menu" class="hidden md:hidden">
-          <div class="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-b-lg">
-
-            <a href="/welcome/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
-              <i class="bi bi-house text-lg mr-3 text-[#293272]"></i>
-              <span>Home</span>
-            </a>
-
-            <a href="/properties/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
-              <i class="bi bi-building text-lg mr-3 text-[#293272]"></i>
-              <span>My Home</span>
-            </a>
-
-            <a href="/report/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
-              <i class="bi bi-list-check text-lg mr-3 text-[#293272]"></i>
-              <span>Reports</span>
-            </a>
-
-            <a href="/chat/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
-              <i class="bi bi-envelope-paper text-lg mr-3 text-[#293272]"></i>
-              <span>Messages</span>
-            </a>
-
-            <a href="/account/" class="flex items-center px-3 py-3 text-base font-medium rounded-md border-b border-gray-100 hover:text-[#293272] hover:bg-gray-50">
-              <i class="bi bi-person-circle text-lg mr-3 text-[#293272]"></i>
-              <span>Profile</span>
-            </a>
-
-            <form method="POST" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="flex items-center text-red-600 font-bold hover:text-red-800 transition w-full px-3 py-3">
-                <i class="bi bi-box-arrow-right mr-2"></i>
-                Logout
-              </button>
-            </form>
-          </div>
+        <!-- Desktop Menu -->
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="/welcome/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+            <i class="bi bi-house text-lg mr-2"></i> Home
+          </a>
+          <a href="/properties/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+            <i class="bi bi-building text-lg mr-2"></i> My Home
+          </a>
+          <a href="/report/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+            <i class="bi bi-list-check text-lg mr-2"></i> Reports
+          </a>
+          <a href="/chat/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+            <i class="bi bi-envelope-paper text-lg mr-2"></i> Messages
+          </a>
+          <a href="/account/" class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-200 hover:bg-gray-100">
+            <i class="bi bi-person-circle text-lg mr-2"></i> Profile
+          </a>
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100">
+              <i class="bi bi-box-arrow-right text-lg mr-2"></i> Logout
+            </button>
+          </form>
         </div>
       </div>
-    </nav>
+    </div>
+  </nav>
+</div>
+
+  <!-- Mobile Bottom Tab Bar -->
+  <div class="fixed inset-x-0 bottom-0 z-50 md:hidden bg-white border-t border-gray-200 shadow-lg">
+    <div class="flex justify-around items-center h-16 max-w-lg mx-auto">
+      <a href="/welcome/" class="flex flex-col items-center justify-center w-full h-full text-blue-600">
+        <i class="bi bi-house-fill text-2xl"></i>
+        <span class="text-xs font-medium mt-1">Home</span>
+      </a>
+      <a href="/chat/" class="flex flex-col items-center justify-center w-full h-full text-gray-600 hover:text-blue-600 transition">
+        <i class="bi bi-envelope text-2xl"></i>
+        <span class="text-xs font-medium mt-1">Messages</span>
+      </a>
+      <a href="/account/" class="flex flex-col items-center justify-center w-full h-full text-gray-600 hover:text-blue-600 transition">
+        <i class="bi bi-person-circle text-2xl"></i>
+        <span class="text-xs font-medium mt-1">Account</span>
+      </a>
+    </div>
   </div>
 
-  <!-- Bootstrap JS -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Toggle Script -->
   <script>
+    // Hamburger toggle script (keep if needed)
     const twMenuBtn = document.getElementById('tw-menu-btn');
     const twMenu = document.getElementById('tw-menu');
     const menuIconOpen = document.getElementById('menu-icon-open');
     const menuIconClose = document.getElementById('menu-icon-close');
 
-    twMenuBtn.addEventListener('click', () => {
-      const isHidden = twMenu.classList.contains('hidden');
-      if (isHidden) {
-        twMenu.classList.remove('hidden');
-        twMenu.classList.add('show');
-        menuIconOpen.classList.add('hidden');
-        menuIconClose.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // prevent scroll behind menu
-      } else {
-        twMenu.classList.add('hidden');
-        twMenu.classList.remove('show');
-        menuIconOpen.classList.remove('hidden');
-        menuIconClose.classList.add('hidden');
-        document.body.style.overflow = '';
-      }
-    });
-
-    // Close when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!twMenuBtn.contains(e.target) && !twMenu.contains(e.target)) {
-        twMenu.classList.add('hidden');
-        twMenu.classList.remove('show');
-        menuIconOpen.classList.remove('hidden');
-        menuIconClose.classList.add('hidden');
-        document.body.style.overflow = '';
-      }
-    });
-
-    // Reset when resizing back to desktop
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 768) {
-        twMenu.classList.add('hidden');
-        twMenu.classList.remove('show');
-        menuIconOpen.classList.remove('hidden');
-        menuIconClose.classList.add('hidden');
-        document.body.style.overflow = '';
-      }
-    });
+    if (twMenuBtn) {
+      twMenuBtn.addEventListener('click', () => {
+        const isHidden = twMenu.classList.contains('hidden');
+        if (isHidden) {
+          twMenu.classList.remove('hidden');
+          twMenu.classList.add('show');
+          menuIconOpen.classList.add('hidden');
+          menuIconClose.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        } else {
+          twMenu.classList.add('hidden');
+          twMenu.classList.remove('show');
+          menuIconOpen.classList.remove('hidden');
+          menuIconClose.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+      });
+    }
   </script>
 </body>
 </html>

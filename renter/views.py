@@ -1121,6 +1121,17 @@ def welcome(request):
             job_list = Jobs.objects.filter(renter=renter)
             agents = AgentRegister.objects.all()
 
+
+            tasks_status = {
+                'personal_details': bool(renter.first_name and renter.last_name and renter.contact_number),
+                'agent_details': Property.objects.filter(renter=renter).exists(),
+                'condition_report': MainConditionReport.objects.filter(renter=renter).exists(),
+                'appliance_reports': RoomApplianceReport.objects.filter(renter=renter).exists(),
+                'maintenance_requests': Jobs.objects.filter(renter=renter).exists(),
+                'minimum_standard_reports': MinimumStandardReport.objects.filter(renter=renter).exists(),
+            }
+
+
             return render(request, 'renter/welcome.html', {
                 'renter': renter,
                 'renter_id': renter.id,
@@ -1131,14 +1142,28 @@ def welcome(request):
                 'jobs': job_list,
                 'job_form': JobForm(),
                 'agents': agents,
+                'tasks_status': tasks_status,  # <-- pass the status dict
             })
 
         elif ThirdParty.objects.filter(user=user).first():
             return redirect('thirdparty_account')
 
         else:
+            renter = Renter.objects.filter(user=user).first()
+
+            tasks_status = {
+                'personal_details': bool(renter.first_name and renter.last_name and renter.contact_number),
+                'agent_details': Property.objects.filter(renter=renter).exists(),
+                'condition_report': MainConditionReport.objects.filter(renter=renter).exists(),
+                'appliance_reports': RoomApplianceReport.objects.filter(renter=renter).exists(),
+                'maintenance_requests': Jobs.objects.filter(renter=renter).exists(),
+                'minimum_standard_reports': MinimumStandardReport.objects.filter(renter=renter).exists(),
+            }
+
+
             return render(request, 'renter/welcome.html', {
-                'renter': None,
+
+                # 'renter': None,
                 'renter_id': None,
                 'room_conditions': [],
                 'properties': [],
@@ -1147,10 +1172,28 @@ def welcome(request):
                 'jobs': [],
                 'job_form': JobForm(),
                 'agents': [],
+                'tasks_status': tasks_status,  # <-- pass the status dict
             })
 
     except Exception as e:
         print("Welcome view error:", e)
+        renter = Renter.objects.filter(user=user).first()
+
+        tasks_status = {
+            'personal_details': bool(renter.name),
+            'agent_details': Property.objects.filter(renter=renter).exists(),
+            'condition_report': MainConditionReport.objects.filter(renter=renter).exists(),
+            'appliance_reports': RoomApplianceReport.objects.filter(renter=renter).exists(),
+            'maintenance_requests': Jobs.objects.filter(renter=renter).exists(),
+            'minimum_standard_reports': MinimumStandardReport.objects.filter(renter=renter).exists(),
+        }
+
+        # compute done count
+        done_count = sum(tasks_status.values())
+        total_tasks = len(tasks_status)
+
+
+
         return render(request, 'renter/welcome.html', {
             'renter': None,
             'renter_id': None,
@@ -1161,6 +1204,8 @@ def welcome(request):
             'jobs': [],
             'job_form': JobForm(),
             'agents': [],
+             'done_count': done_count,
+            'tasks_status': tasks_status,  # <-- pass the status dict
         })
 
 

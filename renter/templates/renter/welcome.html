@@ -4,11 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome Home - FixMyHome</title>
+  <title>Welcome Home - FixMyHouse</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AlpineJS (for modal toggling) -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
   <!-- Lexend Font -->
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -71,57 +73,326 @@
     <div class="container mx-auto mt-6 px-4">
         <div class="tab-pane fade show active" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
 
-            <!-- Header with Blue Title & Bordered Container -->
-            <div class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden">
+
+          <!-- Report Required Maintenance/Issues Card -->
+        <div id="maintenance-card" class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition p-4">
+          <h2 class="text-2xl font-bold mb-2" style="color: #006ffd;">Report Required Maintenance/Issues</h2>
+          <p class="text-gray-600 text-sm">Create a new request for traders</p>
+        </div>
+
+            <!-- Modal (hidden by default) -->
+            <div id="modal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-start justify-center sm:items-center p-4">
+              <div class="bg-white rounded-xl w-full max-w-lg shadow-lg overflow-hidden">
+                <!-- Modal Header -->
+                <div class="flex items-center p-4 border-b border-gray-200">
+                  <button id="modal-close" class="text-gray-500 hover:text-gray-800 mr-3">
+                    <!-- Back Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <center> <h3 class="text-lg font-bold text-gray-900">Create Request</h3> </center>
+                </div>
+                <!-- Modal Body -->
+                  <!-- Modal Body -->
+                    <div class="p-0">
+                      <iframe src="/maintenance_modal/" class="w-full h-[70vh] border-none" title="Maintenance Modal"></iframe>
+                    </div>
+
+              </div>
+            </div>
+
+            <script>
+              const card = document.getElementById('maintenance-card');
+              const modal = document.getElementById('modal');
+              const modalClose = document.getElementById('modal-close');
+
+              card.addEventListener('click', () => {
+
+                modal.classList.remove('hidden'); // Show modal
+              });
+
+              modalClose.addEventListener('click', () => {
+                modal.classList.add('hidden'); // Hide modal
+              });
+
+              // Optional: click outside modal content to close
+              modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                  modal.classList.add('hidden');
+                }
+              });
+            </script>
+
+            <!--This will be conditional, we will display a dynamic screen here displaying an ongoing maintenance request -->
+
+            <!-- CARD -->
+            <div id="maintenance-card2" class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition" style="margin-top: 40px;">
+              <!-- Header -->
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
+                <h2 class="text-2xl font-bold flex items-center gap-2 mb-3 sm:mb-0 text-black">
+                  See My Request Status
+                </h2>
+                <p class="text-gray-600">See my requests</p>
+              </div>
+            </div>
+
+            <!-- MODAL -->
+            <div id="modal2" class="fixed inset-0 z-50 hidden bg-black/50 flex items-start justify-center sm:items-center p-4">
+              <div class="bg-white rounded-xl w-full max-w-lg shadow-lg overflow-hidden">
+                <!-- Modal Header -->
+                <div class="flex items-center p-4 border-b border-gray-200">
+                  <button id="modal-close2" class="text-gray-500 hover:text-gray-800 mr-3">
+                    <!-- Back Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <h3 class="text-lg font-bold text-gray-900">My Request Status</h3>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-0">
+                  <iframe src="/maintenance_list/" class="w-full h-[70vh] border-none" title="Maintenance Modal"></iframe>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- SCRIPT -->
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const card = document.getElementById('maintenance-card2');
+                const modal = document.getElementById('modal2');
+                const modalClose = document.getElementById('modal-close2');
+
+                // Open modal when card is clicked
+                card.addEventListener('click', () => {
+                  modal.classList.remove('hidden'); // show modal
+                  document.body.classList.add('overflow-hidden'); // prevent background scroll
+
+                });
+
+                // Close when back icon is clicked
+                modalClose.addEventListener('click', () => {
+                  modal.classList.add('hidden');
+                  document.body.classList.remove('overflow-hidden');
+                });
+
+                // Optional: click outside modal to close
+                modal.addEventListener('click', (e) => {
+                  if (e.target === modal2) {
+                    modal.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                  }
+                });
+              });
+            </script>
+
+
+            <div class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden" style="margin-top: 40px;">
 
                 <!-- Header -->
-                <div class="flex items-center justify-between p-4 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
-                    <h2 class="text-2xl font-bold flex items-center gap-2" style="color: #006ffd;">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #006ffd;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Report Required Maintenance/Issues
-                    </h2>
-                    <button onclick="location.reload()"
-                            class="text-sm px-4 py-1.5 bg-[#006ffd] hover:bg-[#005edc] text-white rounded-full font-medium transition flex items-center gap-1.5 shadow-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0L9 13m10.418-2H15m0 0l-4 4"></path>
-                        </svg>
-                        Refresh
-                    </button>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
+                    {% if tasks_status %}
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 ">
+                  <div class="max-w-6xl mx-auto">
+                   <h3 class="text-2xl font-bold text-left text-gray-900 mb-2">Complete Your Profile</h3>
+                    <p class="text-left text-gray-600 mb-4">
+                      By completing all profile details, you have a better chance of getting more Traders to work for you.
+                    </p>
+
+                    <!-- ✅ Progress Bar with Percentage -->
+                    <div class="mb-8 flex items-center gap-3">
+                      <span id="progress-percent" class="font-semibold text-[#293272] text-sm w-10 text-right">0%</span>
+                      <div class="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar" class="bg-[#293272] h-3 rounded-full transition-all duration-700 ease-in-out" style="width: 0%;"></div>
+                      </div>
+                    </div>
+
+                    <!-- Task Grid -->
+                    <div id="task-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                      <!-- Personal Details -->
+                      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                         <span class="status text-xl">
+                              {% if tasks_status.personal_details %}
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm font-bold">
+                                  ✓
+                                </span>
+                              {% else %}
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 text-sm font-bold">
+                                  ℹ️
+                                </span>
+                              {% endif %}
+                            </span>
+
+                          <span class="text-gray-800 font-medium">Add your personal details</span>
+                        </div>
+                        <a href="/account/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+                      </div>
+
+                      <!-- Agent Details -->
+                      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-3 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                          <span class="status text-xl">
+                            {% if tasks_status.agent_details %}
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm font-bold">
+                                ✓
+                                </span>
+                            {% else %}
+                              ℹ️
+                            {% endif %}
+                          </span>
+                          <span class="text-gray-800 font-medium">Add your agent details</span>
+                        </div>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+                      </div>
+
+                      <!-- Condition Report -->
+                      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-3 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                          <span class="status text-xl">
+                            {% if tasks_status.condition_report %}
+                              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm font-bold">
+                                ✓
+                                </span>
+                            {% else %}
+                              ℹ️
+                            {% endif %}
+                          </span>
+                          <span class="text-gray-800 font-medium">Complete Condition Report</span>
+                        </div>
+                        <a href="/report/?tab=condition" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+                      </div>
+
+                      <!-- Maintenance Requests -->
+                      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-3 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                          <span class="status text-xl">
+                            {% if tasks_status.maintenance_requests %}
+                              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm font-bold">
+                                ✓
+                              </span>
+                            {% else %}
+                              ℹ️
+                            {% endif %}
+                          </span>
+                          <span class="text-gray-800 font-medium">Add Maintenance Requests</span>
+                        </div>
+                        <a href="/report/" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+                      </div>
+
+                      <!-- Appliance Reports -->
+                      <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-3 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                          <span class="status text-xl">
+                            {% if tasks_status.appliance_reports %}
+                              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm font-bold">
+                                ✓
+                                </span>
+                            {% else %}
+                              ℹ️
+                            {% endif %}
+                          </span>
+                          <span class="text-gray-800 font-medium">Add Appliance Reports</span>
+                        </div>
+                        <a href="/report/?tab=appliance" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+                      </div>
+
+                      <!-- Minimum Standard Reports -->
+                     <div class="task-item flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all rounded-lg p-3 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                          <span class="status text-xl">
+                            {% if tasks_status.minimum_standard_reports %}
+                              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm font-bold">
+                                ✓
+                                </span>
+                            {% else %}
+                              ℹ️
+                            {% endif %}
+                          </span>
+                          <span class="text-gray-800 font-medium">Add Minimum Standard Reports</span>
+                        </div>
+                        <a href="/report/?tab=standard" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">→</a>
+                      </div>
+
+                    </div>
+                  </div>
                 </div>
 
-                <!-- Loading State -->
-                <div id="maintenance-loading" class="flex flex-col items-center justify-center py-16 text-gray-600">
-                    <div class="spinner-border animate-spin inline-block w-12 h-12 border-4 border-gray-200 border-t-[#006ffd] rounded-full mb-4"></div>
-                    <p class="text-sm font-medium">Loading maintenance requests...</p>
+
                 </div>
+            </div>
+
+
+            <div id="maintenance-card2" class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition" style="margin-top: 30px;">
+              <!-- Header - Compact + Bold text -->
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
+                <p class="text-sm font-bold text-gray-800">See agent details</p>
+              </div>
+            </div>
+
+            <!-- Pangalawang card -->
+            <div id="maintenance-card2" class="bg-white border-2 border-[#006ffd] rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition" style="margin-top: 30px;">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gradient-to-r from-[#006ffd]/5 to-transparent border-b border-[#006ffd]/20">
+                <p class="text-sm font-bold text-gray-800">See property reports</p>
+              </div>
+            </div>
+
+
+            <!-- Loading State -->
+            <!--<div id="maintenance-loading" class="flex flex-col items-center justify-center py-16 text-gray-600">-->
+            <!--    <div class="spinner-border animate-spin inline-block w-12 h-12 border-4 border-gray-200 border-t-[#006ffd] rounded-full mb-4"></div>-->
+            <!--    <p class="text-sm font-medium">Loading maintenance requests...</p>-->
+            <!--</div>-->
 
                 <!-- Iframe -->
-                <div style="height: calc(100vh - 300px); min-height: 500px;">
-                    <iframe
-                        src="{% url 'maintenance_list' %}"
-                        title="Maintenance Request List"
-                        frameborder="0"
-                        class="w-full h-full rounded-b-lg"
-                        onload="document.getElementById('maintenance-loading').style.display='none';"
-                        style="display: block;">
-                    </iframe>
-                </div>
-            </div>
+            <!--    <div style="height: calc(100vh - 300px); min-height: 500px;">-->
+            <!--        <iframe-->
+            <!--            src="{% url 'maintenance_list' %}"-->
+            <!--            title="Maintenance Request List"-->
+            <!--            frameborder="0"-->
+            <!--            class="w-full h-full rounded-b-lg"-->
+            <!--            onload="document.getElementById('maintenance-loading').style.display='none';"-->
+            <!--            style="display: block;">-->
+            <!--        </iframe>-->
+            <!--    </div>-->
+            <!--</div>-->
 
             <!-- Mobile Tip -->
-            <div class="mt-3 text-center text-xs text-gray-500 md:hidden">
-                Tip: Rotate to landscape for better view
-            </div>
+            <!--<div class="mt-3 text-center text-xs text-gray-500 md:hidden">-->
+            <!--    Tip: Rotate to landscape for better view-->
+            <!--</div>-->
         </div>
     </div>
 
 
     </div>
 </div>
+
+
+<!-- ✅ JS Progress Bar Logic -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tasks = document.querySelectorAll("#task-grid .task-item .status");
+  const total = tasks.length;
+  const completed = Array.from(tasks).filter(el => el.textContent.trim() === "✓").length;
+  const progress = Math.round((completed / total) * 100);
+
+  const progressBar = document.getElementById("progress-bar");
+  const percentText = document.getElementById("progress-percent");
+
+  // Animate the bar and percentage
+  setTimeout(() => {
+    progressBar.style.width = progress + "%";
+    percentText.textContent = progress + "%";
+  }, 200);
+});
+</script>
+{% endif %}
 
     <div class="container mt-4">
       <h3 class="mb-3">Manage Calendar</h3>
@@ -139,82 +410,82 @@
 
 
   <!-- Features Section -->
-  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-    <div class="max-w-7xl mx-auto">
-      <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Why Choose FixMyHouse?</h3>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
-          <i class="bi bi-house-door-fill text-[#293272] text-4xl mb-4"></i>
-          <h4 class="text-xl font-semibold text-gray-800 mb-3">Streamlined Property Management</h4>
-          <p class="text-gray-600 mb-4">Easily manage your rental properties, track tenancy agreements, and ensure compliance with Australian tenancy laws.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
-          <i class="bi bi-tools text-[#EF7153] text-4xl mb-4"></i>
-          <h4 class="text-xl font-semibold text-gray-800 mb-3">Fast Maintenance Requests</h4>
-          <p class="text-gray-600 mb-4">Report issues quickly and connect with trusted traders for prompt repairs, keeping your property in top condition.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">
-          <i class="bi bi-person-check-fill text-[#293272] text-4xl mb-4"></i>
-          <h4 class="text-xl font-semibold text-gray-800 mb-3">Trusted Agent Connections</h4>
-          <p class="text-gray-600 mb-4">Work with licensed property agents to handle leasing, inspections, and compliance with ease.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!--<section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">-->
+  <!--  <div class="max-w-7xl mx-auto">-->
+  <!--    <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Why Choose FixMyHouse?</h3>-->
+  <!--    <div class="grid md:grid-cols-3 gap-8">-->
+  <!--      <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">-->
+  <!--        <i class="bi bi-house-door-fill text-[#293272] text-4xl mb-4"></i>-->
+  <!--        <h4 class="text-xl font-semibold text-gray-800 mb-3">Streamlined Property Management</h4>-->
+  <!--        <p class="text-gray-600 mb-4">Easily manage your rental properties, track tenancy agreements, and ensure compliance with Australian tenancy laws.</p>-->
+  <!--      </div>-->
+  <!--      <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">-->
+  <!--        <i class="bi bi-tools text-[#EF7153] text-4xl mb-4"></i>-->
+  <!--        <h4 class="text-xl font-semibold text-gray-800 mb-3">Fast Maintenance Requests</h4>-->
+  <!--        <p class="text-gray-600 mb-4">Report issues quickly and connect with trusted traders for prompt repairs, keeping your property in top condition.</p>-->
+  <!--      </div>-->
+  <!--      <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 text-center">-->
+  <!--        <i class="bi bi-person-check-fill text-[#293272] text-4xl mb-4"></i>-->
+  <!--        <h4 class="text-xl font-semibold text-gray-800 mb-3">Trusted Agent Connections</h4>-->
+  <!--        <p class="text-gray-600 mb-4">Work with licensed property agents to handle leasing, inspections, and compliance with ease.</p>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</section>-->
 
   <!-- How It Works Section -->
-  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
-    <div class="max-w-7xl mx-auto">
-      <h3 class="text-4xl font-extrabold text-center text-gray-900 mb-16 tracking-tight">How FixMyHouse Works</h3>
-      <div class="space-y-16">
+  <!--<section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">-->
+  <!--  <div class="max-w-7xl mx-auto">-->
+  <!--    <h3 class="text-4xl font-extrabold text-center text-gray-900 mb-16 tracking-tight">How FixMyHouse Works</h3>-->
+  <!--    <div class="space-y-16">-->
         <!-- Renter -->
-        <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">
-          <div class="md:w-1/2">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Renter" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
-          </div>
-          <div class="md:w-1/2">
-            <h4 class="text-2xl font-semibold text-gray-800 mb-4">Renters: Your Home, Your Control</h4>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              As a renter, FixMyHouse empowers you to report maintenance issues quickly, track repairs, and communicate with your property agent.
-            </p>
-            <a href="/properties/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">
-              Start Managing Your Rental
-            </a>
-          </div>
-        </div>
+  <!--      <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Renter" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">-->
+  <!--        </div>-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Renters: Your Home, Your Control</h4>-->
+  <!--          <p class="text-gray-600 mb-6 leading-relaxed">-->
+  <!--            As a renter, FixMyHouse empowers you to report maintenance issues quickly, track repairs, and communicate with your property agent.-->
+  <!--          </p>-->
+  <!--          <a href="/properties/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">-->
+  <!--            Start Managing Your Rental-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
         <!-- Trader -->
-        <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">
-          <div class="md:w-1/2">
-            <img src="https://images.unsplash.com/photo-1581091215367-59ab6b52d2a9?auto=format&fit=crop&w=800&q=80" alt="Trader" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
-          </div>
-          <div class="md:w-1/2">
-            <h4 class="text-2xl font-semibold text-gray-800 mb-4">Traders: Reliable Repairs, Fast</h4>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              Traders on FixMyHouse are licensed professionals who handle maintenance requests efficiently.
-            </p>
-            <a href="/jobs/" class="inline-block btn-accent py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">
-              View Maintenance Jobs
-            </a>
-          </div>
-        </div>
+  <!--      <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <img src="https://images.unsplash.com/photo-1581091215367-59ab6b52d2a9?auto=format&fit=crop&w=800&q=80" alt="Trader" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">-->
+  <!--        </div>-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Traders: Reliable Repairs, Fast</h4>-->
+  <!--          <p class="text-gray-600 mb-6 leading-relaxed">-->
+  <!--            Traders on FixMyHouse are licensed professionals who handle maintenance requests efficiently.-->
+  <!--          </p>-->
+  <!--          <a href="/jobs/" class="inline-block btn-accent py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">-->
+  <!--            View Maintenance Jobs-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
         <!-- Agent -->
-        <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">
-          <div class="md:w-1/2">
-            <img src="https://images.unsplash.com/photo-1596079890680-7b1d9ffb2a6d?auto=format&fit=crop&w=800&q=80" alt="Agent" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
-          </div>
-          <div class="md:w-1/2">
-            <h4 class="text-2xl font-semibold text-gray-800 mb-4">Agents: Seamless Property Management</h4>
-            <p class="text-gray-600 mb-6 leading-relaxed">
-              Property agents act as the bridge between renters and property owners, handling lease agreements, routine inspections, and maintenance coordination.
-            </p>
-            <a href="/agents/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">
-              Manage Your Properties
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!--      <div class="flex flex-col md:flex-row items-center gap-8 bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition duration-300">-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <img src="https://images.unsplash.com/photo-1596079890680-7b1d9ffb2a6d?auto=format&fit=crop&w=800&q=80" alt="Agent" class="w-full h-72 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300">-->
+  <!--        </div>-->
+  <!--        <div class="md:w-1/2">-->
+  <!--          <h4 class="text-2xl font-semibold text-gray-800 mb-4">Agents: Seamless Property Management</h4>-->
+  <!--          <p class="text-gray-600 mb-6 leading-relaxed">-->
+  <!--            Property agents act as the bridge between renters and property owners, handling lease agreements, routine inspections, and maintenance coordination.-->
+  <!--          </p>-->
+  <!--          <a href="/agents/" class="inline-block btn-primary py-2.5 px-6 rounded-full shadow-md transition duration-300 font-medium">-->
+  <!--            Manage Your Properties-->
+  <!--          </a>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</section>-->
 
   <!-- Testimonials -->
   <section class="py-16 px-4 sm:px-6 lg:px-8 bg-blue-50">
