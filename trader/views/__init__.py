@@ -14,5 +14,6 @@ from .quoteList import QuoteListView
 from .quoteView import QuoteView
 from .maintenance_view import MaintenanceView
 from .biddingRegister import BiddingCreateView
+from .get_member_data import get_member_data
 # ============ Job Views ============
 from .jobList import JobListView

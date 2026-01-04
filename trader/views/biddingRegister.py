@@ -43,37 +43,10 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
 
-
-        if not bidding.quote_code:  # Kung wala pa
-            while True:
-                # Format example: QUO-2025-0001
-                year = timezone.now().year
-                prefix = f"QUO-{year}-"
-                last_bidding = Bidding.objects.filter(
-                    quote_code__startswith=prefix
-                ).order_by('-quote_code').first()
-
-                if last_bidding and last_bidding.quote_code.startswith(prefix):
-                    # Extract number, e.g., QUO-2025-0005 → 5
-                    try:
-                        last_num = int(last_bidding.quote_code.split('-')[-1])
-                        new_num = last_num + 1
-                    except:
-                        new_num = 1
-                else:
-                    new_num = 1
-
-                new_quote_code = f"{prefix}{new_num:04d}"  # 0001, 0002, etc.
-
-                # Check if exists (rare but safe)
-                if not Bidding.objects.filter(quote_code=new_quote_code).exists():
-                    bidding.quote_code = new_quote_code
-                    break
-        # === End of quote_code generation ===
-
-        if bidding.end_date < bidding.start_date:
-            messages.error(self.request, "End date cannot be earlier than start date.")
-            return self.form_invalid(form)
+        if bidding.start_date and bidding.end_date:
+            if bidding.end_date < bidding.start_date:
+                messages.error(self.request, "End date cannot be earlier than start date.")
+                return self.form_invalid(form)
 
         bidding.trader = trader
 
@@ -107,7 +80,6 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
                 ItemNeeded.objects.create(bidding=bidding, name=name.strip(), price=price_val)
 
         # Increment job bid count
-        print(job, '<<<<<<<<<<< current bid count')
         job.bid_count += 1
         job.save()
 
@@ -159,6 +131,5 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         context = self.get_context_data(form=form)
         context['error'] = "There was an error updating your profile."
-        messages.error(self.request, "There was an error updating your profile.")
-        print(form.errors, '=================>>')
+        print(f'There was an error updating your profile: {form.errors}')
         return self.render_to_response(context)

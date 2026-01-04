@@ -7,135 +7,133 @@
 
 <form method="POST">
   {% csrf_token %}
-  <div class="max-w-lg mx-auto px-4 py-6 space-y-6 bg-white">
 
-    <!-- Header -->
-    <div class="text-center mb-2">
-      <h2 class="text-xl font-semibold text-gray-900">Quote - {{ form.initial.jobs.job_code }}</h2>
-    </div>
+  <!-- Header -->
+  <div class="text-center mb-2">
+    <h2 class="text-xl font-semibold text-gray-900">Quote - {{ form.initial.jobs.job_code }}</h2>
+  </div>
 
-    <!-- ===================== -->
-    <!-- TEAM MEMBERS SECTION -->
-    <!-- ===================== -->
-    <div x-data="teamMembers()" class="p-4">
+  <!-- ===================== -->
+  <!-- TEAM MEMBERS SECTION -->
+  <!-- ===================== -->
+  <div x-data="teamMembers()" class="max-w-lg mx-auto px-4 py-6 space-y-6 bg-white">
 
-      <!-- TEAM MEMBERS CARD -->
-      <div class="border border-[#293272] rounded-2xl p-4 bg-white shadow-sm">
-        <div class="flex justify-between items-start mb-2">
-          <div>
-            <h2 class="font-semibold text-lg text-gray-900">Team Members</h2>
-            <template x-for="member in selectedMembers" :key="member.id">
-              <p class="text-gray-500 text-sm" x-text="member.name + ' - ' + member.role"></p>
-            </template>
-          </div>
-          <div class="flex space-x-2">
-            <button type="button" class="text-[#293272] hover:text-[#1e255e]" @click="editMembers()">
-              <i class="fa-solid fa-pen text-lg"></i>
-            </button>
-            <button type="button" class="text-red-500 hover:text-red-600" @click="clearMembers()">
-              <i class="fa-solid fa-trash text-lg"></i>
-            </button>
-          </div>
+    <!-- TEAM MEMBERS CARD -->
+    <div class="border border-[#293272] rounded-2xl p-4 bg-white shadow-sm">
+      <div class="flex justify-between items-start mb-2">
+        <div>
+          <h2 class="font-semibold text-lg text-gray-900">Team Members</h2>
+          <template x-for="member in selectedMembers" :key="member.id">
+            <p class="text-gray-500 text-sm" x-text="member.name + ' - ' + member.role"></p>
+          </template>
         </div>
-
-        <div class="text-center mt-3">
-          <button type="button" @click="showChooseMember = true"
-                  class="text-[#293272] font-semibold text-sm hover:underline">
-            Allocate team member
+        <div class="flex space-x-2">
+          <button type="button" class="text-[#293272] hover:text-[#1e255e]" @click="editMembers()">
+            <i class="fa-solid fa-pen text-lg"></i>
+          </button>
+          <button type="button" class="text-red-500 hover:text-red-600" @click="clearMembers()">
+            <i class="fa-solid fa-trash text-lg"></i>
           </button>
         </div>
       </div>
 
-      <!-- ========================= -->
-      <!-- CHOOSE TEAM MEMBER MODAL -->
-      <!-- ========================= -->
-      <div x-show="showChooseMember"
-          x-cloak
-          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-        <div class="bg-white rounded-2xl p-6 w-96 shadow-lg">
-          <h2 class="text-lg font-semibold text-gray-800 mb-1">Choose Team Member</h2>
-          <p class="text-gray-500 text-sm mb-4">
-            Choose a team member to add to this Job.
-          </p>
+      <div class="text-center mt-3">
+        <button type="button" @click="showChooseMember = true"
+                class="text-[#293272] font-semibold text-sm hover:underline">
+          Allocate team member
+        </button>
+      </div>
+    </div>
 
-          <select x-model="selectedMemberId"
-                  class="w-full border rounded-xl py-2 px-3 text-gray-700 focus:ring-[#293272] focus:border-[#293272]">
-            <option value="">Choose team member</option>
-            {% for member in team_members %}
-              <option value="{{ member.id }}">{{ member.teamName }} - {{ member.position }}</option>
-            {% endfor %}
-          </select>
+    <!-- ========================= -->
+    <!-- CHOOSE TEAM MEMBER MODAL -->
+    <!-- ========================= -->
+    <div x-show="showChooseMember"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div class="bg-white rounded-2xl p-6 w-96 shadow-lg">
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">Choose Team Member</h2>
+        <p class="text-gray-500 text-sm mb-4">
+          Choose a team member to add to this Job.
+        </p>
 
-          <div class="mt-6 text-center">
-            <button type="button" @click="confirmMember()"
-                    class="bg-[#293272] hover:bg-[#1e255e] text-white rounded-xl w-full py-2 font-semibold">
-              Confirm
-            </button>
-          </div>
+        <select x-model="selectedMemberId"
+                class="w-full border rounded-xl py-2 px-3 text-gray-700 focus:ring-[#293272] focus:border-[#293272]">
+          <option value="">Choose team member</option>
+          {% for member in team_members %}
+            <option value="{{ member.id }}">{{ member.teamName }} - {{ member.position }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="mt-6 text-center">
+          <button type="button" @click="confirmMember()"
+                  class="bg-[#293272] hover:bg-[#1e255e] text-white rounded-xl w-full py-2 font-semibold">
+            Confirm
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- ====================== -->
-      <!-- MEMBER DETAILS MODAL -->
-      <!-- ====================== -->
-      <div x-show="showMemberDetails"
-          x-cloak
-          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-        <div class="bg-white rounded-2xl p-6 w-96 shadow-lg overflow-y-auto max-h-[90vh]">
-          <template x-if="currentMember">
-            <div>
-              <div class="flex items-center space-x-3 mb-4">
-                <img :src="currentMember.image" class="w-12 h-12 rounded-full" alt="">
-                <div>
-                  <p class="font-semibold text-gray-800"
-                    x-text="currentMember.name + ' - ' + currentMember.role"></p>
-                  <div class="flex text-yellow-400 mt-1">
-                    <template x-for="star in 5">
-                      <i class="fa-solid fa-star"></i>
-                    </template>
-                  </div>
+    <!-- ====================== -->
+    <!-- MEMBER DETAILS MODAL -->
+    <!-- ====================== -->
+    <div x-show="showMemberDetails"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div class="bg-white rounded-2xl p-6 w-96 shadow-lg overflow-y-auto max-h-[90vh]">
+        <template x-if="currentMember">
+          <div>
+            <div class="flex items-center space-x-3 mb-4">
+              <img :src="currentMember.image" class="w-12 h-12 rounded-full" alt="">
+              <div>
+                <p class="font-semibold text-gray-800"
+                  x-text="currentMember.name + ' - ' + currentMember.role"></p>
+                <div class="flex text-yellow-400 mt-1">
+                  <template x-for="star in 5">
+                    <i class="fa-solid fa-star"></i>
+                  </template>
                 </div>
               </div>
-
-              <h3 class="font-semibold text-gray-800 mb-1">Availability</h3>
-              <p class="text-sm text-gray-500 mb-4" x-text="currentMember.availability"></p>
-
-              <h3 class="font-semibold text-gray-800 mb-1">Current workload</h3>
-              <div class="border rounded-xl p-3 mb-4 text-sm text-gray-600">
-                <p x-text="currentMember.current_job"></p>
-                <span class="text-gray-400" x-text="currentMember.job_date"></span>
-              </div>
-
-              <h3 class="font-semibold text-gray-800 mb-2">Rates</h3>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Labour per hour</span>
-                <span class="font-medium" x-text="`$${currentMember.labour_rate}`"></span>
-              </div>
-              <div class="flex justify-between text-sm mb-4">
-                <span>Callout</span>
-                <span class="font-medium" x-text="`$${currentMember.callout_rate}`"></span>
-              </div>
-
-              <button type="button" @click="closeMemberDetails()"
-                      class="bg-[#293272] hover:bg-[#1e255e] text-white rounded-xl w-full py-2 font-semibold">
-                Close
-              </button>
             </div>
-          </template>
-        </div>
-      </div>
 
-      <!-- ========================== -->
-      <!-- HIDDEN INPUTS FOR DJANGO -->
-      <!-- ========================== -->
-      <template x-for="id in selectedMemberIds" :key="id">
-        <input type="hidden" name="team_member" :value="id">
-      </template>
+            <h3 class="font-semibold text-gray-800 mb-1">Availability</h3>
+            <p class="text-sm text-gray-500 mb-4" x-text="currentMember.availability"></p>
 
-      <!-- Keep original Django form field (hidden for validation) -->
-      <div class="hidden">
-        {{ form.team_member }}
+            <h3 class="font-semibold text-gray-800 mb-1">Current workload</h3>
+            <div class="border rounded-xl p-3 mb-4 text-sm text-gray-600">
+              <p x-text="currentMember.current_job"></p>
+              <span class="text-gray-400" x-text="currentMember.job_date"></span>
+            </div>
+
+            <h3 class="font-semibold text-gray-800 mb-2">Rates</h3>
+            <div class="flex justify-between text-sm mb-1">
+              <span>Labour per hour</span>
+              <span class="font-medium" x-text="`$${currentMember.labour_per_hour}`"></span>
+            </div>
+            <div class="flex justify-between text-sm mb-4">
+              <span>Callout</span>
+              <span class="font-medium" x-text="`$${currentMember.callout_rate}`"></span>
+            </div>
+
+            <button type="button" @click="closeMemberDetails()"
+                    class="bg-[#293272] hover:bg-[#1e255e] text-white rounded-xl w-full py-2 font-semibold">
+              Close
+            </button>
+          </div>
+        </template>
       </div>
+    </div>
+
+    <!-- ========================== -->
+    <!-- HIDDEN INPUTS FOR DJANGO -->
+    <!-- ========================== -->
+    <template x-for="id in selectedMemberIds" :key="id">
+      <input type="hidden" name="team_member" :value="id">
+    </template>
+
+    <!-- Keep original Django form field (hidden for validation) -->
+    <div class="hidden">
+      {{ form.team_member }}
     </div>
 
     <!-- Job -->
@@ -162,14 +160,29 @@
     <div>
       <label class="text-gray-700 font-semibold text-sm">Labour (per hour)</label>
       <p class="text-gray-400 text-xs mb-1">Your labour rate per hour</p>
-      {{ form.labour_per_hour|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600" }}
+      <input
+        type="number"
+        step="0.01"
+        class="w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600"
+        x-model.number="labour_per_hour"
+        name="labour_per_hour"
+        @input="calculateTotals()"
+      />
     </div>
 
     <!-- Callout -->
     <div>
       <label class="text-gray-700 font-semibold text-sm">Callout rate</label>
       <p class="text-gray-400 text-xs mb-1">Your travel and logistics expenses</p>
-      {{ form.callout_rate|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600" }}
+      <input
+        type="number"
+        name="callout_rate"
+        value="{{ form.callout_rate.value|default:0 }}"
+        class="w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600"
+        x-model.number="callout_rate"
+        name="callout_rate"
+        @input="calculateTotals()"
+      />
     </div>
 
     <!-- View location -->
@@ -179,7 +192,14 @@
     <div>
       <label class="text-gray-700 font-semibold text-sm">Parts</label>
       <p class="text-gray-400 text-xs mb-1">Expenses on parts and items needed</p>
-      {{ form.parts_unit_price|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600 mt-1" }}
+      <input
+        type="number"
+        step="0.01"
+        class="w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600"
+        x-model.number="parts_unit_price"
+        name="parts_unit_price"
+        @input="calculateTotals()"
+      />
       <div class="flex justify-center gap-4 mt-3">
         <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">−</button>
         <span class="font-medium text-gray-700">1</span>
@@ -193,14 +213,28 @@
     <!-- Parts Qty -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Parts Quantity</label>
-      {{ form.parts_qty|add_class:"w-full border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition" }}
+      <input
+        type="number"
+        min="0"
+        class="w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600"
+        x-model.number="parts_qty"
+        name="parts_qty"
+        @input="calculateTotals()"
+      />
     </div>
 
     <!-- Hours -->
     <div>
       <label class="text-gray-700 font-semibold text-sm">Hours</label>
       <p class="text-gray-400 text-xs mb-1">How much time you’ll spend working</p>
-      {{ form.hours|add_class:"w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600" }}
+      <input
+        type="number"
+        step="0.5"
+        class="w-full text-right border rounded-xl px-3 py-2 bg-gray-50 text-gray-600"
+        x-model.number="hours"
+        name="hours"
+        @input="calculateTotals()"
+      />
       <div class="flex justify-center gap-4 mt-3">
         <button class="bg-gray-100 w-8 h-8 rounded-full text-[#293272] font-bold">−</button>
         <span class="font-medium text-gray-700">½</span>
@@ -269,22 +303,45 @@
 
     <!-- Totals -->
     <div class="space-y-2 text-sm text-gray-700 border-t pt-3">
-      <div class="flex justify-between"><span>Labour</span><span>$12.00</span></div>
-      <div class="flex justify-between"><span>Callout</span><span>$12.00</span></div>
-      <div class="flex justify-between"><span>Parts</span><span>$12.00</span></div>
-      <div class="flex justify-between"><span>Hours</span><span>12</span></div>
-      <div class="flex justify-between font-medium"><span>Subtotal</span><span>$168.00</span></div>
-      <div class="flex justify-between text-gray-500 text-xs"><span>General service tax (GST) 10%</span><span>$16.80</span></div>
+      <div class="flex justify-between">
+        <span>Labour</span>
+        <span x-text="labour_total.toFixed(2)"></span>
+      </div>
+
+      <div class="flex justify-between">
+        <span>Callout</span>
+        <span x-text="callout_rate.toFixed(2)"></span>
+      </div>
+
+      <div class="flex justify-between">
+        <span>Parts</span>
+        <span x-text="parts_total.toFixed(2)"></span>
+      </div>
+
+      <div class="flex justify-between font-medium">
+        <span>Subtotal</span>
+        <span x-text="subtotal.toFixed(2)"></span>
+      </div>
+
+      <div class="flex justify-between text-gray-500 text-xs">
+        <span>GST (10%)</span>
+        <span x-text="gst.toFixed(2)"></span>
+      </div>
+
       <div class="flex justify-between font-bold text-lg text-gray-900 border-t pt-2">
-        <span>Total</span><span>$184.80</span>
+        <span>Total</span>
+        <span x-text="total.toFixed(2)"></span>
       </div>
     </div>
+
+    <p class="text-xs text-red-500"
+      x-text="JSON.stringify({ labour_per_hour, hours, parts_unit_price, subtotal, total })">
+    </p>
 
     <!-- Submit -->
     <button type="submit" class="w-full bg-[#EF7153] hover:bg-[#d35032] text-white font-semibold py-3 rounded-xl mt-2">
       Submit quote
     </button>
-
   </div>
 </form>
 
@@ -318,60 +375,99 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <script>
-  function teamMembers() {
-    return {
-      showChooseMember: false,
-      showMemberDetails: false,
-      selectedMemberId: "",
-      selectedMembers: [],
-      selectedMemberIds: [],
-      currentMember: null,
+    function teamMembers() {
+      return {
+        showChooseMember: false,
+        showMemberDetails: false,
+        selectedMemberId: "",
+        selectedMembers: [],
+        selectedMemberIds: [],
+        currentMember: null,
+        labour_per_hour: 0,
+        callout_rate: 0,
+        parts_unit_price: 0,
+        labour_total: 0,
+        parts_total: 0,
+        callout_total: 0,
+        hours: 0,
+        subtotal: 0,
+        gst: 0,
+        total: 0,
 
-      confirmMember() {
-        if (!this.selectedMemberId) return;
-        const member = this.getMemberData(this.selectedMemberId);
-        if (!this.selectedMemberIds.includes(member.id)) {
-          this.selectedMembers.push(member);
-          this.selectedMemberIds.push(member.id);
-        }
-        this.showMemberDetails = true;
-        this.currentMember = member;
-        this.selectedMemberId = "";
-        this.showChooseMember = false;
+        async confirmMember() {
+          if (!this.selectedMemberId) return;
+
+          const response = await fetch(`/trader/get-member/${this.selectedMemberId}/`);
+          if (!response.ok) {
+            alert("Failed to load member details");
+            return;
+          }
+
+          const member = await response.json();
+
+          if (!this.selectedMemberIds.includes(member.id)) {
+            this.selectedMembers.push(member);
+            this.selectedMemberIds.push(member.id);
+          }
+
+          this.currentMember = member;
+          this.showMemberDetails = true;
+
+          this.labour_per_hour = parseFloat(member.labour_per_hour) || 0;
+          this.callout_rate = parseFloat(member.callout_rate) || 0;
+
+          this.calculateTotals();
+
+          this.selectedMemberId = "";
+          this.showChooseMember = false;
+        },
+
+      calculateTotals() {
+        const labourRate = this.labour_per_hour || 0
+        const hours = this.hours || 0
+        const partsPrice = this.parts_unit_price || 0
+        const partsQty = this.parts_qty || 0
+        const callout = this.callout_rate || 0
+
+        // compute line totals
+        this.labour_total = hours === 0
+          ? labourRate
+          : labourRate * hours
+        this.parts_total = partsPrice * partsQty
+        this.callout_total = callout
+
+        // compute summary
+        this.subtotal =
+          this.labour_total +
+          this.parts_total +
+          this.callout_total
+
+        this.gst = this.subtotal * 0.10
+        this.total = this.subtotal + this.gst
+      },
+
+      updateField(field, value) {
+        this[field] = parseFloat(value) || 0;
+        this.calculateTotals();
       },
 
       closeMemberDetails() {
         this.showMemberDetails = false;
         this.currentMember = null;
+        this.showChooseMember = false;
       },
 
       clearMembers() {
         this.selectedMembers = [];
         this.selectedMemberIds = [];
+        this.labour_per_hour = 0;
+        this.callout_rate = 0;
+        this.calculateTotals();
       },
 
       editMembers() {
         this.showChooseMember = true;
       },
-
-      getMemberData(id) {
-        const members = [
-          {% for member in team_members %}
-          {
-            id: {{ member.id }},
-            name: "{{ member.teamName|escapejs }}",
-            image: "{{ member.image_url|default:'https://randomuser.me/api/portraits/men/32.jpg' }}",
-            role: "{{ member.position|escapejs }}",
-            availability: "Available soon",
-            current_job: "Ongoing: Building Maintenance",
-            job_date: "Nov 2, 2025",
-            labour_rate: "25",
-            callout_rate: "50",
-          },
-          {% endfor %}
-        ];
-        return members.find(m => m.id == id);
-      }
     };
   }
   </script>

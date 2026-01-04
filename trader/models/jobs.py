@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError, transaction
 from django.utils import timezone
 
 from agent.models import AgentRegister, Property
@@ -43,34 +43,29 @@ class Jobs(models.Model):
 
 
     def save(self, *args, **kwargs):
-        # Always regenerate job_code based on current status
-        # prefix = self.status[:3].upper()  # 'QUO', 'APP', etc.
+        # Auto-close bid if bid_count >= 3
+        self.bid_status = "closed" if self.bid_count >= 3 else "open"
 
-        # --- Auto close bid if bid_count >= 3 ---
-        if self.bid_count >= 3:
-            self.bid_status = "closed"
-        else:
-            self.bid_status = "open"
-
-        # --- Generate job_code only if not set (to avoid regenerating on every save) ---
+        # Generate job_code if not set
         if not self.job_code:
-            count = 1
-            base_code = f"QUO-{count:05d}"
+            for _ in range(5):  # try 5 times to avoid race condition
+                last_job = Jobs.objects.order_by('-id').first()
+                next_number = 1
+                if last_job and last_job.job_code and last_job.job_code[3:].isdigit():
+                    next_number = int(last_job.job_code[3:]) + 1
+                self.job_code = f"JOB{next_number:05d}"
 
-            # Increment until unique
-            while Jobs.objects.filter(job_code=base_code).exists():
-                count += 1
-                base_code = f"QUO-{count:05d}"
-
-            self.job_code = base_code
-        super().save(*args, **kwargs)
+                try:
+                    with transaction.atomic():
+                        super().save(*args, **kwargs)
+                    break  # success
+                except IntegrityError:
+                    self.job_code = None  # retry with next number
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return self.job_code
-
-
-
-
 
 # Added for multiple images for maintenance requests
 class JobImage(models.Model):
