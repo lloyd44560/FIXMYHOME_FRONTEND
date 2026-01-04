@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError, transaction
 from django.utils import timezone
 
 from agent.models import AgentRegister
@@ -42,13 +42,24 @@ class Bidding(models.Model):
     approval_notes = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        # Only generate quote_code if missing
         if not self.quote_code:
-            last_bid = Bidding.objects.order_by('-id').first()
-            next_number = 1
-            if last_bid and last_bid.quote_code and last_bid.quote_code[3:].isdigit():
-                next_number = int(last_bid.quote_code[3:]) + 1
-            self.quote_code = f"QUO{next_number:05d}"
-        super().save(*args, **kwargs)
+            for _ in range(5):  # try 5 times to avoid race condition
+                last_bid = Bidding.objects.order_by('-id').first()
+                next_number = 1
+                if last_bid and last_bid.quote_code and last_bid.quote_code[3:].isdigit():
+                    next_number = int(last_bid.quote_code[3:]) + 1
+                self.quote_code = f"QUO{next_number:05d}"
+                
+                try:
+                    with transaction.atomic():
+                        super().save(*args, **kwargs)
+                    break  # success, exit loop
+                except IntegrityError:
+                    # if UNIQUE fails, try again with next number
+                    self.quote_code = None
+        else:
+            super().save(*args, **kwargs)
     
     def subtotal(self):
         return (

@@ -67,10 +67,10 @@
         <a href="{% url 'maintenance_request_list' %}">To Quote Requests</a>
       </h2>
       <a href="{% url 'maintenance_request_list' %}?priority=true">
-        <p class="text-sm font-medium text-[#EF7153]">{{ to_quote_urgent }} urgent</p>
+        <p class="text-sm font-medium text-[#EF7153] hover:underline">{{ to_quote_urgent }} urgent</p>
       </a>
       <a href="{% url 'maintenance_request_list' %}?priority=false">
-        <p class="text-sm text-[#EF7153]">{{ to_quote_non_urgent }} non-urgent</p>
+        <p class="text-sm text-[#EF7153] hover:underline">{{ to_quote_non_urgent }} non-urgent</p>
       </a>
     </div>
 
@@ -80,10 +80,10 @@
         <a href="{% url 'quote_list' %}?status=pending">Pending Quotes</a>
       </h2>
       <a href="{% url 'quote_list' %}?status=pending&priority=true">
-        <p class="text-sm font-medium text-[#EF7153]">{{ pending_urgent }} urgent</p>
+        <p class="text-sm font-medium text-[#EF7153] hover:underline">{{ pending_urgent }} urgent</p>
       </a>
       <a href="{% url 'quote_list' %}?status=pending&priority=false">
-        <p class="text-sm text-[#EF7153]">{{ pending_non_urgent }} non-urgent</p>
+        <p class="text-sm text-[#EF7153] hover:underline">{{ pending_non_urgent }} non-urgent</p>
       </a>
     </div>
 
@@ -96,10 +96,10 @@
         <a href="{% url 'job_list' %}?status=scheduled">Jobs Today</a>
       </h2>
       <a href="{% url 'job_list' %}?status=scheduled&priority=true">
-        <p class="text-sm font-semibold text-[#EF7153]">{{ today_urgent }} urgent</p>
+        <p class="text-sm font-semibold text-[#EF7153] hover:underline">{{ today_urgent }} urgent</p>
       </a>
       <a href="{% url 'job_list' %}?status=scheduled&priority=false">
-        <p class="text-sm text-[#EF7153]">{{ today_non_urgent }} non-urgent</p>
+        <p class="text-sm text-[#EF7153] hover:underline">{{ today_non_urgent }} non-urgent</p>
       </a>
     </div>
 
@@ -112,10 +112,10 @@
         <a href="{% url 'job_list' %}?status=approved">Jobs Approved</a>
       </h2>
       <a href="{% url 'job_list' %}?status=approved&priority=true">
-        <p class="text-sm font-medium text-[#EF7153]">{{ approved_urgent }} urgent</p>
+        <p class="text-sm font-medium text-[#EF7153] hover:underline">{{ approved_urgent }} urgent</p>
       </a>
       <a href="{% url 'job_list' %}?status=approved&priority=false">
-        <p class="text-sm text-[#EF7153]">{{ approved_non_urgent }} non-urgent</p>
+        <p class="text-sm text-[#EF7153] hover:underline">{{ approved_non_urgent }} non-urgent</p>
       </a>
     </div>
   </div>

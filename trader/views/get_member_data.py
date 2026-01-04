@@ -18,5 +18,4 @@ def get_member_data(request, member_id):
         "labour_per_hour": member.labour_rate_per_hour or 0.00,
         "callout_rate": member.callout_rate or 0.00,
     }
-    print(data, '===============================>>>')
     return JsonResponse(data)

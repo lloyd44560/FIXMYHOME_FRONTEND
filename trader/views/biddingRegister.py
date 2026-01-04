@@ -39,9 +39,13 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
         # Set trader as current user
         trader = TraderRegistration.objects.filter(user=self.request.user).first()
         bidding = form.save(commit=False)
-
-        if bidding.end_date < bidding.start_date:
-            messages.error(self.request, "End date cannot be earlier than start date.")
+        
+        if bidding.start_date and bidding.end_date:
+            if bidding.end_date < bidding.start_date:
+                messages.error(self.request, "End date cannot be earlier than start date.")
+                return self.form_invalid(form)
+        else:
+            messages.error(self.request, "Please provide both start and end dates.")
             return self.form_invalid(form)
 
         bidding.trader = trader
@@ -127,6 +131,5 @@ class BiddingCreateView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         context = self.get_context_data(form=form)
         context['error'] = "There was an error updating your profile."
-        messages.error(self.request, "There was an error updating your profile.")
-        print(form.errors, '=================>>')
+        print(f'There was an error updating your profile: {form.errors}')
         return self.render_to_response(context)
