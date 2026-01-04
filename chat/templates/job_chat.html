@@ -279,6 +279,27 @@
 
   updateFilterButtons();
   setInterval(() => { if (activeJobCode) loadMessages(); }, 3000);
+
+
+  // Update the openJobChat function to make the job code clickable
+    function openJobChat(jobCode) {
+      activeJobCode = jobCode;
+
+      // Create a clickable link for the job code
+      const jobLink = `<a href="/maintenance_chat/view/${jobCode}/" class="text-blue-600 hover:text-blue-800 font-semibold underline">Job: ${jobCode}</a>`;
+
+      $("#chat-header").html(jobLink);
+      $("#chat-header-mobile").html(jobLink);
+
+      $("#message-form").removeClass("hidden");
+      $("#chat-box").empty();
+      loadMessages();
+
+      if (window.innerWidth < 768) {
+        $("#sidebar").addClass("hidden");
+        window.scrollTo(0, 0);
+      }
+    }
 </script>
 </body>
 

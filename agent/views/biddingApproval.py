@@ -68,6 +68,30 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
                 recipient_list=[bidding.trader.email],
             )
 
+            renter_obj = Renter.objects.filter(name=bidding.jobs.renter).first()
+            trader_user = User.objects.filter(email=bidding.trader.email).first()
+
+            if renter_obj and renter_obj.user:
+                job_code = bidding.jobs.job_code or "N/A"
+                message_content = (
+                    f"Hi {renter_obj.name}, this is {bidding.trader.name}. "
+                    f"I’ve accepted your job request with Job Order No. <b>{job_code}</b>. "
+                    "I’ll be in touch soon to coordinate further details. Thank you!"
+                )
+
+                # Include in the message the job ID as link to make it clickable
+                #
+
+                Message.objects.create(
+                    sender=trader_user,
+                    receiver=renter_obj.user,
+                    content=message_content,
+                    job_id=bidding.jobs.id
+                )
+
+
+
+
         elif bidding.is_approved:  # Approved
             TraderNotification.objects.create(
                 trader_id=bidding.trader,
@@ -95,7 +119,8 @@ class BiddingApprovalView(UserPassesTestMixin, UpdateView):
                     Message.objects.create(
                         sender=trader_user,
                         receiver=renter_obj.user,
-                        content=message_content
+                        content=message_content,
+                        job_id=bidding.jobs.id
                     )
 
             except Renter.DoesNotExist:

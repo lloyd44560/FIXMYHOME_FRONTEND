@@ -1,0 +1,278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Maintenance Request</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/css/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lexend', sans-serif;
+      background-color: #f9fafb;
+      min-height: 100vh;
+    }
+    
+    .detail-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    
+    .detail-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .detail-value {
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 400;
+      padding: 12px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .badge-yes {
+      background: #4CE4C2;
+      color: white;
+    }
+    
+    .badge-no {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .availability-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin: 4px;
+    }
+    
+    .availability-day {
+      background: #006ffd;
+      color: white;
+    }
+    
+    .availability-time {
+      background: #4CE4C2;
+      color: white;
+    }
+    
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .image-gallery img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .image-gallery img:hover {
+      transform: scale(1.05);
+    }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 640px) {
+      .detail-card {
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+      }
+      
+      .detail-label {
+        font-size: 11px;
+      }
+      
+      .detail-value {
+        font-size: 13px;
+        padding: 10px;
+      }
+      
+      .badge {
+        padding: 3px 10px;
+        font-size: 10px;
+      }
+      
+      .availability-badge {
+        padding: 5px 12px;
+        font-size: 11px;
+        margin: 3px;
+      }
+      
+      .image-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 6px;
+      }
+      
+      .image-gallery img {
+        height: 100px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .image-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="max-w-2xl mx-auto p-4 pb-24">
+  <!-- Header -->
+  <div class="flex items-center mb-6">
+    <button onclick="window.history.back()" class="text-blue-600 mr-3 sm:mr-4">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+    <div class="flex-1">
+      <h1 class="text-lg font-bold text-gray-800">Maintenance Request</h1>
+      <p class="text-sm text-gray-500">Request #{{ job.job_code }}</p>
+    </div>
+  </div>
+
+  <!-- Category Title -->
+  <div class="detail-card">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2">
+      {{ job.category.description }}
+    </h2>
+    <p class="text-sm text-gray-500">{{ job.category.name }}</p>
+  </div>
+
+  <!-- Brand/Model/Serial (if available in your system) -->
+  {% if job.property %}
+  <div class="detail-card">
+    <div class="detail-label">Property</div>
+    <div class="detail-value">{{ job.property.address }}</div>
+  </div>
+  {% endif %}
+
+  <!-- When did the issue occur -->
+  <div class="detail-card">
+    <div class="detail-label">When did the issue occur?</div>
+    <div class="detail-value">
+      {% if job.renter_issue_date %}
+        {% if job.renter_issue_date.value %}
+          <span class="font-semibold">{{ job.renter_issue_date.value }}</span>
+        {% else %}
+          <span class="font-semibold">{{ job.renter_issue_date }}</span>
+        {% endif %}
+      {% else %}
+        <span class="text-gray-400 italic">Not specified</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Has the issue been fixed before -->
+  <div class="detail-card">
+    <div class="detail-label">Has the issue been fixed before?</div>
+    <div class="detail-value">
+      {% if job.issue_been_fixed_before %}
+        <span class="badge badge-yes">YES</span>
+      {% else %}
+        <span class="badge badge-no">NO</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Has the issue been fixed by FMH before -->
+  <div class="detail-card">
+    <div class="detail-label">Has the issue been fixed by FMH before?</div>
+    <div class="detail-value">
+      {% if job.issue_been_fixed_by_fmh_before %}
+        <span class="badge badge-yes">YES</span>
+      {% else %}
+        <span class="badge badge-no">NO</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Additional Details/Notes -->
+  {% if job.notes %}
+  <div class="detail-card">
+    <div class="detail-label">Provide additional details of previous fix</div>
+    <div class="detail-value">{{ job.notes }}</div>
+  </div>
+  {% endif %}
+
+  <!-- Availability -->
+  <div class="detail-card">
+    <div class="detail-label">Availability</div>
+    <div class="mt-2">
+      {% if job.renter_availability_schedule %}
+        {% if job.renter_availability_schedule.days %}
+          <div class="mb-2">
+            {% for day in job.renter_availability_schedule.days %}
+              <span class="availability-badge availability-day">{{ day }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if job.renter_availability_schedule.times %}
+          <div>
+            {% for time in job.renter_availability_schedule.times %}
+              <span class="availability-badge availability-time">{{ time }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <span class="text-gray-400 italic text-sm">No availability specified</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Photos -->
+  {% if job.images.all %}
+  <div class="detail-card">
+    <div class="detail-label">Photos of Cooling Area</div>
+    <div class="image-gallery">
+      {% for img in job.images.all %}
+        <img src="{{ img.image.url }}" alt="Job Image">
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Urgent Request Badge -->
+  {% if job.priority %}
+  <div class="detail-card">
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-semibold text-gray-700">Set as Urgent Request?</span>
+      <span class="badge badge-yes">YES</span>
+    </div>
+  </div>
+  {% endif %}
+
+  
+
+</div>
+
+</body>
+</html>

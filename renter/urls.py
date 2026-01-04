@@ -94,6 +94,8 @@ urlpatterns = [
     path('jobs/edit/<int:job_id>/', renter_actions.edit_job, name='edit_job'),
     path('jobs/delete/<int:id>/', renter_actions.delete_job, name='delete_job'),
 
+    path('maintenance_chat/view/<str:job_code>/', renter_actions.view_maintenance_request_chat, name='view_maintenance_request_chat'),
+
 # For Minimum Standard Reports Listings
 
     path('standard-reports/', renter_actions.standard_report_list, name='standard_report_list'),

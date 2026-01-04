@@ -577,6 +577,21 @@ def add_job(request):
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
 
+
+
+@login_required
+def view_maintenance_request_chat(request, job_code):
+    """
+    View to display detailed maintenance request information
+    """
+    job = get_object_or_404(Jobs, job_code=job_code)
+
+    context = {
+        'job': job,
+    }
+
+    return render(request, 'renter/home/jobs/view_job.html', context)
+
 @csrf_exempt
 @login_required
 def add_job_save(request):
